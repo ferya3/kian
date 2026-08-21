@@ -8,7 +8,7 @@
     </x-page-hero>
 
     <section class="bg-sand-50 py-16 lg:py-24">
-        <div class="container-page grid gap-12 lg:grid-cols-12 lg:gap-16">
+        <div class="container-page grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-16">
             <div class="lg:col-span-5">
                 <x-section-heading eyebrow="Story" title="از یک کوره تا دو خط اکستروژن" />
             </div>
@@ -26,7 +26,7 @@
             <x-section-heading eyebrow="Principles" title="سه اصلی که سرِ آن‌ها مذاکره نمی‌کنیم"
                 lead="این‌ها شعار نیستند؛ اگر رعایتشان نکنیم، مشتری‌مان یک بار بیشتر از ما خرید نمی‌کند." />
 
-            <ul class="mt-10 grid gap-4 lg:grid-cols-3" data-reveal-stagger="100">
+            <ul class="mt-10 grid grid-cols-1 gap-4 lg:grid-cols-3" data-reveal-stagger="100">
                 @foreach([
                     ['ruler', 'رواداری ابعادی', 'اگر ابعاد بلوک‌ها یکنواخت نباشد، سرعت اجرا و مصرف ملات به هم می‌ریزد. رواداری ما زیر دو میلی‌متر کنترل می‌شود — و شاهدش در گزارش هر بچ هست.'],
                     ['shield', 'شفافیت عددی', 'هیچ عددی را گرد نمی‌کنیم تا بهتر به‌نظر برسد. دیتاشیت‌های ما نتیجه‌ی آزمون‌اند، نه ادعای بازاریابی.'],
@@ -45,12 +45,12 @@
     </section>
 
     <section class="bg-sand-50 py-16 lg:py-20">
-        <div class="container-page grid gap-10 lg:grid-cols-12 lg:gap-14">
+        <div class="container-page grid grid-cols-1 gap-10 lg:grid-cols-12 lg:gap-14">
             <div class="lg:col-span-5">
                 <x-section-heading eyebrow="Certificates" title="تأییدیه‌ها" />
                 <x-cta :href="route('technical.certificates')" variant="ghost" class="mt-7">صفحه گواهی‌نامه‌ها</x-cta>
             </div>
-            <ul class="grid gap-3 sm:grid-cols-2 lg:col-span-7">
+            <ul class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:col-span-7">
                 @foreach($certificates->take(6) as $certificate)
                     <li class="rounded-xl border border-sand-300 bg-sand-100 p-4">
                         <p class="font-semibold leading-snug">{{ $certificate->title }}</p>

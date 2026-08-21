@@ -32,7 +32,7 @@
 
                 @if($results['products']->isNotEmpty())
                     <h2 class="mt-8 text-h3 font-extrabold">محصولات</h2>
-                    <div class="mt-5 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+                    <div class="mt-5 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
                         @foreach($results['products'] as $product)
                             <x-product-card :product="$product" :showBars="false" />
                         @endforeach
@@ -41,7 +41,7 @@
 
                 @if($results['projects']->isNotEmpty())
                     <h2 class="mt-12 text-h3 font-extrabold">پروژه‌ها</h2>
-                    <div class="mt-5 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                    <div class="mt-5 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
                         @foreach($results['projects'] as $project)
                             <x-project-card :project="$project" />
                         @endforeach
@@ -50,7 +50,7 @@
 
                 @if($results['documents']->isNotEmpty())
                     <h2 class="mt-12 text-h3 font-extrabold">فایل‌های فنی</h2>
-                    <div class="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+                    <div class="mt-5 grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
                         @foreach($results['documents'] as $document)
                             <x-document-row :document="$document" />
                         @endforeach
@@ -59,7 +59,7 @@
 
                 @if($results['articles']->isNotEmpty())
                     <h2 class="mt-12 text-h3 font-extrabold">مقالات</h2>
-                    <ul class="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                    <ul class="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                         @foreach($results['articles'] as $article)
                             <li>
                                 <a href="{{ route('articles.show', $article) }}"

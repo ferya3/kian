@@ -21,7 +21,7 @@
         <div class="container-page relative">
             <x-breadcrumbs />
 
-            <div class="mt-8 grid gap-10 lg:grid-cols-12 lg:gap-14">
+            <div class="mt-8 grid grid-cols-1 gap-10 lg:grid-cols-12 lg:gap-14">
 
                 {{-- نمایشگر محصول --}}
                 <div class="lg:col-span-6"
@@ -145,7 +145,7 @@
 
     {{-- ==================== عملکرد و کاربرد ==================== --}}
     <section class="bg-ink-950 py-16 text-sand-50 lg:py-20">
-        <div class="container-page grid gap-10 lg:grid-cols-12 lg:gap-14">
+        <div class="container-page grid grid-cols-1 gap-10 lg:grid-cols-12 lg:gap-14">
             <div class="lg:col-span-5">
                 <h2 class="text-h2 font-extrabold">چرا این محصول؟</h2>
                 <p class="mt-4 leading-relaxed text-sand-200/65">{{ $product->description ?: $product->summary }}</p>
@@ -154,7 +154,7 @@
             </div>
 
             <div class="lg:col-span-7">
-                <div class="grid gap-4 sm:grid-cols-2">
+                <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <div class="rounded-2xl border border-white/10 bg-white/[0.04] p-6">
                         <h3 class="flex items-center gap-2 font-bold">
                             <x-icon name="sparkle" size="18" class="text-clay-400" />
@@ -218,7 +218,7 @@
                     </div>
                 </div>
 
-                <div class="mt-8 grid gap-3 md:grid-cols-2 xl:grid-cols-4" data-reveal-stagger="70">
+                <div class="mt-8 grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4" data-reveal-stagger="70">
                     @foreach($product->documents as $document)
                         <x-document-row :document="$document" data-reveal />
                     @endforeach
@@ -229,7 +229,7 @@
 
     {{-- ==================== روش اجرا ==================== --}}
     <section class="bg-sand-50 py-16 lg:py-20">
-        <div class="container-page grid gap-10 lg:grid-cols-12 lg:gap-14">
+        <div class="container-page grid grid-cols-1 gap-10 lg:grid-cols-12 lg:gap-14">
             <div class="lg:col-span-4">
                 <x-section-heading eyebrow="Installation" title="روش اجرا"
                     lead="پنج نکته‌ای که بیشترین تأثیر را روی عملکرد نهایی دیوار دارد." />
@@ -263,7 +263,7 @@
         <section class="bg-sand-100 py-16 lg:py-20">
             <div class="container-page">
                 <x-section-heading eyebrow="Used in" title="پروژه‌هایی که با این محصول اجرا شده‌اند" />
-                <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3" data-reveal-stagger="100">
+                <div class="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3" data-reveal-stagger="100">
                     @foreach($product->projects->take(3) as $project)
                         <x-project-card :project="$project" data-reveal />
                     @endforeach
@@ -276,7 +276,7 @@
     <section class="bg-sand-50 py-16 lg:py-20">
         <div class="container-page">
             <x-section-heading eyebrow="Related" title="محصولات مشابه" />
-            <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3" data-reveal-stagger="100">
+            <div class="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3" data-reveal-stagger="100">
                 @foreach($related as $item)
                     <x-product-card :product="$item" data-reveal />
                 @endforeach

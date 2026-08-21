@@ -6,7 +6,7 @@
         variant="dark" />
 
     <section class="bg-sand-50 py-16 lg:py-20">
-        <div class="container-page grid gap-10 lg:grid-cols-12 lg:gap-14">
+        <div class="container-page grid grid-cols-1 gap-10 lg:grid-cols-12 lg:gap-14">
             <div class="lg:col-span-7">
                 <h2 class="text-h3 font-extrabold">{{ $solution->subtitle }}</h2>
                 <div class="mt-5 space-y-4 text-lead text-ink-600">
@@ -18,7 +18,7 @@
                 </div>
 
                 <h3 class="mt-10 text-h3 font-extrabold">مزایای این راهکار</h3>
-                <ul class="mt-5 grid gap-3 sm:grid-cols-2" data-reveal-stagger="80">
+                <ul class="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2" data-reveal-stagger="80">
                     @foreach($solution->benefits ?? [] as $benefit)
                         <li data-reveal class="flex gap-3 rounded-xl border border-sand-300 bg-sand-100 p-4">
                             <x-icon name="check" size="18" class="mt-0.5 shrink-0 text-clay-500" />

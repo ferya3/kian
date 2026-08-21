@@ -28,24 +28,30 @@ class AppServiceProvider extends ServiceProvider
         Paginator::defaultView('vendor.pagination.kian');
 
         // مِگا منوی «محصولات» روی همه‌ی صفحات رندر می‌شود.
-        View::composer(['components.layouts.app', 'partials.header', 'partials.mega-menu', 'partials.mobile-nav', 'partials.footer'], function ($view) {
+        View::composer(['partials.header', 'partials.mega-menu', 'partials.mobile-nav', 'partials.footer'], function ($view) {
             $view->with('navigation', Navigation::items());
             $view->with('megaMenu', $this->megaMenu());
         });
 
-        View::share('seo', $this->app->make(Seo::class));
+        // به‌جای View::share در boot — تا زیر Octane نمونه‌ی درخواست قبلی باقی نماند.
+        View::composer(['components.layouts.app', 'components.breadcrumbs'], function ($view) {
+            $view->with('seo', $this->app->make(Seo::class));
+        });
     }
 
     /** @return Collection<int, ProductCategory> */
     protected function megaMenu()
     {
-        if (! Schema::hasTable('product_categories')) {
-            return collect();
-        }
+        return once(function () {
+            // پیش از اجرای مهاجرت‌ها (مثلاً هنگام migrate:fresh) جدول وجود ندارد.
+            if (! Schema::hasTable('product_categories')) {
+                return collect();
+            }
 
-        return once(fn () => ProductCategory::query()
-            ->roots()
-            ->with(['children' => fn ($q) => $q->withCount('products')])
-            ->get());
+            return ProductCategory::query()
+                ->roots()
+                ->with(['children' => fn ($q) => $q->withCount('products')])
+                ->get();
+        });
     }
 }

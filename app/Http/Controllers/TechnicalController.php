@@ -89,9 +89,20 @@ class TechnicalController extends Controller
         ]);
     }
 
+    /** ترتیب نمایش دسته‌ها: از پرتکرارترین پرسش‌های فنی به عمومی‌ترین. */
+    protected const FAQ_GROUP_ORDER = ['technical', 'installation', 'order', 'general'];
+
     public function faq()
     {
-        $faqs = Faq::query()->orderBy('group')->orderBy('position')->get();
+        $faqs = Faq::query()
+            ->orderBy('position')
+            ->get()
+            ->sortBy([
+                fn (Faq $a, Faq $b) => array_search($a->group, self::FAQ_GROUP_ORDER, true)
+                    <=> array_search($b->group, self::FAQ_GROUP_ORDER, true),
+                fn (Faq $a, Faq $b) => $a->position <=> $b->position,
+            ])
+            ->values();
 
         $this->seo()
             ->title('پرسش‌های متداول فنی')

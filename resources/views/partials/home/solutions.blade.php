@@ -11,7 +11,7 @@
             </div>
         </div>
 
-        <ul class="mt-10 grid gap-4 md:grid-cols-2 xl:grid-cols-4" data-reveal-stagger="90">
+        <ul class="mt-10 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4" data-reveal-stagger="90">
             @foreach($solutions as $solution)
                 <li data-reveal>
                     <a href="{{ route('solutions.show', $solution) }}"

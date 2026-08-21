@@ -1,6 +1,6 @@
 <section id="find-your-block" class="relative bg-sand-100 py-20 lg:py-28" aria-labelledby="finder-heading">
     <div class="container-page">
-        <div class="grid gap-10 lg:grid-cols-12 lg:items-end">
+        <div class="grid grid-cols-1 gap-10 lg:grid-cols-12 lg:items-end">
             <div class="lg:col-span-7">
                 <p class="eyebrow text-clay-600" data-reveal>Find your block</p>
                 <h2 id="finder-heading" class="mt-3 text-h2 font-extrabold text-balance" data-reveal>
@@ -13,7 +13,7 @@
             </div>
 
             <div class="lg:col-span-5 lg:pb-2" data-reveal>
-                <ul class="grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
+                <ul class="grid grid-cols-1 gap-3 sm:grid-cols-3 lg:grid-cols-1">
                     @foreach(config('kian.audiences') as $key => $audience)
                         <li>
                             <a href="{{ route($audience['route']) }}"

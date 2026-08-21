@@ -9,7 +9,7 @@
         <div class="container-page">
             <form method="GET" action="{{ route('technical.downloads') }}"
                   class="rounded-[var(--radius-panel)] border border-sand-300 bg-sand-50 p-5 lg:p-6">
-                <div class="grid gap-4 lg:grid-cols-4">
+                <div class="grid grid-cols-1 gap-4 lg:grid-cols-4">
                     <div>
                         <label for="q" class="mb-2 block text-[0.8125rem] font-semibold text-ink-600">جستجو</label>
                         <input id="q" name="q" type="search" value="{{ request('q') }}" placeholder="نام فایل…"
@@ -77,7 +77,7 @@
                     @foreach($documents->groupBy('category') as $category => $group)
                         <div>
                             <h2 class="border-b border-sand-300 pb-3 text-lg font-extrabold">{{ $labels[$category] ?? $category }}</h2>
-                            <div class="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-3" data-reveal-stagger="50">
+                            <div class="mt-4 grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3" data-reveal-stagger="50">
                                 @foreach($group as $document)
                                     <x-document-row :document="$document" data-reveal />
                                 @endforeach

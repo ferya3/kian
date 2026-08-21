@@ -8,7 +8,7 @@
     </x-page-hero>
 
     <section class="bg-sand-50 py-16 lg:py-24">
-        <div class="container-page grid gap-12 lg:grid-cols-12 lg:gap-16">
+        <div class="container-page grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-16">
             <div class="lg:col-span-5">
                 <x-section-heading eyebrow="Life cycle" title="چرخه‌ی عمر یک بلوک" />
             </div>

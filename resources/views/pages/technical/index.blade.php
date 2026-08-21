@@ -5,7 +5,7 @@
         lead="دیتاشیت، کاتالوگ، فایل CAD، آبجکت BIM، راهنمای اجرا و گواهی‌نامه — بدون ثبت‌نام و بدون تماس با واحد فروش."
         variant="dark">
 
-        <div class="mt-12 grid gap-4 sm:grid-cols-3">
+        <div class="mt-12 grid grid-cols-1 gap-4 sm:grid-cols-3">
             @foreach(config('kian.audiences') as $key => $audience)
                 <a href="{{ route($audience['route']) }}"
                    class="group rounded-2xl border border-white/10 bg-white/[0.05] p-6 transition hover:border-clay-500/40 hover:bg-clay-500/10">
@@ -33,7 +33,7 @@
                         <p class="tech text-[0.8125rem] text-ink-400">{{ \App\Support\Jalali::digits($documents->count()) }} فایل</p>
                     </div>
 
-                    <div class="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-3" data-reveal-stagger="60">
+                    <div class="mt-5 grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3" data-reveal-stagger="60">
                         @foreach($documents->take(6) as $document)
                             <x-document-row :document="$document" data-reveal />
                         @endforeach
@@ -54,7 +54,7 @@
             <x-section-heading eyebrow="Per product" title="فایل‌ها به تفکیک محصول"
                 lead="اگر می‌دانید کدام محصول را می‌خواهید، از اینجا سریع‌تر است." />
 
-            <ul class="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3" data-reveal-stagger="60">
+            <ul class="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3" data-reveal-stagger="60">
                 @foreach($products as $product)
                     <li data-reveal>
                         <a href="{{ route('products.show', $product) }}#downloads"

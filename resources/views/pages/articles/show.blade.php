@@ -37,7 +37,7 @@
             <section class="bg-sand-50 py-16">
                 <div class="container-page">
                     <x-section-heading eyebrow="More" title="مطالب دیگر" />
-                    <ul class="mt-8 grid gap-4 sm:grid-cols-3">
+                    <ul class="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
                         @foreach($more as $item)
                             <li>
                                 <a href="{{ route('articles.show', $item) }}"

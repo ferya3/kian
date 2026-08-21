@@ -3,7 +3,9 @@ import { observeOnce, prefersReducedMotion } from './motion';
 const FA_DIGITS = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
 
 function toPersian(value) {
-    return String(value).replace(/\d/g, (d) => FA_DIGITS[Number(d)]);
+    return String(value)
+        .replace(/\d/g, (d) => FA_DIGITS[Number(d)])
+        .replace(/\./g, '٫'); // جداکننده‌ی اعشار فارسی
 }
 
 function format(value, decimals, separated) {

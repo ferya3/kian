@@ -12,19 +12,19 @@
             </div>
         </div>
 
-        <div class="mt-12 grid gap-6 lg:grid-cols-12" data-reveal-stagger="120">
+        <div class="mt-12 grid grid-cols-1 gap-6 lg:grid-cols-12" data-reveal-stagger="120">
             <div class="lg:col-span-7" data-reveal>
                 <x-project-card :project="$projects->first()" featured class="h-full" />
             </div>
 
-            <div class="grid gap-6 sm:grid-cols-2 lg:col-span-5 lg:grid-cols-1">
+            <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:col-span-5 lg:grid-cols-1">
                 @foreach($projects->skip(1)->take(2) as $project)
                     <x-project-card :project="$project" data-reveal />
                 @endforeach
             </div>
         </div>
 
-        <div class="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3" data-reveal-stagger="100">
+        <div class="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3" data-reveal-stagger="100">
             @foreach($projects->skip(3)->take(3) as $project)
                 <x-project-card :project="$project" data-reveal />
             @endforeach

@@ -8,7 +8,7 @@
         <div class="container-page space-y-6">
             @foreach($solutions as $solution)
                 <article data-reveal
-                         class="group grid gap-8 rounded-[var(--radius-panel)] border border-sand-300 bg-sand-50 p-6 transition hover:border-clay-300 lg:grid-cols-12 lg:p-8">
+                         class="group grid grid-cols-1 gap-8 rounded-[var(--radius-panel)] border border-sand-300 bg-sand-50 p-6 transition hover:border-clay-300 lg:grid-cols-12 lg:p-8">
                     <div class="lg:col-span-5">
                         <p class="tech text-[0.6875rem] uppercase tracking-[0.14em] text-ink-300">{{ $solution->title_en }}</p>
                         <h2 class="mt-2 text-h3 font-extrabold">

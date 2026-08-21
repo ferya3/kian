@@ -20,7 +20,7 @@
                 @foreach($distributors as $province => $group)
                     <div>
                         <h2 class="text-h3 font-extrabold">{{ $province }}</h2>
-                        <ul class="mt-4 grid gap-4 md:grid-cols-2 xl:grid-cols-3" data-reveal-stagger="70">
+                        <ul class="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3" data-reveal-stagger="70">
                             @foreach($group as $distributor)
                                 <li data-reveal class="rounded-[var(--radius-panel)] border border-sand-300 bg-sand-50 p-5">
                                     <p class="font-bold">{{ $distributor->name }}</p>

@@ -11,7 +11,7 @@
 
 <section class="bg-ink-950 py-20 text-sand-50 lg:py-28" aria-labelledby="technical-heading">
     <div class="container-page">
-        <div class="grid gap-12 lg:grid-cols-12 lg:gap-16">
+        <div class="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-16">
             <div class="lg:col-span-5">
                 <x-section-heading
                     eyebrow="Technical center"
@@ -40,7 +40,7 @@
             </div>
 
             <div class="lg:col-span-7">
-                <div class="grid gap-3 sm:grid-cols-2" data-reveal-stagger="70">
+                <div class="grid grid-cols-1 gap-3 sm:grid-cols-2" data-reveal-stagger="70">
                     @foreach($tiles as $tile)
                         <a href="{{ route($tile['route'][0], $tile['route'][1]) }}" data-reveal
                            class="group flex items-center gap-4 rounded-2xl border border-white/10 bg-white/[0.04] p-5 transition-all duration-300 hover:border-clay-500/40 hover:bg-clay-500/10">

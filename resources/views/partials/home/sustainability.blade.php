@@ -1,6 +1,6 @@
 <section class="bg-sand-100 py-20 lg:py-28" aria-labelledby="sustainability-heading">
     <div class="container-page">
-        <div class="grid gap-12 lg:grid-cols-12 lg:items-center lg:gap-16">
+        <div class="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:items-center lg:gap-16">
             <div class="lg:col-span-5">
                 <x-section-heading
                     eyebrow="Sustainability"
@@ -13,7 +13,7 @@
 
             <div class="lg:col-span-7">
                 {{-- چرخه‌ی حیات — سه گام --}}
-                <ol class="relative grid gap-4 sm:grid-cols-3" data-reveal-stagger="120">
+                <ol class="relative grid grid-cols-1 gap-4 sm:grid-cols-3" data-reveal-stagger="120">
                     @foreach([
                         ['خاک رس', 'Extraction', 'برداشت از معدن اختصاصی، با طرح بازسازی محل برداشت.', 'leaf'],
                         ['محصول', 'Production', 'پخت با حرارت بازیافتی؛ ضایعات خام صددرصد به خط برمی‌گردد.', 'factory'],

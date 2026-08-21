@@ -15,7 +15,7 @@
                     'description' => $s->description,
                     'stats' => $s->stats ?? [],
                 ])->all()))"
-                 class="mt-12 grid gap-6 lg:grid-cols-12 lg:gap-8">
+                 class="mt-12 grid grid-cols-1 gap-6 lg:grid-cols-12 lg:gap-8">
 
                 <div class="relative overflow-hidden rounded-[var(--radius-panel)] border border-ink-900/10 bg-ink-950 lg:col-span-8">
                     <x-factory-plan class="aspect-[16/10] w-full" />
@@ -72,7 +72,7 @@
             <x-section-heading eyebrow="Certificates" title="گواهی‌نامه‌ها و تأییدیه‌ها"
                 lead="اعداد این صفحه بی‌معنی‌اند اگر کسی آن‌ها را تأیید نکرده باشد." />
 
-            <ul class="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3" data-reveal-stagger="80">
+            <ul class="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3" data-reveal-stagger="80">
                 @foreach($certificates as $certificate)
                     <li data-reveal class="flex gap-4 rounded-2xl border border-sand-300 bg-sand-100 p-5">
                         <span class="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-clay-100 text-clay-600">

@@ -5,7 +5,7 @@
         lead="بهترین بلوک هم با اجرای اشتباه عملکردش را از دست می‌دهد. این صفحه برای مجری نوشته شده، نه برای بایگانی." />
 
     <section class="bg-sand-100 pb-20">
-        <div class="container-page grid gap-10 lg:grid-cols-12 lg:gap-14">
+        <div class="container-page grid grid-cols-1 gap-10 lg:grid-cols-12 lg:gap-14">
 
             <div class="lg:col-span-8">
                 <h2 class="text-h3 font-extrabold">مراحل اجرای دیوار سفالی</h2>

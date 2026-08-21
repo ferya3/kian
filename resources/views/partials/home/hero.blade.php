@@ -59,10 +59,4 @@
         </dl>
     </div>
 
-    <a href="#find-your-block"
-       class="absolute bottom-6 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-2 text-[0.6875rem] uppercase tracking-[0.2em] text-sand-200/50 transition hover:text-sand-50 lg:flex"
-       aria-label="رفتن به بخش انتخاب محصول">
-        <span>Scroll</span>
-        <span class="h-10 w-px bg-gradient-to-b from-sand-200/50 to-transparent"></span>
-    </a>
 </section>

@@ -115,6 +115,8 @@
     html {
         scroll-behavior: smooth;
         -webkit-text-size-adjust: 100%;
+        /* تور ایمنی در برابر سرریز افقی؛ برخلاف hidden، با position: sticky سازگار است. */
+        overflow-x: clip;
     }
 
     /* Lenis کنترل اسکرول را در دست می‌گیرد؛ smooth بومی باید خاموش شود. */

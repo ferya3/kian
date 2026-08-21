@@ -15,7 +15,7 @@
         compact />
 
     <section class="bg-sand-100 pb-20">
-        <div class="container-page grid gap-10 lg:grid-cols-12 lg:gap-14">
+        <div class="container-page grid grid-cols-1 gap-10 lg:grid-cols-12 lg:gap-14">
 
             <div class="lg:col-span-7">
                 @if(session('success'))
@@ -57,7 +57,7 @@
 
                     <fieldset>
                         <legend class="text-[0.8125rem] font-semibold text-ink-600">موضوع درخواست</legend>
-                        <div class="mt-3 grid gap-2 sm:grid-cols-2">
+                        <div class="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
                             @foreach($types as $value => $type)
                                 <label class="group relative flex cursor-pointer items-start gap-3 rounded-xl border border-sand-300 bg-sand-100 p-4 transition has-[:checked]:border-clay-400 has-[:checked]:bg-clay-50">
                                     <input type="radio" name="type" value="{{ $value }}"
@@ -72,7 +72,7 @@
                         </div>
                     </fieldset>
 
-                    <div class="mt-6 grid gap-4 sm:grid-cols-2">
+                    <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
                         @foreach([
                             ['name', 'نام و نام خانوادگی', 'text', true, 'name'],
                             ['company', 'شرکت یا پروژه', 'text', false, 'organization'],

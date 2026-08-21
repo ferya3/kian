@@ -15,7 +15,7 @@
 
             <ol class="mt-14 space-y-0" data-reveal-stagger="70">
                 @foreach($steps as $step)
-                    <li data-reveal class="group grid gap-6 border-t border-sand-300 py-8 lg:grid-cols-12 lg:gap-10">
+                    <li data-reveal class="group grid grid-cols-1 gap-6 border-t border-sand-300 py-8 lg:grid-cols-12 lg:gap-10">
                         <div class="flex items-baseline gap-4 lg:col-span-3">
                             <span class="tech text-5xl font-extrabold leading-none text-clay-500/25 transition-colors duration-500 group-hover:text-clay-500/60">
                                 {{ \App\Support\Jalali::digits($step->paddedNumber()) }}
@@ -49,7 +49,7 @@
     </section>
 
     <section class="bg-ink-950 py-16 text-sand-50 lg:py-20">
-        <div class="container-page grid gap-10 lg:grid-cols-12 lg:gap-14">
+        <div class="container-page grid grid-cols-1 gap-10 lg:grid-cols-12 lg:gap-14">
             <div class="lg:col-span-5">
                 <x-section-heading eyebrow="Why 900°C" title="چرا دقیقاً نهصد درجه؟" light />
             </div>

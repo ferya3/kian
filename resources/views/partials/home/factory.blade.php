@@ -13,7 +13,7 @@
                 'stats' => $s->stats ?? [],
                 'slug' => $s->slug,
             ])->all()))"
-             class="mt-12 grid gap-6 lg:grid-cols-12 lg:gap-8">
+             class="mt-12 grid grid-cols-1 gap-6 lg:grid-cols-12 lg:gap-8">
 
             {{-- نقشه --}}
             <div class="relative overflow-hidden rounded-[var(--radius-panel)] border border-ink-900/10 bg-ink-950 lg:col-span-8">

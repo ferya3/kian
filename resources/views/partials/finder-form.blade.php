@@ -10,7 +10,7 @@
           @submit.prevent="submit()"
           class="rounded-[var(--radius-panel)] border border-sand-300 bg-sand-50 p-5 shadow-lift lg:p-7">
 
-        <div class="grid gap-4 lg:grid-cols-4">
+        <div class="grid grid-cols-1 gap-4 lg:grid-cols-4">
             @php
                 $fields = [
                     ['name' => 'project_type', 'label' => 'نوع پروژه', 'options' => config('kian.finder.project_types')],

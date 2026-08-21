@@ -6,7 +6,7 @@
 
     <section class="bg-sand-100 pb-20">
         <div class="container-page">
-            <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" data-reveal-stagger="90">
+            <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3" data-reveal-stagger="90">
                 @foreach($articles as $article)
                     <article data-reveal class="group relative flex flex-col overflow-hidden rounded-[var(--radius-panel)] border border-sand-300 bg-sand-50 transition hover:-translate-y-1 hover:border-clay-300 hover:shadow-lift">
                         <div class="relative aspect-[16/9] overflow-hidden bg-gradient-to-bl from-clay-100 via-sand-200 to-sand-300">

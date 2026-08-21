@@ -1,7 +1,7 @@
 <footer class="no-print mt-24 bg-ink-950 text-sand-200">
     {{-- نوار فراخوان پیش از فوتر --}}
     <div class="border-b border-white/[0.07]">
-        <div class="container-page grid gap-8 py-14 lg:grid-cols-12 lg:items-center lg:py-16">
+        <div class="container-page grid grid-cols-1 gap-8 py-14 lg:grid-cols-12 lg:items-center lg:py-16">
             <div class="lg:col-span-7">
                 <p class="eyebrow text-clay-400">Talk to an engineer</p>
                 <h2 class="mt-3 text-h2 font-extrabold text-sand-50">
@@ -26,7 +26,7 @@
         </div>
     </div>
 
-    <div class="container-page grid gap-10 py-14 md:grid-cols-2 lg:grid-cols-12">
+    <div class="container-page grid grid-cols-1 gap-10 py-14 md:grid-cols-2 lg:grid-cols-12">
         <div class="lg:col-span-4">
             <a href="{{ route('home') }}" class="flex items-center gap-3">
                 <x-brand-mark class="h-11 w-11" />
@@ -52,7 +52,7 @@
         </div>
 
         <nav class="lg:col-span-8" aria-label="ناوبری فوتر">
-            <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+            <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
                 <div>
                     <h3 class="mb-4 text-sm font-bold uppercase tracking-wider text-sand-50">محصولات</h3>
                     <ul class="space-y-2.5 text-[0.9375rem] text-sand-200/60">

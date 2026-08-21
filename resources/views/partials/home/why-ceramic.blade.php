@@ -29,7 +29,7 @@
             lead="پنج ویژگی که هیچ‌کدام افزودنی نیستند — همه از خودِ ماده و هندسه‌ی بلوک می‌آیند."
             light id="why-heading" />
 
-        <div class="mt-14 grid gap-10 lg:grid-cols-12 lg:items-start lg:gap-14">
+        <div class="mt-14 grid grid-cols-1 gap-10 lg:grid-cols-12 lg:items-start lg:gap-14">
 
             {{-- بلوک تعاملی --}}
             <div class="lg:col-span-5 lg:sticky lg:top-28" x-data="blockViewer(@js($interactiveProduct?->cavities->map(fn($c) => [

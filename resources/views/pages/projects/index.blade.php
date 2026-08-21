@@ -27,7 +27,7 @@
                 </div>
             </div>
 
-            <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3" data-reveal-stagger="90">
+            <div class="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3" data-reveal-stagger="90">
                 @foreach($projects as $project)
                     <div data-item x-show="matches('{{ $project->category?->slug }}')" x-transition.opacity.duration.300ms>
                         <x-project-card :project="$project" featured data-reveal class="h-full" />
