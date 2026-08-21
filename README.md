@@ -12,7 +12,41 @@
 
 ---
 
-## راه‌اندازی
+## نصب روی سرور اوبونتو — تک دستور
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/ferya3/kian/claude/ceramic-factory-website-p5je97/deploy/install.sh | sudo bash
+```
+
+با دامنه، SSL و MySQL:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/ferya3/kian/claude/ceramic-factory-website-p5je97/deploy/install.sh \
+  | sudo DOMAIN=kian-ceramic.ir SSL=1 DB=mysql bash
+```
+
+اسکریپت PHP 8.4 (به‌همراه intl و gd)، Node 22، Composer و nginx را نصب می‌کند،
+سورس را می‌گیرد، assets را می‌سازد، دیتابیس را مهاجرت و seed می‌کند، دسترسی‌ها را
+تنظیم می‌کند و vhost را با کش یک‌ساله برای فایل‌های هش‌دار می‌نویسد.
+
+| متغیر | پیش‌فرض | توضیح |
+|---|---|---|
+| `DOMAIN` | — | دامنه؛ خالی یعنی روی IP سرور سرو می‌شود |
+| `SSL` | `0` | گرفتن گواهی Let's Encrypt (نیازمند DNS آماده) |
+| `DB` | `sqlite` | یا `mysql` — کاربر و دیتابیس خودکار ساخته می‌شود |
+| `APP_DIR` | `/var/www/kian` | مسیر نصب |
+| `BRANCH` | برنچ توسعه | برنچ گیت |
+| `SKIP_SYSTEM` | `0` | پرش از نصب بسته‌های سیستمی |
+
+**به‌روزرسانی بعدی** (فقط مهاجرت‌های جدید، بدون seed مجدد):
+
+```bash
+cd /var/www/kian && sudo SKIP_SYSTEM=1 bash deploy/install.sh
+```
+
+---
+
+## راه‌اندازی محلی
 
 ```bash
 composer install

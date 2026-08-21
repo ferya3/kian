@@ -81,6 +81,10 @@ command -v npm >/dev/null || die "npm نصب نشد."
 # ------------------------------------------------------------------ سورس ----
 step "دریافت سورس در $APP_DIR"
 
+# بعد از chown به www-data، اجرای مجدد اسکریپت با root به گارد
+# «dubious ownership» گیت می‌خورد؛ این خط اجازه‌ی به‌روزرسانی را می‌دهد.
+git config --global --add safe.directory "$APP_DIR" 2>/dev/null || true
+
 if [ -d "$APP_DIR/.git" ]; then
     git -C "$APP_DIR" fetch --depth 1 origin "$BRANCH"
     git -C "$APP_DIR" reset --hard "origin/$BRANCH"
@@ -160,10 +164,14 @@ find "$APP_DIR/storage" "$APP_DIR/bootstrap/cache" -type f -exec chmod 664 {} +
 # ------------------------------------------------------------------ nginx ---
 step "پیکربندی nginx"
 
+# روی سرورهایی که IPv6 غیرفعال است، listen [::] باعث شکست nginx -t می‌شود
+IPV6_LISTEN=""
+[ -f /proc/net/if_inet6 ] && IPV6_LISTEN="listen [::]:80;"
+
 cat > /etc/nginx/sites-available/kian << NGINX
 server {
     listen 80;
-    listen [::]:80;
+    $IPV6_LISTEN
     server_name ${DOMAIN:-_};
     root $APP_DIR/public;
 
