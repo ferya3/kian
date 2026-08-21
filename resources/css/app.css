@@ -69,29 +69,71 @@
     --font-sans: 'Vazirmatn', 'Segoe UI', system-ui, -apple-system, sans-serif;
     --font-technical: 'InterVar', 'Vazirmatn', ui-sans-serif, system-ui, sans-serif;
 
-    --text-display: clamp(2.75rem, 1.6rem + 5.2vw, 5rem);
-    --text-display--line-height: 1.06;
-    --text-display--letter-spacing: -0.025em;
+    /*
+    | مقیاس سیال.
+    | هر اندازه بین ۳۹۰ پیکسل (موبایل) و ۱۴۴۰ پیکسل (دسکتاپ) خطی رشد می‌کند و
+    | بیرون از آن بازه کلمپ می‌شود. اعداد کمینه برای صفحه‌ی گوشی انتخاب شده‌اند،
+    | نه اینکه اندازه‌ی دسکتاپ کمی کوچک‌تر شود.
+    |
+    |                    ۳۹۰px      ۱۴۴۰px
+    |   display           ۳۸          ۸۰
+    |   h1                ۳۰          ۶۰
+    |   h2                ۲۴          ۴۴
+    |   h3                ۱۹          ۳۲
+    |   lead            ۱۶٫۵          ۲۱
+    |   body              ۱۶          ۱۷
+    */
 
-    --text-h1: clamp(2.25rem, 1.5rem + 3.4vw, 3.75rem);
-    --text-h1--line-height: 1.12;
-    --text-h1--letter-spacing: -0.02em;
+    --text-display: clamp(2.375rem, 1.4rem + 4vw, 5rem);
+    --text-display--line-height: 1.1;
+    --text-display--letter-spacing: -0.022em;
 
-    --text-h2: clamp(1.75rem, 1.25rem + 2.3vw, 2.75rem);
-    --text-h2--line-height: 1.18;
-    --text-h2--letter-spacing: -0.015em;
+    --text-h1: clamp(1.875rem, 1.18rem + 2.86vw, 3.75rem);
+    --text-h1--line-height: 1.18;
+    --text-h1--letter-spacing: -0.018em;
 
-    --text-h3: clamp(1.375rem, 1.15rem + 1vw, 2rem);
-    --text-h3--line-height: 1.3;
+    --text-h2: clamp(1.5rem, 1.04rem + 1.9vw, 2.75rem);
+    --text-h2--line-height: 1.26;
+    --text-h2--letter-spacing: -0.014em;
 
-    --text-lead: clamp(1.0625rem, 1rem + 0.4vw, 1.3125rem);
-    --text-lead--line-height: 1.75;
+    --text-h3: clamp(1.1875rem, 0.886rem + 1.24vw, 2rem);
+    --text-h3--line-height: 1.4;
 
-    --text-body: 1.0625rem;
-    --text-body--line-height: 1.9;
+    --text-lead: clamp(1.03rem, 0.927rem + 0.43vw, 1.3125rem);
+    --text-lead--line-height: 1.8;
 
-    --text-tech: 0.9375rem;
+    --text-body: clamp(1rem, 0.94rem + 0.16vw, 1.0625rem);
+    --text-body--line-height: 1.85;
+
+    --text-tech: clamp(0.875rem, 0.83rem + 0.12vw, 0.9375rem);
     --text-tech--line-height: 1.7;
+
+    /*
+    | اندازه‌های عمومی تیلویند هم سیال می‌شوند.
+    | بدون این بازتعریف، هر جا text-2xl یا text-5xl نوشته شده روی گوشی همان
+    | اندازه‌ی دسکتاپ رندر می‌شود — دقیقاً همان چیزی که سایت را روی موبایل
+    | درشت و بی‌قواره می‌کرد.
+    */
+    --text-lg: clamp(1.0625rem, 1.03rem + 0.1vw, 1.125rem);
+    --text-lg--line-height: 1.7;
+
+    --text-xl: clamp(1.125rem, 1.08rem + 0.19vw, 1.25rem);
+    --text-xl--line-height: 1.55;
+
+    --text-2xl: clamp(1.25rem, 1.16rem + 0.38vw, 1.5rem);
+    --text-2xl--line-height: 1.4;
+
+    --text-3xl: clamp(1.5rem, 1.36rem + 0.57vw, 1.875rem);
+    --text-3xl--line-height: 1.3;
+
+    --text-4xl: clamp(1.75rem, 1.56rem + 0.76vw, 2.25rem);
+    --text-4xl--line-height: 1.22;
+
+    --text-5xl: clamp(2rem, 1.63rem + 1.52vw, 3rem);
+    --text-5xl--line-height: 1.1;
+
+    --text-7xl: clamp(3rem, 2.44rem + 2.29vw, 4.5rem);
+    --text-7xl--line-height: 1.05;
 
     --text-eyebrow: 0.8125rem;
     --text-eyebrow--line-height: 1.4;
@@ -176,7 +218,7 @@
         color: var(--color-ink-900);
         font-family: var(--font-sans);
         font-size: var(--text-body);
-        line-height: 1.9;
+        line-height: var(--text-body--line-height);
         font-feature-settings: 'ss01', 'ss02';
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;

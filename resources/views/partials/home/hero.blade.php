@@ -36,9 +36,9 @@
                 {{ Setting::text('hero_subtitle', config('kian.seo.default_description')) }}
             </p>
 
-            <div class="mt-10 flex flex-wrap items-center gap-3" data-reveal style="--reveal-delay: 270ms">
-                <x-cta :href="route('products.index')" variant="primary" size="lg">مشاهده محصولات</x-cta>
-                <x-cta :href="route('factory')" variant="light" size="lg" icon="play">آشنایی با کارخانه</x-cta>
+            <div class="mt-8 flex flex-col gap-3 sm:mt-10 sm:flex-row sm:flex-wrap sm:items-center" data-reveal style="--reveal-delay: 270ms">
+                <x-cta :href="route('products.index')" variant="primary" size="lg" class="w-full sm:w-auto">مشاهده محصولات</x-cta>
+                <x-cta :href="route('factory')" variant="light" size="lg" icon="play" class="w-full sm:w-auto">آشنایی با کارخانه</x-cta>
             </div>
         </div>
 

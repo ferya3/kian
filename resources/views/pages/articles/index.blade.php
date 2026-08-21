@@ -9,7 +9,7 @@
             <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3" data-reveal-stagger="90">
                 @foreach($articles as $article)
                     <article data-reveal class="group relative flex flex-col overflow-hidden rounded-[var(--radius-panel)] border border-sand-300 bg-sand-50 transition hover:-translate-y-1 hover:border-clay-300 hover:shadow-lift">
-                        <div class="relative aspect-[16/9] overflow-hidden bg-gradient-to-bl from-clay-100 via-sand-200 to-sand-300">
+                        <div class="relative aspect-[21/9] overflow-hidden bg-gradient-to-bl from-clay-100 via-sand-200 to-sand-300 sm:aspect-[16/9]">
                             <div class="absolute inset-0 opacity-70"
                                  style="background-image: repeating-linear-gradient(-45deg, rgba(180,85,45,.1) 0 12px, transparent 12px 34px)"></div>
                             <span class="eyebrow absolute bottom-4 right-4 rounded-full bg-sand-50/90 px-3 py-1 text-micro text-clay-700 backdrop-blur">
