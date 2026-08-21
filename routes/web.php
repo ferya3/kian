@@ -1,6 +1,10 @@
 <?php
 
 use App\Http\Controllers\AboutController;
+use App\Http\Controllers\Admin\ActivityLogController;
+use App\Http\Controllers\Admin\AuthController as AdminAuth;
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\ResourceController;
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\DistributorController;
@@ -68,3 +72,31 @@ Route::get('/search', SearchController::class)->name('search');
 /* سئو */
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 Route::get('/robots.txt', [SitemapController::class, 'robots'])->name('robots');
+
+/*
+|--------------------------------------------------------------------------
+| پنل مدیریت
+|--------------------------------------------------------------------------
+| همه‌ی مسیرها پشت احراز هویت‌اند و هدر noindex می‌گیرند. مسیرهای «فقط مدیر
+| کل» جداگانه با پارامتر admin محافظت می‌شوند.
+*/
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::get('login', [AdminAuth::class, 'show'])->name('login');
+    Route::post('login', [AdminAuth::class, 'login'])->middleware('throttle:20,1');
+
+    Route::middleware('admin')->group(function () {
+        Route::post('logout', [AdminAuth::class, 'logout'])->name('logout');
+        Route::get('/', DashboardController::class)->name('dashboard');
+
+        Route::get('activity', ActivityLogController::class)
+            ->middleware('admin:admin')
+            ->name('activity');
+
+        Route::get('{resource}', [ResourceController::class, 'index'])->name('resource.index');
+        Route::get('{resource}/create', [ResourceController::class, 'create'])->name('resource.create');
+        Route::post('{resource}', [ResourceController::class, 'store'])->name('resource.store');
+        Route::get('{resource}/{id}/edit', [ResourceController::class, 'edit'])->name('resource.edit');
+        Route::put('{resource}/{id}', [ResourceController::class, 'update'])->name('resource.update');
+        Route::delete('{resource}/{id}', [ResourceController::class, 'destroy'])->name('resource.destroy');
+    });
+});

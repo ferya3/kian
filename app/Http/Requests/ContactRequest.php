@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Support\Digits;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -54,17 +55,7 @@ class ContactRequest extends FormRequest
     protected function prepareForValidation(): void
     {
         $this->merge([
-            'phone' => $this->normalizeDigits((string) $this->input('phone')),
+            'phone' => Digits::digitsOnly((string) $this->input('phone')),
         ]);
-    }
-
-    /** تبدیل ارقام فارسی/عربی به لاتین تا اعتبارسنجی شماره تماس شکست نخورد. */
-    protected function normalizeDigits(string $value): string
-    {
-        $fa = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
-        $ar = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
-        $en = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-
-        return preg_replace('/\D/', '', str_replace([...$fa, ...$ar], [...$en, ...$en], $value)) ?? '';
     }
 }

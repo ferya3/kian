@@ -13,6 +13,7 @@ class DatabaseSeeder extends Seeder
             ProjectSeeder::class,
             FactorySeeder::class,
             KnowledgeSeeder::class,
+            AdminSeeder::class,
         ]);
     }
 }

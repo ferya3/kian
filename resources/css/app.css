@@ -330,6 +330,22 @@
         .tap { min-height: 0; }
     }
 
+    /*
+    | نوار کناری پنل مدیریت.
+    |
+    | روی موبایل یک کشوی off-canvas است که با x-show مخفی می‌شود — نه صرفاً
+    | translate. عنصر position:fixed که فقط جابه‌جا شده باشد، بیرون از کادر
+    | باقی می‌ماند و viewport را پهن می‌کند؛ overflow-x: clip روی html هم آن را
+    | نمی‌برد، چون containing block عناصر fixed خودِ viewport است.
+    |
+    | روی دسکتاپ همیشه دیده می‌شود، پس display را از Alpine پس می‌گیریم.
+    */
+    @media (min-width: 1024px) {
+        .admin-sidebar {
+            display: flex !important;
+        }
+    }
+
     /* جبران ارتفاع هدر ثابت + حاشیه‌ی امن بالای صفحه */
     .header-offset {
         height: calc(4rem + var(--safe-top));

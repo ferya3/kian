@@ -15,6 +15,7 @@
  * لینک‌های کشیده‌شده روی کارت (::after با inset صفر) و لینک‌های درون متن جاری
  * استثنا هستند: ناحیه‌ی لمسی واقعی‌شان بزرگ‌تر از کادر خودشان است.
  */
+import { existsSync } from 'node:fs';
 import { chromium } from 'playwright';
 
 const BASE = process.env.BASE || 'http://127.0.0.1:8000';
@@ -31,6 +32,19 @@ const PATHS = [
     '/technical/installation', '/technical/certificates', '/technical/faq', '/articles',
     '/about', '/distributors', '/contact', '/search',
 ];
+
+/*
+ * پنل مدیریت پشت ورود است. اگر ADMIN_EMAIL و ADMIN_PASSWORD داده شوند، ممیزی
+ * یک‌بار وارد می‌شود و این مسیرها را هم بررسی می‌کند.
+ */
+const ADMIN_PATHS = [
+    '/admin', '/admin/products', '/admin/products/1/edit', '/admin/products/create',
+    '/admin/projects', '/admin/documents', '/admin/messages', '/admin/settings',
+    '/admin/users', '/admin/activity',
+];
+
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || '';
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || '';
 
 const MIN_FIELD_FONT = 16;   // زیر این مقدار، iOS زوم می‌کند
 const MIN_TAP = 24;          // WCAG 2.5.8 سطح AA
@@ -95,9 +109,14 @@ function collect() {
     return out;
 }
 
-const browser = await chromium.launch({
-    executablePath: process.env.CHROMIUM_PATH || undefined,
-});
+/*
+ * اگر نسخه‌ی Playwright با مرورگر نصب‌شده هم‌خوان نباشد، مسیر صریح لازم است؛
+ * CHROMIUM_PATH اولویت دارد و بعد مسیر متداول کروميوم سیستمی.
+ */
+const chromiumPath = [process.env.CHROMIUM_PATH, '/opt/pw-browsers/chromium']
+    .find((candidate) => candidate && existsSync(candidate));
+
+const browser = await chromium.launch({ executablePath: chromiumPath });
 
 let failures = 0;
 
@@ -110,7 +129,29 @@ for (const vp of VIEWPORTS) {
 
     const found = { zoom: new Set(), tap: new Set(), tiny: new Set(), touchNone: new Set(), overflow: new Set() };
 
-    for (const path of PATHS) {
+    const paths = [...PATHS];
+
+    if (ADMIN_EMAIL && ADMIN_PASSWORD) {
+        // صفحه‌ی ورود باید پیش از احراز هویت بررسی شود، وگرنه به داشبورد می‌رود.
+        paths.push('/admin/login');
+
+        await page.goto(BASE + '/admin/login', { waitUntil: 'domcontentloaded' });
+        await page.fill('input[name="email"]', ADMIN_EMAIL);
+        await page.fill('input[name="password"]', ADMIN_PASSWORD);
+        await Promise.all([
+            page.waitForNavigation({ waitUntil: 'domcontentloaded' }).catch(() => {}),
+            page.click('button[type="submit"]'),
+        ]);
+
+        if (new URL(page.url()).pathname === '/admin/login') {
+            console.error('ورود به پنل ناموفق بود — مسیرهای مدیریت بررسی نشد.');
+            process.exit(1);
+        }
+
+        paths.push(...ADMIN_PATHS);
+    }
+
+    for (const path of paths) {
         await page.goto(BASE + path, { waitUntil: 'domcontentloaded' });
         await page.waitForTimeout(300);
 

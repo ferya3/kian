@@ -250,5 +250,8 @@ printf '\n\033[1;32m✓ نصب کامل شد.\033[0m\n'
 printf '  آدرس : %s\n' "$APP_URL"
 printf '  مسیر : %s\n' "$APP_DIR"
 printf '  دیتابیس: %s\n\n' "$DB"
+printf 'پنل مدیریت: %s/admin\n' "$APP_URL"
+printf '  ساخت کاربر مدیر (گذرواژه تعاملی پرسیده می‌شود، در history نمی‌ماند):\n'
+printf '    cd %s && sudo -u www-data php artisan admin:create\n\n' "$APP_DIR"
 printf 'به‌روزرسانی بعدی (همیشه آخرین نسخه‌ی اسکریپت را می‌گیرد):\n'
 printf '  curl -fsSL %s | sudo SKIP_SYSTEM=1 bash\n\n' "$SELF_URL"
