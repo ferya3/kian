@@ -15,7 +15,7 @@
                 animation: kiln-breathe 9s ease-in-out infinite"></div>
 
     {{-- لایه‌های خاک — مقاطع زمین‌شناسی معدن رس --}}
-    <svg class="absolute inset-x-0 bottom-0 h-[62%] w-full" viewBox="0 0 1600 520" preserveAspectRatio="xMidYMax slice"
+    <svg class="absolute inset-x-0 bottom-0 h-[42%] w-full sm:h-[62%]" viewBox="0 0 1600 520" preserveAspectRatio="xMidYMax slice"
          data-parallax="0.14">
         <defs>
             <linearGradient id="strata-a" x1="0" y1="0" x2="0" y2="1">
@@ -35,7 +35,7 @@
     </svg>
 
     {{-- سایه‌نمای کارخانه --}}
-    <svg class="absolute bottom-[24%] left-0 h-[30%] w-full" viewBox="0 0 1600 300" preserveAspectRatio="xMidYMax meet"
+    <svg class="absolute bottom-[24%] left-0 hidden h-[30%] w-full sm:block" viewBox="0 0 1600 300" preserveAspectRatio="xMidYMax meet"
          data-parallax="0.22">
         <g fill="#170d07" fill-opacity=".92">
             {{-- سوله‌های خط تولید --}}
@@ -62,7 +62,7 @@
     </svg>
 
     {{-- پالت‌های بلوک در پیش‌زمینه --}}
-    <svg class="absolute bottom-0 left-0 h-[26%] w-full" viewBox="0 0 1600 240" preserveAspectRatio="xMidYMax slice"
+    <svg class="absolute bottom-0 left-0 hidden h-[26%] w-full sm:block" viewBox="0 0 1600 240" preserveAspectRatio="xMidYMax slice"
          data-parallax="0.34">
         <g fill="#0e0e0e">
             <rect x="60" y="120" width="230" height="120" rx="4"/>
@@ -89,8 +89,11 @@
             radial-gradient(1px 1px at 30% 76%, #f5d0b4 50%, transparent);
             animation: dust-drift 24s linear infinite"></div>
 
+    {{-- پرده‌ی ملایم پشت متن — روی هیروی کوتاه گوشی، خوانایی را تضمین می‌کند --}}
+    <div class="absolute inset-0 bg-gradient-to-t from-ink-950/60 via-ink-950/25 to-transparent sm:hidden"></div>
+
     {{-- محو شدن به رنگ پس‌زمینه‌ی صفحه --}}
-    <div class="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-sand-100 to-transparent"></div>
+    <div class="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-sand-100 to-transparent sm:h-32"></div>
 </div>
 
 @once

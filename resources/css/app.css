@@ -76,7 +76,7 @@
     | نه اینکه اندازه‌ی دسکتاپ کمی کوچک‌تر شود.
     |
     |                    ۳۹۰px      ۱۴۴۰px
-    |   display           ۳۸          ۸۰
+    |   display           ۳۴          ۸۰
     |   h1                ۳۰          ۶۰
     |   h2                ۲۴          ۴۴
     |   h3                ۱۹          ۳۲
@@ -84,7 +84,7 @@
     |   body              ۱۶          ۱۷
     */
 
-    --text-display: clamp(2.375rem, 1.4rem + 4vw, 5rem);
+    --text-display: clamp(2.125rem, 1.06rem + 4.38vw, 5rem);
     --text-display--line-height: 1.1;
     --text-display--letter-spacing: -0.022em;
 
