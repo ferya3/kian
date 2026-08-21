@@ -6,6 +6,7 @@ use App\Models\ProductCategory;
 use App\Support\Navigation;
 use App\Support\Seo;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
@@ -35,7 +36,7 @@ class AppServiceProvider extends ServiceProvider
         View::share('seo', $this->app->make(Seo::class));
     }
 
-    /** @return \Illuminate\Support\Collection<int, ProductCategory> */
+    /** @return Collection<int, ProductCategory> */
     protected function megaMenu()
     {
         if (! Schema::hasTable('product_categories')) {

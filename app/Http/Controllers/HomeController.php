@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\FactorySection;
-use App\Models\Product;
 use App\Models\ProcessStep;
+use App\Models\Product;
 use App\Models\Project;
 use App\Models\Solution;
 use App\Models\Stat;

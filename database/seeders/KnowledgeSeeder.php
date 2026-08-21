@@ -7,8 +7,8 @@ use App\Models\Document;
 use App\Models\Faq;
 use App\Models\Product;
 use App\Models\Setting;
-use Illuminate\Database\Seeder;
 use App\Support\Slug;
+use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 
 class KnowledgeSeeder extends Seeder

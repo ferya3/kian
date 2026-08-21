@@ -8,6 +8,7 @@ use App\Models\FactorySection;
 use App\Models\ProcessStep;
 use App\Models\Stat;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
 
 class FactorySeeder extends Seeder
 {
@@ -28,10 +29,10 @@ class FactorySeeder extends Seeder
         foreach ($steps as $i => [$title, $titleEn, $description, $metricLabel, $metricValue, $duration]) {
             ProcessStep::create([
                 'step_no' => $i + 1,
-                'slug' => \Illuminate\Support\Str::slug($titleEn),
+                'slug' => Str::slug($titleEn),
                 'title' => $title,
                 'title_en' => $titleEn,
-                'summary' => \Illuminate\Support\Str::limit($description, 110),
+                'summary' => Str::limit($description, 110),
                 'description' => $description,
                 'metric_label' => $metricLabel,
                 'metric_value' => $metricValue,
