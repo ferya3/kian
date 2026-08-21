@@ -38,11 +38,14 @@ curl -fsSL https://raw.githubusercontent.com/ferya3/kian/claude/ceramic-factory-
 | `BRANCH` | برنچ توسعه | برنچ گیت |
 | `SKIP_SYSTEM` | `0` | پرش از نصب بسته‌های سیستمی |
 
-**به‌روزرسانی بعدی** (فقط مهاجرت‌های جدید، بدون seed مجدد):
+**به‌روزرسانی** (pull، build مجدد، فقط مهاجرت‌های جدید — بدون seed دوباره):
 
 ```bash
-cd /var/www/kian && sudo SKIP_SYSTEM=1 bash deploy/install.sh
+curl -fsSL https://raw.githubusercontent.com/ferya3/kian/claude/ceramic-factory-website-p5je97/deploy/install.sh | sudo SKIP_SYSTEM=1 bash
 ```
+
+اسکریپت را از روی curl اجرا کنید، نه نسخه‌ی داخل سرور: نسخه‌ی داخل سرور تا قبل از
+اجرای همین دستور قدیمی است و ممکن است اصلاحات بعدی را نداشته باشد.
 
 ---
 

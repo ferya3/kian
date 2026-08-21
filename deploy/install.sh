@@ -13,9 +13,14 @@
 #   SSL=1                    گرفتن گواهی Let's Encrypt (نیازمند DOMAIN و DNS آماده)
 #   SKIP_SYSTEM=1            پرش از نصب بسته‌های سیستمی (برای اجرای مجدد/به‌روزرسانی)
 #
+# برای به‌روزرسانی، همین دستور را با SKIP_SYSTEM=1 دوباره اجرا کنید. اجرای آن از
+# روی curl (نه از نسخه‌ی داخل سرور) امن‌تر است: اسکریپت داخل سرور ممکن است قدیمی
+# باشد و اصلاحات بعدی — مثل گارد safe.directory گیت — را نداشته باشد.
+#
 set -euo pipefail
 
 REPO="${REPO:-https://github.com/ferya3/kian.git}"
+SELF_URL="${SELF_URL:-https://raw.githubusercontent.com/ferya3/kian/claude/ceramic-factory-website-p5je97/deploy/install.sh}"
 BRANCH="${BRANCH:-claude/ceramic-factory-website-p5je97}"
 APP_DIR="${APP_DIR:-/var/www/kian}"
 DOMAIN="${DOMAIN:-}"
@@ -245,4 +250,5 @@ printf '\n\033[1;32m✓ نصب کامل شد.\033[0m\n'
 printf '  آدرس : %s\n' "$APP_URL"
 printf '  مسیر : %s\n' "$APP_DIR"
 printf '  دیتابیس: %s\n\n' "$DB"
-printf 'به‌روزرسانی بعدی:\n  cd %s && sudo SKIP_SYSTEM=1 bash deploy/install.sh\n\n' "$APP_DIR"
+printf 'به‌روزرسانی بعدی (همیشه آخرین نسخه‌ی اسکریپت را می‌گیرد):\n'
+printf '  curl -fsSL %s | sudo SKIP_SYSTEM=1 bash\n\n' "$SELF_URL"
