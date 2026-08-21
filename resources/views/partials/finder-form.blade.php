@@ -20,13 +20,13 @@
 
             @foreach($fields as $field)
                 <div>
-                    <label for="finder-{{ $field['name'] }}" class="mb-2 block text-[0.8125rem] font-semibold text-ink-600">
+                    <label for="finder-{{ $field['name'] }}" class="mb-2 block text-meta font-semibold text-ink-600">
                         {{ $field['label'] }}
                     </label>
                     <div class="relative">
                         <select id="finder-{{ $field['name'] }}" name="{{ $field['name'] }}"
                                 x-model="criteria.{{ $field['name'] }}"
-                                class="w-full appearance-none rounded-xl border border-sand-300 bg-sand-100 py-3.5 pr-4 pl-10 text-[0.9375rem] font-semibold text-ink-800 outline-none transition focus:border-clay-400 focus:bg-sand-50">
+                                class="w-full appearance-none rounded-xl border border-sand-300 bg-sand-100 py-3.5 pr-4 pl-10 font-semibold text-ink-800 outline-none transition focus:border-clay-400 focus:bg-sand-50">
                             <option value="">انتخاب کنید</option>
                             @foreach($field['options'] as $value => $option)
                                 <option value="{{ $value }}">{{ $option['label'] }}</option>
@@ -38,12 +38,12 @@
             @endforeach
 
             <div>
-                <label for="finder-thickness" class="mb-2 block text-[0.8125rem] font-semibold text-ink-600">
+                <label for="finder-thickness" class="mb-2 block text-meta font-semibold text-ink-600">
                     ضخامت مورد نیاز
                 </label>
                 <div class="relative">
                     <select id="finder-thickness" name="thickness" x-model="criteria.thickness"
-                            class="w-full appearance-none rounded-xl border border-sand-300 bg-sand-100 py-3.5 pr-4 pl-10 text-[0.9375rem] font-semibold text-ink-800 outline-none transition focus:border-clay-400 focus:bg-sand-50">
+                            class="w-full appearance-none rounded-xl border border-sand-300 bg-sand-100 py-3.5 pr-4 pl-10 font-semibold text-ink-800 outline-none transition focus:border-clay-400 focus:bg-sand-50">
                         <option value="">مهم نیست</option>
                         @foreach(config('kian.finder.thicknesses') as $thickness)
                             <option value="{{ $thickness }}">{{ \App\Support\Jalali::digits($thickness) }} سانتی‌متر</option>
@@ -54,12 +54,12 @@
             </div>
 
             <div>
-                <label for="finder-insulation" class="mb-2 block text-[0.8125rem] font-semibold text-ink-600">
+                <label for="finder-insulation" class="mb-2 block text-meta font-semibold text-ink-600">
                     نیاز به عایق حرارتی
                 </label>
                 <div class="relative">
                     <select id="finder-insulation" name="insulation" x-model="criteria.insulation"
-                            class="w-full appearance-none rounded-xl border border-sand-300 bg-sand-100 py-3.5 pr-4 pl-10 text-[0.9375rem] font-semibold text-ink-800 outline-none transition focus:border-clay-400 focus:bg-sand-50">
+                            class="w-full appearance-none rounded-xl border border-sand-300 bg-sand-100 py-3.5 pr-4 pl-10 font-semibold text-ink-800 outline-none transition focus:border-clay-400 focus:bg-sand-50">
                         <option value="">مهم نیست</option>
                         @foreach(config('kian.finder.insulation_levels') as $value => $level)
                             <option value="{{ $value }}">{{ $level['label'] }}</option>
@@ -71,7 +71,7 @@
         </div>
 
         <div class="mt-5 flex flex-wrap items-center justify-between gap-4 border-t border-sand-200 pt-5">
-            <p class="text-[0.8125rem] text-ink-400">
+            <p class="text-meta text-ink-400">
                 <span x-show="!ready">دست‌کم دو گزینه را انتخاب کنید تا پیشنهاد دقیق‌تری بدهیم.</span>
                 <span x-show="ready" x-cloak class="flex items-center gap-1.5 font-semibold text-clay-600">
                     <x-icon name="check" size="15" />
@@ -81,7 +81,7 @@
 
             <div class="flex items-center gap-2">
                 <button type="button" x-show="answered > 0" x-cloak @click="reset()"
-                        class="rounded-full px-4 py-2 text-[0.8125rem] text-ink-400 transition hover:text-ink-900">
+                        class="rounded-full px-4 py-2 text-meta text-ink-400 transition hover:text-ink-900">
                     پاک کردن
                 </button>
                 <button type="submit"
@@ -106,7 +106,7 @@
          role="region" aria-live="polite" aria-label="نتیجه انتخاب محصول"></div>
 
     <noscript>
-        <p class="mt-3 text-[0.8125rem] text-ink-400">
+        <p class="mt-3 text-meta text-ink-400">
             برای دیدن نتیجه، دکمه‌ی بالا شما را به صفحه‌ی نتایج می‌برد.
         </p>
     </noscript>

@@ -5,8 +5,8 @@
         <caption class="sr-only">جدول مشخصات فنی {{ $product->name }}</caption>
         <thead class="bg-sand-200/70">
             <tr>
-                <th scope="col" class="px-5 py-3 text-[0.8125rem] font-bold text-ink-600">ویژگی</th>
-                <th scope="col" class="px-5 py-3 text-left text-[0.8125rem] font-bold text-ink-600">مقدار</th>
+                <th scope="col" class="px-5 py-3 text-meta font-bold text-ink-600">ویژگی</th>
+                <th scope="col" class="px-5 py-3 text-left text-meta font-bold text-ink-600">مقدار</th>
             </tr>
         </thead>
         <tbody class="divide-y divide-sand-200 bg-sand-50">
@@ -17,7 +17,7 @@
                     </th>
                     <td class="px-5 {{ $dense ? 'py-2.5' : 'py-3.5' }} text-left font-bold text-ink-900">
                         <x-num :value="$spec['value']" />
-                        <span class="text-[0.75rem] font-normal text-ink-400">{{ $spec['unit'] }}</span>
+                        <span class="text-micro font-normal text-ink-400">{{ $spec['unit'] }}</span>
                     </td>
                 </tr>
             @endforeach

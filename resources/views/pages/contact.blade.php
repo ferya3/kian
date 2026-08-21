@@ -56,16 +56,16 @@
                     </div>
 
                     <fieldset>
-                        <legend class="text-[0.8125rem] font-semibold text-ink-600">موضوع درخواست</legend>
+                        <legend class="text-meta font-semibold text-ink-600">موضوع درخواست</legend>
                         <div class="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
                             @foreach($types as $value => $type)
                                 <label class="group relative flex cursor-pointer items-start gap-3 rounded-xl border border-sand-300 bg-sand-100 p-4 transition has-[:checked]:border-clay-400 has-[:checked]:bg-clay-50">
                                     <input type="radio" name="type" value="{{ $value }}"
                                            @checked(old('type', $presetType) === $value)
-                                           class="mt-1 h-4 w-4 shrink-0 accent-[var(--color-clay-500)]">
+                                           class="mt-0.5 h-6 w-6 shrink-0 accent-[var(--color-clay-500)]">
                                     <span>
                                         <span class="block text-[0.9375rem] font-semibold">{{ $type['label'] }}</span>
-                                        <span class="block text-[0.8125rem] text-ink-400">{{ $type['hint'] }}</span>
+                                        <span class="block text-meta text-ink-400">{{ $type['hint'] }}</span>
                                     </span>
                                 </label>
                             @endforeach
@@ -81,7 +81,7 @@
                             ['city', 'شهر', 'text', false, 'address-level2'],
                         ] as [$field, $label, $type, $required, $autocomplete])
                             <div @class(['sm:col-span-2' => $field === 'city'])>
-                                <label for="{{ $field }}" class="mb-2 block text-[0.8125rem] font-semibold text-ink-600">
+                                <label for="{{ $field }}" class="mb-2 block text-meta font-semibold text-ink-600">
                                     {{ $label }} @if($required)<span class="text-clay-600" aria-hidden="true">*</span>@endif
                                 </label>
                                 <input id="{{ $field }}" name="{{ $field }}" type="{{ $type }}"
@@ -89,18 +89,18 @@
                                        @if($required) required aria-required="true" @endif
                                        @if($errors->has($field)) aria-invalid="true" aria-describedby="{{ $field }}-error" @endif
                                        @if($field === 'phone') inputmode="tel" dir="ltr" placeholder="۰۹۱۲۱۲۳۴۵۶۷" @endif
-                                       class="w-full rounded-xl border bg-sand-100 px-4 py-3 text-[0.9375rem] outline-none transition focus:bg-sand-50 {{ $errors->has($field) ? 'border-red-400 focus:border-red-500' : 'border-sand-300 focus:border-clay-400' }}">
+                                       class="w-full rounded-xl border bg-sand-100 px-4 py-3 outline-none transition focus:bg-sand-50 {{ $errors->has($field) ? 'border-red-400 focus:border-red-500' : 'border-sand-300 focus:border-clay-400' }}">
                                 @error($field)
-                                    <p id="{{ $field }}-error" class="mt-1.5 text-[0.8125rem] text-red-600">{{ $message }}</p>
+                                    <p id="{{ $field }}-error" class="mt-1.5 text-meta text-red-600">{{ $message }}</p>
                                 @enderror
                             </div>
                         @endforeach
 
                         <div class="sm:col-span-2">
-                            <label for="product_id" class="mb-2 block text-[0.8125rem] font-semibold text-ink-600">محصول مورد نظر (اختیاری)</label>
+                            <label for="product_id" class="mb-2 block text-meta font-semibold text-ink-600">محصول مورد نظر (اختیاری)</label>
                             <div class="relative">
                                 <select id="product_id" name="product_id"
-                                        class="w-full appearance-none rounded-xl border border-sand-300 bg-sand-100 py-3 pr-4 pl-10 text-[0.9375rem] outline-none focus:border-clay-400 focus:bg-sand-50">
+                                        class="w-full appearance-none rounded-xl border border-sand-300 bg-sand-100 py-3 pr-4 pl-10 outline-none focus:border-clay-400 focus:bg-sand-50">
                                     <option value="">انتخاب نشده</option>
                                     @foreach($products as $product)
                                         <option value="{{ $product->id }}" @selected((int) old('product_id', $presetProduct) === $product->id)>{{ $product->name }}</option>
@@ -111,21 +111,21 @@
                         </div>
 
                         <div class="sm:col-span-2">
-                            <label for="message" class="mb-2 block text-[0.8125rem] font-semibold text-ink-600">
+                            <label for="message" class="mb-2 block text-meta font-semibold text-ink-600">
                                 متن پیام <span class="text-clay-600" aria-hidden="true">*</span>
                             </label>
                             <textarea id="message" name="message" rows="5" required aria-required="true"
                                       placeholder="متراژ پروژه، شهر، زمان مورد نیاز و هر جزئیاتی که کمک می‌کند دقیق‌تر پاسخ بدهیم."
                                       @if($errors->has('message')) aria-invalid="true" @endif
-                                      class="w-full rounded-xl border bg-sand-100 px-4 py-3 text-[0.9375rem] leading-relaxed outline-none transition focus:bg-sand-50 {{ $errors->has('message') ? 'border-red-400' : 'border-sand-300 focus:border-clay-400' }}">{{ old('message') }}</textarea>
+                                      class="w-full rounded-xl border bg-sand-100 px-4 py-3 leading-relaxed outline-none transition focus:bg-sand-50 {{ $errors->has('message') ? 'border-red-400' : 'border-sand-300 focus:border-clay-400' }}">{{ old('message') }}</textarea>
                             @error('message')
-                                <p class="mt-1.5 text-[0.8125rem] text-red-600">{{ $message }}</p>
+                                <p class="mt-1.5 text-meta text-red-600">{{ $message }}</p>
                             @enderror
                         </div>
                     </div>
 
                     <div class="mt-6 flex flex-wrap items-center justify-between gap-4 border-t border-sand-200 pt-6">
-                        <p class="text-[0.8125rem] text-ink-400">فیلدهای ستاره‌دار الزامی است.</p>
+                        <p class="text-meta text-ink-400">فیلدهای ستاره‌دار الزامی است.</p>
                         <button type="submit"
                                 class="group inline-flex items-center gap-2 rounded-full bg-clay-500 px-8 py-3.5 font-semibold text-white transition hover:bg-clay-600">
                             ارسال درخواست
@@ -143,35 +143,35 @@
                             <li class="flex gap-3">
                                 <x-icon name="phone" size="18" class="mt-1 shrink-0 text-clay-500" />
                                 <span>
-                                    <span class="block text-[0.8125rem] text-ink-400">دفتر مرکزی</span>
-                                    <a href="tel:{{ config('kian.contact.phone_raw') }}" class="tech font-bold transition hover:text-clay-600">{{ config('kian.contact.phone') }}</a>
+                                    <span class="block text-meta text-ink-400">دفتر مرکزی</span>
+                                    <a href="tel:{{ config('kian.contact.phone_raw') }}" class="tech tap font-bold transition hover:text-clay-600">{{ config('kian.contact.phone') }}</a>
                                 </span>
                             </li>
                             <li class="flex gap-3">
                                 <x-icon name="mail" size="18" class="mt-1 shrink-0 text-clay-500" />
                                 <span>
-                                    <span class="block text-[0.8125rem] text-ink-400">واحد فروش</span>
-                                    <a href="mailto:{{ config('kian.contact.email') }}" class="tech font-bold transition hover:text-clay-600">{{ config('kian.contact.email') }}</a>
+                                    <span class="block text-meta text-ink-400">واحد فروش</span>
+                                    <a href="mailto:{{ config('kian.contact.email') }}" class="tech tap font-bold transition hover:text-clay-600">{{ config('kian.contact.email') }}</a>
                                 </span>
                             </li>
                             <li class="flex gap-3">
                                 <x-icon name="blueprint" size="18" class="mt-1 shrink-0 text-clay-500" />
                                 <span>
-                                    <span class="block text-[0.8125rem] text-ink-400">واحد فنی</span>
-                                    <a href="mailto:{{ config('kian.contact.technical_email') }}" class="tech font-bold transition hover:text-clay-600">{{ config('kian.contact.technical_email') }}</a>
+                                    <span class="block text-meta text-ink-400">واحد فنی</span>
+                                    <a href="mailto:{{ config('kian.contact.technical_email') }}" class="tech tap font-bold transition hover:text-clay-600">{{ config('kian.contact.technical_email') }}</a>
                                 </span>
                             </li>
                             <li class="flex gap-3">
                                 <x-icon name="pin" size="18" class="mt-1 shrink-0 text-clay-500" />
                                 <span>
-                                    <span class="block text-[0.8125rem] text-ink-400">کارخانه</span>
+                                    <span class="block text-meta text-ink-400">کارخانه</span>
                                     <span class="font-semibold leading-relaxed">{{ config('kian.contact.address') }}</span>
                                 </span>
                             </li>
                             <li class="flex gap-3">
                                 <x-icon name="clock" size="18" class="mt-1 shrink-0 text-clay-500" />
                                 <span>
-                                    <span class="block text-[0.8125rem] text-ink-400">ساعات کاری</span>
+                                    <span class="block text-meta text-ink-400">ساعات کاری</span>
                                     <span class="font-semibold">{{ config('kian.contact.working_hours') }}</span>
                                 </span>
                             </li>

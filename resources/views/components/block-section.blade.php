@@ -46,11 +46,11 @@
             <button type="button"
                     @click="selectCavity({{ $index }})"
                     :aria-pressed="activeCavity === {{ $index }} ? 'true' : 'false'"
-                    class="group absolute grid h-8 w-8 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full transition-transform duration-300 hover:scale-110 focus-visible:scale-110"
+                    class="tap-icon group absolute -translate-x-1/2 -translate-y-1/2 rounded-full transition-transform duration-300 hover:scale-110 focus-visible:scale-110"
                     style="left: {{ $cavity->x }}%; top: {{ $cavity->y }}%"
                     aria-label="{{ $cavity->label }}">
-                <span class="absolute inset-0 rounded-full bg-sand-50/25 backdrop-blur-[1px]"></span>
-                <span class="absolute inset-0 animate-ping rounded-full bg-sand-50/40"
+                <span class="absolute inset-[30%] rounded-full bg-sand-50/25 backdrop-blur-[1px]"></span>
+                <span class="absolute inset-[30%] animate-ping rounded-full bg-sand-50/40"
                       :class="activeCavity === {{ $index }} && 'hidden'"
                       style="animation-duration: 2.6s"></span>
                 <span class="relative grid h-4 w-4 place-items-center rounded-full border-2 border-sand-50 transition-colors"

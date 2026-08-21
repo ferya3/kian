@@ -22,7 +22,7 @@
                             <a href="#faq-{{ $group }}"
                                class="flex items-center justify-between rounded-lg px-4 py-3 text-[0.9375rem] font-semibold text-ink-600 transition hover:bg-sand-200 hover:text-clay-600">
                                 {{ $groupLabels[$group] ?? $group }}
-                                <span class="tech text-[0.75rem] text-ink-300">{{ \App\Support\Jalali::digits($items->count()) }}</span>
+                                <span class="tech text-micro text-ink-300">{{ \App\Support\Jalali::digits($items->count()) }}</span>
                             </a>
                         </li>
                     @endforeach

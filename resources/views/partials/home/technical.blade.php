@@ -29,7 +29,7 @@
                                 <p class="font-bold">{{ $audience['label'] }}</p>
                                 <p class="mt-0.5 text-[0.9375rem] text-sand-200/60">«{{ $audience['question'] }}»</p>
                                 <a href="{{ route($audience['route']) }}"
-                                   class="mt-2 inline-flex items-center gap-1.5 text-[0.8125rem] font-semibold text-clay-400 transition hover:text-clay-300">
+                                   class="tap mt-2 gap-1.5 text-meta font-semibold text-clay-400 transition hover:text-clay-300">
                                     {{ $audience['cta'] }}
                                     <x-icon name="arrow-left" size="14" />
                                 </a>
@@ -49,7 +49,7 @@
                             </span>
                             <span class="min-w-0 flex-1">
                                 <span class="block font-semibold">{{ $tile['label'] }}</span>
-                                <span class="tech block text-[0.75rem] uppercase tracking-wider text-sand-200/45">{{ $tile['meta'] }}</span>
+                                <span class="tech block text-micro uppercase tracking-wider text-sand-200/45">{{ $tile['meta'] }}</span>
                             </span>
                             <x-icon name="download" size="18" class="shrink-0 text-sand-200/30 transition group-hover:text-clay-300" />
                         </a>

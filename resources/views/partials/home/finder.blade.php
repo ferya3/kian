@@ -22,7 +22,7 @@
                                     <x-icon :name="$audience['icon']" size="18" />
                                 </span>
                                 <span class="min-w-0">
-                                    <span class="block text-[0.8125rem] font-bold">{{ $audience['label'] }}</span>
+                                    <span class="block text-meta font-bold">{{ $audience['label'] }}</span>
                                     <span class="block truncate text-xs text-ink-400">{{ $audience['question'] }}</span>
                                 </span>
                                 <x-icon name="chevron-left" size="16" class="mr-auto shrink-0 text-ink-300 transition group-hover:text-clay-500" />

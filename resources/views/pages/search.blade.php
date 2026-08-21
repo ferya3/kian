@@ -7,7 +7,7 @@
             <label for="page-search" class="sr-only">عبارت جستجو</label>
             <input id="page-search" name="q" type="search" value="{{ $term }}" autofocus
                    placeholder="نام محصول، ضخامت، پروژه یا فایل فنی…"
-                   class="w-full rounded-full border border-sand-300 bg-sand-100 py-4 pr-14 pl-32 text-[1.0625rem] outline-none focus:border-clay-400 focus:bg-sand-50">
+                   class="w-full rounded-full border border-sand-300 bg-sand-100 py-4 pr-14 pl-32 outline-none focus:border-clay-400 focus:bg-sand-50">
             <x-icon name="search" size="20" class="pointer-events-none absolute right-5 top-1/2 -translate-y-1/2 text-ink-300" />
             <button type="submit" class="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-ink-900 px-6 py-2.5 text-[0.875rem] font-semibold text-sand-50 transition hover:bg-clay-600">
                 جستجو

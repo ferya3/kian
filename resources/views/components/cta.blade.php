@@ -16,10 +16,11 @@
         'plain'   => 'text-clay-600 hover:text-clay-700 px-0',
     ];
 
+    // ارتفاع حداقلی ۴۴ پیکسل روی موبایل — استاندارد هدف لمسی؛ روی دسکتاپ فشرده‌تر
     $sizes = [
-        'sm' => 'px-4 py-2 text-[0.8125rem]',
-        'md' => 'px-6 py-3 text-[0.9375rem]',
-        'lg' => 'px-8 py-4 text-base',
+        'sm' => 'min-h-11 px-4 py-2 text-meta lg:min-h-0',
+        'md' => 'min-h-11 px-6 py-3 text-[0.9375rem]',
+        'lg' => 'min-h-12 px-8 py-4 text-base',
     ];
 
     $classes = $base.' '.($variants[$variant] ?? $variants['primary']).' '.($variant === 'plain' ? '' : ($sizes[$size] ?? $sizes['md']));

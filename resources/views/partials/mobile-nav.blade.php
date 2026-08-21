@@ -16,7 +16,8 @@
          x-transition:leave="transition ease-in duration-250"
          x-transition:leave-start="translate-x-0"
          x-transition:leave-end="translate-x-full"
-         class="fixed inset-y-0 right-0 z-[70] flex w-[min(24rem,90vw)] flex-col bg-sand-50 shadow-float"
+         class="fixed inset-y-0 right-0 z-[70] flex h-dvh w-[min(24rem,90vw)] flex-col bg-sand-50 shadow-float"
+         style="padding-top: var(--safe-top); padding-bottom: var(--safe-bottom)"
          style="display: none"
          role="dialog" aria-modal="true" aria-label="منوی اصلی">
 
@@ -32,11 +33,11 @@
             </button>
         </div>
 
-        <div class="flex-1 overflow-y-auto overscroll-contain px-5 py-4" data-lenis-prevent>
+        <div class="flex-1 overflow-y-auto overscroll-contain px-5 py-4" data-lenis-prevent style="-webkit-overflow-scrolling: touch">
             <form action="{{ route('search') }}" method="GET" class="relative mb-5">
                 <label for="mobile-search" class="sr-only">جستجو</label>
                 <input id="mobile-search" name="q" type="search" placeholder="جستجوی محصول یا فایل فنی…"
-                       class="w-full rounded-xl border border-sand-300 bg-sand-100 py-3 pr-11 pl-4 text-[0.9375rem] outline-none focus:border-clay-400">
+                       class="w-full rounded-xl border border-sand-300 bg-sand-100 py-3 pr-11 pl-4 outline-none focus:border-clay-400">
                 <x-icon name="search" size="18" class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-ink-300" />
             </form>
 

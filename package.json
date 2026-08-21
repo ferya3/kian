@@ -4,7 +4,8 @@
     "type": "module",
     "scripts": {
         "build": "vite build",
-        "dev": "vite"
+        "dev": "vite",
+        "audit:mobile": "node tests/Browser/mobile-audit.mjs"
     },
     "devDependencies": {
         "@tailwindcss/vite": "^4.0.0",

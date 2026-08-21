@@ -23,7 +23,7 @@
 <div class="grid place-items-center"
      style="--bs: min({{ $size }}px, 62vw); perspective: 1400px; perspective-origin: 50% 45%; min-height: calc(var(--bs) * 0.95)">
     <div class="relative transition-transform duration-100 ease-linear
-                {{ $interactive ? 'cursor-grab touch-none active:cursor-grabbing' : '' }}"
+                {{ $interactive ? 'cursor-grab touch-pan-y active:cursor-grabbing' : '' }}"
          style="transform-style: preserve-3d; {{ $box }}; transform: rotateX(-14deg) rotateY(-24deg)"
          @if($interactive)
              :style="`transform-style: preserve-3d; {{ $box }}; transform: ${transform}`"

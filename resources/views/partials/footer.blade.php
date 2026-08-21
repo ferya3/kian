@@ -32,7 +32,7 @@
                 <x-brand-mark class="h-11 w-11" />
                 <span>
                     <span class="block text-lg font-extrabold text-sand-50">{{ config('kian.brand.legal_name') }}</span>
-                    <span class="tech block text-[0.6875rem] uppercase tracking-[0.18em] text-sand-200/45">{{ config('kian.brand.name_en') }}</span>
+                    <span class="tech block text-micro uppercase tracking-[0.18em] text-sand-200/45">{{ config('kian.brand.name_en') }}</span>
                 </span>
             </a>
             <p class="mt-5 max-w-sm text-[0.9375rem] leading-relaxed text-sand-200/55">
@@ -46,7 +46,7 @@
                 </li>
                 <li class="flex gap-3">
                     <x-icon name="mail" size="18" class="mt-0.5 shrink-0 text-clay-400" />
-                    <a href="mailto:{{ config('kian.contact.email') }}" class="tech transition hover:text-sand-50">{{ config('kian.contact.email') }}</a>
+                    <a href="mailto:{{ config('kian.contact.email') }}" class="tech tap transition hover:text-sand-50">{{ config('kian.contact.email') }}</a>
                 </li>
             </ul>
         </div>
@@ -55,48 +55,48 @@
             <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
                 <div>
                     <h3 class="mb-4 text-sm font-bold uppercase tracking-wider text-sand-50">محصولات</h3>
-                    <ul class="space-y-2.5 text-[0.9375rem] text-sand-200/60">
+                    <ul class="-my-1 text-[0.9375rem] text-sand-200/60 lg:my-0 lg:space-y-2.5">
                         @foreach($megaMenu->flatMap->children->take(6) as $child)
-                            <li><a href="{{ route('products.index', ['category' => $child->slug]) }}" class="transition hover:text-clay-300">{{ $child->name }}</a></li>
+                            <li><a href="{{ route('products.index', ['category' => $child->slug]) }}" class="tap w-full transition hover:text-clay-300 lg:w-auto">{{ $child->name }}</a></li>
                         @endforeach
-                        <li><a href="{{ route('finder.show') }}" class="font-semibold text-clay-400 transition hover:text-clay-300">انتخاب محصول →</a></li>
+                        <li><a href="{{ route('finder.show') }}" class="tap w-full font-semibold text-clay-400 transition hover:text-clay-300 lg:w-auto">انتخاب محصول →</a></li>
                     </ul>
                 </div>
                 <div>
                     <h3 class="mb-4 text-sm font-bold uppercase tracking-wider text-sand-50">مرکز فنی</h3>
-                    <ul class="space-y-2.5 text-[0.9375rem] text-sand-200/60">
-                        <li><a href="{{ route('technical.downloads') }}" class="transition hover:text-clay-300">دیتاشیت محصولات</a></li>
-                        <li><a href="{{ route('technical.downloads', ['category' => 'cad']) }}" class="transition hover:text-clay-300">فایل‌های CAD</a></li>
-                        <li><a href="{{ route('technical.downloads', ['category' => 'bim']) }}" class="transition hover:text-clay-300">آبجکت‌های BIM</a></li>
-                        <li><a href="{{ route('technical.installation') }}" class="transition hover:text-clay-300">راهنمای اجرا</a></li>
-                        <li><a href="{{ route('technical.certificates') }}" class="transition hover:text-clay-300">گواهی‌نامه‌ها</a></li>
-                        <li><a href="{{ route('technical.faq') }}" class="transition hover:text-clay-300">پرسش‌های متداول</a></li>
+                    <ul class="-my-1 text-[0.9375rem] text-sand-200/60 lg:my-0 lg:space-y-2.5">
+                        <li><a href="{{ route('technical.downloads') }}" class="tap w-full transition hover:text-clay-300 lg:w-auto">دیتاشیت محصولات</a></li>
+                        <li><a href="{{ route('technical.downloads', ['category' => 'cad']) }}" class="tap w-full transition hover:text-clay-300 lg:w-auto">فایل‌های CAD</a></li>
+                        <li><a href="{{ route('technical.downloads', ['category' => 'bim']) }}" class="tap w-full transition hover:text-clay-300 lg:w-auto">آبجکت‌های BIM</a></li>
+                        <li><a href="{{ route('technical.installation') }}" class="tap w-full transition hover:text-clay-300 lg:w-auto">راهنمای اجرا</a></li>
+                        <li><a href="{{ route('technical.certificates') }}" class="tap w-full transition hover:text-clay-300 lg:w-auto">گواهی‌نامه‌ها</a></li>
+                        <li><a href="{{ route('technical.faq') }}" class="tap w-full transition hover:text-clay-300 lg:w-auto">پرسش‌های متداول</a></li>
                     </ul>
                 </div>
                 <div>
                     <h3 class="mb-4 text-sm font-bold uppercase tracking-wider text-sand-50">شرکت</h3>
-                    <ul class="space-y-2.5 text-[0.9375rem] text-sand-200/60">
-                        <li><a href="{{ route('about') }}" class="transition hover:text-clay-300">درباره ما</a></li>
-                        <li><a href="{{ route('factory') }}" class="transition hover:text-clay-300">کارخانه</a></li>
-                        <li><a href="{{ route('technology') }}" class="transition hover:text-clay-300">فناوری تولید</a></li>
-                        <li><a href="{{ route('sustainability') }}" class="transition hover:text-clay-300">پایداری</a></li>
-                        <li><a href="{{ route('projects.index') }}" class="transition hover:text-clay-300">پروژه‌ها</a></li>
-                        <li><a href="{{ route('articles.index') }}" class="transition hover:text-clay-300">مقالات فنی</a></li>
+                    <ul class="-my-1 text-[0.9375rem] text-sand-200/60 lg:my-0 lg:space-y-2.5">
+                        <li><a href="{{ route('about') }}" class="tap w-full transition hover:text-clay-300 lg:w-auto">درباره ما</a></li>
+                        <li><a href="{{ route('factory') }}" class="tap w-full transition hover:text-clay-300 lg:w-auto">کارخانه</a></li>
+                        <li><a href="{{ route('technology') }}" class="tap w-full transition hover:text-clay-300 lg:w-auto">فناوری تولید</a></li>
+                        <li><a href="{{ route('sustainability') }}" class="tap w-full transition hover:text-clay-300 lg:w-auto">پایداری</a></li>
+                        <li><a href="{{ route('projects.index') }}" class="tap w-full transition hover:text-clay-300 lg:w-auto">پروژه‌ها</a></li>
+                        <li><a href="{{ route('articles.index') }}" class="tap w-full transition hover:text-clay-300 lg:w-auto">مقالات فنی</a></li>
                     </ul>
                 </div>
                 <div>
                     <h3 class="mb-4 text-sm font-bold uppercase tracking-wider text-sand-50">فروش</h3>
-                    <ul class="space-y-2.5 text-[0.9375rem] text-sand-200/60">
-                        <li><a href="{{ route('contact') }}" class="transition hover:text-clay-300">درخواست قیمت</a></li>
-                        <li><a href="{{ route('distributors') }}" class="transition hover:text-clay-300">نمایندگان فروش</a></li>
-                        <li><a href="{{ route('contact', ['type' => 'distributor']) }}" class="transition hover:text-clay-300">درخواست نمایندگی</a></li>
-                        <li><a href="{{ route('contact', ['type' => 'technical']) }}" class="transition hover:text-clay-300">پشتیبانی فنی</a></li>
+                    <ul class="-my-1 text-[0.9375rem] text-sand-200/60 lg:my-0 lg:space-y-2.5">
+                        <li><a href="{{ route('contact') }}" class="tap w-full transition hover:text-clay-300 lg:w-auto">درخواست قیمت</a></li>
+                        <li><a href="{{ route('distributors') }}" class="tap w-full transition hover:text-clay-300 lg:w-auto">نمایندگان فروش</a></li>
+                        <li><a href="{{ route('contact', ['type' => 'distributor']) }}" class="tap w-full transition hover:text-clay-300 lg:w-auto">درخواست نمایندگی</a></li>
+                        <li><a href="{{ route('contact', ['type' => 'technical']) }}" class="tap w-full transition hover:text-clay-300 lg:w-auto">پشتیبانی فنی</a></li>
                     </ul>
 
                     <div class="mt-6 flex gap-2">
                         @foreach(['instagram' => 'IG', 'linkedin' => 'in', 'aparat' => 'AP', 'telegram' => 'TG'] as $key => $label)
                             <a href="{{ config("kian.social.$key") }}" rel="noopener noreferrer" target="_blank"
-                               class="tech grid h-9 w-9 place-items-center rounded-full border border-white/12 text-[0.6875rem] font-semibold text-sand-200/70 transition hover:border-clay-400 hover:text-clay-300"
+                               class="tech tap-icon rounded-full border border-white/12 text-micro font-semibold text-sand-200/70 transition hover:border-clay-400 hover:text-clay-300 lg:min-h-9 lg:min-w-9"
                                aria-label="{{ $key }}">{{ $label }}</a>
                         @endforeach
                     </div>
@@ -106,9 +106,10 @@
     </div>
 
     <div class="border-t border-white/[0.07]">
-        <div class="container-page flex flex-col gap-3 py-6 text-[0.8125rem] text-sand-200/40 sm:flex-row sm:items-center sm:justify-between">
+        <div class="container-page flex flex-col gap-3 pt-6 text-meta text-sand-200/40 sm:flex-row sm:items-center sm:justify-between"
+             style="padding-bottom: max(1.5rem, var(--safe-bottom))">
             <p>© {{ \App\Support\Jalali::year() }} {{ config('kian.brand.legal_name') }} — تمام حقوق محفوظ است.</p>
-            <p class="tech">{{ config('kian.brand.tagline_en') }}</p>
+            <p class="tech"><bdi dir="ltr">{{ config('kian.brand.tagline_en') }}</bdi></p>
         </div>
     </div>
 </footer>

@@ -22,7 +22,7 @@
                             </span>
                             <div>
                                 <h3 class="text-h3 font-bold leading-tight">{{ $step->title }}</h3>
-                                <p class="tech mt-1 text-[0.75rem] uppercase tracking-[0.14em] text-ink-300">{{ $step->title_en }}</p>
+                                <p class="tech mt-1 text-micro uppercase tracking-[0.14em] text-ink-300">{{ $step->title_en }}</p>
                             </div>
                         </div>
 
@@ -31,13 +31,13 @@
                         <dl class="flex flex-wrap items-start gap-6 lg:col-span-3 lg:justify-end">
                             @if($step->metric_value)
                                 <div class="text-right lg:text-left">
-                                    <dt class="text-[0.75rem] text-ink-400">{{ $step->metric_label }}</dt>
+                                    <dt class="text-micro text-ink-400">{{ $step->metric_label }}</dt>
                                     <dd class="mt-0.5 text-xl font-extrabold text-clay-600"><x-num :value="$step->metric_value" /></dd>
                                 </div>
                             @endif
                             @if($step->duration)
                                 <div class="text-right lg:text-left">
-                                    <dt class="text-[0.75rem] text-ink-400">زمان</dt>
+                                    <dt class="text-micro text-ink-400">زمان</dt>
                                     <dd class="mt-0.5 text-xl font-extrabold text-ink-700"><x-num :value="$step->duration" /></dd>
                                 </div>
                             @endif

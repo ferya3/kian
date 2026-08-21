@@ -39,7 +39,8 @@
 </head>
 <body class="min-h-dvh bg-sand-100 text-ink-900 antialiased">
     <a href="#main"
-       class="sr-only-focusable fixed top-4 right-4 z-[100] rounded-full bg-ink-900 px-5 py-3 text-sm font-semibold text-sand-50 shadow-float">
+       class="sr-only-focusable fixed right-4 z-[100] inline-flex min-h-11 items-center rounded-full bg-ink-900 px-5 text-sm font-semibold text-sand-50 shadow-float"
+       style="top: calc(1rem + var(--safe-top))">
         پرش به محتوای اصلی
     </a>
 

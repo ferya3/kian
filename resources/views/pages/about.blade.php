@@ -54,7 +54,7 @@
                 @foreach($certificates->take(6) as $certificate)
                     <li class="rounded-xl border border-sand-300 bg-sand-100 p-4">
                         <p class="font-semibold leading-snug">{{ $certificate->title }}</p>
-                        <p class="mt-1 text-[0.8125rem] text-ink-400">{{ $certificate->issuer }}</p>
+                        <p class="mt-1 text-meta text-ink-400">{{ $certificate->issuer }}</p>
                     </li>
                 @endforeach
             </ul>

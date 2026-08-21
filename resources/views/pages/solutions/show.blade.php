@@ -41,7 +41,7 @@
                                     </span>
                                     <span class="min-w-0 flex-1">
                                         <span class="block font-bold group-hover:text-clay-700">{{ $product->name }}</span>
-                                        <span class="tech block text-[0.75rem] text-ink-400">
+                                        <span class="tech block text-micro text-ink-400">
                                             λ {{ \App\Support\Jalali::digits($product->thermal_conductivity) }} · {{ \App\Support\Jalali::digits($product->weight_kg) }} kg
                                         </span>
                                     </span>
@@ -58,4 +58,10 @@
             </aside>
         </div>
     </section>
+    <x-mobile-action-bar
+        :primary-href="route('contact', ['type' => 'technical'])"
+        primary-label="مشاوره فنی"
+        :secondary-href="route('products.index')"
+        secondary-label="محصولات"
+        secondary-icon="grid" />
 </x-layouts.app>

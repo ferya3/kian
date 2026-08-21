@@ -12,12 +12,12 @@
         </div>
 
         @if($product->is_featured)
-            <span class="eyebrow absolute right-4 top-4 rounded-full bg-ink-900/90 px-3 py-1 text-[0.625rem] text-sand-50">
+            <span class="eyebrow absolute right-4 top-4 rounded-full bg-ink-900/90 px-3 py-1 text-micro text-sand-50">
                 پرکاربرد
             </span>
         @endif
 
-        <span class="tech absolute left-4 top-4 rounded-full border border-ink-900/10 bg-sand-50/80 px-2.5 py-1 text-[0.6875rem] font-semibold text-ink-500 backdrop-blur">
+        <span class="tech absolute left-4 top-4 rounded-full border border-ink-900/10 bg-sand-50/80 px-2.5 py-1 text-micro font-semibold text-ink-500 backdrop-blur">
             {{ $product->sku }}
         </span>
 
@@ -57,10 +57,10 @@
                 ['مقاومت', $product->compressive_strength_mpa, 'MPa'],
             ] as [$label, $value, $unit])
                 <div class="bg-sand-50 px-2 py-2.5 text-center">
-                    <dt class="text-[0.6875rem] text-ink-400">{{ $label }}</dt>
+                    <dt class="text-micro text-ink-400">{{ $label }}</dt>
                     <dd class="mt-0.5 text-sm font-bold text-ink-900">
                         <x-num :value="$value" />
-                        <span class="text-[0.625rem] font-normal text-ink-300">{{ $unit }}</span>
+                        <span class="text-micro font-normal text-ink-300">{{ $unit }}</span>
                     </dd>
                 </div>
             @endforeach

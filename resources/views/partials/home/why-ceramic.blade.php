@@ -49,14 +49,14 @@
                             </div>
 
                             <div role="tablist" aria-label="نمای بلوک"
-                                 class="flex rounded-full border border-white/12 bg-ink-950/50 p-1 text-[0.8125rem]">
+                                 class="flex rounded-full border border-white/12 bg-ink-950/50 p-1 text-meta">
                                 <button type="button" role="tab" @click="mode = 'solid'"
                                         :aria-selected="mode === 'solid'"
-                                        class="rounded-full px-3.5 py-1.5 transition"
+                                        class="tap rounded-full px-4 py-2 transition"
                                         :class="mode === 'solid' ? 'bg-clay-500 text-white' : 'text-sand-200/60 hover:text-sand-50'">حجم</button>
                                 <button type="button" role="tab" @click="mode = 'section'"
                                         :aria-selected="mode === 'section'"
-                                        class="rounded-full px-3.5 py-1.5 transition"
+                                        class="tap rounded-full px-4 py-2 transition"
                                         :class="mode === 'section' ? 'bg-clay-500 text-white' : 'text-sand-200/60 hover:text-sand-50'">مقطع</button>
                             </div>
                         </div>
@@ -105,14 +105,14 @@
                         <div>
                             <div class="flex flex-wrap items-baseline gap-x-3">
                                 <h3 class="text-h3 font-bold text-sand-50">{{ $pillar['title'] }}</h3>
-                                <span class="tech text-[0.6875rem] uppercase tracking-[0.16em] text-sand-200/35">{{ $pillar['en'] }}</span>
+                                <span class="tech text-micro uppercase tracking-[0.16em] text-sand-200/35">{{ $pillar['en'] }}</span>
                             </div>
 
                             <p class="mt-2.5 max-w-xl leading-relaxed text-sand-200/65">{{ $pillar['text'] }}</p>
 
                             <p class="mt-4 flex items-baseline gap-2">
                                 <span class="tech text-2xl font-extrabold text-clay-300">{{ $pillar['metric'] }}</span>
-                                <span class="text-[0.8125rem] text-sand-200/45">{{ $pillar['metricLabel'] }}</span>
+                                <span class="text-meta text-sand-200/45">{{ $pillar['metricLabel'] }}</span>
                             </p>
                         </div>
                     </li>

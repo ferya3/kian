@@ -4,7 +4,7 @@
 <dl {{ $attributes->merge(['class' => 'space-y-2.5']) }}>
     @foreach($product->performanceBars() as $bar)
         <div class="flex items-center gap-3">
-            <dt class="w-24 shrink-0 {{ $compact ? 'text-xs' : 'text-[0.8125rem]' }} {{ $light ? 'text-sand-200/70' : 'text-ink-400' }}">
+            <dt class="w-24 shrink-0 {{ $compact ? 'text-xs' : 'text-meta' }} {{ $light ? 'text-sand-200/70' : 'text-ink-400' }}">
                 {{ $bar['label'] }}
             </dt>
             <dd class="flex flex-1 items-center gap-2">

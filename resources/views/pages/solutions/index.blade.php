@@ -10,7 +10,7 @@
                 <article data-reveal
                          class="group grid grid-cols-1 gap-8 rounded-[var(--radius-panel)] border border-sand-300 bg-sand-50 p-6 transition hover:border-clay-300 lg:grid-cols-12 lg:p-8">
                     <div class="lg:col-span-5">
-                        <p class="tech text-[0.6875rem] uppercase tracking-[0.14em] text-ink-300">{{ $solution->title_en }}</p>
+                        <p class="tech text-micro uppercase tracking-[0.14em] text-ink-300">{{ $solution->title_en }}</p>
                         <h2 class="mt-2 text-h3 font-extrabold">
                             <a href="{{ route('solutions.show', $solution) }}" class="transition hover:text-clay-600">{{ $solution->title }}</a>
                         </h2>
@@ -20,7 +20,7 @@
                     </div>
 
                     <div class="lg:col-span-4">
-                        <h3 class="text-[0.8125rem] font-bold uppercase tracking-wider text-ink-400">مزایا</h3>
+                        <h3 class="text-meta font-bold uppercase tracking-wider text-ink-400">مزایا</h3>
                         <ul class="mt-3 space-y-2">
                             @foreach($solution->benefits ?? [] as $benefit)
                                 <li class="flex gap-2.5 text-[0.9375rem] leading-relaxed text-ink-600">
@@ -32,7 +32,7 @@
                     </div>
 
                     <div class="lg:col-span-3">
-                        <h3 class="text-[0.8125rem] font-bold uppercase tracking-wider text-ink-400">محصولات</h3>
+                        <h3 class="text-meta font-bold uppercase tracking-wider text-ink-400">محصولات</h3>
                         <ul class="mt-3 space-y-1.5">
                             @foreach($solution->products as $product)
                                 <li>

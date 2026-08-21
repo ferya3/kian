@@ -12,7 +12,7 @@
         @if($labels)
             <ul class="flex flex-wrap items-center gap-1.5">
                 @foreach($labels as $label)
-                    <li class="rounded-full border border-clay-200 bg-sand-50 px-3 py-1 text-[0.8125rem] text-clay-700">{{ $label }}</li>
+                    <li class="rounded-full border border-clay-200 bg-sand-50 px-3 py-1 text-meta text-clay-700">{{ $label }}</li>
                 @endforeach
             </ul>
         @endif
@@ -41,7 +41,7 @@
                             </h4>
                             <span class="tech text-sm text-ink-400">{{ \App\Support\Jalali::digits($product->dimensionLabel()) }} cm</span>
                             @if($index === 0)
-                                <span class="rounded-full bg-ink-900 px-2.5 py-0.5 text-[0.6875rem] font-semibold text-sand-50">بهترین تطابق</span>
+                                <span class="rounded-full bg-ink-900 px-2.5 py-0.5 text-micro font-semibold text-sand-50">بهترین تطابق</span>
                             @endif
                         </div>
 
@@ -50,7 +50,7 @@
                         @if($match['reasons'])
                             <ul class="mt-3 flex flex-wrap gap-x-4 gap-y-1.5">
                                 @foreach($match['reasons'] as $reason)
-                                    <li class="flex items-center gap-1.5 text-[0.8125rem] text-clay-700">
+                                    <li class="flex items-center gap-1.5 text-meta text-clay-700">
                                         <x-icon name="check" size="14" class="text-clay-500" />
                                         {{ $reason }}
                                     </li>
@@ -59,13 +59,13 @@
                         @endif
 
                         @if($match['gaps'] && $index > 0)
-                            <p class="mt-2 text-[0.8125rem] text-ink-400">{{ $match['gaps'][0] }}</p>
+                            <p class="mt-2 text-meta text-ink-400">{{ $match['gaps'][0] }}</p>
                         @endif
                     </div>
 
                     <div class="shrink-0 sm:w-40">
                         <div class="mb-2 flex items-baseline justify-between gap-2">
-                            <span class="text-[0.75rem] text-ink-400">میزان تطابق</span>
+                            <span class="text-micro text-ink-400">میزان تطابق</span>
                             <span class="tech text-sm font-bold text-clay-600">{{ \App\Support\Jalali::digits($match['score']) }}٪</span>
                         </div>
                         <div class="h-1.5 overflow-hidden rounded-full bg-sand-300"
@@ -82,7 +82,7 @@
     </ol>
 
     <div class="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-clay-200 pt-5">
-        <p class="text-[0.8125rem] text-ink-400">
+        <p class="text-meta text-ink-400">
             این پیشنهاد بر اساس معیارهای شماست. برای محاسبه‌ی دقیق مبحث ۱۹ با واحد فنی تماس بگیرید.
         </p>
         <div class="flex flex-wrap gap-2">

@@ -11,9 +11,9 @@
                   class="rounded-[var(--radius-panel)] border border-sand-300 bg-sand-50 p-5 lg:p-6">
                 <div class="grid grid-cols-1 gap-4 lg:grid-cols-4">
                     <div>
-                        <label for="q" class="mb-2 block text-[0.8125rem] font-semibold text-ink-600">جستجو</label>
+                        <label for="q" class="mb-2 block text-meta font-semibold text-ink-600">جستجو</label>
                         <input id="q" name="q" type="search" value="{{ request('q') }}" placeholder="نام فایل…"
-                               class="w-full rounded-xl border border-sand-300 bg-sand-100 px-4 py-3 text-[0.9375rem] outline-none focus:border-clay-400 focus:bg-sand-50">
+                               class="w-full rounded-xl border border-sand-300 bg-sand-100 px-4 py-3 outline-none focus:border-clay-400 focus:bg-sand-50">
                     </div>
 
                     @foreach([
@@ -21,10 +21,10 @@
                         ['name' => 'audience', 'label' => 'مخاطب', 'options' => $audiences],
                     ] as $field)
                         <div>
-                            <label for="{{ $field['name'] }}" class="mb-2 block text-[0.8125rem] font-semibold text-ink-600">{{ $field['label'] }}</label>
+                            <label for="{{ $field['name'] }}" class="mb-2 block text-meta font-semibold text-ink-600">{{ $field['label'] }}</label>
                             <div class="relative">
                                 <select id="{{ $field['name'] }}" name="{{ $field['name'] }}"
-                                        class="w-full appearance-none rounded-xl border border-sand-300 bg-sand-100 py-3 pr-4 pl-10 text-[0.9375rem] outline-none focus:border-clay-400 focus:bg-sand-50">
+                                        class="w-full appearance-none rounded-xl border border-sand-300 bg-sand-100 py-3 pr-4 pl-10 outline-none focus:border-clay-400 focus:bg-sand-50">
                                     <option value="">همه</option>
                                     @foreach($field['options'] as $value => $label)
                                         <option value="{{ $value }}" @selected(request($field['name']) === $value)>{{ $label }}</option>
@@ -36,10 +36,10 @@
                     @endforeach
 
                     <div>
-                        <label for="format" class="mb-2 block text-[0.8125rem] font-semibold text-ink-600">فرمت</label>
+                        <label for="format" class="mb-2 block text-meta font-semibold text-ink-600">فرمت</label>
                         <div class="relative">
                             <select id="format" name="format"
-                                    class="w-full appearance-none rounded-xl border border-sand-300 bg-sand-100 py-3 pr-4 pl-10 text-[0.9375rem] uppercase outline-none focus:border-clay-400 focus:bg-sand-50">
+                                    class="w-full appearance-none rounded-xl border border-sand-300 bg-sand-100 py-3 pr-4 pl-10 uppercase outline-none focus:border-clay-400 focus:bg-sand-50">
                                 <option value="">همه</option>
                                 @foreach($formats as $format)
                                     <option value="{{ $format }}" @selected(request('format') === $format)>{{ strtoupper($format) }}</option>
@@ -51,15 +51,15 @@
                 </div>
 
                 <div class="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-sand-200 pt-5">
-                    <p class="tech text-[0.8125rem] text-ink-400">
+                    <p class="tech text-meta text-ink-400">
                         {{ \App\Support\Jalali::digits($documents->count()) }} فایل
                     </p>
                     <div class="flex gap-2">
                         @if(request()->hasAny(['q', 'category', 'audience', 'format']))
                             <a href="{{ route('technical.downloads') }}"
-                               class="rounded-full px-4 py-2.5 text-[0.875rem] text-ink-400 transition hover:text-ink-900">حذف فیلترها</a>
+                               class="tap rounded-full px-4 py-2.5 text-[0.875rem] text-ink-400 transition hover:text-ink-900">حذف فیلترها</a>
                         @endif
-                        <button type="submit" class="rounded-full bg-ink-900 px-6 py-2.5 text-[0.875rem] font-semibold text-sand-50 transition hover:bg-clay-600">
+                        <button type="submit" class="tap rounded-full bg-ink-900 px-6 py-2.5 text-[0.875rem] font-semibold text-sand-50 transition hover:bg-clay-600">
                             اعمال فیلتر
                         </button>
                     </div>

@@ -33,27 +33,27 @@
                      ])->all()))">
 
                     <div class="relative overflow-hidden rounded-[var(--radius-panel)] border border-sand-300 bg-gradient-to-bl from-sand-200 via-sand-100 to-sand-300">
-                        <div class="absolute right-5 top-5 z-10 flex rounded-full border border-ink-900/10 bg-sand-50/90 p-1 text-[0.8125rem] backdrop-blur"
+                        <div class="absolute right-5 top-5 z-10 flex rounded-full border border-ink-900/10 bg-sand-50/90 p-1 text-meta backdrop-blur"
                              role="tablist" aria-label="نمای محصول">
                             <button type="button" role="tab" @click="mode = 'solid'" :aria-selected="mode === 'solid'"
-                                    class="rounded-full px-3.5 py-1.5 font-semibold transition"
+                                    class="tap rounded-full px-4 py-2 font-semibold transition"
                                     :class="mode === 'solid' ? 'bg-ink-900 text-sand-50' : 'text-ink-500 hover:text-ink-900'">نمای حجمی</button>
                             <button type="button" role="tab" @click="mode = 'section'" :aria-selected="mode === 'section'"
-                                    class="rounded-full px-3.5 py-1.5 font-semibold transition"
+                                    class="tap rounded-full px-4 py-2 font-semibold transition"
                                     :class="mode === 'section' ? 'bg-ink-900 text-sand-50' : 'text-ink-500 hover:text-ink-900'">مقطع داخلی</button>
                         </div>
 
                         <div class="grid min-h-[24rem] place-items-center p-8 lg:min-h-[28rem]">
                             <div x-show="mode === 'solid'" x-transition.opacity.duration.300ms class="w-full">
                                 <x-block-3d :product="$product" :size="300" />
-                                <p class="mt-8 text-center text-[0.8125rem] text-ink-400">
+                                <p class="mt-8 text-center text-meta text-ink-400">
                                     برای چرخاندن بکشید — یا از کلیدهای جهت استفاده کنید
                                 </p>
                             </div>
 
                             <div x-show="mode === 'section'" x-cloak x-transition.opacity.duration.300ms class="w-full">
                                 <x-block-section :product="$product" />
-                                <p class="mt-5 text-center text-[0.8125rem] text-ink-400">
+                                <p class="mt-5 text-center text-meta text-ink-400">
                                     روی نقاط مقطع کلیک کنید
                                 </p>
                             </div>
@@ -67,7 +67,7 @@
                                 <p class="font-bold text-clay-700" x-text="cavity.label"></p>
                                 <p class="mt-1.5 leading-relaxed text-ink-500" x-text="cavity.description"></p>
                                 <p class="tech mt-3 flex items-baseline gap-2 border-t border-sand-300 pt-3">
-                                    <span class="text-[0.8125rem] text-ink-400" x-text="cavity.metricLabel"></span>
+                                    <span class="text-meta text-ink-400" x-text="cavity.metricLabel"></span>
                                     <span class="font-bold" x-text="cavity.metricValue"></span>
                                 </p>
                             </div>
@@ -98,9 +98,9 @@
                         @foreach($benefits as $benefit)
                             <li class="rounded-2xl border border-sand-300 bg-sand-100 p-4 text-center">
                                 <x-icon :name="$benefit['icon']" size="22" class="mx-auto text-clay-500" />
-                                <p class="tech mt-2 text-[0.6875rem] uppercase tracking-[0.12em] text-ink-300">{{ $benefit['en'] }}</p>
+                                <p class="tech mt-2 text-micro uppercase tracking-[0.12em] text-ink-300">{{ $benefit['en'] }}</p>
                                 <p class="mt-1 font-extrabold"><x-num :value="$benefit['value']" /></p>
-                                <p class="mt-1 text-[0.75rem] leading-snug text-ink-400">{{ $benefit['label'] }}</p>
+                                <p class="mt-1 text-micro leading-snug text-ink-400">{{ $benefit['label'] }}</p>
                             </li>
                         @endforeach
                     </ul>
@@ -131,7 +131,7 @@
                     @if($product->standards)
                         <ul class="mt-6 flex flex-wrap gap-2 border-t border-sand-200 pt-5">
                             @foreach($product->standards as $standard)
-                                <li class="flex items-center gap-1.5 rounded-full bg-sand-200 px-3 py-1.5 text-[0.8125rem] text-ink-600">
+                                <li class="flex items-center gap-1.5 rounded-full bg-sand-200 px-3 py-1.5 text-meta text-ink-600">
                                     <x-icon name="check" size="14" class="text-clay-500" />
                                     {{ $standard }}
                                 </li>
@@ -271,6 +271,14 @@
             </div>
         </section>
     @endif
+
+    {{-- نوار اقدام چسبان موبایل — تماس و استعلام همیشه در دسترس --}}
+    @php $datasheetDoc = $product->documents->firstWhere('category', 'datasheet'); @endphp
+    <x-mobile-action-bar
+        :primary-href="route('contact', ['type' => 'quote', 'product' => $product->id])"
+        primary-label="استعلام قیمت"
+        :secondary-href="$datasheetDoc ? route('documents.download', $datasheetDoc) : null"
+        secondary-label="دیتاشیت" />
 
     {{-- ==================== محصولات مشابه ==================== --}}
     <section class="bg-sand-50 py-16 lg:py-20">

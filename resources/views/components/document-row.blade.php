@@ -14,13 +14,13 @@
 <a href="{{ route('documents.download', $document) }}"
    {{ $attributes->merge(['class' => 'group flex items-center gap-4 rounded-xl border border-sand-300 bg-sand-50 p-4 transition-all duration-300 hover:border-clay-300 hover:bg-clay-50']) }}>
 
-    <span class="tech grid h-11 w-11 shrink-0 place-items-center rounded-lg text-[0.6875rem] font-extrabold uppercase {{ $formatColors[$document->format] ?? 'bg-sand-200 text-ink-600' }}">
+    <span class="tech grid h-11 w-11 shrink-0 place-items-center rounded-lg text-micro font-extrabold uppercase {{ $formatColors[$document->format] ?? 'bg-sand-200 text-ink-600' }}">
         {{ $document->format }}
     </span>
 
     <span class="min-w-0 flex-1">
         <span class="block truncate font-semibold text-ink-900 group-hover:text-clay-700">{{ $document->title }}</span>
-        <span class="mt-0.5 flex flex-wrap items-center gap-x-2.5 gap-y-0.5 text-[0.75rem] text-ink-400">
+        <span class="mt-0.5 flex flex-wrap items-center gap-x-2.5 gap-y-0.5 text-micro text-ink-400">
             <span>{{ $document->categoryLabel() }}</span>
             @if($document->version)
                 <span class="h-1 w-1 rounded-full bg-ink-300"></span>

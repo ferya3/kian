@@ -30,7 +30,7 @@
                 <div>
                     <div class="flex flex-wrap items-end justify-between gap-3 border-b border-sand-300 pb-4">
                         <h2 class="text-h3 font-extrabold">{{ $label }}</h2>
-                        <p class="tech text-[0.8125rem] text-ink-400">{{ \App\Support\Jalali::digits($documents->count()) }} فایل</p>
+                        <p class="tech text-meta text-ink-400">{{ \App\Support\Jalali::digits($documents->count()) }} فایل</p>
                     </div>
 
                     <div class="mt-5 grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3" data-reveal-stagger="60">
@@ -64,7 +64,7 @@
                             </span>
                             <span class="min-w-0 flex-1">
                                 <span class="block font-bold group-hover:text-clay-700">{{ $product->name }}</span>
-                                <span class="tech block text-[0.75rem] text-ink-400">PDF · DWG · RVT · IFC</span>
+                                <span class="tech block text-micro text-ink-400">PDF · DWG · RVT · IFC</span>
                             </span>
                             <x-icon name="download" size="18" class="shrink-0 text-ink-300 transition group-hover:text-clay-500" />
                         </a>

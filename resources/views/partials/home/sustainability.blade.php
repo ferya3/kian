@@ -20,7 +20,7 @@
                         ['ساختمان', 'In use', 'پنجاه سال عملکرد بدون افت، و کاهش دائمی مصرف انرژی ساختمان.', 'shield'],
                     ] as $i => [$title, $en, $text, $icon])
                         <li data-reveal class="relative rounded-2xl border border-sand-300 bg-sand-50 p-5">
-                            <span class="tech text-[0.6875rem] uppercase tracking-[0.14em] text-ink-300">{{ $en }}</span>
+                            <span class="tech text-micro uppercase tracking-[0.14em] text-ink-300">{{ $en }}</span>
                             <p class="mt-2 flex items-center gap-2 text-lg font-extrabold">
                                 <x-icon :name="$icon" size="19" class="text-clay-500" />
                                 {{ $title }}
@@ -43,7 +43,7 @@
                                     <span data-countup="{{ $stat->value }}" data-decimals="{{ $stat->decimals }}">۰</span>{{ $stat->suffix }}
                                 </bdi>
                             </dd>
-                            <dt class="mt-1 text-[0.8125rem] leading-snug text-ink-500">{{ $stat->label }}</dt>
+                            <dt class="mt-1 text-meta leading-snug text-ink-500">{{ $stat->label }}</dt>
                         </div>
                     @endforeach
                 </dl>

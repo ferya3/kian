@@ -7,15 +7,16 @@
 <header x-data="siteHeader({{ $overHero ? 'true' : 'false' }})"
         @keydown.escape.window="close(); searchOpen = false"
         class="no-print fixed inset-x-0 top-0 z-50 transition-transform duration-500 ease-[var(--ease-out-expo)]"
+        style="padding-top: var(--safe-top)"
         :class="hidden ? '-translate-y-full' : 'translate-y-0'">
 
     {{-- نوار خدماتی — تماس مستقیم و میان‌بر مهندسان --}}
     <div class="hidden overflow-hidden bg-ink-950 text-sand-200 transition-[height] duration-500 ease-[var(--ease-out-expo)] lg:block"
          :class="scrolled ? 'h-0' : 'h-10'">
-        <div class="container-page flex h-10 items-center justify-between text-[0.8125rem]">
+        <div class="container-page flex h-10 items-center justify-between text-meta">
             <div class="flex items-center gap-6">
                 <a href="tel:{{ config('kian.contact.phone_raw') }}"
-                   class="flex items-center gap-2 transition hover:text-clay-300">
+                   class="flex h-10 items-center gap-2 transition hover:text-clay-300">
                     <x-icon name="phone" size="15" />
                     <span class="tech">{{ config('kian.contact.phone') }}</span>
                 </a>
@@ -41,13 +42,13 @@
          @mouseleave="scheduleClose()">
         <div class="container-page flex h-16 items-center gap-4 lg:h-[4.5rem]">
 
-            <a href="{{ route('home') }}" class="flex shrink-0 items-center gap-3"
+            <a href="{{ route('home') }}" class="flex min-h-11 min-w-11 shrink-0 items-center gap-3"
                aria-label="{{ config('kian.brand.legal_name') }} — صفحه اصلی">
                 <x-brand-mark class="h-9 w-9 lg:h-10 lg:w-10" />
                 <span class="hidden leading-tight sm:block">
                     <span class="block text-[1.0625rem] font-extrabold tracking-tight transition-colors"
                           :class="onDark ? 'text-sand-50' : 'text-ink-900'">{{ config('kian.brand.name') }}</span>
-                    <span class="tech block text-[0.6875rem] uppercase tracking-[0.18em] transition-colors"
+                    <span class="tech block text-micro uppercase tracking-[0.18em] transition-colors"
                           :class="onDark ? 'text-sand-200/55' : 'text-ink-400'">Ceramic Blocks</span>
                 </span>
             </a>
@@ -86,7 +87,7 @@
 
             <div class="mr-auto flex items-center gap-1 lg:mr-0 lg:gap-2">
                 <button type="button" @click="openSearch()"
-                        class="grid h-10 w-10 place-items-center rounded-full transition"
+                        class="tap-icon rounded-full transition"
                         :class="onDark ? 'text-sand-100 hover:bg-white/10' : 'text-ink-600 hover:bg-sand-200 hover:text-ink-900'"
                         aria-label="جستجو در سایت">
                     <x-icon name="search" />
@@ -99,7 +100,7 @@
                 </a>
 
                 <button type="button" @click="$dispatch('toggle-mobile-nav')"
-                        class="grid h-10 w-10 place-items-center rounded-full transition lg:hidden"
+                        class="tap-icon rounded-full transition lg:hidden"
                         :class="onDark ? 'text-sand-50 hover:bg-white/10' : 'text-ink-800 hover:bg-sand-200'"
                         aria-label="باز کردن منو">
                     <x-icon name="menu" size="22" />
@@ -115,5 +116,5 @@
 
 {{-- جبران ارتفاع هدر ثابت برای صفحات بدون قهرمان تمام‌قد --}}
 @unless($overHero)
-    <div class="h-16 lg:h-28" aria-hidden="true"></div>
+    <div class="header-offset" aria-hidden="true"></div>
 @endunless

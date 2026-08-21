@@ -44,7 +44,7 @@
                                    class="group flex h-full flex-col rounded-2xl border border-sand-300 bg-sand-100 p-5 transition hover:border-clay-300">
                                     <span class="eyebrow text-clay-600">{{ $item->category }}</span>
                                     <span class="mt-2 font-bold leading-snug group-hover:text-clay-700">{{ $item->title }}</span>
-                                    <span class="tech mt-auto pt-4 text-[0.75rem] text-ink-400">{{ \App\Support\Jalali::digits($item->reading_time) }} دقیقه</span>
+                                    <span class="tech mt-auto pt-4 text-micro text-ink-400">{{ \App\Support\Jalali::digits($item->reading_time) }} دقیقه</span>
                                 </a>
                             </li>
                         @endforeach

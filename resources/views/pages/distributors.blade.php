@@ -7,12 +7,12 @@
     <section class="bg-sand-100 pb-20">
         <div class="container-page">
             <div class="flex flex-wrap items-center gap-1.5 border-b border-sand-300 pb-5">
-                <span class="ml-2 text-[0.8125rem] font-semibold text-ink-400">استان:</span>
+                <span class="ml-2 text-meta font-semibold text-ink-400">استان:</span>
                 <a href="{{ route('distributors') }}"
-                   class="rounded-full px-3.5 py-1.5 text-[0.875rem] font-semibold transition {{ $selected ? 'bg-sand-200 text-ink-600 hover:bg-sand-300' : 'bg-ink-900 text-sand-50' }}">همه</a>
+                   class="tap rounded-full px-4 py-2 text-[0.875rem] font-semibold transition {{ $selected ? 'bg-sand-200 text-ink-600 hover:bg-sand-300' : 'bg-ink-900 text-sand-50' }}">همه</a>
                 @foreach($provinces as $province)
                     <a href="{{ route('distributors', ['province' => $province]) }}"
-                       class="rounded-full px-3.5 py-1.5 text-[0.875rem] font-semibold transition {{ $selected === $province ? 'bg-ink-900 text-sand-50' : 'bg-sand-200 text-ink-600 hover:bg-sand-300' }}">{{ $province }}</a>
+                       class="tap rounded-full px-4 py-2 text-[0.875rem] font-semibold transition {{ $selected === $province ? 'bg-ink-900 text-sand-50' : 'bg-sand-200 text-ink-600 hover:bg-sand-300' }}">{{ $province }}</a>
                 @endforeach
             </div>
 
@@ -33,13 +33,13 @@
                                     @endif
                                     <div class="mt-4 flex flex-wrap gap-2 border-t border-sand-200 pt-4">
                                         @if($distributor->phone)
-                                            <a href="tel:{{ $distributor->phone }}" class="tech flex items-center gap-1.5 rounded-full bg-sand-200 px-3 py-1.5 text-[0.8125rem] font-semibold transition hover:bg-sand-300">
+                                            <a href="tel:{{ $distributor->phone }}" class="tech tap gap-1.5 rounded-full bg-sand-200 px-4 py-2 text-meta font-semibold transition hover:bg-sand-300">
                                                 <x-icon name="phone" size="14" />
                                                 {{ $distributor->phone }}
                                             </a>
                                         @endif
                                         @if($distributor->mobile)
-                                            <a href="tel:{{ $distributor->mobile }}" class="tech flex items-center gap-1.5 rounded-full bg-sand-200 px-3 py-1.5 text-[0.8125rem] font-semibold transition hover:bg-sand-300">
+                                            <a href="tel:{{ $distributor->mobile }}" class="tech tap gap-1.5 rounded-full bg-sand-200 px-4 py-2 text-meta font-semibold transition hover:bg-sand-300">
                                                 <x-icon name="phone" size="14" />
                                                 {{ $distributor->mobile }}
                                             </a>

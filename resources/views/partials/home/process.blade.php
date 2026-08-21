@@ -61,7 +61,7 @@
                             <div class="flex items-start justify-between gap-4">
                                 <span class="tech text-4xl font-extrabold leading-none text-clay-500/35">{{ \App\Support\Jalali::digits($step->paddedNumber()) }}</span>
                                 @if($step->duration)
-                                    <span class="flex items-center gap-1.5 rounded-full border border-sand-300 bg-sand-50 px-3 py-1 text-[0.75rem] text-ink-500">
+                                    <span class="flex items-center gap-1.5 rounded-full border border-sand-300 bg-sand-50 px-3 py-1 text-micro text-ink-500">
                                         <x-icon name="clock" size="13" />
                                         {{ $step->duration }}
                                     </span>
@@ -70,13 +70,13 @@
 
                             <div data-process-body class="mt-5 flex flex-1 flex-col">
                                 <h3 class="text-h3 font-bold">{{ $step->title }}</h3>
-                                <p class="tech mt-1 text-[0.75rem] uppercase tracking-[0.14em] text-ink-300">{{ $step->title_en }}</p>
+                                <p class="tech mt-1 text-micro uppercase tracking-[0.14em] text-ink-300">{{ $step->title_en }}</p>
 
                                 <p class="mt-4 flex-1 leading-relaxed text-ink-500">{{ $step->description }}</p>
 
                                 @if($step->metric_value)
                                     <dl class="mt-6 flex items-baseline justify-between border-t border-sand-300 pt-4">
-                                        <dt class="text-[0.8125rem] text-ink-400">{{ $step->metric_label }}</dt>
+                                        <dt class="text-meta text-ink-400">{{ $step->metric_label }}</dt>
                                         <dd class="text-lg font-extrabold text-clay-600"><x-num :value="$step->metric_value" /></dd>
                                     </dl>
                                 @endif
@@ -102,7 +102,7 @@
             </ol>
         </div>
 
-        <p class="container-page mt-5 flex items-center gap-2 text-[0.8125rem] text-ink-400 lg:hidden">
+        <p class="container-page mt-5 flex items-center gap-2 text-meta text-ink-400 lg:hidden">
             <x-icon name="arrow-right" size="15" />
             مراحل را بکشید
         </p>

@@ -11,7 +11,7 @@
             </dd>
             <dt class="mt-2 font-semibold {{ $light ? 'text-sand-100' : 'text-ink-800' }}">{{ $stat->label }}</dt>
             @if($stat->description)
-                <p class="mt-1.5 text-[0.8125rem] leading-relaxed {{ $light ? 'text-sand-200/50' : 'text-ink-400' }}">{{ $stat->description }}</p>
+                <p class="mt-1.5 text-meta leading-relaxed {{ $light ? 'text-sand-200/50' : 'text-ink-400' }}">{{ $stat->description }}</p>
             @endif
         </div>
     @endforeach

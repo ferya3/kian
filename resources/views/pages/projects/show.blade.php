@@ -21,7 +21,7 @@
                         $project->blocks_used ? ['بلوک مصرفی', \App\Support\Jalali::digits(number_format($project->blocks_used)).' عدد'] : null,
                     ]) as [$label, $value])
                         <div class="bg-ink-950/60 px-5 py-5">
-                            <dt class="text-[0.8125rem] text-sand-200/50">{{ $label }}</dt>
+                            <dt class="text-meta text-sand-200/50">{{ $label }}</dt>
                             <dd class="tech mt-1 text-lg font-bold">{{ $value }}</dd>
                         </div>
                     @endforeach
@@ -70,7 +70,7 @@
                                            class="group flex items-center justify-between gap-3 rounded-lg border border-sand-200 px-4 py-3 transition hover:border-clay-300 hover:bg-clay-50">
                                             <span>
                                                 <span class="block font-semibold group-hover:text-clay-700">{{ $product->name }}</span>
-                                                <span class="tech block text-[0.75rem] text-ink-400">{{ \App\Support\Jalali::digits($product->dimensionLabel()) }} cm</span>
+                                                <span class="tech block text-micro text-ink-400">{{ \App\Support\Jalali::digits($product->dimensionLabel()) }} cm</span>
                                             </span>
                                             <x-icon name="chevron-left" size="16" class="text-ink-300 transition group-hover:text-clay-500" />
                                         </a>
@@ -96,4 +96,10 @@
             </section>
         @endif
     </article>
+    <x-mobile-action-bar
+        :primary-href="route('contact', ['type' => 'quote'])"
+        primary-label="پروژه مشابه دارید؟"
+        :secondary-href="route('projects.index')"
+        secondary-label="پروژه‌ها"
+        secondary-icon="grid" />
 </x-layouts.app>

@@ -12,22 +12,25 @@
             </div>
         </div>
 
-        {{-- دسکتاپ: شبکه — موبایل: ریل افقی قابل swipe --}}
-        <div class="mt-12 hidden gap-6 md:grid md:grid-cols-2 xl:grid-cols-4" data-reveal-stagger="110">
+        {{--
+            یک فهرست، دو چیدمان.
+            پایه (موبایل) ریل افقی قابل swipe است؛ از md به بالا با همان مارک‌آپ
+            به شبکه تبدیل می‌شود. مارک‌آپ تکراری یعنی دو نسخه که از هم عقب می‌مانند.
+        --}}
+        <ul class="scroll-rail mt-10 md:mx-0 md:mt-12 md:grid md:snap-none md:grid-cols-2 md:gap-6 md:overflow-visible md:px-0 xl:grid-cols-4"
+            data-reveal-stagger="110"
+            aria-label="محصولات پرکاربرد">
             @foreach($featuredProducts as $product)
-                <x-product-card :product="$product" data-reveal />
+                <li class="w-[78vw] max-w-xs md:w-auto md:max-w-none">
+                    <x-product-card :product="$product" data-reveal class="h-full" />
+                </li>
             @endforeach
-        </div>
+        </ul>
 
-        <div class="scroll-rail mt-10 md:hidden" role="list" aria-label="محصولات پرکاربرد">
-            @foreach($featuredProducts as $product)
-                <x-product-card :product="$product" role="listitem" class="w-[80vw] max-w-xs" />
-            @endforeach
-        </div>
-
-        <p class="mt-4 flex items-center gap-2 text-[0.8125rem] text-ink-400 md:hidden">
+        <p class="mt-4 flex items-center gap-2 text-meta text-ink-400 md:hidden">
             <x-icon name="arrow-right" size="15" />
             برای دیدن بقیه، بکشید
         </p>
+
     </div>
 </section>

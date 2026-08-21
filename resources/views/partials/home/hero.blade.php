@@ -53,7 +53,7 @@
                                   @if($stat->value >= 1000) data-separated @endif>۰</span><span class="text-clay-400">{{ $stat->suffix }}</span>
                         </bdi>
                     </dd>
-                    <dt class="mt-1 text-[0.8125rem] text-sand-200/60">{{ $stat->label }}</dt>
+                    <dt class="mt-1 text-meta text-sand-200/60">{{ $stat->label }}</dt>
                 </div>
             @endforeach
         </dl>

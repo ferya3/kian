@@ -33,7 +33,7 @@
                 <div class="col-span-3">
                     <p class="mb-4 border-b border-sand-300 pb-3 text-sm font-bold text-ink-900">
                         {{ $group->name }}
-                        <span class="tech mr-2 text-[0.6875rem] font-normal uppercase tracking-widest text-ink-300">{{ $group->name_en }}</span>
+                        <span class="tech mr-2 text-micro font-normal uppercase tracking-widest text-ink-300">{{ $group->name_en }}</span>
                     </p>
                     <ul class="space-y-0.5">
                         @foreach($group->children as $child)
