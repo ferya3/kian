@@ -16,11 +16,15 @@
         'plain'   => 'text-clay-600 hover:text-clay-700 px-0',
     ];
 
-    // ارتفاع حداقلی ۴۴ پیکسل روی موبایل — استاندارد هدف لمسی؛ روی دسکتاپ فشرده‌تر
+    /*
+    | ۴۴ پیکسل ارتفاع، حداقلِ هدف لمسی است — نه اندازه‌ی دلخواه.
+    | روی موبایل padding افقی کمتر است تا دکمه‌ها حجیم نشوند؛ از lg به بالا
+    | که فضا هست، بزرگ‌تر می‌شوند.
+    */
     $sizes = [
         'sm' => 'min-h-11 px-4 py-2 text-meta lg:min-h-0',
-        'md' => 'min-h-11 px-6 py-3 text-[0.9375rem]',
-        'lg' => 'min-h-12 px-8 py-4 text-base',
+        'md' => 'min-h-11 px-5 py-2.5 text-[0.9375rem] lg:px-6 lg:py-3',
+        'lg' => 'min-h-11 px-5 py-2.5 text-[0.9375rem] lg:min-h-12 lg:px-8 lg:py-4 lg:text-base',
     ];
 
     $classes = $base.' '.($variants[$variant] ?? $variants['primary']).' '.($variant === 'plain' ? '' : ($sizes[$size] ?? $sizes['md']));

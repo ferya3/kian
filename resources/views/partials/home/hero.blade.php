@@ -3,7 +3,7 @@
     $video = Setting::text('hero_video');
 @endphp
 
-<section class="relative flex min-h-[100svh] flex-col justify-end overflow-hidden bg-ink-950 pb-8 pt-28 text-sand-50 lg:pb-12">
+<section class="relative flex min-h-[78svh] flex-col justify-center overflow-hidden bg-ink-950 pb-12 pt-24 text-sand-50 sm:min-h-[82svh] lg:min-h-[88svh] lg:pb-16 lg:pt-32">
 
     @if($video)
         {{-- ویدئوی سینمایی کارخانه: نمای نزدیک خاک → کوره → خروج محصول → ساختمان --}}
@@ -36,27 +36,16 @@
                 {{ Setting::text('hero_subtitle', config('kian.seo.default_description')) }}
             </p>
 
-            <div class="mt-8 flex flex-col gap-3 sm:mt-10 sm:flex-row sm:flex-wrap sm:items-center" data-reveal style="--reveal-delay: 270ms">
-                <x-cta :href="route('products.index')" variant="primary" size="lg" class="w-full sm:w-auto">مشاهده محصولات</x-cta>
-                <x-cta :href="route('factory')" variant="light" size="lg" icon="play" class="w-full sm:w-auto">آشنایی با کارخانه</x-cta>
+            {{-- دو دکمه کنار هم روی گوشی: متن تک‌خطی، padding کم، ارتفاع ۴۴ --}}
+            <div class="mt-7 flex items-center gap-2.5 sm:mt-10 sm:gap-3" data-reveal style="--reveal-delay: 270ms">
+                {{-- آیکون روی گوشی پنهان می‌شود: در ۳۶۰ پیکسل، برچسب مهم‌تر از فلش است --}}
+                <x-cta :href="route('products.index')" variant="primary" size="lg"
+                       class="min-w-0 flex-1 justify-center whitespace-nowrap px-2 text-meta [&_svg]:hidden sm:flex-none sm:gap-2 sm:px-5 sm:text-[0.9375rem] sm:[&_svg]:block">مشاهده محصولات</x-cta>
+                <x-cta :href="route('factory')" variant="light" size="lg" icon="play"
+                       class="min-w-0 flex-1 justify-center whitespace-nowrap px-2 text-meta [&_svg]:hidden sm:flex-none sm:gap-2 sm:px-5 sm:text-[0.9375rem] sm:[&_svg]:block">آشنایی با کارخانه</x-cta>
             </div>
         </div>
 
-        {{-- نوار شاخص‌ها — لنگر بصری پایین قهرمان --}}
-        <dl class="mt-10 grid grid-cols-2 gap-px overflow-hidden rounded-[var(--radius-panel)] border border-white/10 bg-white/[0.07] backdrop-blur-md lg:mt-14 lg:grid-cols-4"
-            data-reveal data-reveal-stagger="80" style="--reveal-delay: 360ms">
-            @foreach($stats as $stat)
-                <div class="bg-ink-950/45 px-5 py-5 lg:px-7 lg:py-6">
-                    <dd class="text-2xl font-extrabold text-sand-50 lg:text-3xl">
-                        <bdi dir="ltr" class="tech inline-block whitespace-nowrap">
-                            <span data-countup="{{ $stat->value }}" data-decimals="{{ $stat->decimals }}"
-                                  @if($stat->value >= 1000) data-separated @endif>۰</span><span class="text-clay-400">{{ $stat->suffix }}</span>
-                        </bdi>
-                    </dd>
-                    <dt class="mt-1 text-meta text-sand-200/60">{{ $stat->label }}</dt>
-                </div>
-            @endforeach
-        </dl>
     </div>
 
 </section>

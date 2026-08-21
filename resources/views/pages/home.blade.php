@@ -1,5 +1,6 @@
 <x-layouts.app>
     @include('partials.home.hero')
+    @include('partials.home.stats')
     @include('partials.home.finder')
     @include('partials.home.products')
     @include('partials.home.why-ceramic')

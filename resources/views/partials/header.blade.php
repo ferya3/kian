@@ -40,15 +40,28 @@
     <div class="transition-colors duration-300"
          :class="onDark ? 'bg-transparent' : 'bg-sand-50/95 backdrop-blur-xl border-b border-sand-300'"
          @mouseleave="scheduleClose()">
-        <div class="container-page flex h-16 items-center gap-4 lg:h-[4.5rem]">
+        <div class="container-page flex h-16 items-center gap-2 lg:h-[4.5rem] lg:gap-4">
 
-            <a href="{{ route('home') }}" class="flex min-h-11 min-w-11 shrink-0 items-center gap-3"
+            {{--
+                موبایل: همبرگر سمت راست، لوگو وسط، جستجو سمت چپ.
+                همان عناصر روی دسکتاپ به چیدمان افقی متعارف برمی‌گردند —
+                بدون تکرار مارک‌آپ، فقط با ترتیب و flex.
+            --}}
+            <button type="button" @click="$dispatch('toggle-mobile-nav')"
+                    class="tap-icon shrink-0 rounded-full transition lg:hidden"
+                    :class="onDark ? 'text-sand-50 hover:bg-white/10' : 'text-ink-800 hover:bg-sand-200'"
+                    aria-label="باز کردن منو">
+                <x-icon name="menu" size="24" />
+            </button>
+
+            <a href="{{ route('home') }}"
+               class="flex min-h-11 flex-1 items-center justify-center gap-2.5 lg:min-w-11 lg:flex-none lg:justify-start lg:gap-3"
                aria-label="{{ config('kian.brand.legal_name') }} — صفحه اصلی">
-                <x-brand-mark class="h-9 w-9 lg:h-10 lg:w-10" />
-                <span class="hidden leading-tight sm:block">
+                <x-brand-mark class="h-8 w-8 shrink-0 sm:h-9 sm:w-9 lg:h-10 lg:w-10" />
+                <span class="leading-tight">
                     <span class="block text-[1.0625rem] font-extrabold tracking-tight transition-colors"
                           :class="onDark ? 'text-sand-50' : 'text-ink-900'">{{ config('kian.brand.name') }}</span>
-                    <span class="tech block text-micro uppercase tracking-[0.18em] transition-colors"
+                    <span class="tech hidden text-micro uppercase tracking-[0.18em] transition-colors sm:block"
                           :class="onDark ? 'text-sand-200/55' : 'text-ink-400'">Ceramic Blocks</span>
                 </span>
             </a>
@@ -85,26 +98,19 @@
                 @endforeach
             </nav>
 
-            <div class="mr-auto flex items-center gap-1 lg:mr-0 lg:gap-2">
+            <div class="flex shrink-0 items-center gap-1 lg:gap-2">
                 <button type="button" @click="openSearch()"
                         class="tap-icon rounded-full transition"
                         :class="onDark ? 'text-sand-100 hover:bg-white/10' : 'text-ink-600 hover:bg-sand-200 hover:text-ink-900'"
                         aria-label="جستجو در سایت">
-                    <x-icon name="search" />
+                    <x-icon name="search" size="24" />
                 </button>
 
                 <a href="{{ route('contact') }}"
-                   class="hidden items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition sm:flex"
+                   class="hidden items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition lg:flex"
                    :class="onDark ? 'bg-clay-500 text-white hover:bg-clay-400' : 'bg-ink-900 text-sand-50 hover:bg-clay-600'">
                     درخواست قیمت
                 </a>
-
-                <button type="button" @click="$dispatch('toggle-mobile-nav')"
-                        class="tap-icon rounded-full transition lg:hidden"
-                        :class="onDark ? 'text-sand-50 hover:bg-white/10' : 'text-ink-800 hover:bg-sand-200'"
-                        aria-label="باز کردن منو">
-                    <x-icon name="menu" size="22" />
-                </button>
             </div>
         </div>
 

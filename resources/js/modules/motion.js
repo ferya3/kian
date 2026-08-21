@@ -28,5 +28,22 @@ export function observeOnce(elements, callback, options = {}) {
         });
     }, { rootMargin: '0px 0px -80px 0px', threshold: 0.01, ...options });
 
-    items.forEach((item) => observer.observe(item));
+    /*
+     * حاشیه‌ی منفیِ بالا حس «ظاهر شدن هنگام اسکرول» را می‌سازد، اما عنصری که
+     * همان ابتدا کمی زیر خط تا است هرگز فعال نمی‌شد — مثل نوار شاخص‌ها روی
+     * نمایشگر ۹۰۰ پیکسلی. هرچه در viewport واقعی دیده می‌شود، بی‌درنگ اجرا شود.
+     */
+    const visibleNow = [];
+
+    items.forEach((item) => {
+        const box = item.getBoundingClientRect();
+        const inView = box.top < window.innerHeight && box.bottom > 0;
+
+        if (inView) visibleNow.push(item);
+        else observer.observe(item);
+    });
+
+    if (visibleNow.length) {
+        requestAnimationFrame(() => visibleNow.forEach(callback));
+    }
 }
