@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#3d1b0e"/><stop offset="55%" stop-color="#1c1109"/><stop offset="1" stop-color="#0e0e0e"/>
+    </linearGradient>
+    <radialGradient id="glow" cx=".22" cy=".3" r=".55">
+      <stop offset="0" stop-color="#e2732f" stop-opacity=".42"/><stop offset="1" stop-color="#e2732f" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+  <path d="M0 470 C 260 430, 520 500, 800 464 S 1140 420, 1200 456 V630 H0 Z" fill="#5c2815" fill-opacity=".55"/>
+  <path d="M0 528 C 300 494, 560 560, 860 524 S 1140 486, 1200 526 V630 H0 Z" fill="#2a1109"/>
+  <g fill="#170d07">
+    <path d="M760 630V470l90-34 90 34v160z"/><rect x="960" y="500" width="220" height="130" rx="4"/>
+    <path d="M1040 500V400h26v100z"/>
+  </g>
+  <rect x="972" y="536" width="34" height="34" rx="3" fill="#f0a05c"/>
+  <rect x="72" y="76" width="52" height="52" rx="11" fill="#B4552D"/>
+  <g fill="#F5F3EF" fill-opacity=".92">
+    <rect x="82" y="87" width="8" height="10" rx="1.5"/><rect x="94" y="87" width="8" height="10" rx="1.5"/><rect x="106" y="87" width="8" height="10" rx="1.5"/>
+    <rect x="88" y="103" width="8" height="13" rx="1.5"/><rect x="100" y="103" width="8" height="13" rx="1.5"/>
+  </g>
+  <text x="1128" y="112" text-anchor="end" font-family="Vazirmatn, Tahoma, sans-serif" font-size="26" font-weight="700" fill="#f5d0b4" direction="rtl">شرکت صنایع سفال کیان</text>
+  <text x="1128" y="286" text-anchor="end" font-family="Vazirmatn, Tahoma, sans-serif" font-size="70" font-weight="800" fill="#faf8f5" direction="rtl">ساخته‌شده از خاک،</text>
+  <text x="1128" y="368" text-anchor="end" font-family="Vazirmatn, Tahoma, sans-serif" font-size="70" font-weight="800" fill="#faf8f5" direction="rtl">مهندسی‌شده برای آینده</text>
+  <text x="1128" y="424" text-anchor="end" font-family="Inter, Arial, sans-serif" font-size="20" letter-spacing="4" fill="#c87755">BORN OF EARTH · ENGINEERED FOR THE FUTURE</text>
+</svg>

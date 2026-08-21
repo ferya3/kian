@@ -1,0 +1,331 @@
+@import 'tailwindcss';
+
+/* ==========================================================================
+   فونت‌ها — به‌صورت محلی سرو می‌شوند، نه از CDN.
+   دلیل: سایت باید داخل ایران هم بدون وابستگی به دامنه‌های خارجی سریع باز شود.
+   ========================================================================== */
+
+@font-face {
+    font-family: 'Vazirmatn';
+    src: url('../../node_modules/vazirmatn/fonts/webfonts/Vazirmatn[wght].woff2') format('woff2-variations');
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'InterVar';
+    src: url('../../node_modules/@fontsource-variable/inter/files/inter-latin-wght-normal.woff2') format('woff2-variations');
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+2000-206F, U+2070-209F, U+20A0-20AB, U+2113, U+2C60-2C7F;
+}
+
+/* ==========================================================================
+   توکن‌های طراحی
+   ========================================================================== */
+
+@theme {
+    /* --- پالت رنگ --- */
+    /* پس‌زمینه: کرم سنگی روشن — رنگ خاک خام پیش از پخت */
+    --color-sand-50: #faf8f5;
+    --color-sand-100: #f5f3ef;
+    --color-sand-200: #ece8e0;
+    --color-sand-300: #ded7cb;
+    --color-sand-400: #c4bbaa;
+
+    /* --- رنگ اصلی: خاک رس پخته --- */
+    --color-clay-50: #fbf2ee;
+    --color-clay-100: #f5ded4;
+    --color-clay-200: #e9bdaa;
+    --color-clay-300: #d99a80;
+    --color-clay-400: #c87755;
+    --color-clay-500: #b4552d;
+    --color-clay-600: #9a4524;
+    --color-clay-700: #7c361c;
+    --color-clay-800: #5c2815;
+    --color-clay-900: #3d1b0e;
+
+    /* --- نارنجی سفالی: فقط برای تأکید، هرگز برای سطح بزرگ --- */
+    --color-ember-400: #f08b4a;
+    --color-ember-500: #e2732f;
+    --color-ember-600: #c65c1e;
+
+    /* --- گرافیت --- */
+    --color-ink-50: #f6f6f6;
+    --color-ink-100: #e7e7e7;
+    --color-ink-200: #cfcfcf;
+    --color-ink-300: #a3a3a3;
+    --color-ink-400: #6b6b6b;
+    --color-ink-500: #454545;
+    --color-ink-600: #2e2e2e;
+    --color-ink-700: #232323;
+    --color-ink-800: #1c1c1c;
+    --color-ink-900: #171717;
+    --color-ink-950: #0e0e0e;
+
+    /* --- تایپوگرافی --- */
+    --font-sans: 'Vazirmatn', 'Segoe UI', system-ui, -apple-system, sans-serif;
+    --font-technical: 'InterVar', 'Vazirmatn', ui-sans-serif, system-ui, sans-serif;
+
+    --text-display: clamp(2.75rem, 1.6rem + 5.2vw, 5rem);
+    --text-display--line-height: 1.06;
+    --text-display--letter-spacing: -0.025em;
+
+    --text-h1: clamp(2.25rem, 1.5rem + 3.4vw, 3.75rem);
+    --text-h1--line-height: 1.12;
+    --text-h1--letter-spacing: -0.02em;
+
+    --text-h2: clamp(1.75rem, 1.25rem + 2.3vw, 2.75rem);
+    --text-h2--line-height: 1.18;
+    --text-h2--letter-spacing: -0.015em;
+
+    --text-h3: clamp(1.375rem, 1.15rem + 1vw, 2rem);
+    --text-h3--line-height: 1.3;
+
+    --text-lead: clamp(1.0625rem, 1rem + 0.4vw, 1.3125rem);
+    --text-lead--line-height: 1.75;
+
+    --text-body: 1.0625rem;
+    --text-body--line-height: 1.9;
+
+    --text-tech: 0.9375rem;
+    --text-tech--line-height: 1.7;
+
+    --text-eyebrow: 0.8125rem;
+    --text-eyebrow--line-height: 1.4;
+    --text-eyebrow--letter-spacing: 0.14em;
+
+    /* --- حرکت --- */
+    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
+
+    /* --- شعاع و سایه --- */
+    --radius-panel: 1.25rem;
+    --shadow-lift: 0 1px 2px rgb(23 23 23 / 0.04), 0 12px 32px -12px rgb(23 23 23 / 0.18);
+    --shadow-float: 0 2px 4px rgb(23 23 23 / 0.05), 0 28px 60px -24px rgb(23 23 23 / 0.28);
+}
+
+/* ==========================================================================
+   لایه پایه
+   ========================================================================== */
+
+@layer base {
+    html {
+        scroll-behavior: smooth;
+        -webkit-text-size-adjust: 100%;
+    }
+
+    /* Lenis کنترل اسکرول را در دست می‌گیرد؛ smooth بومی باید خاموش شود. */
+    html.lenis,
+    html.lenis body {
+        height: auto;
+    }
+
+    html.lenis {
+        scroll-behavior: auto;
+    }
+
+    .lenis.lenis-smooth [data-lenis-prevent] {
+        overscroll-behavior: contain;
+    }
+
+    body {
+        background-color: var(--color-sand-100);
+        color: var(--color-ink-900);
+        font-family: var(--font-sans);
+        font-size: var(--text-body);
+        line-height: 1.9;
+        font-feature-settings: 'ss01', 'ss02';
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-rendering: optimizeLegibility;
+    }
+
+    /* اعداد فنی همیشه با فونت لاتین و عرض ثابت — جدول‌ها به هم نریزند. */
+    .tnum,
+    table td,
+    table th {
+        font-variant-numeric: tabular-nums;
+    }
+
+    h1, h2, h3, h4 {
+        font-weight: 700;
+        text-wrap: balance;
+    }
+
+    p {
+        text-wrap: pretty;
+    }
+
+    :focus-visible {
+        outline: 2px solid var(--color-clay-500);
+        outline-offset: 3px;
+        border-radius: 2px;
+    }
+
+    ::selection {
+        background-color: var(--color-clay-200);
+        color: var(--color-clay-900);
+    }
+
+    /* هدر چسبان نباید عنوان لنگر را بپوشاند */
+    [id] {
+        scroll-margin-top: 6rem;
+    }
+
+    [x-cloak] {
+        display: none !important;
+    }
+
+    dialog::backdrop {
+        background: rgb(14 14 14 / 0.62);
+        backdrop-filter: blur(4px);
+    }
+}
+
+/* ==========================================================================
+   ابزارها و کامپوننت‌ها
+   ========================================================================== */
+
+@layer components {
+    .container-page {
+        width: 100%;
+        margin-inline: auto;
+        padding-inline: 1.25rem;
+        max-width: 88rem;
+    }
+
+    @media (min-width: 768px) {
+        .container-page { padding-inline: 2rem; }
+    }
+
+    @media (min-width: 1280px) {
+        .container-page { padding-inline: 3rem; }
+    }
+
+    .eyebrow {
+        font-family: var(--font-technical);
+        font-size: var(--text-eyebrow);
+        letter-spacing: var(--text-eyebrow--letter-spacing);
+        text-transform: uppercase;
+        font-weight: 600;
+    }
+
+    /* اعداد و واحدهای فنی */
+    .tech {
+        font-family: var(--font-technical);
+        font-variant-numeric: tabular-nums;
+        letter-spacing: -0.01em;
+    }
+
+    /* خط‌کش نازک بین بخش‌ها — امضای بصری سایت */
+    .rule {
+        height: 1px;
+        background: linear-gradient(to left, transparent, var(--color-sand-300) 15%, var(--color-sand-300) 85%, transparent);
+    }
+
+    .scroll-rail {
+        display: flex;
+        gap: 1rem;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        scrollbar-width: none;
+        padding-inline: 1.25rem;
+        padding-block-end: 0.5rem;
+        margin-inline: -1.25rem;
+    }
+
+    .scroll-rail::-webkit-scrollbar { display: none; }
+
+    .scroll-rail > * {
+        scroll-snap-align: start;
+        flex: 0 0 auto;
+    }
+
+    /* کارت شیشه‌ای روی تصویر تیره */
+    .glass {
+        background: rgb(23 23 23 / 0.55);
+        backdrop-filter: blur(14px) saturate(1.2);
+        border: 1px solid rgb(255 255 255 / 0.1);
+    }
+}
+
+@layer utilities {
+    /* ظاهر شدن تدریجی هنگام ورود به viewport — با JS مقدار data-reveal ست می‌شود */
+    [data-reveal] {
+        opacity: 0;
+        transform: translateY(1.75rem);
+        transition:
+            opacity 0.9s var(--ease-out-expo),
+            transform 0.9s var(--ease-out-expo);
+        transition-delay: var(--reveal-delay, 0ms);
+    }
+
+    [data-reveal].is-visible {
+        opacity: 1;
+        transform: none;
+    }
+
+    /* پرده‌ی بالارونده روی تصویر */
+    [data-clip-reveal] {
+        clip-path: inset(0 0 100% 0);
+        transition: clip-path 1.1s var(--ease-out-expo);
+        transition-delay: var(--reveal-delay, 0ms);
+    }
+
+    [data-clip-reveal].is-visible {
+        clip-path: inset(0 0 0 0);
+    }
+
+    .text-balance { text-wrap: balance; }
+
+    /* فقط برای صفحه‌خوان‌ها */
+    .sr-only-focusable:not(:focus):not(:focus-within) {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border-width: 0;
+    }
+
+    .mask-fade-b {
+        mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+    }
+}
+
+/* ==========================================================================
+   احترام به prefers-reduced-motion — انیمیشن در خدمت محصول است، نه برعکس
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+
+    [data-reveal],
+    [data-clip-reveal] {
+        opacity: 1 !important;
+        transform: none !important;
+        clip-path: none !important;
+    }
+}
+
+@media print {
+    .no-print { display: none !important; }
+    body { background: #fff; color: #000; }
+}

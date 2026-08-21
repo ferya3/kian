@@ -1,0 +1,12 @@
+<x-layouts.app>
+    @include('partials.home.hero')
+    @include('partials.home.finder')
+    @include('partials.home.products')
+    @include('partials.home.why-ceramic')
+    @include('partials.home.process')
+    @include('partials.home.factory')
+    @include('partials.home.solutions')
+    @include('partials.home.projects')
+    @include('partials.home.technical')
+    @include('partials.home.sustainability')
+</x-layouts.app>
