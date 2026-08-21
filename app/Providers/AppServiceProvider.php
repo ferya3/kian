@@ -21,7 +21,9 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        if ($this->app->environment('production')) {
+        // فقط وقتی سایت واقعاً روی https سرو می‌شود؛ وگرنه نصب بدون SSL
+        // لینک‌های https تولید می‌کند که باز نمی‌شوند.
+        if (str_starts_with((string) config('app.url'), 'https://')) {
             URL::forceScheme('https');
         }
 
