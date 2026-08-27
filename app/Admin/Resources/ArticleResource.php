@@ -45,6 +45,8 @@ class ArticleResource extends Resource
                 'installation' => 'اجرا',
                 'factory' => 'کارخانه',
             ])->rules(['required'])->inList()->half(),
+            Field::image('cover_image', 'تصویر شاخص', 'articles')->rules(['nullable']),
+
             Field::textarea('excerpt', 'چکیده')->rules(['nullable', 'max:600'])
                 ->hint('در کارت مقاله و توضیح سئو استفاده می‌شود.'),
             Field::longtext('body', 'متن مقاله')->rules(['nullable', 'max:40000'])

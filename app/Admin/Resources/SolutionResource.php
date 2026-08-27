@@ -42,6 +42,7 @@ class SolutionResource extends Resource
             Field::text('title_en', 'عنوان انگلیسی')->rules(['nullable'])->half(),
             Field::slug('slug')->rules(['required'])->half(),
             Field::text('subtitle', 'زیرعنوان')->rules(['nullable'])->half(),
+            Field::image('image', 'تصویر راهکار', 'solutions')->rules(['nullable'])->half(),
             Field::textarea('summary', 'خلاصه')->rules(['nullable', 'max:600']),
             Field::longtext('description', 'توضیح کامل')->rules(['nullable', 'max:6000']),
             Field::lines('benefits', 'مزایا')->rules(['nullable']),

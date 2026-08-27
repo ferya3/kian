@@ -169,6 +169,12 @@ class ResourceController extends Controller
 
         foreach ($fields as $field) {
             $rules[$field->key] = $this->rulesFor($field, $record);
+
+            // قاعده روی آرایه، سقف تعداد را می‌گیرد؛ نوع و حجم باید روی
+            // تک‌تک فایل‌ها بنشیند وگرنه هر چیزی داخل گالری آپلود می‌شود.
+            if ($field->type === 'gallery') {
+                $rules[$field->key.'.*'] = ['image', 'mimes:jpg,jpeg,png,webp', 'max:4096'];
+            }
         }
 
         $validator = validator($request->only(array_column($fields, 'key')), $rules, [], $this->attributeNames($fields));
@@ -288,6 +294,8 @@ class ResourceController extends Controller
 
             'file', 'image' => $this->storeUpload($request, $field, $record),
 
+            'gallery' => $this->storeGallery($request, $field, $record),
+
             'number' => [$field->key => $value === null ? null : (int) $value],
             'decimal' => [$field->key => $value === null ? null : (float) $value],
 
@@ -337,6 +345,43 @@ class ResourceController extends Controller
         }
 
         return $data;
+    }
+
+    /**
+     * گالری: افزودن تجمعی و حذف تک‌تک.
+     *
+     * فرم فقط تصویرهای *جدید* را می‌فرستد؛ تصویرهای موجود از رکورد خوانده
+     * می‌شوند تا ذخیره‌ی فرم بدون انتخاب فایل، گالری را خالی نکند. ترتیب
+     * نهایی از ورودی _order_ می‌آید و به مسیرهای شناخته‌شده محدود می‌شود —
+     * تا نتوان با دستکاری فرم مسیر دلخواهی را داخل ستون نوشت.
+     */
+    protected function storeGallery(Request $request, Field $field, ?Model $record): array
+    {
+        $existing = collect((array) ($record?->{$field->key} ?? []))->filter()->values();
+
+        $removed = collect((array) $request->input('_remove_'.$field->key, []))
+            ->filter(fn ($path) => $existing->contains($path));
+
+        $removed->each(fn ($path) => Storage::disk($field->disk)->delete($path));
+
+        $kept = $existing->reject(fn ($path) => $removed->contains($path))->values();
+
+        foreach ((array) $request->file($field->key, []) as $upload) {
+            if (! $upload?->isValid()) {
+                continue;
+            }
+
+            $kept->push($upload->store('admin/'.$field->folder, $field->disk));
+        }
+
+        // ترتیب فقط بازچینش همین مسیرهاست، نه فهرست دلخواه کاربر
+        $order = collect((array) $request->input('_order_'.$field->key, []))
+            ->filter(fn ($path) => $kept->contains($path))
+            ->unique();
+
+        $final = $order->merge($kept->reject(fn ($path) => $order->contains($path)))->values();
+
+        return [$field->key => $final->all()];
     }
 
     protected function attributeNames(array $fields): array

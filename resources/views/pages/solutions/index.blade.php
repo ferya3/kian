@@ -10,6 +10,11 @@
                 <article data-reveal
                          class="group grid grid-cols-1 gap-8 rounded-[var(--radius-panel)] border border-sand-300 bg-sand-50 p-6 transition hover:border-clay-300 lg:grid-cols-12 lg:p-8">
                     <div class="lg:col-span-5">
+                        @if(\App\Support\Media::has($solution->image))
+                            <div class="mb-5 aspect-[16/9] overflow-hidden rounded-2xl bg-sand-200">
+                                <x-media :path="$solution->image" :alt="$solution->title" />
+                            </div>
+                        @endif
                         <p class="tech text-micro uppercase tracking-[0.14em] text-ink-300">{{ $solution->title_en }}</p>
                         <h2 class="mt-2 text-h3 font-extrabold">
                             <a href="{{ route('solutions.show', $solution) }}" class="transition hover:text-clay-600">{{ $solution->title }}</a>

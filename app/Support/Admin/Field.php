@@ -158,6 +158,21 @@ class Field
         return $field;
     }
 
+    /**
+     * گالری چندتصویری روی یک ستون JSON.
+     *
+     * برخلاف image که یک مسیر نگه می‌دارد، این آرایه‌ای از مسیرهاست: آپلود
+     * جدید به انتها اضافه می‌شود و حذف تک‌تک انجام می‌گیرد، پس ویرایش یک
+     * تصویر بقیه را از بین نمی‌برد.
+     */
+    public static function gallery(string $key, string $label, string $folder): static
+    {
+        $field = new static($key, $label, 'gallery');
+        $field->folder = $folder;
+
+        return $field;
+    }
+
     public static function readonly(string $key, string $label): static
     {
         return new static($key, $label, 'readonly');
@@ -270,9 +285,14 @@ class Field
             'slug' => ['string', 'max:190', 'regex:/^[\pL\pN\-]+$/u'],
             'date' => ['date'],
             'select', 'relation' => [],
-            'checkboxes', 'lines' => ['array'],
+            'checkboxes' => ['array'],
+            // lines یک textarea است: هر خط یک آیتم. رشته می‌آید و در کست به
+            // آرایه تبدیل می‌شود، پس قاعده هم باید روی رشته بنشیند نه آرایه.
+            'lines' => ['string', 'max:4000'],
             // آپلود: نوع و حجم همیشه محدود می‌شود، حتی اگر منبع چیزی نگوید
             'image' => ['image', 'mimes:jpg,jpeg,png,webp,svg', 'max:4096'],
+            // هر فایلِ گالری جداگانه بررسی می‌شود؛ قاعده روی خودِ آرایه نمی‌نشیند.
+            'gallery' => ['array', 'max:24'],
             'file' => ['file', 'mimes:pdf,dwg,dxf,rvt,ifc,skp,zip,xlsx,jpg,png,svg', 'max:20480'],
             default => ['string', 'max:2000'],
         };
@@ -282,7 +302,7 @@ class Field
 
     public function isFileUpload(): bool
     {
-        return in_array($this->type, ['file', 'image'], true);
+        return in_array($this->type, ['file', 'image', 'gallery'], true);
     }
 
     public function isEditable(): bool

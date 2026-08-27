@@ -33,6 +33,8 @@ class CertificateResource extends Resource
     {
         return [
             Field::text('title', 'عنوان')->rules(['required'])->inList(true),
+            Field::image('image', 'تصویر گواهی‌نامه', 'certificates')->rules(['nullable'])->half(),
+
             Field::text('issuer', 'صادرکننده')->rules(['nullable'])->inList()->half(),
             Field::text('number', 'شماره')->rules(['nullable', 'max:60'])->half(),
             Field::number('year', 'سال (شمسی)')->rules(['nullable', 'min:1300', 'max:1500'])->inList()->half(),

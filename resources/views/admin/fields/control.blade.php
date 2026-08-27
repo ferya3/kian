@@ -76,12 +76,12 @@
         @if($existing)
             <div class="mb-2 flex flex-wrap items-center gap-3 rounded-xl border border-sand-300 bg-sand-100 p-3">
                 @if($field->type === 'image')
-                    <img src="{{ \Illuminate\Support\Facades\Storage::disk($field->disk)->url($existing) }}"
+                    <img src="{{ \App\Support\Media::url($existing) }}"
                          alt="" class="h-14 w-14 rounded-lg object-cover">
                 @else
                     <x-icon name="file" size="22" class="text-clay-500" />
                 @endif
-                <a href="{{ \Illuminate\Support\Facades\Storage::disk($field->disk)->url($existing) }}"
+                <a href="{{ \App\Support\Media::url($existing) }}"
                    target="_blank" rel="noopener"
                    class="tap min-w-0 flex-1 truncate text-meta text-ink-600 hover:text-clay-600" dir="ltr">
                     {{ basename($existing) }}
@@ -93,8 +93,61 @@
                 </label>
             </div>
         @endif
-        <input id="{{ $id }}" name="{{ $field->key }}" type="file"
-               class="w-full rounded-xl border border-dashed border-sand-300 bg-sand-100 px-4 py-3 text-meta file:ml-3 file:rounded-lg file:border-0 file:bg-ink-900 file:px-4 file:py-2 file:text-meta file:font-semibold file:text-sand-50">
+        {{--
+            دکمه‌ی بومی input[type=file] متن انگلیسی مرورگر را نشان می‌دهد
+            («Choose File») و ترجمه‌پذیر نیست؛ پس پنهانش می‌کنیم و label
+            جای آن می‌نشیند. label برای input فایل، خودش کلیک را منتقل می‌کند،
+            پس بدون جاوااسکریپت هم کار می‌کند.
+        --}}
+        <div x-data="{ picked: '' }" class="flex flex-wrap items-center gap-3">
+            <input id="{{ $id }}" name="{{ $field->key }}" type="file" class="sr-only"
+                   @if($field->type === 'image') accept="image/*" @endif
+                   x-on:change="picked = $el.files.length ? $el.files[0].name : ''">
+            <label for="{{ $id }}"
+                   class="tap cursor-pointer gap-2 rounded-xl bg-ink-900 px-4 text-meta font-semibold text-sand-50 transition hover:bg-ink-800">
+                <x-icon name="plus" size="15" />
+                انتخاب فایل
+            </label>
+            <span class="min-w-0 flex-1 truncate text-meta text-ink-400"
+                  x-text="picked || 'فایلی انتخاب نشده'" dir="auto">فایلی انتخاب نشده</span>
+        </div>
+        @break
+
+    @case('gallery')
+        @php $images = collect((array) ($record->{$field->key} ?? []))->filter()->values(); @endphp
+
+        {{--
+            تصویرهای موجود به‌صورت مسیر در فرم می‌مانند تا ذخیره بدون انتخاب
+            فایل جدید، گالری را خالی نکند. حذف با چک‌باکس روی همان کارت است.
+        --}}
+        @if($images->isNotEmpty())
+            <ul class="mb-3 grid grid-cols-2 gap-3 sm:grid-cols-3">
+                @foreach($images as $path)
+                    <li class="relative overflow-hidden rounded-xl border border-sand-300 bg-sand-100">
+                        <input type="hidden" name="_order_{{ $field->key }}[]" value="{{ $path }}">
+                        <img src="{{ \App\Support\Media::url($path) }}"
+                             alt="" loading="lazy" class="aspect-[4/3] w-full object-cover">
+                        <label class="tap w-full justify-center gap-2 border-t border-sand-300 text-meta text-red-600">
+                            <input type="checkbox" name="_remove_{{ $field->key }}[]" value="{{ $path }}"
+                                   class="h-4 w-4 accent-[var(--color-clay-500)]">
+                            حذف
+                        </label>
+                    </li>
+                @endforeach
+            </ul>
+        @endif
+
+        <div x-data="{ count: 0 }" class="flex flex-wrap items-center gap-3">
+            <input id="{{ $id }}" name="{{ $field->key }}[]" type="file" multiple accept="image/*" class="sr-only"
+                   x-on:change="count = $el.files.length">
+            <label for="{{ $id }}"
+                   class="tap cursor-pointer gap-2 rounded-xl bg-ink-900 px-4 text-meta font-semibold text-sand-50 transition hover:bg-ink-800">
+                <x-icon name="plus" size="15" />
+                افزودن تصویر
+            </label>
+            <span class="min-w-0 flex-1 truncate text-meta text-ink-400"
+                  x-text="count ? count + ' فایل انتخاب شد' : 'می‌توانید چند فایل را با هم انتخاب کنید'">می‌توانید چند فایل را با هم انتخاب کنید</span>
+        </div>
         @break
 
     @case('readonly')

@@ -4,6 +4,7 @@ use App\Http\Controllers\AboutController;
 use App\Http\Controllers\Admin\ActivityLogController;
 use App\Http\Controllers\Admin\AuthController as AdminAuth;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\ResourceController;
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\ContactController;
@@ -87,6 +88,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::middleware('admin')->group(function () {
         Route::post('logout', [AdminAuth::class, 'logout'])->name('logout');
         Route::get('/', DashboardController::class)->name('dashboard');
+
+        // پیش از مسیر عمومی {resource} تعریف می‌شود، وگرنه media یک منبع تلقی می‌شود
+        Route::get('media', MediaController::class)->name('media');
 
         Route::get('activity', ActivityLogController::class)
             ->middleware('admin:admin')

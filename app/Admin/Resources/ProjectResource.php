@@ -57,6 +57,12 @@ class ProjectResource extends Resource
             Field::number('year', 'سال اجرا (شمسی)')->rules(['required', 'min:1300', 'max:1500'])->inList(true)->third()->section('مشخصات پروژه'),
             Field::number('area_sqm', 'زیربنا')->rules(['nullable', 'min:0', 'max:9999999'])->suffix('m²')->half()->section('مشخصات پروژه'),
             Field::number('blocks_used', 'تعداد بلوک مصرفی')->rules(['nullable', 'min:0', 'max:99999999'])->half()->section('مشخصات پروژه'),
+            Field::image('cover_image', 'تصویر شاخص', 'projects')
+                ->rules(['nullable'])->section('تصاویر')
+                ->hint('اگر خالی بماند، جلد وکتوری پروژه نمایش داده می‌شود.'),
+            Field::gallery('gallery', 'گالری تصاویر', 'projects')
+                ->rules(['nullable'])->section('تصاویر'),
+
             Field::textarea('summary', 'خلاصه')->rules(['nullable', 'max:600'])->section('روایت پروژه'),
             Field::longtext('description', 'مسئله و راه‌حل')->rules(['nullable', 'max:6000'])->section('روایت پروژه'),
             Field::number('position', 'ترتیب')->rules(['nullable', 'min:0', 'max:999'])->half()->section('انتشار'),

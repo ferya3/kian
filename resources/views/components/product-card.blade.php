@@ -8,7 +8,9 @@
              style="background-image: radial-gradient(circle at 22% 18%, rgba(180,85,45,.16), transparent 55%)"></div>
 
         <div class="absolute inset-0 grid place-items-center transition-transform duration-700 ease-[var(--ease-out-expo)] group-hover:scale-[1.06]">
-            <x-block-3d :product="$product" :size="152" :interactive="false" />
+            <x-media :path="$product->hero_image" :alt="$product->name" :eager="$eager">
+                <x-block-3d :product="$product" :size="152" :interactive="false" />
+            </x-media>
         </div>
 
         @if($product->is_featured)

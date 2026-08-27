@@ -68,6 +68,12 @@
                                 @endif
                             </div>
 
+                            @if(\App\Support\Media::has($step->image))
+                                <div class="mt-5 aspect-[16/9] overflow-hidden rounded-2xl bg-sand-200">
+                                    <x-media :path="$step->image" :alt="$step->title" />
+                                </div>
+                            @endif
+
                             <div data-process-body class="mt-5 flex flex-1 flex-col">
                                 <h3 class="text-h3 font-bold">{{ $step->title }}</h3>
                                 <p class="tech mt-1 text-micro uppercase tracking-[0.14em] text-ink-300">{{ $step->title_en }}</p>

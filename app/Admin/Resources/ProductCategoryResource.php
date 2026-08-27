@@ -40,6 +40,8 @@ class ProductCategoryResource extends Resource
             Field::text('name', 'نام دسته')->rules(['required'])->inList(true)->half(),
             Field::text('name_en', 'نام انگلیسی')->rules(['nullable'])->half(),
             Field::slug('slug')->rules(['required'])->half(),
+            Field::image('image', 'تصویر دسته', 'categories')->rules(['nullable'])->half(),
+
             Field::relation('parent_id', 'زیرمجموعه‌ی', ProductCategory::class)
                 ->rules(['nullable', 'exists:product_categories,id'])
                 ->hint('برای دسته‌ی اصلی خالی بگذارید.')->inList()->half(),

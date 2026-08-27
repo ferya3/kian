@@ -1,4 +1,13 @@
-@props(['project'])
+@props(['project', 'eager' => false])
+
+{{-- عکس واقعی پروژه اگر آپلود شده باشد؛ وگرنه جلد مولد. --}}
+@php $cover = \App\Support\Media::url($project->cover_image); @endphp
+
+@if($cover)
+    <img src="{{ $cover }}" alt="{{ $project->title }}"
+         loading="{{ $eager ? 'eager' : 'lazy' }}" decoding="async"
+         class="h-full w-full object-cover">
+@else
 
 @php
     // تصویر مولد و قطعی برای هر پروژه — تا زمانی که عکس واقعی آپلود شود.
@@ -76,3 +85,4 @@
     {{-- زمین --}}
     <rect y="576" width="800" height="24" fill="{{ $dark }}" fill-opacity=".9"/>
 </svg>
+@endif

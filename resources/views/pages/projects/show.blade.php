@@ -29,6 +29,8 @@
             </div>
         </section>
 
+        <x-gallery :images="$project->gallery" title="گالری پروژه" eyebrow="Gallery" class="bg-sand-100 py-16 lg:py-20" />
+
         <section class="bg-sand-50 py-16 lg:py-20">
             <div class="container-page grid grid-cols-1 gap-10 lg:grid-cols-12 lg:gap-14">
                 <div class="lg:col-span-7">

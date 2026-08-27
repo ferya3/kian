@@ -155,7 +155,14 @@ else
     php artisan migrate --seed --force     # نصب تازه: با داده‌ی نمونه
 fi
 
+# پیوند storage برای تصویرهای آپلودشده حیاتی است: بدون آن هر عکس ۴۰۳ می‌گیرد
+# و سایت بی‌صدا بدون تصویر می‌ماند. پس شکستش را رد نمی‌کنیم.
 php artisan storage:link || true
+
+if [ ! -e public/storage ]; then
+    printf '\n\033[1;31m✗ پیوند public/storage ساخته نشد — تصویرهای آپلودشده نمایش داده نمی‌شوند.\033[0m\n'
+    printf '  دستی اجرا کنید: cd %s && sudo -u www-data php artisan storage:link\n\n' "$APP_DIR"
+fi
 
 # ------------------------------------------------------------- دسترسی‌ها ----
 step "تنظیم دسترسی‌ها و کش"

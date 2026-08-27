@@ -2,6 +2,7 @@
 
 namespace Tests\Unit;
 
+use App\Support\Digits;
 use App\Support\Jalali;
 use App\Support\Slug;
 use PHPUnit\Framework\TestCase;
@@ -30,6 +31,15 @@ class SupportTest extends TestCase
     {
         $this->assertSame('۱۲۰٬۰۰۰', Jalali::digits('120,000'));
         $this->assertSame('۶٫۵', Jalali::digits('6.5'));
+    }
+
+    public function test_it_normalises_persian_and_arabic_digits(): void
+    {
+        // قلم سایت ارقام را فارسی نشان می‌دهد، پس کاربر هم فارسی تایپ می‌کند
+        $this->assertSame('120', Digits::toLatin('۱۲۰'));
+        $this->assertSame('0.28', Digits::toLatin('۰٫۲۸'));
+        $this->assertSame('1234567890', Digits::toLatin('١٢٣٤٥٦٧٨٩٠'));
+        $this->assertSame('09121234567', Digits::digitsOnly('۰۹۱۲-۱۲۳ ۴۵۶۷'));
     }
 
     public function test_it_formats_gregorian_dates_as_jalali(): void

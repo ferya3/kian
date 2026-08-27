@@ -54,6 +54,14 @@ class ProductResource extends Resource
                 ->relationName('category')
                 ->rules(['required', 'exists:product_categories,id'])->inList()->third(),
 
+            Field::image('hero_image', 'تصویر اصلی', 'products')
+                ->rules(['nullable'])->half()->section('تصاویر')
+                ->hint('اگر خالی بماند، بلوک سه‌بعدی وکتوری نمایش داده می‌شود.'),
+            Field::image('section_image', 'تصویر مقطع', 'products')
+                ->rules(['nullable'])->half()->section('تصاویر'),
+            Field::gallery('gallery', 'گالری تصاویر', 'products')
+                ->rules(['nullable'])->section('تصاویر'),
+
             Field::text('subtitle', 'زیرعنوان')->rules(['nullable'])->section('معرفی'),
             Field::textarea('summary', 'خلاصه')->rules(['nullable', 'max:600'])->section('معرفی'),
             Field::longtext('description', 'توضیح کامل')->rules(['nullable', 'max:6000'])->section('معرفی'),

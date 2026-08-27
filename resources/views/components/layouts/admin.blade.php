@@ -59,6 +59,16 @@
                 نمای کلی
             </a>
 
+            <a href="{{ route('admin.media') }}"
+               @class([
+                   'mb-4 flex items-center gap-3 rounded-xl px-3 py-2.5 text-[0.9375rem] font-semibold transition',
+                   'bg-clay-500 text-white' => request()->routeIs('admin.media'),
+                   'text-sand-200/75 hover:bg-white/[0.06] hover:text-sand-50' => ! request()->routeIs('admin.media'),
+               ])>
+                <x-icon name="layers" size="18" />
+                کتابخانه‌ی تصاویر
+            </a>
+
             @foreach(Registry::navigation() as $group => $resources)
                 <p class="eyebrow px-3 pb-2 pt-4 text-sand-200/35">{{ $group }}</p>
                 <ul class="space-y-0.5">

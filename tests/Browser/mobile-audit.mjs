@@ -40,7 +40,7 @@ const PATHS = [
 const ADMIN_PATHS = [
     '/admin', '/admin/products', '/admin/products/1/edit', '/admin/products/create',
     '/admin/projects', '/admin/documents', '/admin/messages', '/admin/settings',
-    '/admin/users', '/admin/activity',
+    '/admin/users', '/admin/activity', '/admin/media', '/admin/certificates',
 ];
 
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || '';
@@ -76,6 +76,18 @@ function collect() {
 
         // لینک پرش: تا وقتی فوکوس نگرفته پنهان است؛ اندازه‌ی حالت فوکوس ملاک است
         if (el.classList.contains('sr-only-focusable')) return;
+
+        // ورودی فایلِ پنهان: دکمه‌ی بومی مرورگر ترجمه‌پذیر نیست، پس ورودی
+        // sr-only شده و label متصل هدف لمسی واقعی است
+        // (عنوانِ فیلد هم همان for را دارد، پس همه‌ی labelها بررسی می‌شوند)
+        if (el.type === 'file' && el.classList.contains('sr-only') && el.id) {
+            const labels = [...document.querySelectorAll(`label[for="${CSS.escape(el.id)}"]`)];
+            const big = labels.some((lb) => {
+                const r = lb.getBoundingClientRect();
+                return Math.min(r.width, r.height) >= 24;
+            });
+            if (big) return;
+        }
 
         // ورودی رادیو/چک‌باکس: برچسبِ در بر گیرنده هدف لمسی واقعی است
         if ((el.type === 'radio' || el.type === 'checkbox') && el.closest('label')) {

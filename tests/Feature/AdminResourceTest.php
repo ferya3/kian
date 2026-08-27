@@ -265,6 +265,131 @@ class AdminResourceTest extends TestCase
         $this->assertContains(null, $sections, 'فیلدهای شناسه باید در پنل نخستِ بی‌عنوان بمانند.');
     }
 
+    public function test_a_product_image_is_stored_and_rendered_on_the_public_page(): void
+    {
+        Storage::fake('public');
+        $product = Product::first();
+
+        $this->actingAs($this->admin)
+            ->put(ProductResource::updateUrl($product), $this->productPayload($product, [
+                'hero_image' => UploadedFile::fake()->image('عکس محصول.jpg', 1200, 900),
+                'is_active' => 1,   // چک‌باکس غایب یعنی خاموش؛ صفحه‌ی عمومی باید بماند
+            ]))->assertRedirect();
+
+        $stored = $product->fresh()->hero_image;
+
+        $this->assertNotNull($stored);
+        Storage::disk('public')->assertExists($stored);
+        $this->assertStringNotContainsString('عکس', $stored);
+
+        // سایت عمومی باید همان فایل را نشان دهد، نه آرت وکتوری
+        $this->get(route('products.show', $product->fresh()))
+            ->assertOk()
+            ->assertSee(Storage::disk('public')->url($stored), false);
+    }
+
+    public function test_the_public_page_falls_back_to_vector_art_without_an_image(): void
+    {
+        // سایت باید با دیتابیس بدون عکس هم کامل دیده شود
+        $product = Product::first();
+
+        $this->assertNull($product->hero_image);
+        $this->get(route('products.show', $product))->assertOk();
+        $this->get(route('products.index'))->assertOk();
+    }
+
+    public function test_gallery_uploads_accumulate_and_survive_a_save_without_files(): void
+    {
+        Storage::fake('public');
+        $product = Product::first();
+
+        $this->actingAs($this->admin)
+            ->put(ProductResource::updateUrl($product), $this->productPayload($product, [
+                'gallery' => [
+                    UploadedFile::fake()->image('a.jpg'),
+                    UploadedFile::fake()->image('b.jpg'),
+                ],
+            ]))->assertRedirect();
+
+        $first = $product->fresh()->gallery;
+        $this->assertCount(2, $first);
+
+        // ذخیره‌ی دوباره بدون انتخاب فایل نباید گالری را خالی کند
+        $this->actingAs($this->admin)
+            ->put(ProductResource::updateUrl($product), $this->productPayload($product, [
+                '_order_gallery' => $first,
+            ]))->assertRedirect();
+
+        $this->assertSame($first, $product->fresh()->gallery);
+    }
+
+    public function test_removing_one_gallery_image_keeps_the_others(): void
+    {
+        Storage::fake('public');
+        $product = Product::first();
+
+        $this->actingAs($this->admin)
+            ->put(ProductResource::updateUrl($product), $this->productPayload($product, [
+                'gallery' => [UploadedFile::fake()->image('a.jpg'), UploadedFile::fake()->image('b.jpg')],
+            ]))->assertRedirect();
+
+        [$keep, $drop] = $product->fresh()->gallery;
+
+        $this->actingAs($this->admin)
+            ->put(ProductResource::updateUrl($product), $this->productPayload($product, [
+                '_remove_gallery' => [$drop],
+                '_order_gallery' => [$keep, $drop],
+            ]))->assertRedirect();
+
+        $this->assertSame([$keep], $product->fresh()->gallery);
+        Storage::disk('public')->assertMissing($drop);
+        Storage::disk('public')->assertExists($keep);
+    }
+
+    public function test_a_gallery_rejects_a_file_that_is_not_an_image(): void
+    {
+        Storage::fake('public');
+        $product = Product::first();
+
+        $this->actingAs($this->admin)
+            ->put(ProductResource::updateUrl($product), $this->productPayload($product, [
+                'gallery' => [UploadedFile::fake()->create('payload.php', 8, 'application/x-php')],
+            ]))->assertSessionHasErrors('gallery.0');
+
+        $this->assertEmpty($product->fresh()->gallery ?? []);
+    }
+
+    public function test_a_gallery_path_cannot_be_injected_through_the_order_field(): void
+    {
+        // _order_ فقط بازچینش است؛ نباید بشود مسیر دلخواه را داخل ستون نوشت
+        Storage::fake('public');
+        $product = Product::first();
+
+        $this->actingAs($this->admin)
+            ->put(ProductResource::updateUrl($product), $this->productPayload($product, [
+                '_order_gallery' => ['../../.env', 'admin/products/anything.jpg'],
+            ]))->assertRedirect();
+
+        $this->assertEmpty($product->fresh()->gallery ?? []);
+    }
+
+    public function test_the_media_library_lists_every_image_field(): void
+    {
+        Storage::fake('public');
+        $product = Product::first();
+
+        $this->actingAs($this->admin)
+            ->put(ProductResource::updateUrl($product), $this->productPayload($product, [
+                'hero_image' => UploadedFile::fake()->image('hero.jpg'),
+            ]))->assertRedirect();
+
+        $this->actingAs($this->admin)
+            ->get(route('admin.media'))
+            ->assertOk()
+            ->assertSee('کتابخانه‌ی تصاویر')
+            ->assertSee($product->fresh()->hero_image);
+    }
+
     /** بدنه‌ی کامل فرم محصول — چون اعتبارسنجی فیلدهای الزامی را می‌خواهد. */
     protected function productPayload(Product $product, array $overrides = []): array
     {

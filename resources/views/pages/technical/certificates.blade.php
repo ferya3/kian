@@ -11,8 +11,10 @@
                 <ul class="mt-6 space-y-3" data-reveal-stagger="70">
                     @foreach($certificates as $certificate)
                         <li data-reveal class="flex gap-4 rounded-2xl border border-sand-300 bg-sand-50 p-5">
-                            <span class="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-clay-100 text-clay-600">
-                                <x-icon name="shield" size="22" />
+                            <span class="grid h-12 w-12 shrink-0 place-items-center overflow-hidden rounded-xl bg-clay-100 text-clay-600">
+                                <x-media :path="$certificate->image" :alt="$certificate->title">
+                                    <x-icon name="shield" size="22" />
+                                </x-media>
                             </span>
                             <div class="min-w-0 flex-1">
                                 <h3 class="font-bold leading-snug">{{ $certificate->title }}</h3>

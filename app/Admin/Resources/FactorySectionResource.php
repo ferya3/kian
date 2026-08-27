@@ -35,6 +35,7 @@ class FactorySectionResource extends Resource
             Field::text('title', 'عنوان')->rules(['required'])->inList(true)->half(),
             Field::text('title_en', 'عنوان انگلیسی')->rules(['nullable'])->half(),
             Field::slug('slug')->rules(['required'])->half(),
+            Field::image('image', 'تصویر بخش', 'factory')->rules(['nullable'])->half(),
             Field::number('position', 'ترتیب')->rules(['nullable', 'min:0', 'max:999'])->half(),
             Field::textarea('description', 'توضیح')->rules(['required', 'max:800']),
             Field::decimal('hotspot_x', 'موقعیت افقی نقطه')->rules(['required', 'min:0', 'max:100'])

@@ -143,6 +143,10 @@
         </div>
     </section>
 
+    {{-- ==================== تصاویر ==================== --}}
+    <x-gallery :images="array_filter([$product->hero_image, $product->section_image, ...(array) $product->gallery])"
+               title="تصاویر محصول" eyebrow="Gallery" />
+
     {{-- ==================== عملکرد و کاربرد ==================== --}}
     <section class="bg-ink-950 py-16 text-sand-50 lg:py-20">
         <div class="container-page grid grid-cols-1 gap-10 lg:grid-cols-12 lg:gap-14">

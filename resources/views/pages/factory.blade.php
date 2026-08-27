@@ -14,6 +14,7 @@
                     'titleEn' => $s->title_en,
                     'description' => $s->description,
                     'stats' => $s->stats ?? [],
+                    'image' => \App\Support\Media::url($s->image),
                 ])->all()))"
                  class="mt-12 grid grid-cols-1 gap-6 lg:grid-cols-12 lg:gap-8">
 
@@ -44,6 +45,14 @@
 
                 <div class="lg:col-span-4">
                     <div class="sticky top-28 rounded-[var(--radius-panel)] border border-sand-300 bg-sand-50 p-6 lg:p-7">
+                        {{-- عکس واقعی بخش، اگر آپلود شده باشد --}}
+                        <template x-if="current.image">
+                            <div class="mb-5 aspect-[16/9] overflow-hidden rounded-2xl bg-sand-200">
+                                <img :src="current.image" :alt="current.title" loading="lazy" decoding="async"
+                                     class="h-full w-full object-cover">
+                            </div>
+                        </template>
+
                         <p class="eyebrow text-clay-600" x-text="current.titleEn"></p>
                         <h2 class="mt-2 text-h3 font-extrabold" x-text="current.title"></h2>
                         <p class="mt-4 leading-relaxed text-ink-500" x-text="current.description"></p>
@@ -75,8 +84,10 @@
             <ul class="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3" data-reveal-stagger="80">
                 @foreach($certificates as $certificate)
                     <li data-reveal class="flex gap-4 rounded-2xl border border-sand-300 bg-sand-100 p-5">
-                        <span class="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-clay-100 text-clay-600">
-                            <x-icon name="shield" size="21" />
+                        <span class="grid h-11 w-11 shrink-0 place-items-center overflow-hidden rounded-xl bg-clay-100 text-clay-600">
+                            <x-media :path="$certificate->image" :alt="$certificate->title">
+                                <x-icon name="shield" size="21" />
+                            </x-media>
                         </span>
                         <div>
                             <h3 class="font-bold leading-snug">{{ $certificate->title }}</h3>

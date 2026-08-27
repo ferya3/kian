@@ -36,6 +36,8 @@ class ProcessStepResource extends Resource
             Field::text('title', 'عنوان')->rules(['required'])->inList()->third(),
             Field::text('title_en', 'عنوان انگلیسی')->rules(['nullable'])->third(),
             Field::slug('slug')->rules(['required'])->half(),
+            Field::image('image', 'تصویر مرحله', 'process')->rules(['nullable'])->half()
+                ->hint('عکس واقعی خط تولید. اگر خالی بماند، آیکون مرحله نمایش داده می‌شود.'),
             Field::text('duration', 'مدت زمان')->rules(['nullable'])
                 ->hint('مثلاً: ۲۴ ساعت — خالی یعنی نمایش داده نشود.')->half(),
             Field::textarea('summary', 'خلاصه')->rules(['nullable', 'max:300']),
