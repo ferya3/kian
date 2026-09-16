@@ -35,7 +35,7 @@ curl -fsSL https://raw.githubusercontent.com/ferya3/kian/claude/ceramic-factory-
 | `SSL` | `0` | گرفتن گواهی Let's Encrypt (نیازمند DNS آماده) |
 | `DB` | `sqlite` | یا `mysql` — کاربر و دیتابیس خودکار ساخته می‌شود |
 | `APP_DIR` | `/var/www/kian` | مسیر نصب |
-| `BRANCH` | برنچ توسعه | برنچ گیت |
+| `BRANCH` | برنچ توسعه | برنچ گیت؛ روی نصب موجود هم قابل تعویض است |
 | `SKIP_SYSTEM` | `0` | پرش از نصب بسته‌های سیستمی |
 
 **به‌روزرسانی** (pull، build مجدد، فقط مهاجرت‌های جدید — بدون seed دوباره):

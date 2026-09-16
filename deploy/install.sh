@@ -91,8 +91,15 @@ step "دریافت سورس در $APP_DIR"
 git config --global --add safe.directory "$APP_DIR" 2>/dev/null || true
 
 if [ -d "$APP_DIR/.git" ]; then
-    git -C "$APP_DIR" fetch --depth 1 origin "$BRANCH"
-    git -C "$APP_DIR" reset --hard "origin/$BRANCH"
+    # refspec صریح لازم است: کلون با --branch تک‌برنچی است و فقط برنچِ همان
+    # کلون را در refs/remotes نگه می‌دارد. با fetch ساده، origin/$BRANCH برای
+    # هر برنچ دیگری اصلاً ساخته نمی‌شود و reset با «unknown revision» می‌ایستد.
+    git -C "$APP_DIR" fetch --depth 1 origin "+refs/heads/$BRANCH:refs/remotes/origin/$BRANCH"
+    git -C "$APP_DIR" reset --hard "refs/remotes/origin/$BRANCH"
+
+    # نام برنچ محلی هم با برنچ مقصد یکی می‌شود؛ وگرنه پس از تعویض BRANCH،
+    # git status نام برنچ قبلی را نشان می‌دهد و گمراه‌کننده است.
+    git -C "$APP_DIR" checkout -B "$BRANCH"
 else
     mkdir -p "$(dirname "$APP_DIR")"
     git clone --depth 1 --branch "$BRANCH" "$REPO" "$APP_DIR"
