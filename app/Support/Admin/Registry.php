@@ -15,6 +15,7 @@ use App\Admin\Resources\ProductResource;
 use App\Admin\Resources\ProjectCategoryResource;
 use App\Admin\Resources\ProjectResource;
 use App\Admin\Resources\SettingResource;
+use App\Admin\Resources\SiteMediaResource;
 use App\Admin\Resources\SolutionResource;
 use App\Admin\Resources\StatResource;
 use App\Admin\Resources\UserResource;
@@ -41,6 +42,7 @@ class Registry
             FactorySectionResource::class,
             StatResource::class,
             CertificateResource::class,
+            SiteMediaResource::class,
             DistributorResource::class,
             ContactMessageResource::class,
             SettingResource::class,
@@ -67,6 +69,7 @@ class Registry
 
         return collect(static::all())
             ->reject(fn (string $resource) => $resource::$adminOnly && ! $isAdmin)
+            ->reject(fn (string $resource) => ! $resource::$inNavigation)
             ->groupBy(fn (string $resource) => $resource::$group);
     }
 

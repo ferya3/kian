@@ -1,6 +1,7 @@
 <x-layouts.app>
     <article>
-        <x-page-hero :eyebrow="$article->category" :title="$article->title" :lead="$article->excerpt">
+        <x-page-hero :image="$article->cover_image" :image-alt="$article->title"
+                     :eyebrow="$article->category" :title="$article->title" :lead="$article->excerpt">
             <p class="mt-8 flex flex-wrap items-center gap-3 text-[0.875rem] text-ink-400">
                 <span>{{ $article->author }}</span>
                 <span class="h-1 w-1 rounded-full bg-ink-300"></span>

@@ -1,5 +1,7 @@
 <x-layouts.app>
     <x-page-hero
+        :image="$activeCategory?->image"
+        :image-alt="$activeCategory?->name"
         eyebrow="Product system"
         title="محصولات"
         lead="یک خانواده‌ی ماژولار از بلوک سفالی: تیغه‌ای، دیواری، عایق، سبک، سقفی و متعلقات. ابعاد همه با هم می‌خوانند تا رگ‌چینی بدون برش اضافه پیش برود.">

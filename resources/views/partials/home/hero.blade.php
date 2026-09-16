@@ -1,6 +1,14 @@
 @php
     use App\Models\Setting;
+    use App\Models\SiteMedia;
+
+    /*
+    | سه حالت، به همین ترتیب: ویدئو، تصویر، طرح وکتوری. هیچ‌کدام اجباری نیست —
+    | سایت با دیتابیسِ بدون رسانه هم کامل دیده می‌شود.
+    */
     $video = Setting::text('hero_video');
+    $image = SiteMedia::url('hero.home');
+    $poster = SiteMedia::url('hero.home_poster') ?? $image;
 @endphp
 
 {{--
@@ -12,12 +20,20 @@
 <section class="relative flex min-h-[100vw] flex-col justify-center overflow-hidden bg-ink-950 pb-6 pt-[4.5rem] text-sand-50 sm:min-h-[min(100vw,36rem)] sm:pb-12 sm:pt-24 lg:min-h-[88svh] lg:pb-16 lg:pt-32">
 
     @if($video)
-        {{-- ویدئوی سینمایی کارخانه: نمای نزدیک خاک → کوره → خروج محصول → ساختمان --}}
+        {{--
+            ویدئوی سینمایی کارخانه: نمای نزدیک خاک → کوره → خروج محصول → ساختمان.
+            پوستر از پنل می‌آید؛ بدون آن تا لحظه‌ی آماده‌شدن ویدئو کادر سیاه است.
+        --}}
         <video class="absolute inset-0 h-full w-full object-cover opacity-60"
                autoplay muted loop playsinline preload="metadata"
-               poster="/media/hero-poster.jpg" aria-hidden="true">
+               @if($poster) poster="{{ $poster }}" @endif aria-hidden="true">
             <source src="{{ $video }}" type="video/mp4">
         </video>
+        <div class="absolute inset-0 bg-gradient-to-t from-ink-950 via-ink-950/70 to-ink-950/40"></div>
+    @elseif($image)
+        <img src="{{ $image }}" alt="{{ SiteMedia::alt('hero.home') }}"
+             fetchpriority="high" decoding="async"
+             class="absolute inset-0 h-full w-full object-cover opacity-60">
         <div class="absolute inset-0 bg-gradient-to-t from-ink-950 via-ink-950/70 to-ink-950/40"></div>
     @else
         <x-hero-scene />

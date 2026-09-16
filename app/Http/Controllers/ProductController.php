@@ -14,6 +14,11 @@ class ProductController extends Controller
     {
         $categories = ProductCategory::query()->roots()->with('children')->get();
 
+        // دسته‌ی فیلترشده تصویر هیرو را می‌دهد؛ بدون فیلتر، جایگاه صفحه می‌نشیند
+        $activeCategory = $request->filled('category')
+            ? ProductCategory::query()->where('slug', $request->string('category')->toString())->first()
+            : null;
+
         $products = Product::query()
             ->active()
             ->with('category')
@@ -32,7 +37,7 @@ class ProductController extends Controller
             ->description('کاتالوگ کامل بلوک‌های سفالی دیواری، تیغه‌ای، عایق و سقفی به‌همراه مشخصات فنی، ابعاد، مقاومت فشاری و ضریب هدایت حرارتی.')
             ->breadcrumbs([['خانه', route('home')], ['محصولات', null]]);
 
-        return view('pages.products.index', compact('categories', 'products'));
+        return view('pages.products.index', compact('categories', 'products', 'activeCategory'));
     }
 
     public function show(Product $product)

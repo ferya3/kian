@@ -36,6 +36,14 @@ abstract class Resource
     /** فقط مدیر کل — نه ویرایشگر محتوا. */
     public static bool $adminOnly = false;
 
+    /**
+     * در فهرست گروه‌بندی‌شده‌ی منو دیده شود؟
+     *
+     * منبعی که پیوند سنجاق‌شده‌ی خودش را در بالای منو دارد، اینجا false می‌شود
+     * تا دوبار فهرست نشود.
+     */
+    public static bool $inNavigation = true;
+
     public static string $orderBy = 'id';
 
     public static string $orderDir = 'desc';
@@ -80,16 +88,36 @@ abstract class Resource
         return array_values(array_filter(static::fields(), fn (Field $f) => $f->inList));
     }
 
-    /** @return array<int, Field> */
+    /**
+     * فیلدهایی که در فرم *دیده* می‌شوند — شامل فیلدهای فقط‌خواندنی.
+     *
+     * فیلد readonly برای نمایش زمینه است (کلید تنظیم، جایگاه تصویر در طراحی)
+     * و بدون آن مدیر نمی‌فهمد دارد کدام رکورد را ویرایش می‌کند.
+     *
+     * @return array<int, Field>
+     */
     public static function formFields(bool $creating): array
     {
-        return array_values(array_filter(static::fields(), function (Field $field) use ($creating) {
-            if (! $field->isEditable()) {
-                return false;
-            }
+        return array_values(array_filter(
+            static::fields(),
+            fn (Field $field) => $creating ? ! $field->onlyOnEdit : ! $field->onlyOnCreate
+        ));
+    }
 
-            return $creating ? ! $field->onlyOnEdit : ! $field->onlyOnCreate;
-        }));
+    /**
+     * فیلدهایی که از فرم *ذخیره* می‌شوند.
+     *
+     * عمداً از formFields جداست: هرچه readonly است نه اعتبارسنجی می‌شود نه در
+     * دیتابیس می‌نشیند، حتی اگر مرورگر مقداری برایش بفرستد.
+     *
+     * @return array<int, Field>
+     */
+    public static function savableFields(bool $creating): array
+    {
+        return array_values(array_filter(
+            static::formFields($creating),
+            fn (Field $field) => $field->isEditable()
+        ));
     }
 
     public static function field(string $key): ?Field

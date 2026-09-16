@@ -2,6 +2,7 @@
 
 namespace App\Support;
 
+use App\Models\SiteMedia;
 use Illuminate\Support\Str;
 
 /**
@@ -104,9 +105,15 @@ class Seo
         return $this->description ?: config('kian.seo.default_description');
     }
 
+    /**
+     * تصویر اشتراک‌گذاری: تصویر خودِ صفحه، وگرنه تصویر برند از پنل، وگرنه پیش‌فرض.
+     *
+     * برخلاف تصویرهای داخل صفحه اینجا نشانی مطلق لازم است — شبکه‌های اجتماعی
+     * مسیر نسبی را نمی‌توانند بخوانند.
+     */
     public function ogImage(): string
     {
-        return url($this->image ?: config('kian.seo.og_image'));
+        return url($this->image ?: SiteMedia::url('brand.og') ?: config('kian.seo.og_image'));
     }
 
     public function canonicalUrl(): string

@@ -20,15 +20,20 @@
         </span>
     </label>
 @else
-    <label for="{{ $id }}" class="mb-2 block text-meta font-semibold text-ink-600">
-        {{ $field->label }}
-        @if(in_array('required', $field->rules, true))
-            <span class="text-clay-600" aria-hidden="true">*</span>
-        @endif
-        @if($field->suffix)
-            <span class="tech mr-1 font-normal text-ink-300">({{ $field->suffix }})</span>
-        @endif
-    </label>
+    @if($field->type === 'readonly')
+        {{-- فیلد فقط‌خواندنی کنترل فرم نیست، پس label با for به آن اشاره نمی‌کند --}}
+        <p class="mb-2 block text-meta font-semibold text-ink-600">{{ $field->label }}</p>
+    @else
+        <label for="{{ $id }}" class="mb-2 block text-meta font-semibold text-ink-600">
+            {{ $field->label }}
+            @if(in_array('required', $field->rules, true))
+                <span class="text-clay-600" aria-hidden="true">*</span>
+            @endif
+            @if($field->suffix)
+                <span class="tech mr-1 font-normal text-ink-300">({{ $field->suffix }})</span>
+            @endif
+        </label>
+    @endif
 
     @include('admin.fields.control', compact('field', 'record', 'id', 'value', 'base', 'invalid'))
 

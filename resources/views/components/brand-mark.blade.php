@@ -1,3 +1,14 @@
+@php $logo = \App\Models\SiteMedia::url('brand.logo'); @endphp
+
+@if($logo)
+    {{--
+        لوگوی آپلودشده جای نشانه‌ی وکتوری می‌نشیند. object-contain است نه cover:
+        لوگو نباید برای پرکردن کادرِ مربع بریده شود.
+    --}}
+    <img src="{{ $logo }}" alt="{{ config('kian.brand.name') }}"
+         {{ $attributes->merge(['class' => 'h-10 w-10 object-contain']) }}>
+@else
+
 {{-- نشانه‌ی برند: مقطع یک بلوک سفالی با حفره‌های عمودی --}}
 <svg {{ $attributes->merge(['class' => 'h-10 w-10']) }} viewBox="0 0 40 40" fill="none" role="img"
      aria-label="{{ config('kian.brand.name') }}">
@@ -17,3 +28,5 @@
         </linearGradient>
     </defs>
 </svg>
+
+@endif

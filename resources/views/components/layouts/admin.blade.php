@@ -69,6 +69,20 @@
                 کتابخانه‌ی تصاویر
             </a>
 
+            {{--
+                تصاویر ثابت سایت کنار کتابخانه می‌نشیند، نه لای گروه‌های محتوا:
+                دنبالِ «عکس هیرو» کسی در «کاتالوگ» نمی‌گردد.
+            --}}
+            <a href="{{ route('admin.resource.index', \App\Admin\Resources\SiteMediaResource::$slug) }}"
+               @class([
+                   'mb-4 flex items-center gap-3 rounded-xl px-3 py-2.5 text-[0.9375rem] font-semibold transition',
+                   'bg-clay-500 text-white' => request()->route('resource') === \App\Admin\Resources\SiteMediaResource::$slug,
+                   'text-sand-200/75 hover:bg-white/[0.06] hover:text-sand-50' => request()->route('resource') !== \App\Admin\Resources\SiteMediaResource::$slug,
+               ])>
+                <x-icon name="image" size="18" />
+                {{ \App\Admin\Resources\SiteMediaResource::$label }}
+            </a>
+
             @foreach(Registry::navigation() as $group => $resources)
                 <p class="eyebrow px-3 pb-2 pt-4 text-sand-200/35">{{ $group }}</p>
                 <ul class="space-y-0.5">

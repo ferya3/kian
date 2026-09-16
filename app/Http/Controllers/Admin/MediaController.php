@@ -48,7 +48,8 @@ class MediaController extends Controller
         $items = [];
         $missing = 0;
 
-        foreach ($resource::$model::all() as $record) {
+        // query() نه all(): منبع ممکن است پیش از خواندن، رکوردهایش را همگام کند
+        foreach ($resource::query()->get() as $record) {
             $before = count($items);
 
             foreach ($fields as $field) {

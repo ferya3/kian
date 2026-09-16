@@ -27,8 +27,15 @@
     <meta name="twitter:description" content="{{ $seo->metaDescription() }}">
     <meta name="twitter:image" content="{{ $seo->ogImage() }}">
 
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    @php $favicon = \App\Models\SiteMedia::url('brand.favicon'); @endphp
+    @if($favicon)
+        {{-- نوع اعلام نمی‌شود: فایل آپلودی می‌تواند png یا svg باشد و مرورگر خودش تشخیص می‌دهد --}}
+        <link rel="icon" href="{{ $favicon }}">
+        <link rel="apple-touch-icon" href="{{ $favicon }}">
+    @else
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    @endif
     <link rel="sitemap" type="application/xml" href="{{ route('sitemap') }}">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])

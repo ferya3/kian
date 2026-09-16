@@ -162,7 +162,7 @@ class ResourceController extends Controller
      */
     protected function validated(Request $request, string $class, ?Model $record): array
     {
-        $fields = $class::formFields($record === null);
+        $fields = $class::savableFields($record === null);
         $rules = [];
 
         $this->normalizeNumericInput($request, $fields);

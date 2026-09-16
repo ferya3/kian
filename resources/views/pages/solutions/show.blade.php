@@ -1,5 +1,7 @@
 <x-layouts.app>
     <x-page-hero
+        :image="$solution->image"
+        :image-alt="$solution->title"
         :eyebrow="$solution->title_en"
         :title="$solution->title"
         :lead="$solution->summary"
