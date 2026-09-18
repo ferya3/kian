@@ -311,6 +311,29 @@
 }
 
 /* ==========================================================================
+   نشان‌واژه‌ی فوتر — شعله‌ای که از روی حروف رد می‌شود
+   ========================================================================== */
+
+/*
+| حروف خودشان پنجره‌اند، نه رنگ.
+|
+| متن با background-clip شفاف می‌شود و گرادیانِ پشتش از داخل حروف دیده می‌شود؛
+| بعد همان گرادیان حرکت می‌کند. پس نور دقیقاً به شکل حروف بریده می‌شود، بی‌آنکه
+| لایه یا ماسک جداگانه‌ای لازم باشد.
+|
+| زمینه ۲۵۰٪ عرض کادر است تا نوار روشن پیش و پس از سفر، کامل بیرون بماند.
+|
+| بازه‌ی حرکت عمداً ۱۰۰٪ تا ۰٪ است و نه بیشتر: با no-repeat، بیرون از این بازه
+| بخشی از کادر اصلاً زمینه ندارد و حروفِ آن بخش کم‌رنگ نمی‌شوند — کاملاً
+| نامرئی می‌شوند. در همین بازه، زمینه همیشه تمام کادر را می‌پوشاند و نوار روشن
+| هم از بیرونِ یک لبه تا بیرونِ لبه‌ی دیگر سفر می‌کند.
+*/
+@keyframes wordmark-flare {
+    from { background-position: 100% 0; }
+    to { background-position: 0% 0; }
+}
+
+/* ==========================================================================
    اشاره‌گر بارانی هیرو
    ========================================================================== */
 
@@ -340,6 +363,32 @@
    ========================================================================== */
 
 @layer components {
+    /* نشان‌واژه‌ی فوتر — مارک‌آپش در partials/footer.blade.php */
+    .wordmark-flare {
+        background-image: linear-gradient(100deg,
+            rgb(255 255 255 / 0.2) 0%,
+            rgb(255 255 255 / 0.2) 36%,
+            color-mix(in oklab, var(--color-clay-300) 65%, transparent) 44%,
+            rgb(255 255 255 / 0.95) 50%,
+            color-mix(in oklab, var(--color-clay-300) 65%, transparent) 56%,
+            rgb(255 255 255 / 0.2) 64%,
+            rgb(255 255 255 / 0.2) 100%);
+        background-size: 250% 100%;
+        background-repeat: no-repeat;
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        animation: wordmark-flare 7s cubic-bezier(0.55, 0, 0.45, 1) infinite;
+    }
+
+    /* بدون background-clip، متنِ شفاف یعنی متنِ نامرئی — پس رنگ توپر برمی‌گردد */
+    @supports not ((background-clip: text) or (-webkit-background-clip: text)) {
+        .wordmark-flare {
+            background-image: none;
+            color: var(--color-sand-200);
+        }
+    }
+
     /* قطره‌ی اشاره‌گر هیرو — مارک‌آپش در partials/home/hero.blade.php */
     .hero-rain-drop {
         position: absolute;
@@ -576,6 +625,16 @@
         opacity: 1 !important;
         transform: none !important;
         clip-path: none !important;
+    }
+
+    /*
+    | نشان‌واژه استثناست: خاموش‌کردن انیمیشن، گرادیان را روی آخرین فریم قفل
+    | می‌کند و آنجا شعله بیرون از کادر است — یعنی حروف تقریباً نامرئی می‌شوند.
+    | پس به‌جای فریز، رنگ توپر می‌گیرد.
+    */
+    .wordmark-flare {
+        background-image: none !important;
+        color: color-mix(in oklab, var(--color-sand-200) 60%, transparent) !important;
     }
 }
 
