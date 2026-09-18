@@ -80,15 +80,13 @@
                 {{ Setting::text('hero_subtitle', config('kian.seo.default_description')) }}
             </p>
 
-            {{--
-                دو دکمه کنار هم روی گوشی: متن تک‌خطی، padding کم، ارتفاع ۴۴.
-                روی گوشی کلاهک گرد پنهان است، پس padding دو طرف قرینه می‌شود.
-            --}}
+            {{-- دو دکمه کنار هم روی گوشی: متن تک‌خطی، padding کم، ارتفاع ۴۴ --}}
             <div class="mt-4 flex items-center gap-2.5 sm:mt-10 sm:gap-3" data-reveal style="--reveal-delay: 270ms">
-                <x-glass-cta :href="route('products.index')" tone="warm"
-                             class="min-w-0 flex-1 px-2 text-meta sm:flex-none sm:ps-6 sm:pe-1.5 sm:text-[0.9375rem]">مشاهده محصولات</x-glass-cta>
-                <x-glass-cta :href="route('factory')" icon="play"
-                             class="min-w-0 flex-1 px-2 text-meta sm:flex-none sm:ps-6 sm:pe-1.5 sm:text-[0.9375rem]">آشنایی با کارخانه</x-glass-cta>
+                {{-- آیکون روی گوشی پنهان می‌شود: در ۳۶۰ پیکسل، برچسب مهم‌تر از فلش است --}}
+                <x-cta :href="route('products.index')" variant="primary" size="lg"
+                       class="min-w-0 flex-1 justify-center whitespace-nowrap px-2 text-meta [&_svg]:hidden sm:flex-none sm:gap-2 sm:px-5 sm:text-[0.9375rem] sm:[&_svg]:block">مشاهده محصولات</x-cta>
+                <x-cta :href="route('factory')" variant="light" size="lg" icon="play"
+                       class="min-w-0 flex-1 justify-center whitespace-nowrap px-2 text-meta [&_svg]:hidden sm:flex-none sm:gap-2 sm:px-5 sm:text-[0.9375rem] sm:[&_svg]:block">آشنایی با کارخانه</x-cta>
             </div>
         </div>
 
