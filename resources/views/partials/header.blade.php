@@ -66,8 +66,12 @@
                 </span>
             </a>
 
-            {{-- ناوبری دسکتاپ --}}
-            <nav class="mr-auto hidden items-center lg:flex" aria-label="ناوبری اصلی">
+            {{--
+                ناوبری دسکتاپ — بلافاصله کنار لوگو.
+                فاصله‌ی خالی به سمت چپ منتقل شده: نوار ابزار (جستجو و درخواست
+                قیمت) با mr-auto به لبه‌ی چپ می‌رود و منو کنار برند می‌ماند.
+            --}}
+            <nav class="hidden items-center lg:flex" aria-label="ناوبری اصلی">
                 @foreach($navigation as $item)
                     @php
                         $active = Navigation::isActive($item);
@@ -98,7 +102,7 @@
                 @endforeach
             </nav>
 
-            <div class="flex shrink-0 items-center gap-1 lg:gap-2">
+            <div class="flex shrink-0 items-center gap-1 lg:mr-auto lg:gap-2">
                 <button type="button" @click="openSearch()"
                         class="tap-icon rounded-full transition"
                         :class="onDark ? 'text-sand-100 hover:bg-white/10' : 'text-ink-600 hover:bg-sand-200 hover:text-ink-900'"

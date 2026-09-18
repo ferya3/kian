@@ -31,16 +31,38 @@
         </video>
         <div class="absolute inset-0 bg-gradient-to-t from-ink-950 via-ink-950/70 to-ink-950/40"></div>
     @elseif($image)
+        {{--
+            تصویر با شفافیت کامل — پیش‌تر opacity-60 داشت و یک پرده‌ی تیره روی
+            تمام سطحش، یعنی عملاً نصفه دیده می‌شد.
+
+            به‌جای آن دو محافظ موضعی مانده، چون هدر شفاف است و متن روی عکس
+            می‌نشیند: یک نوار بالا (روی آسمان، که معمولاً خالی است) و یک شیب از
+            سمت راست که تا میانه‌ی کادر کاملاً محو می‌شود. نیمه‌ی چپ عکس
+            دست‌نخورده و با رنگ کامل دیده می‌شود.
+
+            اگر عکس نهایی تیره باشد، هر دو محافظ را می‌شود برداشت.
+        --}}
         <img src="{{ $image }}" alt="{{ SiteMedia::alt('hero.home') }}"
              fetchpriority="high" decoding="async"
-             class="absolute inset-0 h-full w-full object-cover opacity-60">
-        <div class="absolute inset-0 bg-gradient-to-t from-ink-950 via-ink-950/70 to-ink-950/40"></div>
+             class="absolute inset-0 h-full w-full object-cover">
+
+        <div class="absolute inset-x-0 top-0 h-36 bg-gradient-to-b from-ink-950/80 to-transparent" aria-hidden="true"></div>
+        {{--
+            روی گوشی متن تمام عرض را می‌گیرد، پس شیب باید تا لبه‌ی چپ برسد —
+            ولی آنجا هم فقط ۲۰٪ است. از lg به بالا متن در نیمه‌ی راست می‌ماند و
+            شیب تا ۷۰٪ عرض کاملاً محو می‌شود.
+        --}}
+        <div class="absolute inset-0 bg-gradient-to-l from-ink-950/85 via-ink-950/60 to-ink-950/20 lg:via-ink-950/45 lg:via-40% lg:to-transparent lg:to-70%" aria-hidden="true"></div>
     @else
         <x-hero-scene />
     @endif
 
     <div class="container-page relative">
-        <div class="max-w-4xl">
+        {{--
+            سایه‌ی متن فقط وقتی لازم است که پشت متن عکس باشد؛ روی طرح وکتوری
+            زمینه از قبل تیره است و سایه بی‌دلیل متن را کدر می‌کند.
+        --}}
+        <div class="max-w-4xl {{ $image && ! $video ? '[text-shadow:0_2px_20px_rgb(10_8_6/0.85),0_1px_4px_rgb(10_8_6/0.7)]' : '' }}">
             <p class="eyebrow inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/[0.06] px-3 py-1.5 text-clay-300 backdrop-blur-sm sm:gap-2.5 sm:px-4 sm:py-2"
                data-reveal>
                 <span class="relative flex h-1.5 w-1.5">
