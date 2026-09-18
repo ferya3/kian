@@ -1,6 +1,12 @@
 <x-layouts.app>
     @include('partials.home.hero')
-    @include('partials.home.stats')
+
+    {{--
+        نوار شاخص‌ها فعلاً غیرفعال است تا بعداً جای دیگری بنشیند. پارشال و
+        داده‌اش (stats در HomeController) سر جایشان‌اند؛ برگرداندنش یک خط است.
+    --}}
+    {{-- @include('partials.home.stats') --}}
+
     @include('partials.home.finder')
     @include('partials.home.products')
     @include('partials.home.why-ceramic')
