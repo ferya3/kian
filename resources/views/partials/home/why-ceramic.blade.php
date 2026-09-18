@@ -9,6 +9,9 @@
         ['key' => 'fire',      'icon' => 'fire',     'en' => 'Fire Resistance', 'title' => 'مقاومت در برابر آتش',
          'text' => 'سفال در نهصد درجه پخته شده؛ چیزی برای سوختن باقی نمانده. غیرقابل اشتعال است و در حریق گاز سمی منتشر نمی‌کند.',
          'metric' => 'تا ۲۴۰', 'metricLabel' => 'دقیقه مقاومت آتش'],
+        ['key' => 'weight',    'icon' => 'weight',   'en' => 'Reduced Dead Load', 'title' => 'سبکی و بار مرده',
+         'text' => 'نیروی جانبی زلزله متناسب با جرم سازه است. دیوار سبک‌تر یعنی برش پایه‌ی کمتر — و در اضافه طبقه و مقاوم‌سازی، همین چند درصد تعیین‌کننده است.',
+         'metric' => 'تا ۲۸٪', 'metricLabel' => 'کاهش وزن دیوار'],
         ['key' => 'durability','icon' => 'shield',   'en' => 'Durability', 'title' => 'دوام',
          'text' => 'جمع‌شدگی بلندمدت ندارد، پوسیده نمی‌شود و در برابر رطوبت و یخبندان پایدار می‌ماند. عمرش برابر عمر ساختمان است.',
          'metric' => '۵۰+', 'metricLabel' => 'سال عمر مفید'],
@@ -16,6 +19,10 @@
          'text' => 'خاک، آب، آتش. بدون افزودنی شیمیایی پایدار، بدون انتشار ترکیبات فرار — و در پایان عمر ساختمان، قابل خردایش و بازگشت به چرخه.',
          'metric' => '۱۰۰٪', 'metricLabel' => 'ماده اولیه معدنی'],
     ];
+
+    // سه‌تای اول سمت راستِ بلوک می‌نشینند و سه‌تای دوم سمت چپ
+    $rightPillars = array_slice($pillars, 0, 3);
+    $leftPillars = array_slice($pillars, 3);
 @endphp
 
 <section class="relative overflow-hidden bg-ink-950 py-20 text-sand-50 lg:py-28" aria-labelledby="why-heading">
@@ -26,23 +33,46 @@
         <x-section-heading
             eyebrow="Why ceramic?"
             title="چرا سفال؟"
-            lead="پنج ویژگی که هیچ‌کدام افزودنی نیستند — همه از خودِ ماده و هندسه‌ی بلوک می‌آیند."
+            lead="شش ویژگی که هیچ‌کدام افزودنی نیستند — همه از خودِ ماده و هندسه‌ی بلوک می‌آیند."
             light id="why-heading" />
 
-        <div class="mt-14 grid grid-cols-1 gap-10 lg:grid-cols-12 lg:items-start lg:gap-14">
+        {{--
+            بلوک تعاملی وسط می‌نشیند و ویژگی‌ها دو طرفش. در RTL اولین آیتم گرید
+            سمت راست می‌افتد، پس ترتیب سورس یعنی: سه ویژگی راست، بلوک، سه ویژگی چپ.
 
-            {{-- بلوک تعاملی --}}
-            <div class="lg:col-span-5 lg:sticky lg:top-28" x-data="blockViewer(@js($interactiveProduct?->cavities->map(fn($c) => [
-                    'label' => $c->label,
-                    'description' => $c->description,
-                    'metricLabel' => $c->metric_label,
-                    'metricValue' => $c->metric_value,
-                ])->all() ?? []))">
+            زیر lg همه‌چیز تک‌ستونی می‌شود و بلوک با order اول می‌آید: روی گوشی،
+            نمایشگر تعاملی نباید وسط فهرست دفن شود.
+        --}}
+        {{--
+            فاصله‌ی عمودی صفر است: زیر lg دو فهرست پشت سر هم می‌آیند و باید یک
+            فهرست پیوسته دیده شوند، نه دو بلوک با شکاف وسطشان. جدایی بلوک
+            تعاملی با margin خودش تأمین می‌شود.
+        --}}
+        <div @class([
+            'mt-14 grid grid-cols-1 gap-y-0 lg:items-start lg:gap-8 xl:gap-12',
+            'lg:grid-cols-[1fr_minmax(0,24rem)_1fr]' => $interactiveProduct,
+            'lg:grid-cols-2' => ! $interactiveProduct,
+        ])>
 
-                @if($interactiveProduct)
-                    <div class="rounded-[var(--radius-panel)] border border-white/10 bg-white/[0.04] p-6 backdrop-blur-sm">
+            {{-- خط پایانی فقط روی دسکتاپ برداشته می‌شود؛ زیر lg ادامه‌ی فهرست است --}}
+            <ul data-reveal-stagger="90" class="lg:[&>li:last-child]:border-b-0">
+                @foreach($rightPillars as $pillar)
+                    @include('partials.home.pillar', ['pillar' => $pillar])
+                @endforeach
+            </ul>
 
-                        <div class="flex items-center justify-between gap-3">
+            @if($interactiveProduct)
+                <div class="order-first mb-10 lg:order-none lg:mb-0 lg:sticky lg:top-28"
+                     x-data="blockViewer(@js($interactiveProduct->cavities->map(fn($c) => [
+                        'label' => $c->label,
+                        'description' => $c->description,
+                        'metricLabel' => $c->metric_label,
+                        'metricValue' => $c->metric_value,
+                     ])->all()))">
+
+                    <div class="rounded-[var(--radius-panel)] border border-white/10 bg-white/[0.04] p-5 backdrop-blur-sm lg:p-6">
+
+                        <div class="flex flex-wrap items-center justify-between gap-3">
                             <div>
                                 <p class="eyebrow text-clay-400">Interactive</p>
                                 <p class="mt-1 font-bold">{{ $interactiveProduct->name }}</p>
@@ -90,34 +120,15 @@
                             </div>
                         </div>
                     </div>
-                @endif
-            </div>
+                </div>
+            @endif
 
-            {{-- ستون‌های ویژگی --}}
-            <ol class="lg:col-span-7" data-reveal-stagger="90">
-                @foreach($pillars as $i => $pillar)
-                    <li data-reveal
-                        class="group grid grid-cols-[auto_1fr] gap-5 border-b border-white/[0.08] py-7 first:pt-0 last:border-0">
-                        <span class="grid h-12 w-12 place-items-center rounded-xl border border-white/10 bg-white/[0.05] text-clay-400 transition-colors duration-500 group-hover:border-clay-500/40 group-hover:bg-clay-500/15 group-hover:text-clay-300">
-                            <x-icon :name="$pillar['icon']" size="22" />
-                        </span>
-
-                        <div>
-                            <div class="flex flex-wrap items-baseline gap-x-3">
-                                <h3 class="text-h3 font-bold text-sand-50">{{ $pillar['title'] }}</h3>
-                                <span class="tech text-micro uppercase tracking-[0.16em] text-sand-200/35">{{ $pillar['en'] }}</span>
-                            </div>
-
-                            <p class="mt-2.5 max-w-xl leading-relaxed text-sand-200/65">{{ $pillar['text'] }}</p>
-
-                            <p class="mt-4 flex items-baseline gap-2">
-                                <span class="tech text-2xl font-extrabold text-clay-300">{{ $pillar['metric'] }}</span>
-                                <span class="text-meta text-sand-200/45">{{ $pillar['metricLabel'] }}</span>
-                            </p>
-                        </div>
-                    </li>
+            <ul data-reveal-stagger="90" class="[&>li:last-child]:border-b-0">
+                @foreach($leftPillars as $pillar)
+                    @include('partials.home.pillar', ['pillar' => $pillar])
                 @endforeach
-            </ol>
+            </ul>
+
         </div>
     </div>
 </section>
