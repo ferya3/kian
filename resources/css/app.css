@@ -84,19 +84,33 @@
     |   body              ۱۶          ۱۷
     */
 
-    --text-display: clamp(2.125rem, 1.06rem + 4.38vw, 5rem);
-    --text-display--line-height: 1.1;
-    --text-display--letter-spacing: -0.022em;
+    /*
+    | پله‌های تیتر.
+    |
+    | سقف‌ها یک‌بار پایین آمدند: display روی دسکتاپ ۸۰ پیکسل بود — اندازه‌ی
+    | بیلبورد، نه تیتر یک سایت صنعتی که باید خوانده شود. سر دیگر مقیاس تقریباً
+    | دست‌نخورده ماند، چون روی گوشی از اول بی‌راه نبود؛ یعنی شیب clamp کم شد نه
+    | اینکه همه‌چیز کوچک شود.
+    |
+    |            گوشی ۳۶۰   دسکتاپ ۱۴۴۰      پیش از این
+    |   display     ۳۲          ۵۶            ۳۴ → ۸۰
+    |   h1          ۲۸          ۴۴            ۳۰ → ۶۰
+    |   h2          ۲۳          ۳۴            ۲۴ → ۴۴
+    |   h3          ۱۸          ۲۴            ۱۹ → ۳۲
+    */
+    --text-display: clamp(2rem, 1.5rem + 2.222vw, 3.5rem);
+    --text-display--line-height: 1.12;
+    --text-display--letter-spacing: -0.02em;
 
-    --text-h1: clamp(1.875rem, 1.18rem + 2.86vw, 3.75rem);
-    --text-h1--line-height: 1.18;
-    --text-h1--letter-spacing: -0.018em;
+    --text-h1: clamp(1.75rem, 1.417rem + 1.481vw, 2.75rem);
+    --text-h1--line-height: 1.2;
+    --text-h1--letter-spacing: -0.016em;
 
-    --text-h2: clamp(1.5rem, 1.04rem + 1.9vw, 2.75rem);
-    --text-h2--line-height: 1.26;
-    --text-h2--letter-spacing: -0.014em;
+    --text-h2: clamp(1.4375rem, 1.208rem + 1.019vw, 2.125rem);
+    --text-h2--line-height: 1.28;
+    --text-h2--letter-spacing: -0.012em;
 
-    --text-h3: clamp(1.1875rem, 0.886rem + 1.24vw, 2rem);
+    --text-h3: clamp(1.125rem, 1rem + 0.556vw, 1.5rem);
     --text-h3--line-height: 1.4;
 
     /*
@@ -109,12 +123,13 @@
     |
     | فاصله‌ی خطش جمع‌تر از lead است چون تیتر است نه متن جاری.
     */
-    --text-card: clamp(1.0625rem, 0.979rem + 0.37vw, 1.3125rem);
+    --text-card: clamp(1.0625rem, 1rem + 0.278vw, 1.25rem);
     --text-card--line-height: 1.35;
     --text-card--letter-spacing: -0.006em;
 
-    --text-lead: clamp(1.03rem, 0.927rem + 0.43vw, 1.3125rem);
-    --text-lead--line-height: 1.8;
+    /* lead زیر عنوان می‌نشیند، پس باید از card جلو نزند */
+    --text-lead: clamp(1rem, 0.9375rem + 0.278vw, 1.1875rem);
+    --text-lead--line-height: 1.75;
 
     --text-body: clamp(1rem, 0.94rem + 0.16vw, 1.0625rem);
     --text-body--line-height: 1.85;
@@ -140,14 +155,16 @@
     --text-3xl: clamp(1.5rem, 1.36rem + 0.57vw, 1.875rem);
     --text-3xl--line-height: 1.3;
 
-    --text-4xl: clamp(1.75rem, 1.56rem + 0.76vw, 2.25rem);
+    /* اعداد درشت (شاخص‌ها، شماره‌ی مرحله، کد خطا) هم یک پله پایین آمدند تا از
+       تیترها جلو نزنند: ۴xl از ۳۶ به ۳۲، ۵xl از ۴۸ به ۴۰، ۷xl از ۷۲ به ۶۰ */
+    --text-4xl: clamp(1.625rem, 1.5rem + 0.556vw, 2rem);
     --text-4xl--line-height: 1.22;
 
-    --text-5xl: clamp(2rem, 1.63rem + 1.52vw, 3rem);
-    --text-5xl--line-height: 1.1;
+    --text-5xl: clamp(1.75rem, 1.5rem + 1.111vw, 2.5rem);
+    --text-5xl--line-height: 1.12;
 
-    --text-7xl: clamp(3rem, 2.44rem + 2.29vw, 4.5rem);
-    --text-7xl--line-height: 1.05;
+    --text-7xl: clamp(2.5rem, 2.083rem + 1.852vw, 3.75rem);
+    --text-7xl--line-height: 1.06;
 
     --text-eyebrow: 0.8125rem;
     --text-eyebrow--line-height: 1.4;
