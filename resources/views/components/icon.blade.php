@@ -33,6 +33,7 @@
         'factory'      => '<path d="M3 21V10l6 4V10l6 4V7l6 3v11H3Z"/><path d="M7 21v-4M12 21v-4M17 21v-4"/>',
         'sparkle'      => '<path d="m12 3 2 6 6 2-6 2-2 6-2-6-6-2 6-2 2-6Z"/>',
         'file'         => '<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5Z"/><path d="M14 3v5h5"/>',
+        'arrow-up-left'=> '<path d="M16.5 16.5 7.5 7.5"/><path d="M7.5 13.5v-6h6"/>',
         'image'        => '<rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9.5" r="1.7"/><path d="m4 17.5 5-4.5 4 3.5 3-2.5 4 4"/>',
         'grid'         => '<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>',
         'clock'        => '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
