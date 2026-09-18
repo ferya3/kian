@@ -21,7 +21,7 @@
         </div>
     </x-page-hero>
 
-    <section class="bg-sand-100 py-16 lg:py-20">
+    <section class="bg-sand-100 section">
         <div class="container-page space-y-12">
             @foreach($labels as $category => $label)
                 @php $documents = $groups[$category] ?? collect(); @endphp
@@ -49,7 +49,7 @@
         </div>
     </section>
 
-    <section class="bg-sand-50 py-16 lg:py-20">
+    <section class="bg-sand-50 section">
         <div class="container-page">
             <x-section-heading eyebrow="Per product" title="فایل‌ها به تفکیک محصول"
                 lead="اگر می‌دانید کدام محصول را می‌خواهید، از اینجا سریع‌تر است." />

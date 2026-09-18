@@ -15,7 +15,7 @@
         </form>
     </x-page-hero>
 
-    <section class="bg-sand-100 pb-20">
+    <section class="bg-sand-100 section-b">
         <div class="container-page">
             @php $total = collect($results)->sum(fn($c) => $c->count()); @endphp
 

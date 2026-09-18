@@ -5,7 +5,7 @@
         lead="همه‌ی فایل‌های فنی در یک صفحه، با فیلتر بر اساس نوع فایل، مخاطب و فرمت."
         compact />
 
-    <section class="bg-sand-100 pb-20">
+    <section class="bg-sand-100 section-b">
         <div class="container-page">
             <form method="GET" action="{{ route('technical.downloads') }}"
                   class="rounded-[var(--radius-panel)] border border-sand-300 bg-sand-50 p-5 lg:p-6">

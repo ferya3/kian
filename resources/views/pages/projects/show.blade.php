@@ -6,7 +6,7 @@
             </div>
             <div class="absolute inset-0 bg-gradient-to-t from-ink-950 via-ink-950/85 to-ink-950/55"></div>
 
-            <div class="container-page relative py-16 lg:py-24">
+            <div class="container-page relative section-lg">
                 <x-breadcrumbs class="[&_*]:text-sand-200/60" />
 
                 <p class="eyebrow mt-6 text-clay-400">{{ $project->category?->name }} · {{ $project->category?->name_en }}</p>
@@ -29,9 +29,9 @@
             </div>
         </section>
 
-        <x-gallery :images="$project->gallery" title="گالری پروژه" eyebrow="Gallery" class="bg-sand-100 py-16 lg:py-20" />
+        <x-gallery :images="$project->gallery" title="گالری پروژه" eyebrow="Gallery" class="bg-sand-100 section" />
 
-        <section class="bg-sand-50 py-16 lg:py-20">
+        <section class="bg-sand-50 section">
             <div class="container-page grid grid-cols-1 gap-10 lg:grid-cols-12 lg:gap-14">
                 <div class="lg:col-span-7">
                     <h2 class="text-h3 font-extrabold">مسئله و راه‌حل</h2>
@@ -86,7 +86,7 @@
         </section>
 
         @if($more->isNotEmpty())
-            <section class="bg-sand-100 py-16 lg:py-20">
+            <section class="bg-sand-100 section">
                 <div class="container-page">
                     <x-section-heading eyebrow="More" title="پروژه‌های مشابه" />
                     <div class="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3" data-reveal-stagger="100">

@@ -1,4 +1,4 @@
-<section class="bg-sand-100 py-20 lg:py-28" aria-labelledby="factory-heading">
+<section class="bg-sand-100 section-lg" aria-labelledby="factory-heading">
     <div class="container-page">
         <x-section-heading
             eyebrow="Our factory"

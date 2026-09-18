@@ -7,7 +7,7 @@
         <x-stat-band :stats="$stats" light class="mt-12" />
     </x-page-hero>
 
-    <section class="bg-sand-50 py-16 lg:py-24">
+    <section class="bg-sand-50 section-lg">
         <div class="container-page grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-16">
             <div class="lg:col-span-5">
                 <x-section-heading eyebrow="Story" title="از یک کوره تا دو خط اکستروژن" />
@@ -21,7 +21,7 @@
         </div>
     </section>
 
-    <section class="bg-sand-100 py-16 lg:py-20">
+    <section class="bg-sand-100 section">
         <div class="container-page">
             <x-section-heading eyebrow="Principles" title="سه اصلی که سرِ آن‌ها مذاکره نمی‌کنیم"
                 lead="این‌ها شعار نیستند؛ اگر رعایتشان نکنیم، مشتری‌مان یک بار بیشتر از ما خرید نمی‌کند." />
@@ -44,7 +44,7 @@
         </div>
     </section>
 
-    <section class="bg-sand-50 py-16 lg:py-20">
+    <section class="bg-sand-50 section">
         <div class="container-page grid grid-cols-1 gap-10 lg:grid-cols-12 lg:gap-14">
             <div class="lg:col-span-5">
                 <x-section-heading eyebrow="Certificates" title="تأییدیه‌ها" />

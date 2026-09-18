@@ -42,7 +42,7 @@
              style="background: radial-gradient(70% 60% at 88% 0%, rgba(180,85,45,.12), transparent 60%)"></div>
     @endif
 
-    <div class="container-page relative {{ $compact ? 'py-12 lg:py-16' : 'py-16 lg:py-24' }}">
+    <div class="container-page relative {{ $compact ? 'section-sm' : 'section-lg' }}">
         <x-breadcrumbs class="{{ $dark ? '[&_*]:text-sand-200/60' : '' }}" />
 
         <div class="mt-6 max-w-4xl">

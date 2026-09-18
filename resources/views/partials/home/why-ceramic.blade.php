@@ -25,7 +25,7 @@
     $leftPillars = array_slice($pillars, 3);
 @endphp
 
-<section class="relative overflow-hidden bg-ink-950 py-20 text-sand-50 lg:py-28" aria-labelledby="why-heading">
+<section class="relative overflow-hidden bg-ink-950 section-lg text-sand-50" aria-labelledby="why-heading">
     <div class="pointer-events-none absolute -right-40 top-0 h-[40rem] w-[40rem] rounded-full opacity-50 blur-[120px]"
          style="background: radial-gradient(circle, rgba(180,85,45,.35), transparent 65%)"></div>
 
@@ -49,7 +49,7 @@
             تعاملی با margin خودش تأمین می‌شود.
         --}}
         <div @class([
-            'mt-14 grid grid-cols-1 gap-y-0 lg:items-start lg:gap-8 xl:gap-12',
+            'mt-10 grid grid-cols-1 gap-y-0 lg:items-start lg:gap-8 xl:gap-12',
             'lg:grid-cols-[1fr_minmax(0,24rem)_1fr]' => $interactiveProduct,
             'lg:grid-cols-2' => ! $interactiveProduct,
         ])>

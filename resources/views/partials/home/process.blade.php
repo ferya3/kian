@@ -5,7 +5,7 @@
     موبایل / reduced-motion: همان محتوا به‌صورت ریل قابل swipe، بدون هیچ pin شدنی.
 --}}
 <section data-process-scroll
-         class="relative overflow-hidden bg-sand-50 py-20 lg:h-[100svh] lg:overflow-hidden lg:py-0"
+         class="relative overflow-hidden bg-sand-50 section lg:h-[100svh] lg:overflow-hidden lg:py-0"
          aria-labelledby="process-heading">
 
     {{-- لایه‌ی پس‌زمینه که کندتر حرکت می‌کند --}}

@@ -14,7 +14,7 @@
     @endphp
 
     {{-- ==================== سربرگ محصول ==================== --}}
-    <section class="relative overflow-hidden bg-sand-50 pb-16 pt-10 lg:pb-20">
+    <section class="relative overflow-hidden bg-sand-50 pt-10 section-b">
         <div class="pointer-events-none absolute inset-0 opacity-60" aria-hidden="true"
              style="background: radial-gradient(60% 55% at 78% 8%, rgba(180,85,45,.14), transparent 62%)"></div>
 
@@ -148,7 +148,7 @@
                title="تصاویر محصول" eyebrow="Gallery" />
 
     {{-- ==================== عملکرد و کاربرد ==================== --}}
-    <section class="bg-ink-950 py-16 text-sand-50 lg:py-20">
+    <section class="bg-ink-950 section text-sand-50">
         <div class="container-page grid grid-cols-1 gap-10 lg:grid-cols-12 lg:gap-14">
             <div class="lg:col-span-5">
                 <h2 class="text-h2 font-extrabold">چرا این محصول؟</h2>
@@ -212,7 +212,7 @@
 
     {{-- ==================== فایل‌های فنی ==================== --}}
     @if($product->documents->isNotEmpty())
-        <section class="bg-sand-100 py-16 lg:py-20">
+        <section class="bg-sand-100 section">
             <div class="container-page">
                 <div class="flex flex-wrap items-end justify-between gap-4">
                     <x-section-heading eyebrow="Downloads" title="فایل‌های فنی این محصول"
@@ -232,7 +232,7 @@
     @endif
 
     {{-- ==================== روش اجرا ==================== --}}
-    <section class="bg-sand-50 py-16 lg:py-20">
+    <section class="bg-sand-50 section">
         <div class="container-page grid grid-cols-1 gap-10 lg:grid-cols-12 lg:gap-14">
             <div class="lg:col-span-4">
                 <x-section-heading eyebrow="Installation" title="روش اجرا"
@@ -264,7 +264,7 @@
 
     {{-- ==================== پروژه‌ها ==================== --}}
     @if($product->projects->isNotEmpty())
-        <section class="bg-sand-100 py-16 lg:py-20">
+        <section class="bg-sand-100 section">
             <div class="container-page">
                 <x-section-heading eyebrow="Used in" title="پروژه‌هایی که با این محصول اجرا شده‌اند" />
                 <div class="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3" data-reveal-stagger="100">
@@ -285,7 +285,7 @@
         secondary-label="دیتاشیت" />
 
     {{-- ==================== محصولات مشابه ==================== --}}
-    <section class="bg-sand-50 py-16 lg:py-20">
+    <section class="bg-sand-50 section">
         <div class="container-page">
             <x-section-heading eyebrow="Related" title="محصولات مشابه" />
             <div class="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3" data-reveal-stagger="100">

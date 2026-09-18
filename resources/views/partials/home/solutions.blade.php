@@ -1,4 +1,4 @@
-<section class="bg-sand-50 py-20 lg:py-24" aria-labelledby="solutions-heading">
+<section class="bg-sand-50 section-lg" aria-labelledby="solutions-heading">
     <div class="container-page">
         <div class="flex flex-wrap items-end justify-between gap-6">
             <x-section-heading

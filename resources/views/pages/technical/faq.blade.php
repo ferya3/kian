@@ -13,7 +13,7 @@
         title="پرسش‌های متداول"
         lead="پاسخ‌های کوتاه و صریح کارشناسان فنی به پرسش‌هایی که بیشتر از همه می‌شنویم." />
 
-    <section class="bg-sand-100 pb-20">
+    <section class="bg-sand-100 section-b">
         <div class="container-page grid grid-cols-1 gap-10 lg:grid-cols-12 lg:gap-14">
             <nav class="lg:col-span-3" aria-label="دسته‌های پرسش">
                 <ul class="sticky top-28 space-y-1">

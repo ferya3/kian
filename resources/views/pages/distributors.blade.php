@@ -4,7 +4,7 @@
         title="نمایندگان فروش"
         lead="برای مقادیر کمتر از یک تریلی، نزدیک‌ترین نمایندگی سریع‌تر و ارزان‌تر از تحویل مستقیم کارخانه است." />
 
-    <section class="bg-sand-100 pb-20">
+    <section class="bg-sand-100 section-b">
         <div class="container-page">
             <div class="flex flex-wrap items-center gap-1.5 border-b border-sand-300 pb-5">
                 <span class="ml-2 text-meta font-semibold text-ink-400">استان:</span>

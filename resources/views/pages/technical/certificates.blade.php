@@ -4,7 +4,7 @@
         title="گواهی‌نامه‌ها و استانداردها"
         lead="هر عددی که در دیتاشیت‌های ما نوشته شده، پشتوانه‌ی آزمون دارد. این صفحه فهرست همان پشتوانه‌هاست." />
 
-    <section class="bg-sand-100 pb-20">
+    <section class="bg-sand-100 section-b">
         <div class="container-page grid grid-cols-1 gap-10 lg:grid-cols-12 lg:gap-14">
             <div class="lg:col-span-7">
                 <h2 class="text-h3 font-extrabold">گواهی‌نامه‌های شرکت</h2>

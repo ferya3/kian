@@ -4,7 +4,7 @@
         title="دانش فنی"
         lead="مقالاتی که واحد فنی ما می‌نویسد: مقایسه‌ی صادقانه‌ی مصالح، محاسبات مبحث ۱۹، و آنچه در کارگاه‌ها بیشتر از همه اشتباه اجرا می‌شود." />
 
-    <section class="bg-sand-100 pb-20">
+    <section class="bg-sand-100 section-b">
         <div class="container-page">
             <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3" data-reveal-stagger="90">
                 @foreach($articles as $article)

@@ -7,7 +7,7 @@
         <x-stat-band :stats="$stats" light class="mt-12" />
     </x-page-hero>
 
-    <section class="bg-sand-50 py-16 lg:py-24">
+    <section class="bg-sand-50 section-lg">
         <div class="container-page grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-16">
             <div class="lg:col-span-5">
                 <x-section-heading eyebrow="Life cycle" title="چرخه‌ی عمر یک بلوک" />
@@ -34,7 +34,7 @@
         </div>
     </section>
 
-    <section class="bg-sand-100 py-16 lg:py-20">
+    <section class="bg-sand-100 section">
         <div class="container-page">
             <div class="rounded-[var(--radius-panel)] border border-sand-300 bg-sand-50 p-7 lg:p-10">
                 <p class="eyebrow text-clay-600">Honest note</p>

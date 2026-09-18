@@ -8,12 +8,12 @@
         <x-stat-band :stats="$stats" light class="mt-12" />
     </x-page-hero>
 
-    <section class="bg-sand-50 py-16 lg:py-24">
+    <section class="bg-sand-50 section-lg">
         <div class="container-page">
             <x-section-heading eyebrow="Process" title="نُه مرحله، از معدن تا پالت"
                 lead="هر مرحله یک متغیر کنترلی دارد که اگر از پنجره‌ی مجاز خارج شود، محصول نهایی را خراب می‌کند." />
 
-            <ol class="mt-14 space-y-0" data-reveal-stagger="70">
+            <ol class="mt-10 space-y-0" data-reveal-stagger="70">
                 @foreach($steps as $step)
                     <li data-reveal class="group grid grid-cols-1 gap-6 border-t border-sand-300 py-8 lg:grid-cols-12 lg:gap-10">
                         <div class="flex items-baseline gap-4 lg:col-span-3">
@@ -48,7 +48,7 @@
         </div>
     </section>
 
-    <section class="bg-ink-950 py-16 text-sand-50 lg:py-20">
+    <section class="bg-ink-950 section text-sand-50">
         <div class="container-page grid grid-cols-1 gap-10 lg:grid-cols-12 lg:gap-14">
             <div class="lg:col-span-5">
                 <x-section-heading eyebrow="Why 900°C" title="چرا دقیقاً نهصد درجه؟" light />
@@ -61,7 +61,7 @@
         </div>
     </section>
 
-    <section class="bg-sand-100 py-16 lg:py-20">
+    <section class="bg-sand-100 section">
         <div class="container-page flex flex-wrap items-center justify-between gap-6">
             <div>
                 <h2 class="text-h3 font-extrabold">می‌خواهید خط تولید را از نزدیک ببینید؟</h2>

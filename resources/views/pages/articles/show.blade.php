@@ -11,7 +11,7 @@
             </p>
         </x-page-hero>
 
-        <section class="bg-sand-100 pb-20">
+        <section class="bg-sand-100 section-b">
             <div class="container-page">
                 <div class="mx-auto max-w-3xl">
                     @foreach(preg_split('/\n+/', $article->body ?? '') as $block)
@@ -35,7 +35,7 @@
         </section>
 
         @if($more->isNotEmpty())
-            <section class="bg-sand-50 py-16">
+            <section class="bg-sand-50 section">
                 <div class="container-page">
                     <x-section-heading eyebrow="More" title="مطالب دیگر" />
                     <ul class="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-3">

@@ -9,7 +9,7 @@
     ];
 @endphp
 
-<section class="bg-ink-950 py-20 text-sand-50 lg:py-28" aria-labelledby="technical-heading">
+<section class="bg-ink-950 section-lg text-sand-50" aria-labelledby="technical-heading">
     <div class="container-page">
         <div class="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-16">
             <div class="lg:col-span-5">

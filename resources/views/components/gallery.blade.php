@@ -8,7 +8,7 @@
     بدون قفل اسکرول و بدون رفتار متفاوت روی موبایل انجام می‌دهد.
 --}}
 @if($urls)
-    <section {{ $attributes->merge(['class' => 'bg-sand-100 py-16 lg:py-20']) }}>
+    <section {{ $attributes->merge(['class' => 'bg-sand-100 section']) }}>
         <div class="container-page">
             <x-section-heading :eyebrow="$eyebrow" :title="$title" />
 

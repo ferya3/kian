@@ -1,7 +1,7 @@
 <footer class="no-print mt-24 bg-ink-950 text-sand-200">
     {{-- نوار فراخوان پیش از فوتر --}}
     <div class="border-b border-white/[0.07]">
-        <div class="container-page grid grid-cols-1 gap-8 py-14 lg:grid-cols-12 lg:items-center lg:py-16">
+        <div class="container-page grid grid-cols-1 gap-8 section-sm lg:grid-cols-12 lg:items-center">
             <div class="lg:col-span-7">
                 <p class="eyebrow text-clay-400">Talk to an engineer</p>
                 <h2 class="mt-3 text-h2 font-extrabold text-sand-50">
@@ -26,7 +26,7 @@
         </div>
     </div>
 
-    <div class="container-page grid grid-cols-1 gap-10 py-14 md:grid-cols-2 lg:grid-cols-12">
+    <div class="container-page grid grid-cols-1 gap-10 section-sm md:grid-cols-2 lg:grid-cols-12">
         <div class="lg:col-span-4">
             <a href="{{ route('home') }}" class="flex items-center gap-3">
                 <x-brand-mark class="h-11 w-11" />

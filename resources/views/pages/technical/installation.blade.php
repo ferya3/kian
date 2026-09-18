@@ -4,7 +4,7 @@
         title="راهنمای اجرا"
         lead="بهترین بلوک هم با اجرای اشتباه عملکردش را از دست می‌دهد. این صفحه برای مجری نوشته شده، نه برای بایگانی." />
 
-    <section class="bg-sand-100 pb-20">
+    <section class="bg-sand-100 section-b">
         <div class="container-page grid grid-cols-1 gap-10 lg:grid-cols-12 lg:gap-14">
 
             <div class="lg:col-span-8">
@@ -34,7 +34,7 @@
                 </ol>
 
                 @if($faqs->isNotEmpty())
-                    <h2 class="mt-14 text-h3 font-extrabold">پرسش‌های رایج مجریان</h2>
+                    <h2 class="mt-10 text-h3 font-extrabold">پرسش‌های رایج مجریان</h2>
                     <div x-data="accordion()" class="mt-6 divide-y divide-sand-300 border-y border-sand-300">
                         @foreach($faqs as $faq)
                             <div>

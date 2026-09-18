@@ -1,4 +1,4 @@
-<section class="bg-sand-100 py-20 lg:py-28" aria-labelledby="sustainability-heading">
+<section class="bg-sand-100 section-lg" aria-labelledby="sustainability-heading">
     <div class="container-page">
         <div class="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:items-center lg:gap-16">
             <div class="lg:col-span-5">

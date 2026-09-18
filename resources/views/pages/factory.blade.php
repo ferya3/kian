@@ -5,7 +5,7 @@
         lead="شهرک صنعتی مبارکه، دو خط اکستروژن موازی، کوره‌ی تونلی صد و ده متری و آزمایشگاهی که هر بچ تولید را پیش از بارگیری تأیید می‌کند."
         variant="dark" />
 
-    <section class="bg-sand-100 py-16 lg:py-20">
+    <section class="bg-sand-100 section">
         <div class="container-page">
             <x-stat-band :stats="$stats" />
 
@@ -76,7 +76,7 @@
         </div>
     </section>
 
-    <section class="bg-sand-50 py-16 lg:py-20">
+    <section class="bg-sand-50 section">
         <div class="container-page">
             <x-section-heading eyebrow="Certificates" title="گواهی‌نامه‌ها و تأییدیه‌ها"
                 lead="اعداد این صفحه بی‌معنی‌اند اگر کسی آن‌ها را تأیید نکرده باشد." />

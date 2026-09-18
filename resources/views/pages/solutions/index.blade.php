@@ -4,7 +4,7 @@
         title="راهکارها"
         lead="محصول یک قطعه است؛ راهکار یعنی ترکیب درست قطعه‌ها برای حل مسئله‌ی مشخص پروژه‌ی شما." />
 
-    <section class="bg-sand-100 pb-20">
+    <section class="bg-sand-100 section-b">
         <div class="container-page space-y-6">
             @foreach($solutions as $solution)
                 <article data-reveal

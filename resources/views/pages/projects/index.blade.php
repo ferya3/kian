@@ -4,7 +4,7 @@
         title="پروژه‌های اجراشده"
         lead="هر پروژه یک مسئله‌ی متفاوت داشت: یکی گواهی انرژی می‌خواست، یکی سرعت اجرا، یکی کاهش بار مرده. اینجا نوشته‌ایم چه چیزی و چرا انتخاب شد." />
 
-    <section class="bg-sand-100 pb-20" x-data="filterable('{{ request('type') ?: 'all' }}')">
+    <section class="bg-sand-100 section-b" x-data="filterable('{{ request('type') ?: 'all' }}')">
         <div class="container-page">
             <div class="sticky z-30 -mx-5 border-b border-sand-300 bg-sand-100/95 px-5 py-4 backdrop-blur-md lg:-mx-12 lg:px-12"
                  style="top: calc(var(--header-h) + var(--safe-top))">

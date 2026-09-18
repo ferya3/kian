@@ -14,7 +14,7 @@
         lead="فرم را پر کنید یا مستقیم زنگ بزنید. کارشناسان ما حداکثر تا یک روز کاری پاسخ می‌دهند."
         compact />
 
-    <section class="bg-sand-100 pb-20">
+    <section class="bg-sand-100 section-b">
         <div class="container-page grid grid-cols-1 gap-10 lg:grid-cols-12 lg:gap-14">
 
             <div class="lg:col-span-7">

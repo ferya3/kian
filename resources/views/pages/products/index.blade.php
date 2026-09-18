@@ -7,7 +7,7 @@
         lead="یک خانواده‌ی ماژولار از بلوک سفالی: تیغه‌ای، دیواری، عایق، سبک، سقفی و متعلقات. ابعاد همه با هم می‌خوانند تا رگ‌چینی بدون برش اضافه پیش برود.">
     </x-page-hero>
 
-    <section class="bg-sand-100 pb-20">
+    <section class="bg-sand-100 section-b">
         <div class="container-page">
             {{-- فیلترها --}}
             <div class="sticky z-30 -mx-5 border-b border-sand-300 bg-sand-100/95 px-5 py-4 backdrop-blur-md lg:-mx-12 lg:px-12"

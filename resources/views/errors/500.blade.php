@@ -1,5 +1,5 @@
 <x-layouts.app>
-    <section class="bg-sand-100 py-24 lg:py-32">
+    <section class="bg-sand-100 section-lg">
         <div class="container-page">
             <div class="mx-auto max-w-2xl text-center">
                 <p class="tech text-7xl font-extrabold text-clay-500/30">۵۰۰</p>

@@ -5,14 +5,14 @@
     با نیاز مشخص آمده، بدون اسکرول شروع می‌کند؛ توضیح برای کسی است که پایین‌تر
     می‌آید و هنوز نمی‌داند این فرم چه کار می‌کند.
 --}}
-<section id="find-your-block" class="relative bg-sand-100 py-12 lg:py-16" aria-labelledby="finder-heading">
+<section id="find-your-block" class="relative bg-sand-100 section-sm" aria-labelledby="finder-heading">
     <div class="container-page">
 
         <div data-reveal>
             @include('partials.finder-form')
         </div>
 
-        <div class="mt-12 lg:mt-16">
+        <div class="mt-10 lg:mt-12">
             <p class="eyebrow text-clay-600" data-reveal>Find your block</p>
             <h2 id="finder-heading" class="mt-3 text-h2 font-extrabold text-balance" data-reveal>
                 محصول مناسب پروژه‌ی خود را پیدا کنید

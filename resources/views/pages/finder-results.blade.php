@@ -5,7 +5,7 @@
         :lead="$labels ? 'بر اساس: '.implode(' · ', $labels) : 'بر اساس معیارهای انتخاب‌شده'"
         compact />
 
-    <section class="bg-sand-100 pb-20">
+    <section class="bg-sand-100 section-b">
         <div class="container-page">
             @include('partials.finder-results')
 
