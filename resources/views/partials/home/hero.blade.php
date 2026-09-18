@@ -107,11 +107,10 @@
     <a href="#find-your-block"
        class="group absolute inset-x-0 bottom-7 z-10 mx-auto hidden w-12 flex-col items-center [@media(min-width:1024px)_and_(min-height:760px)]:flex"
        aria-label="رفتن به بخش انتخاب محصول">
-        <span class="relative block h-16 w-px overflow-hidden bg-white/20 transition-colors duration-300 group-hover:bg-white/35"
+        <span class="relative block h-12 w-0.5 overflow-hidden rounded-full bg-white/20 transition-colors duration-300 group-hover:bg-white/35"
               aria-hidden="true">
             <span class="hero-rain-drop"></span>
-            <span class="hero-rain-drop" style="animation-delay: 1.2s"></span>
-            <span class="hero-rain-drop" style="animation-delay: 2.4s"></span>
+            <span class="hero-rain-drop" style="animation-delay: 1.8s"></span>
         </span>
     </a>
 
