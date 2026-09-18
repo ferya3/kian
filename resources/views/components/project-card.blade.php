@@ -13,7 +13,7 @@
         </span>
 
         <div class="absolute inset-x-0 bottom-0 p-5 lg:p-6">
-            <h3 class="{{ $featured ? 'text-h3' : 'text-xl' }} font-extrabold text-sand-50">
+            <h3 class="text-card font-extrabold text-sand-50">
                 <a href="{{ route('projects.show', $project) }}" class="after:absolute after:inset-0 focus:outline-none">
                     {{ $project->title }}
                 </a>

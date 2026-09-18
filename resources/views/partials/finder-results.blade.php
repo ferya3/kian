@@ -4,7 +4,7 @@
     <div class="flex flex-wrap items-center justify-between gap-3 border-b border-clay-200 pb-4">
         <div>
             <p class="eyebrow text-clay-600">Recommended</p>
-            <h3 class="mt-1.5 text-xl font-extrabold">
+            <h3 class="mt-1.5 text-card font-extrabold">
                 {{ count($matches) }} محصول برای پروژه‌ی شما
             </h3>
         </div>

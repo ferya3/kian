@@ -75,7 +75,7 @@
                             @endif
 
                             <div data-process-body class="mt-5 flex flex-1 flex-col">
-                                <h3 class="text-h3 font-bold">{{ $step->title }}</h3>
+                                <h3 class="text-card font-bold">{{ $step->title }}</h3>
                                 <p class="tech mt-1 text-micro uppercase tracking-[0.14em] text-ink-300">{{ $step->title_en }}</p>
 
                                 <p class="mt-4 flex-1 leading-relaxed text-ink-500">{{ $step->description }}</p>

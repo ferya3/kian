@@ -26,7 +26,7 @@
                                 {{ \App\Support\Jalali::digits(str_pad($i + 1, 2, '0', STR_PAD_LEFT)) }}
                             </span>
                             <div>
-                                <h3 class="text-h3 font-bold">{{ $title }}</h3>
+                                <h3 class="text-card font-bold">{{ $title }}</h3>
                                 <p class="mt-2 leading-relaxed text-ink-500">{{ $text }}</p>
                             </div>
                         </li>

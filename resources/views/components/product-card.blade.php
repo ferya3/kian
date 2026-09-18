@@ -37,7 +37,7 @@
     <div class="flex flex-1 flex-col p-5">
         <p class="eyebrow text-clay-600">{{ $product->category?->name }}</p>
 
-        <h3 class="mt-2 text-xl font-extrabold leading-snug">
+        <h3 class="mt-2 text-card font-extrabold">
             <a href="{{ route('products.show', $product) }}" class="after:absolute after:inset-0 focus:outline-none">
                 {{ $product->name }}
             </a>

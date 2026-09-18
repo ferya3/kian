@@ -16,7 +16,7 @@
 
     <div class="min-w-0">
         <div class="flex flex-wrap items-baseline gap-x-2">
-            <h3 class="text-lead font-bold leading-snug text-sand-50">{{ $pillar['title'] }}</h3>
+            <h3 class="text-card font-bold text-sand-50">{{ $pillar['title'] }}</h3>
             <span class="tech text-micro uppercase tracking-[0.14em] text-sand-200/35">{{ $pillar['en'] }}</span>
         </div>
 

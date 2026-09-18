@@ -20,7 +20,7 @@
                         </div>
 
                         <div class="flex flex-1 flex-col p-5">
-                            <h2 class="text-lg font-extrabold leading-snug">
+                            <h2 class="text-card font-extrabold">
                                 <a href="{{ route('articles.show', $article) }}" class="after:absolute after:inset-0">{{ $article->title }}</a>
                             </h2>
                             <p class="mt-3 line-clamp-3 flex-1 text-[0.9375rem] leading-relaxed text-ink-500">{{ $article->excerpt }}</p>

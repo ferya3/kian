@@ -21,7 +21,7 @@
                                 {{ \App\Support\Jalali::digits($step->paddedNumber()) }}
                             </span>
                             <div>
-                                <h3 class="text-h3 font-bold leading-tight">{{ $step->title }}</h3>
+                                <h3 class="text-card font-bold">{{ $step->title }}</h3>
                                 <p class="tech mt-1 text-micro uppercase tracking-[0.14em] text-ink-300">{{ $step->title_en }}</p>
                             </div>
                         </div>

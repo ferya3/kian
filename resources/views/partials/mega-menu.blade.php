@@ -55,7 +55,7 @@
             <div class="col-span-3">
                 <div class="rounded-[var(--radius-panel)] bg-ink-900 p-6 text-sand-100">
                     <p class="eyebrow text-clay-300">Featured</p>
-                    <h3 class="mt-2 text-xl font-bold">بلوک عایق ۲۵</h3>
+                    <h3 class="mt-2 text-card font-bold">بلوک عایق ۲۵</h3>
                     <p class="mt-2 text-sm leading-relaxed text-sand-200/70">
                         دیوار خارجی تک‌لایه بدون عایق افزوده. ضریب λ برابر ۰٫۲۱.
                     </p>
@@ -86,7 +86,7 @@
         <div x-show="openMenu === '{{ $item['route'] }}'" class="container-page py-8">
             <div class="grid grid-cols-12 gap-8">
                 <div class="col-span-3">
-                    <h2 class="text-xl font-extrabold">{{ $item['label'] }}</h2>
+                    <h2 class="text-card font-extrabold">{{ $item['label'] }}</h2>
                 </div>
                 <ul class="col-span-9 grid grid-cols-3 gap-2">
                     @foreach($item['children'] as $child)

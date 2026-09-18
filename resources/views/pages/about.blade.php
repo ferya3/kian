@@ -36,7 +36,7 @@
                         <span class="grid h-11 w-11 place-items-center rounded-xl bg-clay-100 text-clay-600">
                             <x-icon :name="$icon" size="21" />
                         </span>
-                        <h3 class="mt-4 text-h3 font-bold">{{ $title }}</h3>
+                        <h3 class="mt-4 text-card font-bold">{{ $title }}</h3>
                         <p class="mt-2 leading-relaxed text-ink-500">{{ $text }}</p>
                     </li>
                 @endforeach
