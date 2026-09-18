@@ -363,16 +363,7 @@
    ========================================================================== */
 
 @layer components {
-    /*
-    | نشان‌واژه‌ی فوتر — مارک‌آپش در partials/footer.blade.php
-    |
-    | در حالت عادی محو و ساکن است: انیمیشن با play-state متوقف می‌ماند، نه اینکه
-    | حذف شود. فریم صفرِ همین انیمیشن، نوار نور را بیرون از کادر نگه می‌دارد، پس
-    | توقف یعنی «نور هنوز نرسیده» نه «نور وسط راه یخ زده».
-    |
-    | با رسیدن اشاره‌گر، فقط دو چیز عوض می‌شود: شفافیت و play-state. همین باعث
-    | می‌شود روشن‌شدن نرم باشد و حرکت از همان ابتدای مسیر شروع شود.
-    */
+    /* نشان‌واژه‌ی فوتر — مارک‌آپش در partials/footer.blade.php */
     .wordmark-flare {
         background-image: linear-gradient(100deg,
             rgb(255 255 255 / 0.2) 0%,
@@ -387,17 +378,7 @@
         -webkit-background-clip: text;
         background-clip: text;
         color: transparent;
-        opacity: 0.5;
-        animation: wordmark-flare 3.5s cubic-bezier(0.55, 0, 0.45, 1) infinite;
-        animation-play-state: paused;
-        transition: opacity 500ms var(--ease-out-expo);
-    }
-
-    /* focus-within هم هست تا با صفحه‌کلید هم بتوان به آن رسید، نه فقط با ماوس */
-    .wordmark-band:hover .wordmark-flare,
-    .wordmark-band:focus-within .wordmark-flare {
-        opacity: 1;
-        animation-play-state: running;
+        animation: wordmark-flare 7s cubic-bezier(0.55, 0, 0.45, 1) infinite;
     }
 
     /* بدون background-clip، متنِ شفاف یعنی متنِ نامرئی — پس رنگ توپر برمی‌گردد */
@@ -649,12 +630,11 @@
     /*
     | نشان‌واژه استثناست: خاموش‌کردن انیمیشن، گرادیان را روی آخرین فریم قفل
     | می‌کند و آنجا شعله بیرون از کادر است — یعنی حروف تقریباً نامرئی می‌شوند.
-    | پس به‌جای فریز، رنگ توپر می‌گیرد. شفافیت دست‌نخورده می‌ماند تا روشن‌شدن
-    | با اشاره‌گر سر جایش بماند؛ آن تغییرِ رنگ است نه حرکت.
+    | پس به‌جای فریز، رنگ توپر می‌گیرد.
     */
     .wordmark-flare {
         background-image: none !important;
-        color: var(--color-sand-200) !important;
+        color: color-mix(in oklab, var(--color-sand-200) 60%, transparent) !important;
     }
 }
 
