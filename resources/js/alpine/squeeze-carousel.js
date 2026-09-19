@@ -65,25 +65,57 @@ export default (labels = []) => ({
 
     /* ---------- هندسه ---------- */
 
-    /** ستون‌های بعد از پانلِ باز — نزدیک انتهای صف کمتر از سه‌تا می‌مانند. */
-    get cols() {
-        return Math.max(0, Math.min(3, this.count - this.open - 1));
+    /**
+     * سه پانلِ همراهِ پانلِ باز، به‌ترتیب: اول مراحل پیشِ رو، و هرجا که پیشِ رو
+     * تمام شد، مراحل پشتِ سر.
+     *
+     * نکته‌ی اصلی همین است. پیش‌تر فقط رو به جلو نگاه می‌شد، پس روی مرحله‌ی
+     * آخر هیچ همراهی نمی‌ماند و پانلِ باز تمام عرض را می‌گرفت — یک تصویر
+     * کشیده‌ی دراز که با هیچ حالت دیگری جور نبود. حالا تعداد همراه‌ها همیشه
+     * سه‌تاست، پس پانلِ باز در هر موقعیتی همان اندازه‌ی مرحله‌ی اول را دارد.
+     */
+    get companions() {
+        const out = [];
+
+        for (let i = this.open + 1; i < this.count && out.length < 3; i++) out.push(i);
+        for (let i = this.open - 1; i >= 0 && out.length < 3; i--) out.push(i);
+
+        return out;
+    },
+
+    /**
+     * جایگاه یک پانل در سهم‌بندی: صفر یعنی خودِ پانلِ باز، یک تا سه یعنی ستون
+     * همراه، و ۱- یعنی تیغه.
+     */
+    rank(index) {
+        if (index === this.open) return 0;
+
+        const at = this.companions.indexOf(index);
+
+        return at === -1 ? -1 : at + 1;
     },
 
     /** تیغه‌های ته صف — مراحلی که هنوز نرسیده‌اند. بیش از سه‌تا نشان داده نمی‌شود. */
     get slats() {
-        return Math.max(0, Math.min(MAX_SLATS, this.count - this.open - 4));
+        const ahead = this.count - this.open - 1 - this.companions.filter((i) => i > this.open).length;
+
+        return Math.max(0, Math.min(MAX_SLATS, ahead));
     },
 
     /**
-     * تیغه‌های سر صف — مراحلی که رد شده‌اند.
+     * تیغه‌های سر صف — مراحلی که رد شده‌اند و ستون نشده‌اند.
      *
-     * برخلاف ته صف سقف ندارد: هر مرحله‌ای که پشت سر گذاشته می‌شود، به تیغه
-     * تبدیل شده و همان‌جا کنار لبه می‌ماند. پیش‌تر از کادر بیرون می‌رفت و
-     * ناپدید می‌شد — که هم راه برگشت را می‌بست، هم مسیر طی‌شده را پاک می‌کرد.
+     * برخلاف ته صف سقف ندارد: هر مرحله‌ای که پشت سر گذاشته می‌شود، دست‌کم به
+     * تیغه تبدیل می‌شود و همان‌جا کنار لبه می‌ماند. پیش‌تر از کادر بیرون می‌رفت
+     * و ناپدید می‌شد — که هم راه برگشت را می‌بست، هم مسیر طی‌شده را پاک می‌کرد.
      */
     get behind() {
-        return this.open;
+        return this.open - this.companions.filter((i) => i < this.open).length;
+    },
+
+    /** آخرین پانلی که هنوز دیده می‌شود؛ بعد از آن عرض صفر است. */
+    get last() {
+        return this.open + this.companions.filter((i) => i > this.open).length + this.slats;
     },
 
     get ms() {
@@ -94,16 +126,15 @@ export default (labels = []) => ({
     /**
      * سهم هر ستون از فضای باقی‌مانده.
      *
-     * نزدیک انتهای صف که ستون کم می‌آید، سهم‌های باقی‌مانده بزرگ‌نمایی می‌شوند
-     * تا جمعشان باز هم ۱ شود — یعنی ردیف هیچ‌وقت کوتاه‌تر از کادر نمی‌ماند و
-     * آخرین پانل تمام عرض را می‌گیرد.
+     * با سه همراه، جمعِ سهم‌ها خودش ۱ می‌شود و هیچ تنظیمی لازم نیست. کمتر از
+     * سه همراه فقط وقتی پیش می‌آید که کل پانل‌ها از چهارتا کمتر باشند؛ آن‌وقت
+     * سهم‌های مانده بزرگ‌نمایی می‌شوند تا باز هم ۱ شود.
      */
     get shares() {
-        const k = this.cols;
+        const k = this.companions.length;
         if (k === 0) return [1];
 
-        const col = this.hover - this.open;
-        const lit = ! this.reduced && this.hover >= 0 && col >= 0 && col <= k ? col : -1;
+        const lit = ! this.reduced && this.hover >= 0 ? this.rank(this.hover) : -1;
         const base = lit === -1
             ? SHARES
             : SHARES.map((_, col) => (col === lit ? STRETCHED[col] : SQUEEZED[col]));
@@ -115,25 +146,22 @@ export default (labels = []) => ({
         return [head, ...tail.map((share) => share * scale)];
     },
 
-    /** آخرین پانلی که هنوز دیده می‌شود؛ بعد از آن عرض صفر است. */
-    get last() {
-        return this.cols + this.slats;
-    },
-
     /**
-     * فضای باقی‌مانده برای چهار ستون.
+     * فضای باقی‌مانده برای پانلِ باز و سه همراهش.
      *
      * هرچه ثابت است اول کنار گذاشته می‌شود: بلوک ۱۶:۹ پانلِ باز، تیغه‌های دو
-     * سر با فاصله‌شان، و فاصله‌ی بین ستون‌ها. چون جمع سهم‌ها همیشه ۱ است،
-     * عرض کل ردیف دقیقاً برابر عرض کادر درمی‌آید و نوار هیچ‌وقت جابه‌جا
-     * نمی‌شود — فقط عرض‌ها عوض می‌شوند.
+     * سر، و همه‌ی فاصله‌ها. چون جمع سهم‌ها همیشه ۱ است، عرض کل ردیف دقیقاً
+     * برابر عرض کادر درمی‌آید و نوار هیچ‌وقت جابه‌جا نمی‌شود — فقط عرض‌ها
+     * عوض می‌شوند.
      */
     get room() {
-        const b = this.behind;
-        const fixed = b * SLAT
-            + (b > 0 ? (b - 1) * SLAT_GAP + GAP : 0)
-            + this.cols * GAP
-            + this.slats * (SLAT + SLAT_GAP);
+        const slats = this.behind + this.slats;
+        // فاصله‌ی فرزند اول حساب نمی‌شود؛ و فرزند اول وقتی تیغه است که مرحله‌ای
+        // پشت سر مانده باشد که ستون نشده.
+        const first = this.behind > 0 ? SLAT_GAP : GAP;
+        const fixed = slats * (SLAT + SLAT_GAP)
+            + (this.companions.length + 1) * GAP
+            - first;
 
         return `calc(100cqi - var(--sq-hero) - ${fixed}px)`;
     },
@@ -147,19 +175,22 @@ export default (labels = []) => ({
             return { width: '', marginInlineStart: '', borderRadius: '', opacity: '' };
         }
 
-        const col = index - this.open;
-        let width = `${SLAT}px`;
-        // تیغه‌ها تنگِ هم می‌نشینند تا مثل یک شانه دیده شوند، نه کارت‌های جدا.
-        let margin = col > 0 && col <= this.cols ? `${GAP}px` : `${SLAT_GAP}px`;
+        const place = this.rank(index);
+        const hidden = index > this.last;
 
-        if (col > this.last) {
+        // تیغه‌ها تنگِ هم می‌نشینند تا مثل یک شانه دیده شوند، نه کارت‌های جدا.
+        let width = `${SLAT}px`;
+        let margin = `${SLAT_GAP}px`;
+
+        if (hidden) {
             width = '0px';
             margin = '0px';
-        } else if (col === 0) {
+        } else if (place === 0) {
             width = `calc(var(--sq-hero) + var(--sq-room) * ${this.shares[0]})`;
             margin = `${GAP}px`;
-        } else if (col > 0 && col <= this.cols) {
-            width = `calc(var(--sq-room) * ${this.shares[col]})`;
+        } else if (place > 0) {
+            width = `calc(var(--sq-room) * ${this.shares[place]})`;
+            margin = `${GAP}px`;
         }
 
         if (index === 0) margin = '0px';
@@ -169,7 +200,7 @@ export default (labels = []) => ({
             marginInlineStart: margin,
             // تیغه‌ی ۸ پیکسلی با شعاع ۲۰ پیکسل به قرص تبدیل می‌شود، نه نوار.
             borderRadius: `min(var(--radius-panel), calc(${width} / 2))`,
-            opacity: col > this.last ? '0' : '1',
+            opacity: hidden ? '0' : '1',
             transitionProperty: 'width, margin-inline-start, opacity',
             transitionDuration: 'var(--sq-ms)',
             transitionTimingFunction: 'var(--ease-out-expo)',
