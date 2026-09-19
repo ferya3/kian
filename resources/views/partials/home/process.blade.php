@@ -121,29 +121,45 @@
                     اندازه‌گیری ندارد. روی گوشی همین باعث می‌شد چرخ اصلاً
                     ارتفاع نگیرد.
                 --}}
-                <div class="relative min-h-[20rem] w-full bg-clay-600 lg:w-[38%] lg:min-h-0">
+                <div class="relative min-h-[20rem] w-full bg-clay-600 lg:w-[46%] lg:min-h-0">
                     {{-- تابشِ ملایم از بالا، تا بلوک رنگی تخت نباشد --}}
                     <div class="pointer-events-none absolute inset-0" aria-hidden="true"
                          style="background: radial-gradient(90% 60% at 30% 0%, rgb(255 255 255 / 0.16), transparent 70%)"></div>
 
-                    <div class="fc-wheel absolute inset-0 flex items-center justify-center px-6 md:px-10 lg:justify-start lg:px-9"
+                    <div class="fc-wheel absolute inset-0 flex items-center px-6 md:px-10 lg:px-9"
                          x-ref="wheel" @keydown="onKey"
                          role="tablist" aria-label="مراحل تولید" aria-orientation="vertical">
                         @foreach($slides as $i => $slide)
-                            <div class="fc-chip absolute flex items-center" style="height: 64px" :style="chipStyle({{ $i }})">
+                            {{--
+                                هر پله‌ی چرخ یک ردیف تمام‌عرض است: بیضی، و روبه‌رویش
+                                شرح همان مرحله.
+
+                                شرح بلندتر از ۶۴ پیکسلِ ردیف است و از بالا و پایین
+                                بیرون می‌زند — اشکالی ندارد، چون ردیف‌های همسایه
+                                شرحِ نامرئی دارند و چیزی آنجا دیده نمی‌شود. شفافیتِ
+                                خودِ شرح جداست و نه ارثی از ردیف، وگرنه شرحِ
+                                همسایه‌ها هم نیمه‌جان پیدا می‌شد.
+                            --}}
+                            <div class="fc-chip absolute inset-x-0 flex items-center gap-4 md:gap-5" style="height: 64px" :style="chipStyle({{ $i }})">
                                 <button type="button" role="tab"
                                         :id="$id('process') + '-tab-{{ $i }}'"
                                         :aria-selected="active({{ $i }}) ? 'true' : 'false'"
                                         :aria-controls="$id('process') + '-panel'"
                                         :tabindex="active({{ $i }}) ? 0 : -1"
                                         @click="select({{ $i }})"
-                                        class="flex items-center gap-3 rounded-full border px-5 py-3 transition-colors duration-500 md:px-7 lg:px-6"
+                                        class="flex shrink-0 items-center gap-3 rounded-full border px-5 py-3 transition-colors duration-500 md:px-7 lg:px-6"
                                         :class="active({{ $i }})
                                             ? 'border-sand-50 bg-sand-50 text-clay-600'
                                             : 'border-white/25 text-white/65 hover:border-white/50 hover:text-white'">
                                     <x-icon :name="$slide['icon']" size="18" />
                                     <span class="whitespace-nowrap text-meta font-semibold">{{ $slide['title'] }}</span>
                                 </button>
+
+                                <p class="pointer-events-none min-w-0 flex-1 text-[0.8125rem] leading-[1.6] text-white/85 transition-opacity duration-500 md:text-[0.875rem]"
+                                   :style="{ opacity: active({{ $i }}) ? 1 : 0 }"
+                                   style="{{ $i === 0 ? '' : 'opacity: 0;' }}">
+                                    {{ $slide['summary'] }}
+                                </p>
                             </div>
                         @endforeach
                     </div>
@@ -185,31 +201,29 @@
                                     <span class="tech text-micro uppercase tracking-[0.3em] text-white/75">{{ $slide['title_en'] }}</span>
                                 </div>
 
-                                {{-- شرح، روی شیبِ تیره‌ی پایین کارت --}}
-                                <div class="pointer-events-none absolute inset-x-0 bottom-0 flex flex-col justify-end bg-gradient-to-t from-black/90 via-black/45 to-transparent p-4 pt-9 transition-opacity duration-500 sm:p-5 sm:pt-12 md:p-7 md:pt-28"
+                                {{--
+                                    پایین کارت فقط عددهای همان مرحله می‌ماند.
+                                    شرح رفته کنار بیضیِ فعال، و نامِ مرحله هم
+                                    روی خودِ بیضی هست — تکرارش اینجا فقط تصویر
+                                    را می‌پوشاند.
+                                --}}
+                                <div class="pointer-events-none absolute inset-x-0 bottom-0 flex flex-col justify-end bg-gradient-to-t from-black/85 via-black/35 to-transparent p-4 pt-12 transition-opacity duration-500 sm:p-5 md:p-7 md:pt-16"
                                      :style="{ opacity: active({{ $i }}) ? 1 : 0 }">
 
-                                    <div class="mb-3 flex flex-wrap items-center gap-2">
-                                        <span class="tech rounded-full border border-sand-300 bg-sand-50 px-3 py-1 text-micro font-semibold uppercase tracking-[0.14em] text-ink-700">
-                                            {{ $slide['label'] ? $slide['label'].' • ' : '' }}{{ $slide['title'] }}
-                                        </span>
+                                    <div class="flex flex-wrap items-center gap-2">
                                         @if($slide['metric_value'])
-                                            <span class="rounded-full border border-white/25 px-3 py-1 text-micro text-white/80">
+                                            <span class="rounded-full border border-white/25 bg-black/25 px-3 py-1 text-micro text-white/80 backdrop-blur-sm">
                                                 {{ $slide['metric_label'] }}
                                                 <x-num :value="$slide['metric_value']" class="font-bold text-white" />
                                             </span>
                                         @endif
                                         @if($slide['duration'])
-                                            <span class="flex items-center gap-1.5 rounded-full border border-white/25 px-3 py-1 text-micro text-white/80">
+                                            <span class="flex items-center gap-1.5 rounded-full border border-white/25 bg-black/25 px-3 py-1 text-micro text-white/80 backdrop-blur-sm">
                                                 <x-icon name="clock" size="13" />
                                                 {{ $slide['duration'] }}
                                             </span>
                                         @endif
                                     </div>
-
-                                    <p class="text-[0.8125rem] leading-[1.55] text-white/90 drop-shadow-md md:text-[0.9375rem] md:leading-relaxed">
-                                        {{ $slide['summary'] }}
-                                    </p>
 
                                     @if($slide['cta'])
                                         {{--
