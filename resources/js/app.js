@@ -6,9 +6,9 @@ import factoryMap from './alpine/factory-map';
 import mobileNav from './alpine/mobile-nav';
 import productFinder from './alpine/product-finder';
 import siteHeader from './alpine/site-header';
+import squeezeCarousel from './alpine/squeeze-carousel';
 import { initCountUp } from './modules/count-up';
 import { initParallax } from './modules/parallax';
-import { initProcessScroll } from './modules/process-scroll';
 import { initReveal } from './modules/reveal';
 import { initSmoothScroll } from './modules/smooth-scroll';
 
@@ -17,6 +17,7 @@ Alpine.data('mobileNav', mobileNav);
 Alpine.data('productFinder', productFinder);
 Alpine.data('blockViewer', blockViewer);
 Alpine.data('factoryMap', factoryMap);
+Alpine.data('squeezeCarousel', squeezeCarousel);
 Alpine.data('filterable', filterable);
 Alpine.data('accordion', accordion);
 Alpine.data('tabs', tabs);
@@ -28,7 +29,6 @@ const boot = () => {
     initSmoothScroll();
     initReveal();
     initCountUp();
-    initProcessScroll();
     initParallax();
 };
 

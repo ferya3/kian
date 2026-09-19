@@ -402,6 +402,89 @@
         animation: hero-rain 2.4s cubic-bezier(0.45, 0, 0.55, 1) infinite;
     }
 
+    /*
+    | نوار کاروسل فشرده — منطقش در resources/js/alpine/squeeze-carousel.js است.
+    |
+    | این بلوک فقط فریم اول را درست می‌کند: تا پیش از بالاآمدن Alpine، پانل‌ها
+    | عرض inline ندارند و بدون این قاعده‌ها ردیفی از کارت‌های هم‌عرض دیده
+    | می‌شود که بعد ناگهان جای خود را به چیدمان درست می‌دهد. مقادیر عیناً همان
+    | چیزی است که JS برای open = 0 حساب می‌کند.
+    */
+    .sq-strip {
+        scrollbar-width: none;
+    }
+
+    .sq-strip::-webkit-scrollbar {
+        display: none;
+    }
+
+    /*
+    | عرض و گردی پانل عمداً اینجاست و نه با کلاس‌های Tailwind: لایه‌ی utilities
+    | بعد از components می‌آید، پس یک w-[82vw] ساده بر قاعده‌های زیر غلبه
+    | می‌کرد و فریم اولِ دسکتاپ خراب می‌شد.
+    */
+    .sq-panel {
+        position: relative;
+        isolation: isolate;
+        height: 100%;
+        flex: 0 0 auto;
+        overflow: hidden;
+        scroll-snap-align: center;
+        width: 82vw;
+        border-radius: var(--radius-panel);
+    }
+
+    @media (min-width: 640px) {
+        .sq-panel {
+            width: 58vw;
+        }
+    }
+
+    @media (min-width: 1024px) {
+        .sq-strip {
+            /* سه فاصله‌ی ستون + سه تیغه با فاصله‌شان */
+            --sq-room: calc(100cqi - var(--sq-hero) - 48px - 48px);
+        }
+
+        .sq-strip > * {
+            width: 8px;
+            margin-inline-start: 16px;
+            border-radius: 4px;
+        }
+
+        .sq-strip > :nth-child(1) {
+            width: calc(var(--sq-hero) + var(--sq-room) * -0.06);
+            margin-inline-start: 0;
+            border-radius: var(--radius-panel);
+        }
+
+        .sq-strip > :nth-child(2) {
+            width: calc(var(--sq-room) * 0.61);
+            border-radius: var(--radius-panel);
+        }
+
+        .sq-strip > :nth-child(3) {
+            width: calc(var(--sq-room) * 0.3);
+            border-radius: var(--radius-panel);
+        }
+
+        .sq-strip > :nth-child(4) {
+            width: calc(var(--sq-room) * 0.15);
+            border-radius: var(--radius-panel);
+        }
+
+        .sq-strip > :nth-child(n + 5) {
+            margin-inline-start: 8px;
+        }
+
+        /* بیش از سه تیغه نمایش داده نمی‌شود */
+        .sq-strip > :nth-child(n + 8) {
+            width: 0;
+            margin-inline-start: 0;
+            opacity: 0;
+        }
+    }
+
     .container-page {
         width: 100%;
         margin-inline: auto;

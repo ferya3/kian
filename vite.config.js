@@ -11,8 +11,6 @@ export default defineConfig({
         tailwindcss(),
     ],
     build: {
-        // GSAP و ScrollTrigger فقط در صفحاتی که تایم‌لاین دارند بارگذاری می‌شوند
-        // (dynamic import در modules/process-scroll.js) — باندل اصلی سبک می‌ماند.
         cssCodeSplit: true,
         rollupOptions: {
             output: {
