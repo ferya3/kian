@@ -17,17 +17,23 @@
     --}}
     <div x-data="orbitalTimeline({{ $processSteps->count() }})"
          x-on:click="close()"
-         x-on:mouseenter="auto = false"
-         x-on:mouseleave="if (active === null) auto = true"
-         x-on:focusin="auto = false"
-         x-on:focusout="if (active === null) auto = true"
+         x-on:mouseenter="slow()"
+         x-on:mouseleave="resume()"
+         x-on:focusin="slow()"
+         x-on:focusout="resume()"
          x-on:keydown.escape="close()"
          class="relative h-[40rem] select-none">
 
         <div x-ref="orbit" class="absolute inset-0 flex items-center justify-center">
 
-            {{-- هسته: خاک رس که از مرکز خط تولید بیرون می‌آید --}}
-            <div class="pointer-events-none absolute z-10 grid h-16 w-16 place-items-center rounded-full bg-gradient-to-br from-clay-400 via-clay-500 to-clay-700"
+            {{--
+                هسته: خاک رس که از مرکز خط تولید بیرون می‌آید.
+
+                با باز شدن یک مرحله کنار می‌رود، چون کارت جزئیات دقیقاً وسط
+                مدار می‌نشیند. تلاش برای نگه‌داشتن هر دو، فقط شلوغی می‌سازد.
+            --}}
+            <div class="pointer-events-none absolute z-10 grid h-16 w-16 place-items-center rounded-full bg-gradient-to-br from-clay-400 via-clay-500 to-clay-700 transition-all duration-500 ease-[var(--ease-out-expo)]"
+                 :class="active !== null ? 'scale-50 opacity-0' : 'scale-100 opacity-100'"
                  aria-hidden="true">
                 <span class="absolute h-20 w-20 animate-ping rounded-full border border-clay-500/40 opacity-70"></span>
                 <span class="absolute h-24 w-24 animate-ping rounded-full border border-clay-500/25 opacity-50"
@@ -36,22 +42,27 @@
             </div>
 
             {{-- خودِ مدار --}}
-            <div class="pointer-events-none absolute rounded-full border border-ink-900/10"
+            <div class="pointer-events-none absolute rounded-full border border-ink-900/10 transition-colors duration-500"
+                 :class="active !== null ? 'border-clay-500/20' : ''"
                  :style="`width:${radius * 2}px; height:${radius * 2}px`" aria-hidden="true"></div>
 
             @foreach($processSteps as $index => $step)
-                <div class="absolute transition-[opacity] duration-300"
-                     :style="nodeStyle({{ $index }})">
+                {{--
+                    بدون transition روی این عنصر: موقعیت هر فریم از rAF می‌آید و
+                    یک transition ثانویه مدام از نو شروع می‌شود و حرکت را کِش
+                    می‌آورد. نرمی از خودِ حلقه می‌آید، نه از CSS.
+                --}}
+                <div class="absolute" :style="nodeStyle({{ $index }})">
 
                     <button type="button"
                             x-on:click.stop="toggle({{ $index }})"
                             :aria-expanded="active === {{ $index }} ? 'true' : 'false'"
-                            class="tap-icon grid h-11 w-11 place-items-center rounded-full border-2 transition-all duration-300"
+                            class="tap-icon grid h-11 w-11 place-items-center rounded-full border-2 transition-all duration-500 ease-[var(--ease-out-expo)] hover:scale-110"
                             :class="active === {{ $index }}
-                                ? 'scale-125 border-clay-500 bg-clay-500 text-white shadow-lift'
+                                ? 'scale-125 border-clay-500 bg-clay-500 text-white shadow-[0_0_0_6px_rgb(180_85_45/0.12),0_10px_28px_-10px_rgb(180_85_45/0.6)]'
                                 : (isNeighbour({{ $index }})
-                                    ? 'border-clay-400 bg-clay-100 text-clay-700'
-                                    : 'border-ink-900/15 bg-sand-50 text-ink-600 hover:border-clay-400')">
+                                    ? 'border-clay-400 bg-clay-100 text-clay-700 shadow-[0_0_0_4px_rgb(180_85_45/0.08)]'
+                                    : 'border-ink-900/15 bg-sand-50 text-ink-600 hover:border-clay-400 hover:shadow-lift')">
                         <x-icon :name="$stepIcons[$step->step_no] ?? 'grid'" size="17" />
                         <span class="sr-only">{{ $step->title }}</span>
                     </button>
@@ -65,11 +76,17 @@
                         کارت رو به پایین و داخل مدار باز می‌شود و از کادر
                         بیرون نمی‌زند.
                     --}}
-                    <div x-show="active === {{ $index }}" x-cloak
-                         x-transition:enter="transition duration-300 ease-[var(--ease-out-expo)]"
-                         x-transition:enter-start="opacity-0 -translate-y-2"
-                         x-transition:leave="transition duration-150"
-                         x-transition:leave-end="opacity-0"
+                    {{--
+                        کارت پس از نشستن مدار می‌آید (settled)، نه هم‌زمان با
+                        کلیک: وگرنه وسط چرخشِ گره باز می‌شود و همراه آن سُر
+                        می‌خورد. تأخیرِ کوتاه، حرکت را پیوسته نشان می‌دهد.
+                    --}}
+                    <div x-show="active === {{ $index }} && settled" x-cloak
+                         x-transition:enter="transition duration-500 ease-[var(--ease-out-expo)]"
+                         x-transition:enter-start="opacity-0 -translate-y-4 scale-95"
+                         x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                         x-transition:leave="transition duration-200 ease-in"
+                         x-transition:leave-end="opacity-0 -translate-y-2 scale-95"
                          x-on:click.stop
                          class="absolute right-1/2 top-[4.75rem] w-72 translate-x-1/2 rounded-[var(--radius-panel)] border border-sand-300 bg-sand-50/95 p-5 text-right shadow-float backdrop-blur-md">
 
