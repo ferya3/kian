@@ -32,13 +32,33 @@
     */
     $icons = ['layers', 'compass', 'trowel', 'blueprint', 'ruler', 'thermal', 'fire', 'check', 'grid'];
 
+    /*
+    | جمله‌ی اول شرح.
+    |
+    | روی کارتِ مربع جا برای پاراگراف نیست، و بریدنِ متن وسط جمله «...» به جا
+    | می‌گذارد که مثل خطا دیده می‌شود. یک جمله‌ی کامل می‌ماند و شرحِ کامل سر
+    | جایش در صفحه‌های فناوری و کارخانه هست.
+    |
+    | «:» و «؛» هم پایانِ جمله حساب می‌شوند و جایشان نقطه می‌نشیند. آنچه پیش
+    | از دونقطه می‌آید در فارسی جمله‌ی مستقلی است که فهرست را معرفی می‌کند، و
+    | بدون این، شرحِ «کنترل کیفیت» — که یک جمله‌ی بلندِ بی‌نقطه است — تمام
+    | کارت را روی گوشی می‌پوشاند.
+    */
+    $lead = function (?string $text): string {
+        $text = trim((string) $text);
+
+        $cuts = collect(['. ', ': ', '؛ '])
+            ->map(fn (string $mark) => mb_strpos($text, $mark))
+            ->filter(fn ($at) => $at !== false);
+
+        return $cuts->isEmpty() ? $text : mb_substr($text, 0, $cuts->min()).'.';
+    };
+
     $slides = $processSteps->values()->map(fn ($step, $i) => [
         'label' => Jalali::digits($step->paddedNumber()),
         'title' => $step->title,
         'title_en' => $step->title_en,
-        // شرحِ کامل و نه summary: آن یکی در seeder بریده شده و با «...» تمام
-        // می‌شود، که روی کارت مثل خطا دیده می‌شود نه مثل خلاصه.
-        'summary' => $step->description ?: $step->summary,
+        'summary' => $lead($step->description ?: $step->summary),
         'metric_label' => $step->metric_label,
         'metric_value' => $step->metric_value,
         'duration' => $step->duration,
@@ -133,7 +153,12 @@
                 <div :id="$id('process') + '-panel'" role="tabpanel" aria-live="polite"
                      class="relative flex flex-1 items-center justify-center overflow-hidden border-t border-sand-300 bg-sand-100 px-6 py-12 md:px-10 lg:border-s lg:border-t-0 lg:py-10">
 
-                    <div class="relative aspect-[3/4] w-full max-w-[21rem] sm:aspect-[4/5] md:max-w-[23rem]">
+                    {{--
+                        کارت مربع است، پس ارتفاعش برابر عرضش می‌شود و نسبت به
+                        حالت کشیده کوتاه‌تر. برای همین حداکثر عرض بالاتر رفته:
+                        جای عمودیِ پانل ثابت است و مربعِ کوچک وسطش گم می‌شد.
+                    --}}
+                    <div class="relative aspect-square w-full max-w-[21rem] md:max-w-[26rem] lg:h-full lg:w-auto lg:max-w-none">
                         @foreach($slides as $i => $slide)
                             <div class="fc-card absolute inset-0 origin-center overflow-hidden rounded-[1.75rem] border-4 border-sand-50 bg-sand-50 shadow-float md:rounded-[2.25rem] md:border-8"
                                  :style="cardStyle({{ $i }})"
@@ -161,7 +186,7 @@
                                 </div>
 
                                 {{-- شرح، روی شیبِ تیره‌ی پایین کارت --}}
-                                <div class="pointer-events-none absolute inset-x-0 bottom-0 flex flex-col justify-end bg-gradient-to-t from-black/90 via-black/45 to-transparent p-5 pt-14 transition-opacity duration-500 md:p-7 md:pt-28"
+                                <div class="pointer-events-none absolute inset-x-0 bottom-0 flex flex-col justify-end bg-gradient-to-t from-black/90 via-black/45 to-transparent p-4 pt-9 transition-opacity duration-500 sm:p-5 sm:pt-12 md:p-7 md:pt-28"
                                      :style="{ opacity: active({{ $i }}) ? 1 : 0 }">
 
                                     <div class="mb-3 flex flex-wrap items-center gap-2">
@@ -182,14 +207,22 @@
                                         @endif
                                     </div>
 
-                                    <p class="text-[0.9375rem] leading-relaxed text-white/90 drop-shadow-md">
+                                    <p class="text-[0.8125rem] leading-[1.55] text-white/90 drop-shadow-md md:text-[0.9375rem] md:leading-relaxed">
                                         {{ $slide['summary'] }}
                                     </p>
 
                                     @if($slide['cta'])
+                                        {{--
+                                            دکمه‌ی دوم زیر sm پنهان می‌شود. روی
+                                            کارتِ مربعِ ۲۷۰ پیکسلی، دو هدف لمسیِ
+                                            ۴۴ پیکسلی به دو ردیف می‌شکنند و کل
+                                            تصویر را می‌پوشانند؛ و کوچک‌کردنشان
+                                            یعنی شکستن حداقلِ هدف لمسی. همین
+                                            پیوند در منو و فوتر هم هست.
+                                        --}}
                                         <div class="pointer-events-auto mt-4 flex flex-wrap gap-2">
                                             <x-cta :href="route('technology')" variant="primary" size="sm">جزئیات فناوری</x-cta>
-                                            <x-cta :href="route('factory')" variant="light" size="sm">بازدید از کارخانه</x-cta>
+                                            <x-cta :href="route('factory')" variant="light" size="sm" class="max-sm:hidden">بازدید از کارخانه</x-cta>
                                         </div>
                                     @endif
                                 </div>
