@@ -1,56 +1,58 @@
+@php
+    /*
+    | آیکون هر مرحله. در دیتابیس ستونی برایش نیست و ساختن ستون تازه برای یک
+    | تصمیم صرفاً تصویری، جای درستی نیست — پس نگاشت اینجا می‌ماند و هر کلیدِ
+    | ناشناخته به grid برمی‌گردد.
+    */
+    $stepIcons = [
+        1 => 'layers',    // استخراج خاک
+        2 => 'grid',      // آماده‌سازی
+        3 => 'trowel',    // مخلوط‌سازی
+        4 => 'blueprint', // اکستروژن
+        5 => 'ruler',     // برش
+        6 => 'thermal',   // خشک‌کردن
+        7 => 'fire',      // پخت
+        8 => 'shield',    // کنترل کیفیت
+        9 => 'factory',   // بسته‌بندی
+    ];
+@endphp
+
 {{--
     «از خاک تا سازه» — تایم‌لاین فرایند تولید.
 
-    دسکتاپ: صفحه pin می‌شود و ۹ مرحله افقی حرکت می‌کنند؛ حسِ حرکت دوربین در طول خط تولید.
-    موبایل / reduced-motion: همان محتوا به‌صورت ریل قابل swipe، بدون هیچ pin شدنی.
+    دسکتاپ: مدار چرخان. نُه مرحله دور یک هسته می‌چرخند و با کلیک باز می‌شوند.
+    موبایل: همان محتوا به‌صورت ریل قابل swipe — مدار در ۳۶۰ پیکسل جا نمی‌شود و
+    عنوان‌های فارسی روی شعاع کوچک روی هم می‌افتند.
+
+    محتوا در هر دو حالت از یک منبع می‌آید و هر دو در HTML هستند؛ فقط یکی در هر
+    اندازه دیده می‌شود.
 --}}
-<section data-process-scroll
-         class="relative overflow-hidden bg-sand-50 section lg:h-[100svh] lg:overflow-hidden lg:py-0"
+<section class="relative overflow-hidden bg-sand-50 section"
          aria-labelledby="process-heading">
 
-    {{-- لایه‌ی پس‌زمینه که کندتر حرکت می‌کند --}}
-    <div data-process-parallax class="pointer-events-none absolute inset-0 hidden opacity-70 lg:block" aria-hidden="true">
-        <svg class="absolute bottom-0 right-0 h-[34%] w-[230%]" viewBox="0 0 3200 400" preserveAspectRatio="xMaxYMax slice">
-            <g stroke="#ded7cb" stroke-width="2" fill="none">
-                <path d="M0 340h3200"/>
-                <path d="M0 300h420v-60h180v60h520v-90h240v90h700v-50h300v50h840"/>
-                <path d="M180 240v-70h60v70M980 210v-90h50v90M1900 250v-40h40v40"/>
-            </g>
-            <g fill="#ece8e0" fill-opacity=".75">
-                <rect x="600" y="250" width="380" height="90" rx="4"/>
-                <rect x="1500" y="230" width="500" height="110" rx="4"/>
-                <rect x="2400" y="262" width="320" height="78" rx="4"/>
-            </g>
-        </svg>
-    </div>
+    {{--
+        خط افق کارخانه که پیش‌تر اینجا بود، برای حرکت افقی طراحی شده بود و
+        پشت مدار بی‌ربط می‌افتاد؛ برداشته شد.
+    --}}
 
     <div class="relative flex h-full flex-col lg:justify-center">
 
-        {{-- سربرگ ثابت --}}
-        <div class="container-page shrink-0 lg:pt-24">
-            <div class="flex flex-wrap items-end justify-between gap-6">
-                <div class="max-w-2xl">
-                    <p class="eyebrow text-clay-600" data-reveal>From earth to architecture</p>
-                    <h2 id="process-heading" class="mt-3 text-h2 font-extrabold text-balance" data-reveal>از خاک تا سازه</h2>
-                    <p class="mt-4 text-lead text-ink-500" data-reveal>
-                        نُه مرحله، از برداشت خاک رس معدن تا پالت شرینک‌پیچ‌شده‌ی آماده‌ی بارگیری.
-                    </p>
-                </div>
-
-                <p class="tech hidden items-baseline gap-1.5 lg:flex" aria-hidden="true">
-                    <span class="text-5xl font-extrabold leading-none text-clay-500" data-process-counter>۰۱</span>
-                    <span class="text-2xl font-bold leading-none text-sand-300">/</span>
-                    <span class="text-2xl font-bold leading-none text-ink-400">۰۹</span>
+        {{-- سربرگ --}}
+        <div class="container-page shrink-0">
+            <div class="max-w-2xl">
+                <p class="eyebrow text-clay-600" data-reveal>From earth to architecture</p>
+                <h2 id="process-heading" class="mt-3 text-h2 font-extrabold text-balance" data-reveal>از خاک تا سازه</h2>
+                <p class="mt-4 text-lead text-ink-500" data-reveal>
+                    نُه مرحله، از برداشت خاک رس معدن تا پالت شرینک‌پیچ‌شده‌ی آماده‌ی بارگیری.
+                    <span class="hidden lg:inline">روی هر مرحله کلیک کنید.</span>
                 </p>
-            </div>
-
-            <div class="mt-7 hidden h-0.5 overflow-hidden rounded-full bg-sand-300 lg:block">
-                <div data-process-progress class="h-full origin-right scale-x-0 bg-clay-500 transition-transform duration-150"></div>
             </div>
         </div>
 
-        {{-- ریل مراحل --}}
-        <div class="mt-10 lg:mt-12">
+        @include('partials.home.process-orbit', ['stepIcons' => $stepIcons])
+
+        {{-- ریل مراحل — زیر lg --}}
+        <div class="mt-10 lg:hidden">
             <ol data-process-track
                 class="scroll-rail lg:mx-0 lg:flex lg:gap-8 lg:overflow-visible lg:px-[max(1.25rem,calc((100vw-88rem)/2+3rem))]">
                 @foreach($processSteps as $step)
