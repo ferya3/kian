@@ -1,4 +1,5 @@
 @php
+    use App\Models\SiteMedia;
     use App\Support\Jalali;
     use App\Support\Media;
 
@@ -34,6 +35,7 @@
         'metric_label' => $step->metric_label,
         'metric_value' => $step->metric_value,
         'image' => Media::url($step->image),
+        'alt' => $step->title,
         'tint' => $tints[$i % count($tints)],
         'cta' => false,
     ])->push([
@@ -44,7 +46,8 @@
         'duration' => null,
         'metric_label' => null,
         'metric_value' => null,
-        'image' => null,
+        'image' => SiteMedia::url('process.outcome'),
+        'alt' => SiteMedia::alt('process.outcome', 'ساختمان اجراشده با بلوک سفالی کیان'),
         'tint' => $strata.', linear-gradient(155deg,#2b2b2b,#0e0e0e)',
         'cta' => true,
     ]);
@@ -137,7 +140,7 @@
                             از آن دیده شود.
                         --}}
                         @if($slide['image'])
-                            <img src="{{ $slide['image'] }}" alt="{{ $slide['title'] }}"
+                            <img src="{{ $slide['image'] }}" alt="{{ $slide['alt'] }}"
                                  loading="lazy" decoding="async" draggable="false"
                                  class="absolute inset-y-0 left-1/2 h-full max-w-none -translate-x-1/2 object-cover"
                                  style="width: var(--sq-hero); min-width: 100%">

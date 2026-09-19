@@ -114,6 +114,29 @@ class SiteMediaTest extends TestCase
         $this->get('/')->assertOk()->assertSee('admin/site/hero.jpg', false);
     }
 
+    /**
+     * کارت پایانی «از خاک تا سازه».
+     *
+     * مرحله‌ی تولید نیست، پس ردیفی در «مراحل تولید» ندارد و تنها راه تصویر
+     * دادن به آن، همین جایگاه است. بدون این تست، حذف تصادفی جایگاه باعث
+     * می‌شد کارت بی‌صدا به گرادیان برگردد.
+     */
+    public function test_the_closing_process_card_takes_its_image_from_the_panel(): void
+    {
+        $this->get('/')->assertOk()->assertDontSee('admin/site/outcome.jpg', false);
+
+        // از طریق مدل، نه query builder — تا مثل پنل، کش نقشه‌ی رسانه پاک شود.
+        SiteMedia::query()->where('key', 'process.outcome')->first()->update([
+            'image' => 'admin/site/outcome.jpg',
+            'alt' => 'برج مسکونی نیایش، اجراشده با بلوک سفالی',
+        ]);
+
+        $this->get('/')
+            ->assertOk()
+            ->assertSee('admin/site/outcome.jpg', false)
+            ->assertSee('برج مسکونی نیایش، اجراشده با بلوک سفالی', false);
+    }
+
     public function test_the_video_poster_comes_from_the_panel(): void
     {
         Setting::put('hero_video', '/media/factory.mp4');
@@ -241,5 +264,28 @@ class SiteMediaTest extends TestCase
             ->get('/admin/media')
             ->assertOk()
             ->assertSee(SiteMediaResource::$label);
+    }
+
+    /**
+     * هر جایگاهی که در کد اعلام شده، باید در پنل هم دیده شود.
+     *
+     * جایگاهی که ویو می‌خواندش ولی در فهرست پنل نیست، یعنی تصویری که هیچ‌کس
+     * نمی‌تواند آپلودش کند — همان چیزی که برای کارت «و بعد، ساختمان» پیش آمد.
+     */
+    public function test_the_panel_lists_every_declared_slot(): void
+    {
+        $page = $this->actingAs($this->admin)
+            ->get('/admin/'.SiteMediaResource::$slug)
+            ->assertOk();
+
+        $this->assertLessThanOrEqual(
+            SiteMediaResource::$perPage,
+            count(SiteMedia::SLOTS),
+            'جایگاه‌ها از یک صفحه بیشتر شده‌اند؛ این تست دیگر همه را نمی‌بیند.'
+        );
+
+        foreach (SiteMedia::SLOTS as $key => [$label]) {
+            $page->assertSee($label, false);
+        }
     }
 }
