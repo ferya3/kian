@@ -57,6 +57,17 @@ class Navigation
         ];
     }
 
+    /**
+     * آیا این صفحه قهرمانِ تیره‌ی تمام‌قد دارد؟
+     *
+     * دو جا لازم است و باید یکی باشند: هدر از رویش تصمیم می‌گیرد شفاف بماند
+     * یا نه، و چیدمان از رویش تصمیم می‌گیرد جبرانِ ارتفاع هدر بگذارد یا نه.
+     */
+    public static function overHero(): bool
+    {
+        return request()->routeIs('home');
+    }
+
     /** آیا مسیر فعلی زیرمجموعه‌ی این آیتم است؟ برای aria-current و استایل فعال. */
     public static function isActive(array $item): bool
     {

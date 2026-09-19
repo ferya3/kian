@@ -103,4 +103,23 @@ class PublicPagesTest extends TestCase
             ->assertOk()
             ->assertSee('بلوک سفالی ۲۰');
     }
+
+    /**
+     * جبرانِ ارتفاع هدر باید داخل قاب باشد، نه بیرونش.
+     *
+     * بیرونِ قاب، صفحه‌های بدون قهرمان با یک نوار از زمینه‌ی تیره شروع می‌شدند
+     * و قاب چند ده پیکسل پایین‌تر از هدر آغاز می‌شد.
+     */
+    public function test_the_header_offset_sits_inside_the_shell(): void
+    {
+        $inner = $this->get(route('about'))->assertOk()->getContent();
+        $shell = strpos($inner, 'page-shell');
+        $offset = strpos($inner, 'header-offset');
+
+        $this->assertNotFalse($offset, 'صفحه‌ی بدون قهرمان باید جبران ارتفاع هدر داشته باشد.');
+        $this->assertGreaterThan($shell, $offset, 'جبران ارتفاع هدر باید داخل قاب باشد.');
+
+        // صفحه‌ی اصلی قهرمان تمام‌قد دارد و نباید جبران بگیرد
+        $this->get(route('home'))->assertOk()->assertDontSee('header-offset');
+    }
 }

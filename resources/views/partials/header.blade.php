@@ -1,7 +1,7 @@
 @php
     use App\Support\Navigation;
     // صفحاتی که قهرمان تیره‌ی تمام‌قد دارند، هدر شفاف با متن روشن می‌گیرند.
-    $overHero = request()->routeIs('home');
+    $overHero = Navigation::overHero();
 @endphp
 
 <header x-data="siteHeader({{ $overHero ? 'true' : 'false' }})"
@@ -10,8 +10,15 @@
         style="padding-top: var(--safe-top)"
         :class="hidden ? '-translate-y-full' : 'translate-y-0'">
 
+    {{--
+        هدر خودش تمام‌عرض است ولی نوارهایش به عرض قاب درمی‌آیند، تا با بدنه‌ی
+        سایت یکی دیده شوند. relative لازم است: مگا منو با inset-x-0 به همین
+        قاب تکیه می‌کند، نه به کل پنجره.
+    --}}
+    <div class="shell-width relative">
+
     {{-- نوار خدماتی — تماس مستقیم و میان‌بر مهندسان --}}
-    <div class="hidden overflow-hidden bg-ink-950 text-sand-200 transition-[height] duration-500 ease-[var(--ease-out-expo)] lg:block"
+    <div class="hidden overflow-hidden rounded-t-[var(--shell-radius)] bg-ink-950 text-sand-200 transition-[height] duration-500 ease-[var(--ease-out-expo)] lg:block"
          :class="scrolled ? 'h-0' : 'h-10'">
         <div class="container-page flex h-10 items-center justify-between text-meta">
             <div class="flex items-center gap-6">
@@ -36,9 +43,14 @@
         </div>
     </div>
 
-    {{-- نوار اصلی --}}
+    {{--
+        نوار اصلی. گوشه‌ی بالایش فقط وقتی گرد می‌شود که نوار خدماتی جمع شده
+        باشد و خودش بالاترین چیز روی صفحه باشد؛ وگرنه محل اتصال دو نوار
+        بریدگی پیدا می‌کند.
+    --}}
     <div class="transition-colors duration-300"
-         :class="onDark ? 'bg-transparent' : 'bg-sand-50/95 backdrop-blur-xl border-b border-sand-300'"
+         :class="(onDark ? 'bg-transparent' : 'bg-sand-50/95 backdrop-blur-xl border-b border-sand-300')
+                 + (scrolled ? ' rounded-t-[var(--shell-radius)]' : '')"
          @mouseleave="scheduleClose()">
         <div class="container-page flex h-16 items-center gap-2 lg:h-[4.5rem] lg:gap-4">
 
@@ -121,10 +133,7 @@
         @include('partials.mega-menu')
     </div>
 
+    </div>{{-- /shell-width --}}
+
     @include('partials.search-overlay')
 </header>
-
-{{-- جبران ارتفاع هدر ثابت برای صفحات بدون قهرمان تمام‌قد --}}
-@unless($overHero)
-    <div class="header-offset" aria-hidden="true"></div>
-@endunless

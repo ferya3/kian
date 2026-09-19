@@ -44,7 +44,12 @@
 
     @stack('head')
 </head>
-<body class="min-h-dvh bg-sand-100 text-ink-900 antialiased">
+{{--
+    رنگ زمینه عمداً کلاس Tailwind نیست: لایه‌ی utilities بعد از components
+    می‌آید و bg-sand-100 روی زمینه‌ی تیره‌ی قاب را می‌گرفت. هر دو حالت در
+    app.css تعریف شده‌اند.
+--}}
+<body class="min-h-dvh text-ink-900 antialiased">
     <a href="#main"
        class="sr-only-focusable fixed right-4 z-[100] inline-flex min-h-11 items-center rounded-full bg-ink-900 px-5 text-sm font-semibold text-sand-50 shadow-float"
        style="top: calc(1rem + var(--safe-top))">
@@ -54,11 +59,22 @@
     @include('partials.header')
     @include('partials.mobile-nav')
 
-    <main id="main" class="focus:outline-none">
-        {{ $slot }}
-    </main>
+    {{--
+        قاب سایت. هدر عمداً بیرونش می‌ماند: fixed است و باید روی هیرو شناور
+        بماند، ولی خودش را با همین عرض هم‌تراز می‌کند.
+    --}}
+    <div class="page-shell">
+        {{-- جبران ارتفاع هدر ثابت برای صفحات بدون قهرمان تمام‌قد --}}
+        @unless(\App\Support\Navigation::overHero())
+            <div class="header-offset" aria-hidden="true"></div>
+        @endunless
 
-    @include('partials.footer')
+        <main id="main" class="focus:outline-none">
+            {{ $slot }}
+        </main>
+
+        @include('partials.footer')
+    </div>
 
     @stack('scripts')
 </body>
