@@ -121,45 +121,56 @@
                     اندازه‌گیری ندارد. روی گوشی همین باعث می‌شد چرخ اصلاً
                     ارتفاع نگیرد.
                 --}}
-                <div class="relative min-h-[20rem] w-full bg-clay-600 lg:w-[46%] lg:min-h-0">
+                <div class="relative min-h-[22rem] w-full bg-clay-600 lg:w-[38%] lg:min-h-0">
                     {{-- تابشِ ملایم از بالا، تا بلوک رنگی تخت نباشد --}}
                     <div class="pointer-events-none absolute inset-0" aria-hidden="true"
                          style="background: radial-gradient(90% 60% at 30% 0%, rgb(255 255 255 / 0.16), transparent 70%)"></div>
 
-                    <div class="fc-wheel absolute inset-0 flex items-center px-6 md:px-10 lg:px-9"
+                    {{--
+                        فاصله‌ی افقی روی خودِ ردیف‌هاست و نه روی چرخ.
+
+                        ردیف absolute است و inset-x-0 برای چنین عنصری نسبت به
+                        padding box والد حساب می‌شود، نه content box — یعنی
+                        padding چرخ را کامل نادیده می‌گرفت و بیضی‌ها می‌چسبیدند
+                        به دیواره.
+                    --}}
+                    <div class="fc-wheel absolute inset-0 flex items-center"
                          x-ref="wheel" @keydown="onKey"
                          role="tablist" aria-label="مراحل تولید" aria-orientation="vertical">
                         @foreach($slides as $i => $slide)
                             {{--
-                                هر پله‌ی چرخ یک ردیف تمام‌عرض است: بیضی، و روبه‌رویش
+                                هر پله‌ی چرخ یک ردیف تمام‌عرض است: بیضی، و زیرش
                                 شرح همان مرحله.
 
-                                شرح بلندتر از ۶۴ پیکسلِ ردیف است و از بالا و پایین
-                                بیرون می‌زند — اشکالی ندارد، چون ردیف‌های همسایه
-                                شرحِ نامرئی دارند و چیزی آنجا دیده نمی‌شود. شفافیتِ
-                                خودِ شرح جداست و نه ارثی از ردیف، وگرنه شرحِ
-                                همسایه‌ها هم نیمه‌جان پیدا می‌شد.
+                                شرح absolute است تا ردیف را بلند نکند؛ در عوض
+                                کامپوننت ارتفاعش را می‌خواند و ردیف‌های پایین‌تر
+                                را به همان اندازه هل می‌دهد. شفافیتِ خودِ شرح جداست
+                                و ارثی از ردیف نیست، وگرنه شرحِ همسایه‌ها هم
+                                نیمه‌جان پیدا می‌شد.
                             --}}
-                            <div class="fc-chip absolute inset-x-0 flex items-center gap-4 md:gap-5" style="height: 64px" :style="chipStyle({{ $i }})">
-                                <button type="button" role="tab"
-                                        :id="$id('process') + '-tab-{{ $i }}'"
-                                        :aria-selected="active({{ $i }}) ? 'true' : 'false'"
-                                        :aria-controls="$id('process') + '-panel'"
-                                        :tabindex="active({{ $i }}) ? 0 : -1"
-                                        @click="select({{ $i }})"
-                                        class="flex shrink-0 items-center gap-3 rounded-full border px-5 py-3 transition-colors duration-500 md:px-7 lg:px-6"
-                                        :class="active({{ $i }})
-                                            ? 'border-sand-50 bg-sand-50 text-clay-600'
-                                            : 'border-white/25 text-white/65 hover:border-white/50 hover:text-white'">
-                                    <x-icon :name="$slide['icon']" size="18" />
-                                    <span class="whitespace-nowrap text-meta font-semibold">{{ $slide['title'] }}</span>
-                                </button>
+                            <div class="fc-chip absolute inset-x-0 flex" style="height: 64px" :style="chipStyle({{ $i }})">
+                                <div class="relative mx-6 flex h-full flex-1 items-center justify-center md:mx-10 lg:mx-9 lg:justify-start">
+                                    <button type="button" role="tab"
+                                            :id="$id('process') + '-tab-{{ $i }}'"
+                                            :aria-selected="active({{ $i }}) ? 'true' : 'false'"
+                                            :aria-controls="$id('process') + '-panel'"
+                                            :tabindex="active({{ $i }}) ? 0 : -1"
+                                            @click="select({{ $i }})"
+                                            class="flex shrink-0 items-center gap-3 rounded-full border px-5 py-3 transition-colors duration-500 md:px-7 lg:px-6"
+                                            :class="active({{ $i }})
+                                                ? 'border-sand-50 bg-sand-50 text-clay-600'
+                                                : 'border-white/25 text-white/65 hover:border-white/50 hover:text-white'">
+                                        <x-icon :name="$slide['icon']" size="18" />
+                                        <span class="whitespace-nowrap text-meta font-semibold">{{ $slide['title'] }}</span>
+                                    </button>
 
-                                <p class="pointer-events-none min-w-0 flex-1 text-[0.8125rem] leading-[1.6] text-white/85 transition-opacity duration-500 md:text-[0.875rem]"
-                                   :style="{ opacity: active({{ $i }}) ? 1 : 0 }"
-                                   style="{{ $i === 0 ? '' : 'opacity: 0;' }}">
-                                    {{ $slide['summary'] }}
-                                </p>
+                                    <p data-text
+                                       class="pointer-events-none absolute inset-x-0 top-full mt-2.5 text-center text-[0.8125rem] leading-[1.6] text-white/85 transition-opacity duration-500 md:text-[0.875rem] lg:pe-4 lg:text-start"
+                                       :style="{ opacity: active({{ $i }}) ? 1 : 0 }"
+                                       style="{{ $i === 0 ? '' : 'opacity: 0;' }}">
+                                        {{ $slide['summary'] }}
+                                    </p>
+                                </div>
                             </div>
                         @endforeach
                     </div>

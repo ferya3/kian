@@ -17,21 +17,47 @@ const ITEM_H = 64;
 
 const AUTOPLAY_MS = 3400;
 
+/** فاصله‌ی بیضی تا شرحِ زیرش. */
+const TEXT_GAP = 10;
+
 export default (count = 0) => ({
     count,
     step: 0,
     paused: false,
     reduced: false,
     timer: null,
+    /** جایی که چرخ برای شرحِ مرحله‌ی فعال باز می‌کند. */
+    room: 0,
 
     init() {
         this.reduced = prefersReducedMotion();
         this.$watch('paused', () => this.schedule());
+        this.$watch('step', () => this.measure());
         this.schedule();
+
+        this.$nextTick(() => this.measure());
+
+        // طول شرح با عرض پنجره عوض می‌شود، پس اندازه دوباره گرفته می‌شود
+        this.onResize = () => this.measure();
+        window.addEventListener('resize', this.onResize, { passive: true });
     },
 
     destroy() {
         clearInterval(this.timer);
+        window.removeEventListener('resize', this.onResize);
+    },
+
+    /**
+     * ارتفاع شرحِ مرحله‌ی فعال.
+     *
+     * شرح زیر بیضی می‌نشیند و absolute است، پس خودش ردیف را بلند نمی‌کند —
+     * در عوض ردیف‌های پایین‌تر به همین اندازه هل داده می‌شوند تا رویش نیفتند.
+     * اندازه‌اش خوانده می‌شود و حدس زده نمی‌شود، چون شرح‌ها یک تا چهار خطی‌اند.
+     */
+    measure() {
+        const text = this.$refs.wheel?.children[this.index]?.querySelector('[data-text]');
+
+        this.room = text ? text.offsetHeight + TEXT_GAP : 0;
     },
 
     /**
@@ -107,8 +133,12 @@ export default (count = 0) => ({
     chipStyle(i) {
         const d = this.offset(i);
 
+        // فقط ردیف‌های پایین‌ترِ مرحله‌ی فعال کنار می‌روند؛ بالایی‌ها سر جایشان
+        // می‌مانند، وگرنه کل چرخ با هر قدم بالا و پایین می‌پرد.
+        const push = d > 0 ? this.room : 0;
+
         return {
-            transform: `translateY(${d * ITEM_H}px)`,
+            transform: `translateY(${d * ITEM_H + push}px)`,
             opacity: String(Math.max(0, 1 - Math.abs(d) * 0.25)),
             zIndex: d === 0 ? '10' : '1',
             // چیپ محوشده نباید هدفِ کلیک باشد
