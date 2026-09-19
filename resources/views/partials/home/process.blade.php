@@ -26,14 +26,23 @@
         ['#514741', '#1f1c1a'],
     ])->map(fn ($pair) => $strata.', linear-gradient(155deg,'.$pair[0].','.$pair[1].')')->all();
 
+    /*
+    | آیکون هر مرحله. به ترتیبِ مرحله بسته شده و نه به اسمش، چون اسم را مدیر
+    | می‌تواند عوض کند؛ اگر روزی مرحله‌ای اضافه شود، فهرست دور می‌زند.
+    */
+    $icons = ['layers', 'compass', 'trowel', 'blueprint', 'ruler', 'thermal', 'fire', 'check', 'grid'];
+
     $slides = $processSteps->values()->map(fn ($step, $i) => [
         'label' => Jalali::digits($step->paddedNumber()),
         'title' => $step->title,
         'title_en' => $step->title_en,
-        'description' => $step->description,
-        'duration' => $step->duration,
+        // شرحِ کامل و نه summary: آن یکی در seeder بریده شده و با «...» تمام
+        // می‌شود، که روی کارت مثل خطا دیده می‌شود نه مثل خلاصه.
+        'summary' => $step->description ?: $step->summary,
         'metric_label' => $step->metric_label,
         'metric_value' => $step->metric_value,
+        'duration' => $step->duration,
+        'icon' => $icons[$i % count($icons)],
         'image' => Media::url($step->image),
         'alt' => $step->title,
         'tint' => $tints[$i % count($tints)],
@@ -42,210 +51,153 @@
         'label' => '',
         'title' => 'و بعد، ساختمان',
         'title_en' => 'Output',
-        'description' => 'هر پالتی که از این خط خارج می‌شود، شناسه‌ی بچ تولید دارد — تا اگر ده سال بعد پرسشی درباره‌ی آن پیش آمد، بتوانیم پاسخ بدهیم.',
-        'duration' => null,
+        'summary' => 'هر پالتی که از این خط خارج می‌شود شناسه‌ی بچ تولید دارد — تا ده سال بعد هم قابل ردیابی باشد.',
         'metric_label' => null,
         'metric_value' => null,
+        'duration' => null,
+        'icon' => 'factory',
         'image' => SiteMedia::url('process.outcome'),
         'alt' => SiteMedia::alt('process.outcome', 'ساختمان اجراشده با بلوک سفالی کیان'),
         'tint' => $strata.', linear-gradient(155deg,#2b2b2b,#0e0e0e)',
         'cta' => true,
     ]);
-
-    $labels = $slides->pluck('label')->all();
-    $total = Jalali::digits(str_pad((string) $processSteps->count(), 2, '0', STR_PAD_LEFT));
-
-    /*
-    | آنچه در ردیف، سهمِ بادبزن نیست: فاصله‌ی بین کارت‌ها، به‌اضافه‌ی نوارها در
-    | باریک‌ترین حالتشان (وقتی هر دو طرفِ بادبزن پر است). از تعداد کارت‌ها می‌آید،
-    | پس اینجا حساب می‌شود و نه در CSS — تا با کم و زیاد شدن مراحل خودش را
-    | اصلاح کند. هم‌تراز با ثابت‌های resources/js/alpine/squeeze-carousel.js.
-    */
-    $panels = $slides->count();
-    $narrow = max(0, $panels - 5);
-    $fixed = ($panels - 1) * 12 + $narrow * 8;
-
-    // پهنای نوار در مرحله‌ی اول، که یک سمتِ بادبزن خالی است و نیمِ سهم آزاد است
-    $slat = 'calc((var(--sq-room) * 0.5 + '.($narrow * 8).'px) / '.max(1, $panels - 3).')';
 @endphp
 
 {{--
-    «از خاک تا سازه» — کاروسل فشرده.
+    «از خاک تا سازه» — کاروسل دو‌پانله.
 
-    دسکتاپ: ردیف حولِ کارتِ باز قرینه است — دو کارت پلکانی در هر طرفش و
-    نوارهای نازک در دو سر. کارتِ باز مربع است و عرضِ آن و هر چهار کارتِ بادبزن
-    در همه‌ی حالت‌ها ثابت می‌ماند، پس باز شدنِ یک کارت چه رو به جلو چه رو به
-    عقب یک‌شکل است. تنها چیزی که عوض می‌شود پهنای نوارهاست، آن هم قرینه.
-    هیچ کارتی پنهان نمی‌شود و با کلیک هرکدام، همان باز می‌شود.
+    سمت راست چرخی از چیپ‌هاست که عمودی می‌چرخد و مرحله‌ی فعال وسطش می‌نشیند؛
+    سمت چپ دسته‌ای از کارت‌ها که مرحله‌ی فعال رو به جلو می‌آید و همسایه‌هایش
+    کمی کوچک و کج پشتش می‌مانند. خودش هر چند ثانیه جلو می‌رود و با رسیدن
+    نشانگر یا فوکوس می‌ایستد.
 
-    موبایل: همان پانل‌ها به‌صورت ریل قابل swipe؛ متن زیرِ ریل با هر swipe
-    عوض می‌شود. محتوا یکی است، فقط چیدمان فرق می‌کند.
+    روی گوشی همان دو پانل روی هم می‌نشینند: چرخ بالا، دسته پایین.
 --}}
-<section class="relative overflow-hidden bg-sand-50 section" aria-labelledby="process-heading">
+<section class="bg-sand-50 section" aria-labelledby="process-heading">
+    <div class="container-page">
 
-    <div class="sq-carousel container-page relative"
-         x-data="squeezeCarousel(@js($labels))"
-         x-id="['process']">
-
-        {{-- سربرگ --}}
-        <div class="flex flex-wrap items-end justify-between gap-x-6 gap-y-5">
-            <div class="max-w-2xl">
-                <p class="eyebrow text-clay-600" data-reveal>From earth to architecture</p>
-                <h2 id="process-heading" class="mt-3 text-h2 font-extrabold text-balance" data-reveal>از خاک تا سازه</h2>
-                <p class="mt-4 text-lead text-ink-500" data-reveal>
-                    نُه مرحله، از برداشت خاک رس معدن تا پالت شرینک‌پیچ‌شده‌ی آماده‌ی بارگیری.
-                </p>
-            </div>
-
-            <div class="flex items-center gap-5">
-                {{-- شمارنده روی کارتِ پایانی عدد ندارد، پس محو می‌شود و جایش می‌ماند --}}
-                <p class="tech hidden items-baseline gap-1.5 transition-opacity duration-300 sm:flex"
-                   :class="label === '' && 'opacity-0'" aria-hidden="true">
-                    <span class="text-4xl font-extrabold leading-none text-clay-500" x-text="label || '{{ $total }}'">{{ $labels[0] }}</span>
-                    <span class="text-xl font-bold leading-none text-sand-300">/</span>
-                    <span class="text-xl font-bold leading-none text-ink-400">{{ $total }}</span>
-                </p>
-
-                {{-- در RTL «بعدی» فلشِ چپ است --}}
-                <div class="hidden gap-2 lg:flex">
-                    <button type="button" @click="step(-1)" :disabled="open === 0"
-                            class="tap-icon grid size-10 place-items-center rounded-full bg-ink-900 text-sand-50 transition hover:bg-clay-500 disabled:pointer-events-none disabled:opacity-25"
-                            aria-label="مرحله‌ی قبل">
-                        <x-icon name="arrow-right" size="17" />
-                    </button>
-                    <button type="button" @click="step(1)" :disabled="open === count - 1"
-                            class="tap-icon grid size-10 place-items-center rounded-full bg-ink-900 text-sand-50 transition hover:bg-clay-500 disabled:pointer-events-none disabled:opacity-25"
-                            aria-label="مرحله‌ی بعد">
-                        <x-icon name="arrow-left" size="17" />
-                    </button>
-                </div>
-            </div>
+        <div class="max-w-2xl">
+            <p class="eyebrow text-clay-600" data-reveal>From earth to architecture</p>
+            <h2 id="process-heading" class="mt-3 text-h2 font-extrabold text-balance" data-reveal>از خاک تا سازه</h2>
+            <p class="mt-4 text-lead text-ink-500" data-reveal>
+                نُه مرحله، از برداشت خاک رس معدن تا پالت شرینک‌پیچ‌شده‌ی آماده‌ی بارگیری.
+            </p>
         </div>
 
-        <div class="mt-7 h-0.5 overflow-hidden rounded-full bg-sand-300">
-            <div class="h-full origin-right bg-clay-500 transition-transform duration-700 ease-[var(--ease-out-expo)]"
-                 :style="{ transform: `scaleX(${progress})` }"
-                 style="transform: scaleX({{ round(1 / max(1, $slides->count()), 4) }})"></div>
-        </div>
+        <div class="mt-9"
+             x-data="featureCarousel({{ $slides->count() }})"
+             x-id="['process']"
+             @mouseenter="paused = true"
+             @mouseleave="paused = false"
+             @focusin="paused = true"
+             @focusout="paused = false">
 
-        {{-- نوار پانل‌ها --}}
-        <div class="mt-7 lg:overflow-hidden">
-            <ol x-ref="strip"
-                @scroll.passive="onScroll"
-                @keydown="onKey"
-                @mouseleave="hover = -1"
-                :style="stripStyle"
-                role="tablist"
-                aria-label="مراحل تولید"
-                aria-orientation="horizontal"
-                style="--sq-fixed: {{ $fixed }}px; --sq-slat: {{ $slat }}"
-                class="sq-strip -mx-5 flex h-[var(--sq-h)] snap-x snap-mandatory gap-3 overflow-x-auto overscroll-x-contain scroll-px-5 px-5 md:-mx-8 md:scroll-px-8 md:px-8 lg:mx-0 lg:w-full lg:gap-0 lg:overflow-visible lg:px-0 lg:snap-none">
+            <div class="flex min-h-[34rem] flex-col overflow-hidden rounded-[2rem] border border-sand-300 lg:min-h-0 lg:flex-row lg:rounded-[2.5rem] lg:aspect-[2/1]">
 
-                @foreach($slides as $i => $slide)
-                    <li role="presentation"
-                        :style="panelStyle({{ $i }})"
-                        class="sq-panel bg-sand-200">
+                {{-- چرخِ مرحله‌ها --}}
+                {{--
+                    چرخ با inset-0 کشیده می‌شود و نه با h-full: چیپ‌ها همه
+                    absolute‌اند، پس ارتفاعِ محتوا صفر است و درصدْ چیزی برای
+                    اندازه‌گیری ندارد. روی گوشی همین باعث می‌شد چرخ اصلاً
+                    ارتفاع نگیرد.
+                --}}
+                <div class="relative min-h-[20rem] w-full bg-clay-600 lg:w-[38%] lg:min-h-0">
+                    {{-- تابشِ ملایم از بالا، تا بلوک رنگی تخت نباشد --}}
+                    <div class="pointer-events-none absolute inset-0" aria-hidden="true"
+                         style="background: radial-gradient(90% 60% at 30% 0%, rgb(255 255 255 / 0.16), transparent 70%)"></div>
 
-                        {{--
-                            تصویر همیشه در یک بلوک مربع و وسط‌چین کشیده می‌شود، نه به
-                            عرض پانل. اگر به عرض پانل بود، object-fit با باریک‌شدن
-                            پانل مقیاس را عوض می‌کرد و عکس هر فریم دوباره نمونه‌برداری
-                            می‌شد. یک بلوک یعنی یک مقیاس؛ پانل فقط تعیین می‌کند چقدر
-                            از آن دیده شود.
-                        --}}
-                        @if($slide['image'])
-                            <img src="{{ $slide['image'] }}" alt="{{ $slide['alt'] }}"
-                                 loading="lazy" decoding="async" draggable="false"
-                                 class="absolute inset-y-0 left-1/2 h-full max-w-none -translate-x-1/2 object-cover"
-                                 style="width: var(--sq-hero); min-width: 100%">
-                        @else
-                            <span aria-hidden="true"
-                                  class="absolute inset-y-0 left-1/2 -translate-x-1/2"
-                                  style="width: var(--sq-hero); min-width: 100%; background: {{ $slide['tint'] }}"></span>
-                        @endif
-
-                        {{--
-                            برچسب روی پانلِ باز؛ و روی هر پانلی که نشانگر رویش
-                            است — وگرنه ستون‌های باریک بی‌نام‌اند و کاربر نمی‌داند
-                            پیش از کلیک به کجا می‌رود.
-                        --}}
-                        <span aria-hidden="true"
-                              class="pointer-events-none absolute inset-x-0 bottom-0 flex items-end gap-3 whitespace-nowrap bg-gradient-to-t from-black/60 to-transparent p-5 pt-16"
-                              :style="{ opacity: open === {{ $i }} || hover === {{ $i }} ? 1 : 0, transition: 'opacity var(--sq-ms) var(--ease-out-expo)' }"
-                              style="opacity: {{ $i === 0 ? 1 : 0 }}">
-                            @if($slide['label'])
-                                <span class="tech text-3xl font-extrabold leading-none text-white/45">{{ $slide['label'] }}</span>
-                            @endif
-                            <span class="text-card font-bold text-white">{{ $slide['title'] }}</span>
-                        </span>
-
-                        <button type="button" role="tab"
-                                :id="$id('process') + '-tab-{{ $i }}'"
-                                :aria-selected="open === {{ $i }} ? 'true' : 'false'"
-                                :aria-controls="$id('process') + '-panel'"
-                                :tabindex="open === {{ $i }} ? 0 : -1"
-                                @click="select({{ $i }})"
-                                @mousemove="hover = {{ $i }}"
-                                @focus="go({{ $i }})"
-                                class="absolute inset-0 z-10 h-full w-full cursor-pointer rounded-[inherit] outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-clay-500"
-                                aria-label="{{ $slide['label'] ? 'مرحله‌ی '.$slide['label'].'، ' : '' }}{{ $slide['title'] }}"></button>
-                    </li>
-                @endforeach
-            </ol>
-        </div>
-
-        {{--
-            متنِ زیر نوار. همه‌ی پانل‌ها در یک خانه‌ی grid روی هم می‌نشینند تا
-            ارتفاع بلندترینشان ثابت بماند و با عوض‌شدن مرحله، بقیه‌ی صفحه بالا
-            و پایین نپرد.
-        --}}
-        <div :id="$id('process') + '-panel'" role="tabpanel" aria-live="polite" class="mt-6 grid lg:mt-7">
-            @foreach($slides as $i => $slide)
-                <div class="col-start-1 row-start-1 flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between lg:gap-12"
-                     :aria-hidden="open === {{ $i }} ? 'false' : 'true'"
-                     :style="{
-                         opacity: open === {{ $i }} ? 1 : 0,
-                         visibility: open === {{ $i }} ? 'visible' : 'hidden',
-                         transition: 'opacity var(--sq-ms) var(--ease-out-expo), visibility var(--sq-ms)',
-                     }"
-                     style="{{ $i === 0 ? '' : 'opacity: 0; visibility: hidden;' }}">
-
-                    <div class="max-w-2xl">
-                        <h3 class="text-card font-bold">{{ $slide['title'] }}</h3>
-                        <p class="tech mt-1 text-micro uppercase tracking-[0.14em] text-ink-300">{{ $slide['title_en'] }}</p>
-                        <p class="mt-3 text-[0.9375rem] leading-[1.75] text-ink-500">{{ $slide['description'] }}</p>
+                    <div class="fc-wheel absolute inset-0 flex items-center justify-center px-6 md:px-10 lg:justify-start lg:px-9"
+                         x-ref="wheel" @keydown="onKey"
+                         role="tablist" aria-label="مراحل تولید" aria-orientation="vertical">
+                        @foreach($slides as $i => $slide)
+                            <div class="fc-chip absolute flex items-center" style="height: 64px" :style="chipStyle({{ $i }})">
+                                <button type="button" role="tab"
+                                        :id="$id('process') + '-tab-{{ $i }}'"
+                                        :aria-selected="active({{ $i }}) ? 'true' : 'false'"
+                                        :aria-controls="$id('process') + '-panel'"
+                                        :tabindex="active({{ $i }}) ? 0 : -1"
+                                        @click="select({{ $i }})"
+                                        class="flex items-center gap-3 rounded-full border px-5 py-3 transition-colors duration-500 md:px-7 lg:px-6"
+                                        :class="active({{ $i }})
+                                            ? 'border-sand-50 bg-sand-50 text-clay-600'
+                                            : 'border-white/25 text-white/65 hover:border-white/50 hover:text-white'">
+                                    <x-icon :name="$slide['icon']" size="18" />
+                                    <span class="whitespace-nowrap text-meta font-semibold">{{ $slide['title'] }}</span>
+                                </button>
+                            </div>
+                        @endforeach
                     </div>
-
-                    @if($slide['cta'])
-                        <div class="flex shrink-0 flex-wrap gap-2">
-                            {{-- پانل‌های پنهان visibility: hidden دارند، پس از ترتیب Tab هم بیرون‌اند --}}
-                            <x-cta :href="route('technology')" variant="primary" size="sm">جزئیات فناوری</x-cta>
-                            <x-cta :href="route('factory')" variant="ghost" size="sm">بازدید از کارخانه</x-cta>
-                        </div>
-                    @elseif($slide['metric_value'] || $slide['duration'])
-                        <dl class="flex shrink-0 flex-wrap items-center gap-2.5">
-                            @if($slide['duration'])
-                                <div class="flex items-center gap-2 rounded-full border border-sand-300 bg-sand-100 px-3.5 py-1.5">
-                                    <x-icon name="clock" size="14" class="text-ink-400" />
-                                    <dt class="sr-only">مدت</dt>
-                                    <dd class="text-meta text-ink-500">{{ $slide['duration'] }}</dd>
-                                </div>
-                            @endif
-                            @if($slide['metric_value'])
-                                <div class="flex items-baseline gap-2 rounded-full border border-sand-300 bg-sand-100 px-3.5 py-1.5">
-                                    <dt class="text-meta text-ink-400">{{ $slide['metric_label'] }}</dt>
-                                    <dd class="text-[0.9375rem] font-extrabold text-clay-600"><x-num :value="$slide['metric_value']" /></dd>
-                                </div>
-                            @endif
-                        </dl>
-                    @endif
                 </div>
-            @endforeach
-        </div>
 
-        <p class="mt-5 flex items-center gap-2 text-meta text-ink-400 lg:hidden">
-            <x-icon name="arrow-right" size="15" />
-            مراحل را بکشید
-        </p>
+                {{-- دسته‌ی کارت‌ها --}}
+                <div :id="$id('process') + '-panel'" role="tabpanel" aria-live="polite"
+                     class="relative flex flex-1 items-center justify-center overflow-hidden border-t border-sand-300 bg-sand-100 px-6 py-12 md:px-10 lg:border-s lg:border-t-0 lg:py-10">
+
+                    <div class="relative aspect-[3/4] w-full max-w-[21rem] sm:aspect-[4/5] md:max-w-[23rem]">
+                        @foreach($slides as $i => $slide)
+                            <div class="fc-card absolute inset-0 origin-center overflow-hidden rounded-[1.75rem] border-4 border-sand-50 bg-sand-50 shadow-float md:rounded-[2.25rem] md:border-8"
+                                 :style="cardStyle({{ $i }})"
+                                 style="{{ $i === 0 ? '' : 'opacity: 0;' }}">
+
+                                @if($slide['image'])
+                                    <img src="{{ $slide['image'] }}" alt="{{ $slide['alt'] }}"
+                                         loading="lazy" decoding="async" draggable="false"
+                                         class="h-full w-full object-cover transition-[filter] duration-700"
+                                         :class="active({{ $i }}) ? '' : 'grayscale brightness-75 blur-[2px]'">
+                                @else
+                                    <span aria-hidden="true" class="block h-full w-full transition-[filter] duration-700"
+                                          :class="active({{ $i }}) ? '' : 'grayscale brightness-75 blur-[2px]'"
+                                          style="background: {{ $slide['tint'] }}"></span>
+                                @endif
+
+                                {{-- نشانِ «خط در حال کار» — فقط روی کارت فعال --}}
+                                <div class="pointer-events-none absolute start-7 top-7 flex items-center gap-2.5 transition-opacity duration-300"
+                                     :style="{ opacity: active({{ $i }}) ? 1 : 0 }" aria-hidden="true">
+                                    <span class="relative flex h-2 w-2">
+                                        <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-white/80"></span>
+                                        <span class="relative inline-flex h-2 w-2 rounded-full bg-white shadow-[0_0_10px_rgb(255_255_255/0.9)]"></span>
+                                    </span>
+                                    <span class="tech text-micro uppercase tracking-[0.3em] text-white/75">{{ $slide['title_en'] }}</span>
+                                </div>
+
+                                {{-- شرح، روی شیبِ تیره‌ی پایین کارت --}}
+                                <div class="pointer-events-none absolute inset-x-0 bottom-0 flex flex-col justify-end bg-gradient-to-t from-black/90 via-black/45 to-transparent p-5 pt-14 transition-opacity duration-500 md:p-7 md:pt-28"
+                                     :style="{ opacity: active({{ $i }}) ? 1 : 0 }">
+
+                                    <div class="mb-3 flex flex-wrap items-center gap-2">
+                                        <span class="tech rounded-full border border-sand-300 bg-sand-50 px-3 py-1 text-micro font-semibold uppercase tracking-[0.14em] text-ink-700">
+                                            {{ $slide['label'] ? $slide['label'].' • ' : '' }}{{ $slide['title'] }}
+                                        </span>
+                                        @if($slide['metric_value'])
+                                            <span class="rounded-full border border-white/25 px-3 py-1 text-micro text-white/80">
+                                                {{ $slide['metric_label'] }}
+                                                <x-num :value="$slide['metric_value']" class="font-bold text-white" />
+                                            </span>
+                                        @endif
+                                        @if($slide['duration'])
+                                            <span class="flex items-center gap-1.5 rounded-full border border-white/25 px-3 py-1 text-micro text-white/80">
+                                                <x-icon name="clock" size="13" />
+                                                {{ $slide['duration'] }}
+                                            </span>
+                                        @endif
+                                    </div>
+
+                                    <p class="text-[0.9375rem] leading-relaxed text-white/90 drop-shadow-md">
+                                        {{ $slide['summary'] }}
+                                    </p>
+
+                                    @if($slide['cta'])
+                                        <div class="pointer-events-auto mt-4 flex flex-wrap gap-2">
+                                            <x-cta :href="route('technology')" variant="primary" size="sm">جزئیات فناوری</x-cta>
+                                            <x-cta :href="route('factory')" variant="light" size="sm">بازدید از کارخانه</x-cta>
+                                        </div>
+                                    @endif
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </section>

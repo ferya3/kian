@@ -184,6 +184,36 @@
     --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
     --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
 
+    /*
+    | دو فنر، نمونه‌برداری‌شده از حل تحلیلیِ جرم-فنر-میراگر و ریخته‌شده در
+    | linear(). منحنیِ واقعیِ فنر است، نه تقریبی که شبیهش باشد:
+    |
+    |   چرخ چیپ‌ها  k=۹۰  c=۲۲  m=۱     ζ=۱٫۱۶ → فرامیرا، بدون بیش‌روی
+    |   دسته‌ی کارت k=۲۶۰ c=۲۵ m=۰٫۸   ζ=۰٫۸۷ → بیش‌رویِ زیر نیم درصد
+    |
+    | هر دو جلو-بارند: بیشترِ مسافت در یک‌سومِ اول طی می‌شود و بقیه‌ی مدت
+    | صرفِ نشستنِ نرم می‌شود.
+    */
+    --spring-wheel-ms: 1350ms;
+    --spring-wheel: linear(
+        0, 0.0289, 0.0955, 0.1789, 0.2671, 0.3531, 0.4335, 0.5066, 0.5719, 0.6297,
+        0.6803, 0.7244, 0.7626, 0.7957, 0.8243, 0.849, 0.8702, 0.8885, 0.9042,
+        0.9177, 0.9293, 0.9393, 0.9479, 0.9552, 0.9615, 0.967, 0.9716, 0.9756,
+        0.9791, 0.982, 0.9846, 0.9868, 0.9886, 0.9902, 0.9916, 0.9928, 0.9938,
+        0.9947, 0.9954, 0.9961, 0.9966, 0.9971, 0.9975, 0.9979, 0.9982, 0.9984,
+        0.9987, 0.9988, 1
+    );
+
+    --spring-card-ms: 290ms;
+    --spring-card: linear(
+        0, 0.0055, 0.0206, 0.0435, 0.0727, 0.1067, 0.1445, 0.1848, 0.227, 0.2701,
+        0.3137, 0.3571, 0.3999, 0.4418, 0.4825, 0.5217, 0.5593, 0.5952, 0.6292,
+        0.6614, 0.6917, 0.7201, 0.7466, 0.7713, 0.7942, 0.8153, 0.8348, 0.8528,
+        0.8692, 0.8843, 0.898, 0.9104, 0.9217, 0.9318, 0.941, 0.9492, 0.9566,
+        0.9632, 0.969, 0.9742, 0.9787, 0.9827, 0.9862, 0.9893, 0.9919, 0.9942,
+        0.9962, 0.9978, 1
+    );
+
     /* --- شعاع و سایه --- */
     --radius-panel: 1.25rem;
     --shadow-lift: 0 1px 2px rgb(23 23 23 / 0.04), 0 12px 32px -12px rgb(23 23 23 / 0.18);
@@ -427,93 +457,40 @@
     }
 
     /*
-    | نوار کاروسل فشرده — منطقش در resources/js/alpine/squeeze-carousel.js است.
+    | کاروسل «از خاک تا سازه» — منطقش در alpine/feature-carousel.js است.
     |
-    | این بلوک فقط فریم اول را درست می‌کند: تا پیش از بالاآمدن Alpine، پانل‌ها
-    | عرض inline ندارند و بدون این قاعده‌ها ردیفی از کارت‌های هم‌عرض دیده
-    | می‌شود که بعد ناگهان جای خود را به چیدمان درست می‌دهد. مقادیر عیناً همان
-    | چیزی است که JS برای open = 0 حساب می‌کند.
+    | حرکت اینجاست و نه در کلاس‌های ویو، چون هر دو فنر باید یک‌جا تعریف شوند
+    | و یک‌جا هم جایگزین داشته باشند.
     */
-    /*
-    | کارتِ عکس مربع است، و همین ارتفاع ردیف را تعیین می‌کند: چون پانلِ باز
-    | سهمی از فضای باقی‌مانده نمی‌گیرد، عرضش برابر ارتفاع ردیف است. یعنی هرچه
-    | ردیف کوتاه‌تر باشد، کارتِ باز باریک‌تر از همسایه‌اش می‌شود و سلسله‌مراتب
-    | برعکس می‌شود. ضریب cqi از همین‌جا می‌آید، نه از سلیقه.
-    */
-    .sq-carousel {
-        container-type: inline-size;
-        --sq-h: clamp(260px, 74cqi, 330px);
-        --sq-hero: var(--sq-h);
+    .fc-wheel {
+        /* دو سرِ چرخ محو می‌شوند تا صف بی‌انتها به نظر برسد */
+        mask-image: linear-gradient(to bottom, transparent, #000 16%, #000 84%, transparent);
     }
 
-    @media (min-width: 1024px) {
-        .sq-carousel {
-            --sq-h: clamp(280px, 33cqi, 460px);
-        }
+    .fc-chip,
+    .fc-card {
+        transition-property: transform, opacity;
     }
 
-    .sq-strip {
-        scrollbar-width: none;
+    .fc-chip {
+        transition-duration: var(--spring-wheel-ms);
+        transition-timing-function: var(--spring-wheel);
     }
 
-    .sq-strip::-webkit-scrollbar {
-        display: none;
+    .fc-card {
+        transition-duration: var(--spring-card-ms);
+        transition-timing-function: var(--spring-card);
     }
 
-    /*
-    | عرض و گردی پانل عمداً اینجاست و نه با کلاس‌های Tailwind: لایه‌ی utilities
-    | بعد از components می‌آید، پس یک w-[82vw] ساده بر قاعده‌های زیر غلبه
-    | می‌کرد و فریم اولِ دسکتاپ خراب می‌شد.
-    */
-    .sq-panel {
-        position: relative;
-        isolation: isolate;
-        height: 100%;
-        flex: 0 0 auto;
-        overflow: hidden;
-        scroll-snap-align: center;
-        width: var(--sq-hero);
-        border-radius: var(--radius-panel);
-    }
-
-    @media (min-width: 1024px) {
-        /*
-        | فضای مرجعِ بادبزن — ثابت، در همه‌ی ده حالت.
-        |
-        | --sq-fixed را خود ویو می‌دهد، چون از تعداد کارت‌ها می‌آید: فاصله‌ها به
-        | اضافه‌ی نوارها در باریک‌ترین حالتشان. این‌طور اگر روزی مرحله‌ای به
-        | «مراحل تولید» اضافه شود، حساب خودش را اصلاح می‌کند.
-        */
-        .sq-strip {
-            --sq-room: calc(100cqi - var(--sq-h) - var(--sq-fixed));
+    /* مرورگری که linear() ندارد، منحنی معمولِ سایت را می‌گیرد */
+    @supports not (transition-timing-function: linear(0, 1)) {
+        .fc-chip {
+            transition-duration: 700ms;
+            transition-timing-function: var(--ease-out-expo);
         }
 
-        /*
-        | و این چند قاعده فقط فریم اول را می‌سازند: تا پیش از بالاآمدن Alpine،
-        | کارت‌ها عرض inline ندارند. مقادیر عیناً همان چیزی است که کامپوننت
-        | برای open = 0 حساب می‌کند.
-        */
-        .sq-strip > * {
-            width: var(--sq-slat);
-            margin-inline-start: 12px;
-            border-radius: min(var(--radius-panel), calc(var(--sq-slat) / 2));
-        }
-
-        /* سهم‌ها پس از یکسان‌سازی: ۰٫۶۱ و ۰٫۳ تقسیم بر جمعِ دو طرف (۱٫۸۲) */
-        .sq-strip > :nth-child(1) {
-            width: var(--sq-h);
-            margin-inline-start: 0;
-            border-radius: var(--radius-panel);
-        }
-
-        .sq-strip > :nth-child(2) {
-            width: calc(var(--sq-room) * 0.3352);
-            border-radius: var(--radius-panel);
-        }
-
-        .sq-strip > :nth-child(3) {
-            width: calc(var(--sq-room) * 0.1648);
-            border-radius: var(--radius-panel);
+        .fc-card {
+            transition-timing-function: var(--ease-out-expo);
         }
     }
 
