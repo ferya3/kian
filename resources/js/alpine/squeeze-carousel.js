@@ -3,32 +3,35 @@ import { prefersReducedMotion } from '../modules/motion';
 /**
  * کاروسل «فشرده».
  *
- * یک ردیف است، نه یک حلقه: پانلِ باز بیشترین جا را می‌گیرد، سه پانل بعدی
- * به‌ترتیب باریک‌تر می‌شوند و باقی به تیغه‌های نازک ته صف تبدیل می‌شوند.
- * مرحله‌ای که رد می‌شود هم به تیغه فشرده می‌شود و سر صف می‌ماند؛ نوار جابه‌جا
- * نمی‌شود، فقط عرض‌ها عوض می‌شوند.
+ * یک ردیف است، نه یک حلقه. ساختارش در هر ده حالت یکی است:
  *
- * چهار ستون سهمی از «فضای باقی‌مانده» می‌گیرند. سهم‌ها پس از یکسان‌سازی همیشه
- * ۱ جمع می‌شوند، پس عرض کل ردیف دقیقاً برابر عرض کادر است و هیچ اندازه‌گیری‌ای
- * در JS لازم نیست — عرض‌ها calc در CSS هستند.
+ *     [نوارهای رد شده] [کارتِ باز] [۱] [۲] [۳] [نوارهای نرسیده]
+ *                       راست ← چپ
  *
- * سهم ستون صفر عمداً صفر است: پانلِ باز دقیقاً به اندازه‌ی بلوک مربعش می‌ماند
- * و از فضای باقی‌مانده چیزی نمی‌گیرد و چیزی پس نمی‌دهد. اگر سهمی داشت،
- * کارتِ باز دیگر مربع نبود.
+ * کارتِ باز مربع است و عرضش هیچ‌وقت عوض نمی‌شود. بادبزنِ سه‌تایی همیشه سمت
+ * چپ اوست — یعنی رو به مراحلی که هنوز نیامده‌اند — و هر کارت بادبزن در همه‌ی
+ * حالت‌ها دقیقاً همان عرض را دارد.
+ *
+ * روی سه مرحله‌ی آخر، جلوتر کارتی نمانده که بادبزن را پر کند. پیش‌تر برای پر
+ * کردنش از پشت قرض گرفته می‌شد و نتیجه این بود که بادبزن دور کارتِ باز
+ * می‌چرخید و الگو عوض می‌شد. حالا بادبزن همان‌جا کوتاه می‌شود و فضای آزاد به
+ * نوارهای سمت راست می‌رسد: هرچه جلوتر می‌روی، تاریخچه‌ی طی‌شده پهن‌تر باز
+ * می‌شود. هیچ کارتی هم پنهان نمی‌ماند — هر ده‌تا همیشه روی صفحه‌اند.
  */
-const SHARES = [0, 0.61, 0.3, 0.15];
 
-/** ستونی که نشانگر رویش است، جا می‌گیرد. */
-const STRETCHED = [0, 0.71, 0.4, 0.25];
+/** سهم هر کارتِ بادبزن از «فضای مرجع». */
+const FAN = [0.61, 0.3, 0.15];
+
+/** کارتی که نشانگر رویش است، جا می‌گیرد. */
+const STRETCHED = [0.71, 0.4, 0.25];
 
 /** همسایه‌ها کمی عقب می‌کشند تا هزینه‌اش را بدهند. */
-const SQUEEZED = [0, 0.59, 0.28, 0.13];
+const SQUEEZED = [0.59, 0.28, 0.13];
 
-/* هندسه بر حسب پیکسل — همان مقادیر پیش‌فرض کامپوننت اصلی. */
-const SLAT = 8;
-const SLAT_GAP = 8;
-const GAP = 16;
-const MAX_SLATS = 3;
+/* هندسه بر حسب پیکسل. */
+const MIN_SLAT = 8;
+const GAP = 12;
+const MAX_FAN = 3;
 
 /*
 | لغزشِ نوار بلند است چون حرکت اصلی است؛ پاسخ به نشانگر باید کوتاه باشد،
@@ -68,57 +71,14 @@ export default (labels = []) => ({
 
     /* ---------- هندسه ---------- */
 
-    /**
-     * سه پانلِ همراهِ پانلِ باز، به‌ترتیب: اول مراحل پیشِ رو، و هرجا که پیشِ رو
-     * تمام شد، مراحل پشتِ سر.
-     *
-     * نکته‌ی اصلی همین است. پیش‌تر فقط رو به جلو نگاه می‌شد، پس روی مرحله‌ی
-     * آخر هیچ همراهی نمی‌ماند و پانلِ باز تمام عرض را می‌گرفت — یک تصویر
-     * کشیده‌ی دراز که با هیچ حالت دیگری جور نبود. حالا تعداد همراه‌ها همیشه
-     * سه‌تاست، پس پانلِ باز در هر موقعیتی همان اندازه‌ی مرحله‌ی اول را دارد.
-     */
-    get companions() {
-        const out = [];
-
-        for (let i = this.open + 1; i < this.count && out.length < 3; i++) out.push(i);
-        for (let i = this.open - 1; i >= 0 && out.length < 3; i--) out.push(i);
-
-        return out;
+    /** کارت‌های بادبزن: هرچه جلوتر مانده، تا سقف سه‌تا. */
+    get fan() {
+        return Math.max(0, Math.min(MAX_FAN, this.count - this.open - 1));
     },
 
-    /**
-     * جایگاه یک پانل در سهم‌بندی: صفر یعنی خودِ پانلِ باز، یک تا سه یعنی ستون
-     * همراه، و ۱- یعنی تیغه.
-     */
-    rank(index) {
-        if (index === this.open) return 0;
-
-        const at = this.companions.indexOf(index);
-
-        return at === -1 ? -1 : at + 1;
-    },
-
-    /** تیغه‌های ته صف — مراحلی که هنوز نرسیده‌اند. بیش از سه‌تا نشان داده نمی‌شود. */
+    /** هرچه بادبزن نیست، نوار است — چه رد شده باشد چه نرسیده. هیچ‌کدام پنهان نیستند. */
     get slats() {
-        const ahead = this.count - this.open - 1 - this.companions.filter((i) => i > this.open).length;
-
-        return Math.max(0, Math.min(MAX_SLATS, ahead));
-    },
-
-    /**
-     * تیغه‌های سر صف — مراحلی که رد شده‌اند و ستون نشده‌اند.
-     *
-     * برخلاف ته صف سقف ندارد: هر مرحله‌ای که پشت سر گذاشته می‌شود، دست‌کم به
-     * تیغه تبدیل می‌شود و همان‌جا کنار لبه می‌ماند. پیش‌تر از کادر بیرون می‌رفت
-     * و ناپدید می‌شد — که هم راه برگشت را می‌بست، هم مسیر طی‌شده را پاک می‌کرد.
-     */
-    get behind() {
-        return this.open - this.companions.filter((i) => i < this.open).length;
-    },
-
-    /** آخرین پانلی که هنوز دیده می‌شود؛ بعد از آن عرض صفر است. */
-    get last() {
-        return this.open + this.companions.filter((i) => i > this.open).length + this.slats;
+        return this.count - 1 - this.fan;
     },
 
     get ms() {
@@ -127,84 +87,77 @@ export default (labels = []) => ({
     },
 
     /**
-     * سهم هر ستون از فضای باقی‌مانده.
+     * سهم هر کارتِ بادبزن از فضای مرجع.
      *
-     * با سه همراه، جمعِ سهم‌ها خودش ۱ می‌شود و هیچ تنظیمی لازم نیست. کمتر از
-     * سه همراه فقط وقتی پیش می‌آید که کل پانل‌ها از چهارتا کمتر باشند؛ آن‌وقت
-     * سهم‌های مانده بزرگ‌نمایی می‌شوند تا باز هم ۱ شود.
+     * جمعشان با بادبزنِ کامل دقیقاً ۱ می‌شود — چه نشانگر روی کارتی باشد چه
+     * نباشد — پس عرض هر کارت در همه‌ی حالت‌ها یکی است.
      */
     get shares() {
-        const k = this.companions.length;
-        if (k === 0) return [1];
+        const lit = ! this.reduced && this.hover > this.open && this.hover - this.open <= MAX_FAN
+            ? this.hover - this.open - 1
+            : -1;
 
-        const lit = ! this.reduced && this.hover >= 0 ? this.rank(this.hover) : -1;
         const base = lit === -1
-            ? SHARES
-            : SHARES.map((_, col) => (col === lit ? STRETCHED[col] : SQUEEZED[col]));
+            ? FAN
+            : FAN.map((_, i) => (i === lit ? STRETCHED[i] : SQUEEZED[i]));
 
-        const head = base[0];
-        const tail = base.slice(1, k + 1);
-        const scale = (1 - head) / tail.reduce((sum, share) => sum + share, 0);
+        const total = base.reduce((sum, share) => sum + share, 0);
 
-        return [head, ...tail.map((share) => share * scale)];
+        return base.map((share) => share / total);
+    },
+
+    /** چه کسری از فضای مرجع را بادبزنِ این حالت برمی‌دارد. */
+    get taken() {
+        return this.shares.slice(0, this.fan).reduce((sum, share) => sum + share, 0);
     },
 
     /**
-     * فضای باقی‌مانده برای پانلِ باز و سه همراهش.
+     * عرض نوارها.
      *
-     * هرچه ثابت است اول کنار گذاشته می‌شود: بلوک ۱۶:۹ پانلِ باز، تیغه‌های دو
-     * سر، و همه‌ی فاصله‌ها. چون جمع سهم‌ها همیشه ۱ است، عرض کل ردیف دقیقاً
-     * برابر عرض کادر درمی‌آید و نوار هیچ‌وقت جابه‌جا نمی‌شود — فقط عرض‌ها
-     * عوض می‌شوند.
+     * فضای مرجع (--sq-room) ثابت است و در CSS تعریف می‌شود، پس عرض کارت‌های
+     * بادبزن هیچ‌وقت تغییر نمی‌کند. تنها چیزی که بین حالت‌ها فرق می‌کند همین
+     * است: روی سه مرحله‌ی آخر که بادبزن کوتاه می‌شود، سهمِ استفاده‌نشده بین
+     * نوارها پخش می‌شود و تاریخچه‌ی سمت راست پهن‌تر باز می‌شود.
      */
-    get room() {
-        const slats = this.behind + this.slats;
-        // فاصله‌ی فرزند اول حساب نمی‌شود؛ و فرزند اول وقتی تیغه است که مرحله‌ای
-        // پشت سر مانده باشد که ستون نشده.
-        const first = this.behind > 0 ? SLAT_GAP : GAP;
-        const fixed = slats * (SLAT + SLAT_GAP)
-            + (this.companions.length + 1) * GAP
-            - first;
+    get slatWidth() {
+        if (this.slats < 1) return '0px';
 
-        return `calc(100cqi - var(--sq-hero) - ${fixed}px)`;
+        /*
+         * صورتِ کسر، سهمِ استفاده‌نشده‌ی بادبزن است به‌اضافه‌ی عرضِ پایه‌ی
+         * نوارها. شکل سرراست‌ترش «عرض کادر منهای بقیه» بود، ولی آن‌وقت 100cqi
+         * دو بار در یک calc می‌آمد — یک‌بار مستقیم و یک‌بار داخل --sq-room — و
+         * مرورگر آن دو را با هم ساده نمی‌کرد و کل عبارت صفر درمی‌آمد. اینجا
+         * جبرش از قبل انجام شده و 100cqi فقط یک‌بار، آن هم داخل --sq-room، هست.
+         */
+        const base = Math.max(0, this.count - 4) * MIN_SLAT;
+
+        return `calc((var(--sq-room) * ${(1 - this.taken).toFixed(4)} + ${base}px) / ${this.slats})`;
     },
 
     get stripStyle() {
-        return { '--sq-ms': `${this.ms}ms`, '--sq-room': this.room };
+        return { '--sq-ms': `${this.ms}ms`, '--sq-slat': this.slatWidth };
     },
 
     panelStyle(index) {
         if (! this.desktop) {
-            return { width: '', marginInlineStart: '', borderRadius: '', opacity: '' };
+            return { width: '', marginInlineStart: '', borderRadius: '' };
         }
 
-        const place = this.rank(index);
-        const hidden = index > this.last;
+        const place = index - this.open;
+        let width = 'var(--sq-slat)';
 
-        // تیغه‌ها تنگِ هم می‌نشینند تا مثل یک شانه دیده شوند، نه کارت‌های جدا.
-        let width = `${SLAT}px`;
-        let margin = `${SLAT_GAP}px`;
-
-        if (hidden) {
-            width = '0px';
-            margin = '0px';
-        } else if (place === 0) {
-            width = `calc(var(--sq-hero) + var(--sq-room) * ${this.shares[0]})`;
-            margin = `${GAP}px`;
-        } else if (place > 0) {
-            width = `calc(var(--sq-room) * ${this.shares[place]})`;
-            margin = `${GAP}px`;
+        if (place === 0) {
+            width = 'var(--sq-h)';
+        } else if (place > 0 && place <= this.fan) {
+            width = `calc(var(--sq-room) * ${this.shares[place - 1].toFixed(4)})`;
         }
-
-        if (index === 0) margin = '0px';
 
         return {
             width,
-            marginInlineStart: margin,
-            // تیغه‌ی ۸ پیکسلی با شعاع ۲۰ پیکسل به قرص تبدیل می‌شود، نه نوار.
+            marginInlineStart: index === 0 ? '0px' : `${GAP}px`,
+            // نوار باریک با شعاع ۲۰ پیکسل به قرص تبدیل می‌شود، نه نوار.
             borderRadius: `min(var(--radius-panel), calc(${width} / 2))`,
-            opacity: hidden ? '0' : '1',
-            transitionProperty: 'width, margin-inline-start, opacity',
+            transitionProperty: 'width',
             transitionDuration: 'var(--sq-ms)',
             transitionTimingFunction: 'var(--ease-out-expo)',
         };

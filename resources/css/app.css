@@ -453,20 +453,31 @@
     }
 
     @media (min-width: 1024px) {
+        /*
+        | فضای مرجعِ بادبزن — ثابت، در همه‌ی ده حالت.
+        |
+        | --sq-fixed را خود ویو می‌دهد، چون از تعداد کارت‌ها می‌آید: فاصله‌ها به
+        | اضافه‌ی نوارها در باریک‌ترین حالتشان. این‌طور اگر روزی مرحله‌ای به
+        | «مراحل تولید» اضافه شود، حساب خودش را اصلاح می‌کند.
+        */
         .sq-strip {
-            /* سه فاصله‌ی ستون + سه تیغه با فاصله‌شان */
-            --sq-room: calc(100cqi - var(--sq-hero) - 48px - 48px);
+            --sq-room: calc(100cqi - var(--sq-h) - var(--sq-fixed));
         }
 
+        /*
+        | و این چند قاعده فقط فریم اول را می‌سازند: تا پیش از بالاآمدن Alpine،
+        | کارت‌ها عرض inline ندارند. مقادیر عیناً همان چیزی است که کامپوننت
+        | برای open = 0 حساب می‌کند.
+        */
         .sq-strip > * {
-            width: 8px;
-            margin-inline-start: 16px;
-            border-radius: 4px;
+            width: var(--sq-slat);
+            margin-inline-start: 12px;
+            border-radius: min(var(--radius-panel), calc(var(--sq-slat) / 2));
         }
 
-        /* سهم‌ها پس از یکسان‌سازی: 0.61 و 0.3 و 0.15 تقسیم بر جمعشان (۱٫۰۶) */
+        /* سهم‌ها پس از یکسان‌سازی: ۰٫۶۱ و ۰٫۳ و ۰٫۱۵ تقسیم بر جمعشان (۱٫۰۶) */
         .sq-strip > :nth-child(1) {
-            width: var(--sq-hero);
+            width: var(--sq-h);
             margin-inline-start: 0;
             border-radius: var(--radius-panel);
         }
@@ -484,17 +495,6 @@
         .sq-strip > :nth-child(4) {
             width: calc(var(--sq-room) * 0.1415);
             border-radius: var(--radius-panel);
-        }
-
-        .sq-strip > :nth-child(n + 5) {
-            margin-inline-start: 8px;
-        }
-
-        /* بیش از سه تیغه نمایش داده نمی‌شود */
-        .sq-strip > :nth-child(n + 8) {
-            width: 0;
-            margin-inline-start: 0;
-            opacity: 0;
         }
     }
 
