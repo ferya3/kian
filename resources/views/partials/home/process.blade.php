@@ -56,9 +56,10 @@
 {{--
     «از خاک تا سازه» — کاروسل فشرده.
 
-    دسکتاپ: یک ردیف که پانلِ باز بیشترین جا را می‌گیرد و بقیه به‌ترتیب باریک
-    می‌شوند تا به تیغه‌های نازک ته صف برسند. با رفتن به مرحله‌ی بعد، نوار
-    می‌لغزد و مرحله‌ی قبل خودش به تیغه تبدیل شده و از لبه بیرون می‌رود.
+    دسکتاپ: یک ردیف که پانلِ باز بیشترین جا را می‌گیرد و سه ستون بعدی به‌ترتیب
+    باریک می‌شوند تا به تیغه‌های نازک ته صف برسند. با رفتن به مرحله‌ی بعد،
+    مرحله‌ی قبل خودش به تیغه فشرده می‌شود و کنار لبه‌ی راست می‌ماند — پس دو سر
+    نوار قرینه‌اند: راست، مسیرِ طی‌شده؛ چپ، مراحلِ نرسیده.
 
     موبایل: همان پانل‌ها به‌صورت ریل قابل swipe؛ متن زیرِ ریل با هر swipe
     عوض می‌شود. محتوا یکی است، فقط چیدمان فرق می‌کند.
@@ -121,7 +122,7 @@
                 role="tablist"
                 aria-label="مراحل تولید"
                 aria-orientation="horizontal"
-                class="sq-strip -mx-5 flex h-[var(--sq-h)] snap-x snap-mandatory gap-3 overflow-x-auto overscroll-x-contain scroll-px-5 px-5 md:-mx-8 md:scroll-px-8 md:px-8 lg:mx-0 lg:w-max lg:gap-0 lg:overflow-visible lg:px-0 lg:snap-none">
+                class="sq-strip -mx-5 flex h-[var(--sq-h)] snap-x snap-mandatory gap-3 overflow-x-auto overscroll-x-contain scroll-px-5 px-5 md:-mx-8 md:scroll-px-8 md:px-8 lg:mx-0 lg:w-full lg:gap-0 lg:overflow-visible lg:px-0 lg:snap-none">
 
                 @foreach($slides as $i => $slide)
                     <li role="presentation"
@@ -153,7 +154,7 @@
                         --}}
                         <span aria-hidden="true"
                               class="pointer-events-none absolute inset-x-0 bottom-0 flex items-end gap-3 whitespace-nowrap bg-gradient-to-t from-black/60 to-transparent p-5 pt-16"
-                              :style="{ opacity: open === {{ $i }} || (hover >= 0 && open + hover === {{ $i }}) ? 1 : 0, transition: 'opacity var(--sq-ms) var(--ease-out-expo)' }"
+                              :style="{ opacity: open === {{ $i }} || hover === {{ $i }} ? 1 : 0, transition: 'opacity var(--sq-ms) var(--ease-out-expo)' }"
                               style="opacity: {{ $i === 0 ? 1 : 0 }}">
                             @if($slide['label'])
                                 <span class="tech text-3xl font-extrabold leading-none text-white/45">{{ $slide['label'] }}</span>
@@ -167,7 +168,7 @@
                                 :aria-controls="$id('process') + '-panel'"
                                 :tabindex="open === {{ $i }} ? 0 : -1"
                                 @click="select({{ $i }})"
-                                @mousemove="hover = {{ $i }} - open"
+                                @mousemove="hover = {{ $i }}"
                                 @focus="go({{ $i }})"
                                 class="absolute inset-0 z-10 h-full w-full cursor-pointer rounded-[inherit] outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-clay-500"
                                 aria-label="{{ $slide['label'] ? 'مرحله‌ی '.$slide['label'].'، ' : '' }}{{ $slide['title'] }}"></button>

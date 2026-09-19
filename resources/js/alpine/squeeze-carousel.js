@@ -5,8 +5,8 @@ import { prefersReducedMotion } from '../modules/motion';
  *
  * یک ردیف است، نه یک حلقه: پانلِ باز بیشترین جا را می‌گیرد، سه پانل بعدی
  * به‌ترتیب باریک‌تر می‌شوند و باقی به تیغه‌های نازک ته صف تبدیل می‌شوند.
- * با باز شدن پانل بعدی، کل نوار می‌لغزد و پانل قبلی خودش به تیغه تبدیل شده و
- * از لبه بیرون می‌رود.
+ * مرحله‌ای که رد می‌شود هم به تیغه فشرده می‌شود و سر صف می‌ماند؛ نوار جابه‌جا
+ * نمی‌شود، فقط عرض‌ها عوض می‌شوند.
  *
  * چهار ستون سهمی از «فضای باقی‌مانده» می‌گیرند. سهم‌ها همیشه ۱ جمع می‌شوند،
  * پس عرض کل ردیف دقیقاً برابر عرض کادر است و هیچ اندازه‌گیری‌ای در JS لازم
@@ -70,9 +70,20 @@ export default (labels = []) => ({
         return Math.max(0, Math.min(3, this.count - this.open - 1));
     },
 
-    /** تیغه‌های ته صف. بیش از سه‌تا نمایش داده نمی‌شود. */
+    /** تیغه‌های ته صف — مراحلی که هنوز نرسیده‌اند. بیش از سه‌تا نشان داده نمی‌شود. */
     get slats() {
         return Math.max(0, Math.min(MAX_SLATS, this.count - this.open - 4));
+    },
+
+    /**
+     * تیغه‌های سر صف — مراحلی که رد شده‌اند.
+     *
+     * برخلاف ته صف سقف ندارد: هر مرحله‌ای که پشت سر گذاشته می‌شود، به تیغه
+     * تبدیل شده و همان‌جا کنار لبه می‌ماند. پیش‌تر از کادر بیرون می‌رفت و
+     * ناپدید می‌شد — که هم راه برگشت را می‌بست، هم مسیر طی‌شده را پاک می‌کرد.
+     */
+    get behind() {
+        return this.open;
     },
 
     get ms() {
@@ -91,7 +102,8 @@ export default (labels = []) => ({
         const k = this.cols;
         if (k === 0) return [1];
 
-        const lit = ! this.reduced && this.hover >= 0 && this.hover <= k ? this.hover : -1;
+        const col = this.hover - this.open;
+        const lit = ! this.reduced && this.hover >= 0 && col >= 0 && col <= k ? col : -1;
         const base = lit === -1
             ? SHARES
             : SHARES.map((_, col) => (col === lit ? STRETCHED[col] : SQUEEZED[col]));
@@ -108,22 +120,26 @@ export default (labels = []) => ({
         return this.cols + this.slats;
     },
 
+    /**
+     * فضای باقی‌مانده برای چهار ستون.
+     *
+     * هرچه ثابت است اول کنار گذاشته می‌شود: بلوک ۱۶:۹ پانلِ باز، تیغه‌های دو
+     * سر با فاصله‌شان، و فاصله‌ی بین ستون‌ها. چون جمع سهم‌ها همیشه ۱ است،
+     * عرض کل ردیف دقیقاً برابر عرض کادر درمی‌آید و نوار هیچ‌وقت جابه‌جا
+     * نمی‌شود — فقط عرض‌ها عوض می‌شوند.
+     */
+    get room() {
+        const b = this.behind;
+        const fixed = b * SLAT
+            + (b > 0 ? (b - 1) * SLAT_GAP + GAP : 0)
+            + this.cols * GAP
+            + this.slats * (SLAT + SLAT_GAP);
+
+        return `calc(100cqi - var(--sq-hero) - ${fixed}px)`;
+    },
+
     get stripStyle() {
-        const room = `calc(100cqi - var(--sq-hero) - ${this.slats * (SLAT + SLAT_GAP)}px - ${this.cols * GAP}px)`;
-
-        if (! this.desktop) {
-            return { '--sq-ms': `${this.ms}ms`, '--sq-room': room, transform: '', transition: '' };
-        }
-
-        // پانل‌های رفته سمت راست کادر (RTL) جمع می‌شوند، پس نوار به راست می‌رود.
-        const shift = this.open * (SLAT + GAP) * (this.rtl ? 1 : -1);
-
-        return {
-            '--sq-ms': `${this.ms}ms`,
-            '--sq-room': room,
-            transform: `translateX(${shift}px)`,
-            transition: 'transform var(--sq-ms) var(--ease-out-expo)',
-        };
+        return { '--sq-ms': `${this.ms}ms`, '--sq-room': this.room };
     },
 
     panelStyle(index) {
@@ -133,13 +149,15 @@ export default (labels = []) => ({
 
         const col = index - this.open;
         let width = `${SLAT}px`;
-        let margin = col < 4 ? `${GAP}px` : `${SLAT_GAP}px`;
+        // تیغه‌ها تنگِ هم می‌نشینند تا مثل یک شانه دیده شوند، نه کارت‌های جدا.
+        let margin = col > 0 && col <= this.cols ? `${GAP}px` : `${SLAT_GAP}px`;
 
         if (col > this.last) {
             width = '0px';
             margin = '0px';
         } else if (col === 0) {
             width = `calc(var(--sq-hero) + var(--sq-room) * ${this.shares[0]})`;
+            margin = `${GAP}px`;
         } else if (col > 0 && col <= this.cols) {
             width = `calc(var(--sq-room) * ${this.shares[col]})`;
         }
