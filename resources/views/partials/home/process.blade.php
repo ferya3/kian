@@ -149,7 +149,17 @@
                                 نیمه‌جان پیدا می‌شد.
                             --}}
                             <div class="fc-chip absolute inset-x-0 flex" style="height: 64px" :style="chipStyle({{ $i }})">
-                                <div class="relative mx-6 flex h-full flex-1 items-center justify-center md:mx-10 lg:mx-9 lg:justify-start">
+                                <div class="relative mx-6 flex h-full flex-1 items-center justify-center gap-3 md:mx-10 lg:mx-9 lg:justify-start">
+                                    {{--
+                                        شماره بیرون از بیضی می‌نشیند و عرض ثابت
+                                        دارد، تا بیضی‌ها در یک خط بمانند. کارت
+                                        پایانی شماره ندارد؛ جایش خالی می‌ماند و
+                                        ستون به هم نمی‌ریزد.
+                                    --}}
+                                    <span class="tech w-6 shrink-0 text-end text-micro font-bold transition-colors duration-500"
+                                          :class="active({{ $i }}) ? 'text-sand-50' : 'text-white/35'"
+                                          aria-hidden="true">{{ $slide['label'] }}</span>
+
                                     <button type="button" role="tab"
                                             :id="$id('process') + '-tab-{{ $i }}'"
                                             :aria-selected="active({{ $i }}) ? 'true' : 'false'"
@@ -165,7 +175,8 @@
                                     </button>
 
                                     <p data-text
-                                       class="pointer-events-none absolute inset-x-0 top-full mt-2.5 text-center text-[0.8125rem] leading-[1.6] text-white/85 transition-opacity duration-500 md:text-[0.875rem] lg:pe-4 lg:text-start"
+                                       {{-- ps با عرض شماره و فاصله‌اش جور است تا متن زیر بیضی شروع شود، نه زیر شماره --}}
+                                       class="pointer-events-none absolute inset-x-0 top-full mt-2.5 text-center text-[0.8125rem] leading-[1.6] text-white/85 transition-opacity duration-500 md:text-[0.875rem] lg:ps-9 lg:pe-4 lg:text-start"
                                        :style="{ opacity: active({{ $i }}) ? 1 : 0 }"
                                        style="{{ $i === 0 ? '' : 'opacity: 0;' }}">
                                         {{ $slide['summary'] }}
