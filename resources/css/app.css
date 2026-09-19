@@ -424,7 +424,7 @@
 
     @media (min-width: 1024px) {
         .sq-carousel {
-            --sq-h: clamp(300px, 38cqi, 500px);
+            --sq-h: clamp(280px, 33cqi, 460px);
         }
     }
 
@@ -475,7 +475,7 @@
             border-radius: min(var(--radius-panel), calc(var(--sq-slat) / 2));
         }
 
-        /* سهم‌ها پس از یکسان‌سازی: ۰٫۶۱ و ۰٫۳ و ۰٫۱۵ تقسیم بر جمعشان (۱٫۰۶) */
+        /* سهم‌ها پس از یکسان‌سازی: ۰٫۶۱ و ۰٫۳ تقسیم بر جمعِ دو طرف (۱٫۸۲) */
         .sq-strip > :nth-child(1) {
             width: var(--sq-h);
             margin-inline-start: 0;
@@ -483,17 +483,12 @@
         }
 
         .sq-strip > :nth-child(2) {
-            width: calc(var(--sq-room) * 0.5755);
+            width: calc(var(--sq-room) * 0.3352);
             border-radius: var(--radius-panel);
         }
 
         .sq-strip > :nth-child(3) {
-            width: calc(var(--sq-room) * 0.283);
-            border-radius: var(--radius-panel);
-        }
-
-        .sq-strip > :nth-child(4) {
-            width: calc(var(--sq-room) * 0.1415);
+            width: calc(var(--sq-room) * 0.1648);
             border-radius: var(--radius-panel);
         }
     }
