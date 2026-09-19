@@ -67,10 +67,9 @@
 --}}
 <section class="relative overflow-hidden bg-sand-50 section" aria-labelledby="process-heading">
 
-    <div class="container-page relative"
+    <div class="sq-carousel container-page relative"
          x-data="squeezeCarousel(@js($labels))"
-         x-id="['process']"
-         style="--sq-h: clamp(190px, 26cqi, 320px); --sq-hero: calc(var(--sq-h) * 16 / 9); container-type: inline-size">
+         x-id="['process']">
 
         {{-- سربرگ --}}
         <div class="flex flex-wrap items-end justify-between gap-x-6 gap-y-5">
@@ -131,7 +130,7 @@
                         class="sq-panel bg-sand-200">
 
                         {{--
-                            تصویر همیشه در یک بلوک ۱۶:۹ و وسط‌چین کشیده می‌شود، نه به
+                            تصویر همیشه در یک بلوک مربع و وسط‌چین کشیده می‌شود، نه به
                             عرض پانل. اگر به عرض پانل بود، object-fit با باریک‌شدن
                             پانل مقیاس را عوض می‌کرد و عکس هر فریم دوباره نمونه‌برداری
                             می‌شد. یک بلوک یعنی یک مقیاس؛ پانل فقط تعیین می‌کند چقدر

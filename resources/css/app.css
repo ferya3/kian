@@ -410,6 +410,24 @@
     | می‌شود که بعد ناگهان جای خود را به چیدمان درست می‌دهد. مقادیر عیناً همان
     | چیزی است که JS برای open = 0 حساب می‌کند.
     */
+    /*
+    | کارتِ عکس مربع است، و همین ارتفاع ردیف را تعیین می‌کند: چون پانلِ باز
+    | سهمی از فضای باقی‌مانده نمی‌گیرد، عرضش برابر ارتفاع ردیف است. یعنی هرچه
+    | ردیف کوتاه‌تر باشد، کارتِ باز باریک‌تر از همسایه‌اش می‌شود و سلسله‌مراتب
+    | برعکس می‌شود. ضریب cqi از همین‌جا می‌آید، نه از سلیقه.
+    */
+    .sq-carousel {
+        container-type: inline-size;
+        --sq-h: clamp(260px, 74cqi, 330px);
+        --sq-hero: var(--sq-h);
+    }
+
+    @media (min-width: 1024px) {
+        .sq-carousel {
+            --sq-h: clamp(300px, 38cqi, 500px);
+        }
+    }
+
     .sq-strip {
         scrollbar-width: none;
     }
@@ -430,14 +448,8 @@
         flex: 0 0 auto;
         overflow: hidden;
         scroll-snap-align: center;
-        width: 82vw;
+        width: var(--sq-hero);
         border-radius: var(--radius-panel);
-    }
-
-    @media (min-width: 640px) {
-        .sq-panel {
-            width: 58vw;
-        }
     }
 
     @media (min-width: 1024px) {
@@ -452,24 +464,25 @@
             border-radius: 4px;
         }
 
+        /* سهم‌ها پس از یکسان‌سازی: 0.61 و 0.3 و 0.15 تقسیم بر جمعشان (۱٫۰۶) */
         .sq-strip > :nth-child(1) {
-            width: calc(var(--sq-hero) + var(--sq-room) * -0.06);
+            width: var(--sq-hero);
             margin-inline-start: 0;
             border-radius: var(--radius-panel);
         }
 
         .sq-strip > :nth-child(2) {
-            width: calc(var(--sq-room) * 0.61);
+            width: calc(var(--sq-room) * 0.5755);
             border-radius: var(--radius-panel);
         }
 
         .sq-strip > :nth-child(3) {
-            width: calc(var(--sq-room) * 0.3);
+            width: calc(var(--sq-room) * 0.283);
             border-radius: var(--radius-panel);
         }
 
         .sq-strip > :nth-child(4) {
-            width: calc(var(--sq-room) * 0.15);
+            width: calc(var(--sq-room) * 0.1415);
             border-radius: var(--radius-panel);
         }
 
