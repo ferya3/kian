@@ -1,5 +1,6 @@
 @if ($paginator->hasPages())
-    <nav role="navigation" aria-label="صفحه‌بندی" class="flex items-center justify-center gap-1.5">
+    {{-- فاصله روی موبایل ۸ پیکسل: «۲» و «۳» شش‌پیکسلی، زیر انگشت یکی می‌شوند --}}
+    <nav role="navigation" aria-label="صفحه‌بندی" class="tap-row items-center justify-center">
         @if ($paginator->onFirstPage())
             <span class="tap-icon rounded-full text-ink-300" aria-disabled="true">
                 <x-icon name="chevron-left" size="18" />

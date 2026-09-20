@@ -12,7 +12,7 @@
                     @endif
 
                     @if($item['url'] && !$loop->last)
-                        <a href="{{ $item['url'] }}" class="tap px-1 transition hover:text-clay-600">{{ $item['label'] }}</a>
+                        <a href="{{ $item['url'] }}" class="tap justify-center px-1 transition hover:text-clay-600">{{ $item['label'] }}</a>
                     @else
                         <span class="font-semibold text-ink-700" aria-current="page">{{ $item['label'] }}</span>
                     @endif

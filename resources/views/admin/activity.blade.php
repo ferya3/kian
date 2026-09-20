@@ -8,7 +8,7 @@
             <x-icon name="search" size="18" class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-ink-300" />
         </div>
 
-        <div class="flex flex-wrap gap-1.5">
+        <div class="tap-row">
             <a href="{{ route('admin.activity') }}"
                @class(['tap rounded-full px-3.5 text-meta font-semibold transition',
                        'bg-ink-900 text-sand-50' => ! request('event'),

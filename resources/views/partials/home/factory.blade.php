@@ -19,6 +19,20 @@
             <div class="relative overflow-hidden rounded-[var(--radius-panel)] border border-ink-900/10 bg-ink-950 lg:col-span-8">
                 <x-factory-plan class="aspect-[4/3] w-full sm:aspect-[16/10]" />
 
+                {{--
+                    نشانه‌های روی نقشه — فقط از lg به بالا.
+
+                    هدف لمسی‌شان ۴۴ پیکسل است، ولی نقشه روی گوشی ۳۵۰ پیکسل عرض
+                    دارد و دو نشانه‌ی همسایه ۰٫۴ پیکسل از هم فاصله می‌گرفتند:
+                    انگشت عملاً نمی‌توانست بینشان انتخاب کند. همان انتخاب،
+                    درست پایین‌تر، با بیضی‌های تمام‌اندازه در دسترس است — پس
+                    روی موبایل نقشه تصویر می‌ماند و بیضی‌ها کنترل.
+
+                    display: none و نه pointer-events: none — وگرنه دکمه‌ها از
+                    دسترس ماوس خارج می‌شدند ولی در ترتیب Tab و درخت دسترس‌پذیری
+                    می‌ماندند.
+                --}}
+                <div class="pointer-events-none absolute inset-0 hidden lg:block">
                 @foreach($factorySections as $index => $section)
                     <button type="button"
                             x-ref="spot{{ $index }}"
@@ -27,7 +41,7 @@
                             @keydown.arrow-right.prevent="move(-1)"
                             :aria-pressed="active === {{ $index }} ? 'true' : 'false'"
                             :tabindex="active === {{ $index }} ? 0 : -1"
-                            class="tap-icon group absolute -translate-x-1/2 -translate-y-1/2"
+                            class="tap-icon group pointer-events-auto absolute -translate-x-1/2 -translate-y-1/2"
                             style="left: {{ $section->hotspot_x }}%; top: {{ $section->hotspot_y }}%"
                             aria-label="{{ $section->title }}">
 
@@ -46,6 +60,7 @@
                         </span>
                     </button>
                 @endforeach
+                </div>
 
                 <p class="absolute bottom-4 right-5 text-micro text-sand-200/40">
                     <span x-show="autoplay">در حال پیمایش خودکار — برای کنترل، کلیک کنید</span>
@@ -66,7 +81,7 @@
                         </template>
                     </ul>
 
-                    <nav class="mt-6 flex flex-wrap gap-1.5" aria-label="بخش‌های کارخانه">
+                    <nav class="tap-row mt-6" aria-label="بخش‌های کارخانه">
                         @foreach($factorySections as $index => $section)
                             <button type="button" @click="select({{ $index }})"
                                     class="tap rounded-full px-4 py-2 text-meta font-semibold transition"

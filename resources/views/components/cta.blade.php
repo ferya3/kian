@@ -13,7 +13,8 @@
         'dark'    => 'bg-ink-900 text-sand-50 hover:bg-ink-700 hover:shadow-lift',
         'ghost'   => 'border border-ink-900/15 text-ink-900 hover:border-ink-900/40 hover:bg-sand-200/60',
         'light'   => 'border border-white/20 text-sand-50 hover:border-white/50 hover:bg-white/5',
-        'plain'   => 'text-clay-600 hover:text-clay-700 px-0',
+        // بدون کادر، ولی نه بدون هدف لمسی — min-h از $sizes نمی‌آید، پس اینجاست
+        'plain'   => 'text-clay-600 hover:text-clay-700 px-0 min-h-11 lg:min-h-0',
     ];
 
     /*

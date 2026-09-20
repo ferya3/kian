@@ -83,7 +83,7 @@
                 <li class="rounded-[var(--radius-panel)] border border-sand-300 bg-sand-50 p-4">
                     <div class="flex items-start justify-between gap-3">
                         <a href="{{ $resource::editUrl($record) }}"
-                           class="min-w-0 flex-1 self-center py-1 font-bold leading-snug transition hover:text-clay-600">
+                           class="tap min-w-0 flex-1 self-center py-1 font-bold leading-snug transition hover:text-clay-600">
                             @if($primary)
                                 @include('admin.resource.cell', ['field' => $primary, 'record' => $record])
                             @else

@@ -21,12 +21,14 @@
                 <div class="relative overflow-hidden rounded-[var(--radius-panel)] border border-ink-900/10 bg-ink-950 lg:col-span-8">
                     <x-factory-plan class="aspect-[4/3] w-full sm:aspect-[16/10]" />
 
+                    {{-- نشانه‌ها فقط از lg به بالا — چرایی‌اش در partials/home/factory.blade.php --}}
+                    <div class="pointer-events-none absolute inset-0 hidden lg:block">
                     @foreach($sections as $index => $section)
                         <button type="button" x-ref="spot{{ $index }}" @click="select({{ $index }})"
                                 @keydown.arrow-left.prevent="move(1)" @keydown.arrow-right.prevent="move(-1)"
                                 :aria-pressed="active === {{ $index }} ? 'true' : 'false'"
                                 :tabindex="active === {{ $index }} ? 0 : -1"
-                                class="tap-icon group absolute -translate-x-1/2 -translate-y-1/2"
+                                class="tap-icon group pointer-events-auto absolute -translate-x-1/2 -translate-y-1/2"
                                 style="left: {{ $section->hotspot_x }}%; top: {{ $section->hotspot_y }}%"
                                 aria-label="{{ $section->title }}">
                             <span class="relative grid h-7 w-7 place-items-center">
@@ -41,6 +43,7 @@
                                   :class="active === {{ $index }} && 'opacity-100'">{{ $section->title }}</span>
                         </button>
                     @endforeach
+                    </div>
                 </div>
 
                 <div class="lg:col-span-4">
@@ -61,7 +64,7 @@
                                 <li class="tech rounded-full border border-sand-300 bg-sand-100 px-3 py-1 text-meta text-ink-600" x-text="stat"></li>
                             </template>
                         </ul>
-                        <nav class="mt-6 flex flex-wrap gap-1.5" aria-label="بخش‌های کارخانه">
+                        <nav class="tap-row mt-6" aria-label="بخش‌های کارخانه">
                             @foreach($sections as $index => $section)
                                 <button type="button" @click="select({{ $index }})"
                                         class="tap rounded-full px-4 py-2 text-meta font-semibold transition"

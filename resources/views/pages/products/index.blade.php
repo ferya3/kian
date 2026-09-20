@@ -13,7 +13,7 @@
             <div class="sticky z-30 -mx-5 border-b border-sand-300 bg-sand-100/95 px-5 py-4 backdrop-blur-md lg:-mx-12 lg:px-12"
                  style="top: calc(var(--header-h) + var(--safe-top))">
                 <div class="flex flex-wrap items-center gap-x-6 gap-y-3">
-                    <div class="flex flex-wrap items-center gap-1.5">
+                    <div class="tap-row items-center">
                         <span class="ml-1 text-meta font-semibold text-ink-400">دسته:</span>
                         <a href="{{ route('products.index') }}"
                            class="tap rounded-full px-4 py-2 text-[0.875rem] font-semibold transition {{ request('category') ? 'bg-sand-200 text-ink-600 hover:bg-sand-300' : 'bg-ink-900 text-sand-50' }}">همه</a>
