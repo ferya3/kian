@@ -69,7 +69,7 @@
                     <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-ember-500 opacity-75"></span>
                     <span class="relative inline-flex h-1.5 w-1.5 rounded-full bg-ember-500"></span>
                 </span>
-                {{ Setting::text('hero_eyebrow', 'کارخانه سفال کیان') }}
+                {{ Setting::text('hero_eyebrow', 'کارخانه کیان بهساز') }}
             </p>
 
             <h1 class="mt-3 text-display sm:mt-7 font-extrabold text-balance text-sand-50" data-reveal style="--reveal-delay: 90ms">

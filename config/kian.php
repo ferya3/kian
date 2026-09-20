@@ -2,7 +2,7 @@
 
 /*
 |--------------------------------------------------------------------------
-| پیکربندی دامنه‌ی سایت کارخانه سفال
+| پیکربندی دامنه‌ی سایت کیان بهساز
 |--------------------------------------------------------------------------
 | هرچیزی که ساختار سایت به آن وابسته است — و نه محتوای قابل ویرایش —
 | اینجا نگهداری می‌شود: گزینه‌های موتور انتخاب محصول، مخاطبان مرکز فنی،
@@ -12,9 +12,16 @@
 return [
 
     'brand' => [
-        'name' => env('KIAN_BRAND_NAME', 'سفال کیان'),
-        'name_en' => env('KIAN_BRAND_NAME_EN', 'Kian Ceramic Blocks'),
-        'legal_name' => env('KIAN_LEGAL_NAME', 'شرکت صنایع سفال کیان'),
+        'name' => env('KIAN_BRAND_NAME', 'کیان بهساز'),
+        'name_en' => env('KIAN_BRAND_NAME_EN', 'Kian Behsaz'),
+        'legal_name' => env('KIAN_LEGAL_NAME', 'شرکت کیان بهساز'),
+        /*
+        | خطِ دومِ نشانِ هدر — چیزی که می‌سازند، نه نامشان.
+        |
+        | جدا از name_en است و نه تکرارش: زیرِ «کیان بهساز» نوشتنِ
+        | «Kian Behsaz» همان حرف را دو بار می‌زند.
+        */
+        'descriptor_en' => env('KIAN_DESCRIPTOR_EN', 'Ceramic Blocks'),
         /*
         | نشان‌واژه‌ی لبه‌های قاب.
         |
@@ -32,9 +39,9 @@ return [
         'phone' => env('KIAN_PHONE', '۰۲۱-۹۱۰۰۲۲۳۳'),
         'phone_raw' => env('KIAN_PHONE_RAW', '+982191002233'),
         'sales_phone' => env('KIAN_SALES_PHONE', '۰۹۱۲-۱۲۳۴۵۶۷'),
-        'email' => env('KIAN_EMAIL', 'info@kian-ceramic.ir'),
-        'technical_email' => env('KIAN_TECH_EMAIL', 'technical@kian-ceramic.ir'),
-        'address' => env('KIAN_ADDRESS', 'اصفهان، شهرک صنعتی مبارکه، خیابان صنعت ۱۲، کارخانه سفال کیان'),
+        'email' => env('KIAN_EMAIL', 'info@kianbehsaz.ir'),
+        'technical_email' => env('KIAN_TECH_EMAIL', 'technical@kianbehsaz.ir'),
+        'address' => env('KIAN_ADDRESS', 'اصفهان، شهرک صنعتی مبارکه، خیابان صنعت ۱۲، کارخانه کیان بهساز'),
         'address_locality' => 'اصفهان',
         'address_region' => 'اصفهان',
         'postal_code' => '۸۴۸۱۱۳۳۴۵۶',

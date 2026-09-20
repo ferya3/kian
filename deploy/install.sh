@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 #
-# نصب سایت سفال کیان روی سرور اوبونتو (۲۲.۰۴ / ۲۴.۰۴)
+# نصب سایت کیان بهساز روی سرور اوبونتو (۲۲.۰۴ / ۲۴.۰۴)
 #
 #   curl -fsSL https://raw.githubusercontent.com/ferya3/kian/claude/ceramic-factory-website-p5je97/deploy/install.sh | sudo bash
 #
 # متغیرهای قابل تنظیم (همه اختیاری):
-#   DOMAIN=kian-ceramic.ir   دامنه‌ی سایت؛ پیش‌فرض: هر هاستی
+#   DOMAIN=kianbehsaz.ir     دامنه‌ی سایت؛ پیش‌فرض: هر هاستی
 #   APP_DIR=/var/www/kian    مسیر نصب
 #   BRANCH=main              برنچ گیت
 #   DB=sqlite|mysql          موتور دیتابیس؛ پیش‌فرض sqlite

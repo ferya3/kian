@@ -1,4 +1,4 @@
-# سفال کیان — وب‌سایت کارخانه بلوک سفالی
+# کیان بهساز — وب‌سایت کارخانه بلوک سفالی
 
 وب‌سایت محصول‌محور برای یک کارخانه‌ی تولید بلوک سفالی و مصالح ساختمانی سرامیکی.
 پیاده‌سازی با **Laravel 12 + Blade + Tailwind CSS v4 + Alpine.js + GSAP/Lenis**،
@@ -22,7 +22,7 @@ curl -fsSL https://raw.githubusercontent.com/ferya3/kian/claude/ceramic-factory-
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/ferya3/kian/claude/ceramic-factory-website-p5je97/deploy/install.sh \
-  | sudo DOMAIN=kian-ceramic.ir SSL=1 DB=mysql bash
+  | sudo DOMAIN=kianbehsaz.ir SSL=1 DB=mysql bash
 ```
 
 اسکریپت PHP 8.4 (به‌همراه intl و gd)، Node 22، Composer و nginx را نصب می‌کند،
@@ -46,6 +46,13 @@ curl -fsSL https://raw.githubusercontent.com/ferya3/kian/claude/ceramic-factory-
 
 اسکریپت را از روی curl اجرا کنید، نه نسخه‌ی داخل سرور: نسخه‌ی داخل سرور تا قبل از
 اجرای همین دستور قدیمی است و ممکن است اصلاحات بعدی را نداشته باشد.
+
+> **`.env` از به‌روزرسانی جا نمی‌ماند — ولی خودش هم به‌روز نمی‌شود.**
+> اسکریپت فقط وقتی `.env` را می‌سازد که نباشد؛ روی نصب موجود دست‌نخورده
+> می‌ماند. پس هر مقداری که در `.env` سرور نوشته شده، بر پیش‌فرضِ
+> `config/kian.php` مقدم است. اگر اطلاعات برند یا تماس عوض شد، همان
+> کلیدها را در `.env` سرور هم دستی اصلاح کنید و بعد `php artisan
+> config:clear` بزنید.
 
 ---
 

@@ -25,7 +25,7 @@ class MediaTest extends TestCase
 
     public function test_a_cdn_on_another_host_stays_absolute(): void
     {
-        Config::set('app.url', 'https://kian-ceramic.ir');
+        Config::set('app.url', 'https://kianbehsaz.ir');
         Config::set('filesystems.disks.public.url', 'https://cdn.example.com/files');
 
         $this->assertSame(

@@ -74,7 +74,7 @@
                     <span class="block text-[1.0625rem] font-extrabold tracking-tight transition-colors"
                           :class="onDark ? 'text-sand-50' : 'text-ink-900'">{{ config('kian.brand.name') }}</span>
                     <span class="tech hidden text-micro uppercase tracking-[0.18em] transition-colors sm:block"
-                          :class="onDark ? 'text-sand-200/55' : 'text-ink-400'">Ceramic Blocks</span>
+                          :class="onDark ? 'text-sand-200/55' : 'text-ink-400'">{{ config('kian.brand.descriptor_en') }}</span>
                 </span>
             </a>
 

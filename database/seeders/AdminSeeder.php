@@ -17,7 +17,7 @@ class AdminSeeder extends Seeder
      */
     public function run(): void
     {
-        $email = env('ADMIN_EMAIL', 'admin@kian-ceramic.ir');
+        $email = env('ADMIN_EMAIL', 'admin@kianbehsaz.ir');
 
         if (User::where('email', $email)->exists()) {
             return;
