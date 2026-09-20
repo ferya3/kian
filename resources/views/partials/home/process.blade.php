@@ -112,7 +112,7 @@
              @focusin="paused = true"
              @focusout="paused = false">
 
-            <div class="flex min-h-[34rem] flex-col overflow-hidden rounded-[2rem] border border-sand-300 lg:min-h-0 lg:flex-row lg:rounded-[2.5rem] lg:aspect-[2/1]">
+            <div class="flex flex-col overflow-hidden rounded-[2rem] border border-sand-300 lg:min-h-0 lg:flex-row lg:rounded-[2.5rem] lg:aspect-[2/1]">
 
                 {{-- چرخِ مرحله‌ها --}}
                 {{--
@@ -120,8 +120,13 @@
                     absolute‌اند، پس ارتفاعِ محتوا صفر است و درصدْ چیزی برای
                     اندازه‌گیری ندارد. روی گوشی همین باعث می‌شد چرخ اصلاً
                     ارتفاع نگیرد.
+
+                    و زیر lg اصلاً نیست. ده بیضی روی نمایشگر ۳۹۰ پیکسلی، با
+                    شرحِ زیرشان، بلندتر از خودِ تصویر می‌شدند و بخشی از صفحه را
+                    می‌گرفتند که قرار بود عکس باشد. روی گوشی همان عکس و نامِ
+                    مرحله کافی است.
                 --}}
-                <div class="relative min-h-[22rem] w-full bg-clay-600 lg:w-[38%] lg:min-h-0">
+                <div class="relative hidden min-h-[22rem] w-full bg-clay-600 lg:block lg:w-[38%] lg:min-h-0">
                     {{-- تابشِ ملایم از بالا، تا بلوک رنگی تخت نباشد --}}
                     <div class="pointer-events-none absolute inset-0" aria-hidden="true"
                          style="background: radial-gradient(90% 60% at 30% 0%, rgb(255 255 255 / 0.16), transparent 70%)"></div>
@@ -187,9 +192,22 @@
                     </div>
                 </div>
 
-                {{-- دسته‌ی کارت‌ها --}}
-                <div :id="$id('process') + '-panel'" role="tabpanel" aria-live="polite"
-                     class="relative flex flex-1 items-center justify-center overflow-hidden border-t border-sand-300 bg-sand-100 px-6 py-12 md:px-10 lg:border-s lg:border-t-0 lg:py-10">
+                {{--
+                    دسته‌ی کارت‌ها.
+
+                    نقش با عرضِ صفحه عوض می‌شود: کنارِ چرخ، این پانلِ همان
+                    tablist است؛ بدون چرخ، خودش یک کاروسلِ مستقل است و
+                    tabpanel نامیدنش دروغ می‌شد. روی گوشی لمسِ کارت هم مرحله
+                    را جلو می‌برد، چون دیگر بیضی‌ای برای انتخاب نیست.
+                --}}
+                <div :id="$id('process') + '-panel'" aria-live="polite"
+                     :role="wide ? 'tabpanel' : 'group'"
+                     :aria-roledescription="wide ? null : 'کاروسل'"
+                     :aria-label="wide ? null : 'مراحل تولید'"
+                     :tabindex="wide ? null : 0"
+                     @click="wide || select((index + 1) % count)"
+                     @keydown="wide || onKey($event)"
+                     class="relative flex flex-1 items-center justify-center overflow-hidden bg-sand-100 px-6 py-6 focus-visible:outline-2 focus-visible:outline-offset-[-4px] focus-visible:outline-clay-500 md:px-10 lg:border-s lg:border-sand-300 lg:py-10 lg:focus-visible:outline-none">
 
                     {{--
                         کارت مربع است، پس ارتفاعش برابر عرضش می‌شود و نسبت به
@@ -213,8 +231,8 @@
                                           style="background: {{ $slide['tint'] }}"></span>
                                 @endif
 
-                                {{-- نشانِ «خط در حال کار» — فقط روی کارت فعال --}}
-                                <div class="pointer-events-none absolute start-7 top-7 flex items-center gap-2.5 transition-opacity duration-300"
+                                {{-- نشانِ «خط در حال کار» — فقط روی کارت فعال، و فقط از lg به بالا --}}
+                                <div class="pointer-events-none absolute start-7 top-7 hidden items-center gap-2.5 transition-opacity duration-300 lg:flex"
                                      :style="{ opacity: active({{ $i }}) ? 1 : 0 }" aria-hidden="true">
                                     <span class="relative flex h-2 w-2">
                                         <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-white/80"></span>
@@ -232,7 +250,19 @@
                                 <div class="pointer-events-none absolute inset-x-0 bottom-0 flex flex-col justify-end bg-gradient-to-t from-black/85 via-black/35 to-transparent p-4 pt-12 transition-opacity duration-500 sm:p-5 md:p-7 md:pt-16"
                                      :style="{ opacity: active({{ $i }}) ? 1 : 0 }">
 
-                                    <div class="flex flex-wrap items-center gap-2">
+                                    {{--
+                                        روی گوشی فقط نامِ مرحله.
+
+                                        بالای lg این نام روی بیضیِ فعال نوشته شده و
+                                        تکرارش اینجا فقط تصویر را می‌پوشاند؛ زیر lg
+                                        بیضی‌ای در کار نیست، پس تنها جایی است که
+                                        معلوم می‌شود این عکسِ کدام مرحله است.
+                                    --}}
+                                    <p class="text-card font-extrabold leading-tight text-white lg:hidden">
+                                        {{ $slide['title'] }}
+                                    </p>
+
+                                    <div class="hidden flex-wrap items-center gap-2 lg:flex">
                                         @if($slide['metric_value'])
                                             <span class="rounded-full border border-white/25 bg-black/25 px-3 py-1 text-micro text-white/80 backdrop-blur-sm">
                                                 {{ $slide['metric_label'] }}
@@ -249,16 +279,15 @@
 
                                     @if($slide['cta'])
                                         {{--
-                                            دکمه‌ی دوم زیر sm پنهان می‌شود. روی
-                                            کارتِ مربعِ ۲۷۰ پیکسلی، دو هدف لمسیِ
-                                            ۴۴ پیکسلی به دو ردیف می‌شکنند و کل
-                                            تصویر را می‌پوشانند؛ و کوچک‌کردنشان
-                                            یعنی شکستن حداقلِ هدف لمسی. همین
-                                            پیوند در منو و فوتر هم هست.
+                                            دکمه‌ها از lg به بالا. روی کارتِ
+                                            مربعِ گوشی، دو هدف لمسیِ ۴۴ پیکسلی
+                                            به دو ردیف می‌شکستند و کل تصویر را
+                                            می‌پوشاندند. هر دو پیوند در منو و
+                                            فوتر هم هستند.
                                         --}}
-                                        <div class="pointer-events-auto mt-4 flex flex-wrap gap-2">
+                                        <div class="pointer-events-auto mt-4 hidden flex-wrap gap-2 lg:flex">
                                             <x-cta :href="route('technology')" variant="primary" size="sm">جزئیات فناوری</x-cta>
-                                            <x-cta :href="route('factory')" variant="light" size="sm" class="max-sm:hidden">بازدید از کارخانه</x-cta>
+                                            <x-cta :href="route('factory')" variant="light" size="sm">بازدید از کارخانه</x-cta>
                                         </div>
                                     @endif
                                 </div>

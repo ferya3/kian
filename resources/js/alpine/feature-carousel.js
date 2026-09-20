@@ -29,8 +29,25 @@ export default (count = 0) => ({
     /** جایی که چرخ برای شرحِ مرحله‌ی فعال باز می‌کند. */
     room: 0,
 
+    /**
+     * آیا چرخ روی صفحه هست؟
+     *
+     * زیر lg فقط کارت می‌ماند و چرخ پنهان است، پس نقش‌های tablist/tab هم
+     * آنجا نیستند — و tabpanelِ بی‌tablist، ساختارِ شکسته است. این پرچم به
+     * مارک‌آپ می‌گوید کدام نقش را بگیرد، و همان مرز را دنبال می‌کند که CSS
+     * دنبال می‌کند تا دو جا دو تعریف نداشته باشیم.
+     */
+    wide: false,
+
     init() {
         this.reduced = prefersReducedMotion();
+
+        const desktop = window.matchMedia('(min-width: 1024px)');
+        this.wide = desktop.matches;
+        desktop.addEventListener('change', (event) => {
+            this.wide = event.matches;
+        });
+
         this.$watch('paused', () => this.schedule());
         this.$watch('step', () => this.measure());
         this.schedule();
@@ -151,6 +168,25 @@ export default (count = 0) => ({
     cardStyle(i) {
         const d = this.offset(i);
         const near = d === -1 || d === 1;
+
+        /*
+         * روی گوشی فقط کارتِ فعال.
+         *
+         * دسته‌ی کارت‌ها عمق می‌سازد چون همسایه‌ها از دو طرف بیرون می‌زنند —
+         * ولی در پانلی به عرضِ گوشی، آن بیرون‌زدگی دو نوارِ خاکستریِ بی‌محتوا
+         * می‌شود که مثل ایراد دیده می‌شود، نه مثل عمق.
+         *
+         * افکتِ تصویر سر جایش می‌ماند: کارتِ رونده هنوز active نیست، پس
+         * همان‌طور که محو می‌شود خاکستری و تار هم می‌شود.
+         */
+        if (! this.wide) {
+            return {
+                transform: 'none',
+                opacity: d === 0 ? '1' : '0',
+                zIndex: d === 0 ? '20' : '0',
+                pointerEvents: 'none',
+            };
+        }
 
         /*
          * در چیدمان راست‌به‌چپ، مرحله‌ی بعدی از سمت چپ می‌آید و مرحله‌ی قبلی
