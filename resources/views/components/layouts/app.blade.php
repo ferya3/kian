@@ -77,6 +77,21 @@
     @include('partials.mobile-nav')
 
     {{--
+        نشان‌واژه روی دو لبه‌ی قاب.
+
+        تزیینِ قاب است و نه محتوا، پس aria-hidden می‌ماند؛ نامِ برند در هدر و
+        فوتر خوانده می‌شود. زیر lg پنهان می‌ماند — چون روی گوشی قابی در کار
+        نیست که لبه‌ای داشته باشد.
+    --}}
+    @php $wordmark = config('kian.brand.wordmark'); @endphp
+    @if($wordmark)
+        <div class="frame-mark-rail" aria-hidden="true">
+            <span class="frame-mark frame-mark-left" dir="ltr">{{ $wordmark }}</span>
+            <span class="frame-mark frame-mark-right" dir="ltr">{{ $wordmark }}</span>
+        </div>
+    @endif
+
+    {{--
         قاب سایت. هدر عمداً بیرونش می‌ماند: fixed است و باید روی هیرو شناور
         بماند، ولی خودش را با همین عرض هم‌تراز می‌کند.
     --}}

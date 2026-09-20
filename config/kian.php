@@ -15,6 +15,14 @@ return [
         'name' => env('KIAN_BRAND_NAME', 'سفال کیان'),
         'name_en' => env('KIAN_BRAND_NAME_EN', 'Kian Ceramic Blocks'),
         'legal_name' => env('KIAN_LEGAL_NAME', 'شرکت صنایع سفال کیان'),
+        /*
+        | نشان‌واژه‌ی لبه‌های قاب.
+        |
+        | حروف کوچک عمدی است: Luciano قلمی شکسته است و حروفِ کوچکش به هم
+        | می‌پیوندند، ولی حروف بزرگش هرکدام یک نشانِ جداافتاده‌اند. همان نام
+        | با همه‌حروف‌بزرگ، ده شکلِ بی‌ربطِ کنار هم می‌شود.
+        */
+        'wordmark' => env('KIAN_WORDMARK', 'Kianbehsaz'),
         'tagline' => 'ساخته‌شده از خاک، مهندسی‌شده برای آینده',
         'tagline_en' => 'Born of Earth. Engineered for the Future.',
         'founded' => 2001,

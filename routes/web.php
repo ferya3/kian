@@ -11,7 +11,6 @@ use App\Support\Locales;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-
 /*
 |--------------------------------------------------------------------------
 | صفحه‌های عمومی — زیر پیشوند زبان
@@ -83,7 +82,7 @@ Route::fallback(function (Request $request) {
     */
     try {
         $match = app('router')->getRoutes()->match(Request::create($target, 'GET'));
-    } catch (\Throwable) {
+    } catch (Throwable) {
         abort(404);
     }
 

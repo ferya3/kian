@@ -105,26 +105,6 @@
         </nav>
     </div>
 
-    {{--
-        نشان‌واژه — نور از روی حروف رد می‌شود.
-
-        overflow-hidden روی خودِ نوار لازم است، نه تزئینی: هم هاله‌ی محو و هم
-        فاصله‌ی حرفِ آخر کمی از کادر بیرون می‌زنند و بدون آن، صفحه روی گوشی
-        اسکرول افقی پیدا می‌کند.
-    --}}
-    <div class="relative overflow-hidden border-t border-white/[0.07]">
-        <div aria-hidden="true"
-             class="pointer-events-none absolute inset-x-0 top-1/2 h-32 -translate-y-1/2 blur-[70px]"
-             style="background: radial-gradient(45% 60% at 50% 50%, rgba(217,154,128,.28), transparent 70%)"></div>
-
-        <div class="container-page relative pb-1 pt-7 sm:pt-9">
-            <p class="wordmark-flare tech select-none text-center font-extrabold leading-[0.95] tracking-[0.06em]"
-               style="font-size: clamp(2rem, 11.5vw, 8rem)">
-                <bdi dir="ltr">KIANBEHSAZ</bdi>
-            </p>
-        </div>
-    </div>
-
     <div class="border-t border-white/[0.07]">
         <div class="container-page flex flex-col gap-3 pt-6 text-meta text-sand-200/40 sm:flex-row sm:items-center sm:justify-between"
              style="padding-bottom: max(1.5rem, var(--safe-bottom))">

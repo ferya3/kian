@@ -22,6 +22,23 @@
     unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+2000-206F, U+2070-209F, U+20A0-20AB, U+2113, U+2C60-2C7F;
 }
 
+/*
+| قلمِ نشان‌واژه — فقط برای نامِ برند روی لبه‌های قاب.
+|
+| لاتین‌محض است و حرف فارسی ندارد، پس عمداً هیچ‌جای دیگری استفاده نمی‌شود.
+| font-display: block است و نه swap: این قلم *شکلِ* نشان است، و یک‌لحظه
+| دیده‌شدنش با قلم دیگر یعنی نشانِ غلط. متن decorative و aria-hidden است،
+| پس مکثِ کوتاهِ block هیچ محتوایی را از کسی دریغ نمی‌کند.
+*/
+@font-face {
+    font-family: 'Luciano';
+    src: url('../fonts/luciano.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+    font-display: block;
+    unicode-range: U+0041-005A, U+0061-007A;
+}
+
 /* ==========================================================================
    توکن‌های طراحی
    ========================================================================== */
@@ -255,10 +272,18 @@
         --shell-backdrop: #2b241d;
     }
 
+    /*
+    | از lg به بالا، حاشیه‌ی قاب جا برای نشان‌واژه‌ی کناری هم باز می‌کند.
+    |
+    | ۳rem یعنی ۴۸ پیکسل در هر طرف. نوارِ حروفِ چرخیده ۱٫۰۶ برابر اندازه‌ی
+    | قلم است (از متریکِ خودِ Luciano درآمده، نه حدس): در ۲۴ پیکسل می‌شود
+    | ۲۵٫۵، و ۱۱ پیکسل هوا در هر طرفش می‌ماند. کمتر از این، نشان به دیواره
+    | می‌چسبد؛ بیشتر از این، در عرضِ ۱۰۲۴ زیادی از محتوا کم می‌شود.
+    */
     @media (min-width: 1024px) {
         :root {
             --header-h: 4.5rem;
-            --shell-gap: 1.5rem;
+            --shell-gap: 3rem;
             --shell-radius: 1.5rem;
         }
     }
@@ -373,29 +398,6 @@
 }
 
 /* ==========================================================================
-   نشان‌واژه‌ی فوتر — شعله‌ای که از روی حروف رد می‌شود
-   ========================================================================== */
-
-/*
-| حروف خودشان پنجره‌اند، نه رنگ.
-|
-| متن با background-clip شفاف می‌شود و گرادیانِ پشتش از داخل حروف دیده می‌شود؛
-| بعد همان گرادیان حرکت می‌کند. پس نور دقیقاً به شکل حروف بریده می‌شود، بی‌آنکه
-| لایه یا ماسک جداگانه‌ای لازم باشد.
-|
-| زمینه ۲۵۰٪ عرض کادر است تا نوار روشن پیش و پس از سفر، کامل بیرون بماند.
-|
-| بازه‌ی حرکت عمداً ۱۰۰٪ تا ۰٪ است و نه بیشتر: با no-repeat، بیرون از این بازه
-| بخشی از کادر اصلاً زمینه ندارد و حروفِ آن بخش کم‌رنگ نمی‌شوند — کاملاً
-| نامرئی می‌شوند. در همین بازه، زمینه همیشه تمام کادر را می‌پوشاند و نوار روشن
-| هم از بیرونِ یک لبه تا بیرونِ لبه‌ی دیگر سفر می‌کند.
-*/
-@keyframes wordmark-flare {
-    from { background-position: 100% 0; }
-    to { background-position: 0% 0; }
-}
-
-/* ==========================================================================
    اشاره‌گر بارانی هیرو
    ========================================================================== */
 
@@ -425,32 +427,6 @@
    ========================================================================== */
 
 @layer components {
-    /* نشان‌واژه‌ی فوتر — مارک‌آپش در partials/footer.blade.php */
-    .wordmark-flare {
-        background-image: linear-gradient(100deg,
-            rgb(255 255 255 / 0.2) 0%,
-            rgb(255 255 255 / 0.2) 36%,
-            color-mix(in oklab, var(--color-clay-300) 65%, transparent) 44%,
-            rgb(255 255 255 / 0.95) 50%,
-            color-mix(in oklab, var(--color-clay-300) 65%, transparent) 56%,
-            rgb(255 255 255 / 0.2) 64%,
-            rgb(255 255 255 / 0.2) 100%);
-        background-size: 250% 100%;
-        background-repeat: no-repeat;
-        -webkit-background-clip: text;
-        background-clip: text;
-        color: transparent;
-        animation: wordmark-flare 7s cubic-bezier(0.55, 0, 0.45, 1) infinite;
-    }
-
-    /* بدون background-clip، متنِ شفاف یعنی متنِ نامرئی — پس رنگ توپر برمی‌گردد */
-    @supports not ((background-clip: text) or (-webkit-background-clip: text)) {
-        .wordmark-flare {
-            background-image: none;
-            color: var(--color-sand-200);
-        }
-    }
-
     /* قطره‌ی اشاره‌گر هیرو — مارک‌آپش در partials/home/hero.blade.php */
     .hero-rain-drop {
         position: absolute;
@@ -558,6 +534,79 @@
                 repeating-linear-gradient(0deg, rgb(255 255 255 / 0.035) 0 1px, transparent 1px 46px),
                 repeating-linear-gradient(90deg, rgb(255 255 255 / 0.025) 0 1px, transparent 1px 92px);
             background-attachment: fixed;
+        }
+    }
+
+    /*
+    | نشان‌واژه‌ی کناری — نام برند روی دو لبه‌ی قاب، مثل عطفِ کتاب.
+    |
+    | مارک‌آپش در components/layouts/app.blade.php و aria-hidden است: تزیینِ
+    | قاب است، نه متنِ صفحه. نامِ برند همان بالای صفحه و در فوتر خوانده می‌شود.
+    |
+    | ظرف، هم‌عرضِ خودِ قاب است و ثابت (fixed) می‌ماند؛ پس هر دو نشان دقیقاً به
+    | لبه‌های قاب قفل‌اند — چه حاشیه ۴۸ پیکسل باشد و چه روی نمایشگر پهن، ۴۸۰.
+    |
+    | سمت راست از بالا به پایین خوانده می‌شود و سمت چپ از پایین به بالا؛ یعنی
+    | دو نشان قرینه‌ی هم‌اند و نه تکرارِ هم. جهتِ زبان اینجا دخالت نمی‌کند:
+    | قاب یک شیء فیزیکی است و چپ و راستش با fa و en عوض نمی‌شود.
+    */
+    .frame-mark-rail {
+        display: none;
+    }
+
+    @media (min-width: 1024px) {
+        .frame-mark-rail {
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 0;
+            display: block;
+            width: min(var(--shell-max), 100% - 2 * var(--shell-gap));
+            margin-inline: auto;
+            pointer-events: none;
+        }
+
+        /*
+        | چرخشِ کل کلمه، و نه writing-mode.
+        |
+        | Luciano قلمی شکسته است و حروفش به هم می‌رسند؛ vertical-rl هر حرف را
+        | جداگانه می‌چرخاند و پیوندها را پاره می‌کند. اینجا کلمه افقی چیده
+        | می‌شود — همان‌طور که قلم طراحی شده — و بعد یکپارچه ۹۰ درجه می‌چرخد.
+        */
+        .frame-mark {
+            position: absolute;
+            top: 50%;
+            font-family: 'Luciano', ui-sans-serif, sans-serif;
+            font-size: 1.5rem;
+            font-weight: 400;
+            line-height: 1;
+            white-space: nowrap;
+            color: color-mix(in oklab, var(--color-sand-200) 38%, transparent);
+            user-select: none;
+        }
+
+        /*
+        | مرکزِ کلمه دقیقاً وسطِ حاشیه‌ی قاب می‌نشیند — چه حاشیه ۴۸ پیکسل باشد
+        | و چه روی نمایشگر پهن، جایی که قاب به بیشینه می‌رسد و نشان همچنان به
+        | همین فاصله از لبه می‌ماند.
+        |
+        | آن ۰٫۲۲۹em پایانی جبرانِ ناقرینگیِ خودِ قلم است: جوهرِ «Kianbehsaz»
+        | از ۰٫۰۵۲em زیرِ خط کرسی تا ۱٫۰۰۹em بالایش می‌رود، پس مرکزِ دیداری
+        | با مرکزِ کادرِ متن یکی نیست. چون بعد از rotate می‌آید، در دستگاهِ
+        | چرخیده اثر می‌کند و هر دو نشان را به یک اندازه جابه‌جا می‌کند.
+        */
+        .frame-mark-right {
+            left: 100%;
+            margin-left: calc(var(--shell-gap) / 2);
+            transform: translate(-50%, -50%) rotate(90deg) translateY(0.229em);
+        }
+
+        .frame-mark-left {
+            right: 100%;
+            margin-right: calc(var(--shell-gap) / 2);
+            transform: translate(50%, -50%) rotate(-90deg) translateY(0.229em);
         }
     }
 
@@ -785,16 +834,6 @@
         transform: none !important;
         clip-path: none !important;
     }
-
-    /*
-    | نشان‌واژه استثناست: خاموش‌کردن انیمیشن، گرادیان را روی آخرین فریم قفل
-    | می‌کند و آنجا شعله بیرون از کادر است — یعنی حروف تقریباً نامرئی می‌شوند.
-    | پس به‌جای فریز، رنگ توپر می‌گیرد.
-    */
-    .wordmark-flare {
-        background-image: none !important;
-        color: color-mix(in oklab, var(--color-sand-200) 60%, transparent) !important;
-    }
 }
 
 /* ==========================================================================
@@ -811,7 +850,9 @@
     .no-print { display: none !important; }
     body { background: #fff !important; color: #000; }
 
-    /* روی کاغذ قاب معنا ندارد: نه حاشیه، نه سایه، نه گوشه‌ی گرد */
+    /* روی کاغذ قاب معنا ندارد: نه حاشیه، نه سایه، نه گوشه‌ی گرد — و نه نشانِ کناری */
+    .frame-mark-rail { display: none !important; }
+
     .page-shell {
         width: 100%;
         margin: 0;
