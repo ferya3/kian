@@ -20,6 +20,13 @@ const AUTOPLAY_MS = 3400;
 /** فاصله‌ی بیضی تا شرحِ زیرش. */
 const TEXT_GAP = 10;
 
+/**
+ * کمینه‌ی جابه‌جاییِ افقی که «کشیدن» حساب می‌شود.
+ *
+ * کمتر از این، هر لغزشِ انگشت هنگام اسکرولِ عمودی کارت را عوض می‌کرد.
+ */
+const SWIPE_MIN = 44;
+
 export default (count = 0) => ({
     count,
     step: 0,
@@ -38,6 +45,10 @@ export default (count = 0) => ({
      * دنبال می‌کند تا دو جا دو تعریف نداشته باشیم.
      */
     wide: false,
+
+    /** نقطه‌ی شروعِ لمس، و نشانه‌ای که بگوید این لمس کشیدن بود نه ضربه. */
+    touch: null,
+    swiped: false,
 
     init() {
         this.reduced = prefersReducedMotion();
@@ -119,6 +130,71 @@ export default (count = 0) => ({
         if (ahead) this.step += ahead;
 
         this.schedule();
+    },
+
+    /**
+     * کشیدنِ انگشت.
+     *
+     * هیچ‌جا preventDefault نمی‌شود و touch-action هم دست نمی‌خورد: اسکرولِ
+     * عمودیِ صفحه باید بومی بماند. به‌جایش در پایانِ لمس تصمیم گرفته می‌شود
+     * — اگر جابه‌جاییِ افقی هم از آستانه بیشتر بود و هم از جابه‌جاییِ عمودی،
+     * کشیدن بوده؛ وگرنه کاربر داشته صفحه را بالا و پایین می‌برده.
+     *
+     * جهت با جهتِ صفحه آینه می‌شود. در چیدمانِ راست‌به‌چپ مرحله‌ی بعدی سمت
+     * چپ می‌ایستد و باید به وسط بیاید، یعنی انگشت به راست می‌رود.
+     */
+    onTouchStart(event) {
+        const point = event.changedTouches[0];
+
+        this.touch = { x: point.clientX, y: point.clientY };
+        this.swiped = false;
+    },
+
+    onTouchEnd(event) {
+        if (! this.touch) return;
+
+        const point = event.changedTouches[0];
+        const dx = point.clientX - this.touch.x;
+        const dy = point.clientY - this.touch.y;
+
+        this.touch = null;
+
+        if (Math.abs(dx) < SWIPE_MIN || Math.abs(dx) <= Math.abs(dy)) return;
+
+        const rtl = getComputedStyle(this.$el).direction === 'rtl';
+        const rightward = dx > 0;
+        const forward = rtl ? rightward : ! rightward;
+
+        this.swiped = true;
+        this.nudge(forward ? 1 : -1);
+    },
+
+    /**
+     * یک مرحله جلو یا عقب.
+     *
+     * عمداً از select رد نمی‌شود: آن همیشه رو به جلو می‌چرخد، و کشیدنِ انگشت
+     * به عقب با نُه قدمِ رو به جلو پاسخ می‌گرفت — درست، ولی هیچ ربطی به
+     * حرکتِ دستِ کاربر نداشت.
+     */
+    nudge(by) {
+        this.step += by;
+        this.schedule();
+    },
+
+    /**
+     * ضربه‌ی ساده روی کارت — یک مرحله جلو.
+     *
+     * پس از کشیدن اجرا نمی‌شود: بعضی مرورگرها در پایانِ کشیدن click هم
+     * می‌فرستند و بدون این محافظ، یک کشیدن دو مرحله جلو می‌رفت.
+     */
+    onTap() {
+        if (this.swiped) {
+            this.swiped = false;
+
+            return;
+        }
+
+        this.nudge(1);
     },
 
     /**

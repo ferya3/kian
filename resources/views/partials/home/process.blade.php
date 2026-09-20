@@ -197,17 +197,20 @@
 
                     نقش با عرضِ صفحه عوض می‌شود: کنارِ چرخ، این پانلِ همان
                     tablist است؛ بدون چرخ، خودش یک کاروسلِ مستقل است و
-                    tabpanel نامیدنش دروغ می‌شد. روی گوشی لمسِ کارت هم مرحله
-                    را جلو می‌برد، چون دیگر بیضی‌ای برای انتخاب نیست.
+                    tabpanel نامیدنش دروغ می‌شد. روی گوشی کشیدنِ انگشت یا
+                    ضربه مرحله را عوض می‌کند، چون دیگر بیضی‌ای برای انتخاب
+                    نیست.
                 --}}
                 <div :id="$id('process') + '-panel'" aria-live="polite"
                      :role="wide ? 'tabpanel' : 'group'"
                      :aria-roledescription="wide ? null : 'کاروسل'"
                      :aria-label="wide ? null : 'مراحل تولید'"
                      :tabindex="wide ? null : 0"
-                     @click="wide || select((index + 1) % count)"
+                     @click="wide || onTap()"
+                     @touchstart.passive="wide || onTouchStart($event)"
+                     @touchend.passive="wide || onTouchEnd($event)"
                      @keydown="wide || onKey($event)"
-                     class="relative flex flex-1 items-center justify-center overflow-hidden bg-sand-100 px-6 py-6 focus-visible:outline-2 focus-visible:outline-offset-[-4px] focus-visible:outline-clay-500 md:px-10 lg:border-s lg:border-sand-300 lg:py-10 lg:focus-visible:outline-none">
+                     class="relative flex flex-1 flex-col items-center justify-center overflow-hidden bg-sand-100 px-6 py-6 focus-visible:outline-2 focus-visible:outline-offset-[-4px] focus-visible:outline-clay-500 md:px-10 lg:border-s lg:border-sand-300 lg:py-10 lg:focus-visible:outline-none">
 
                     {{--
                         کارت مربع است، پس ارتفاعش برابر عرضش می‌شود و نسبت به
@@ -242,27 +245,16 @@
                                 </div>
 
                                 {{--
-                                    پایین کارت فقط عددهای همان مرحله می‌ماند.
-                                    شرح رفته کنار بیضیِ فعال، و نامِ مرحله هم
-                                    روی خودِ بیضی هست — تکرارش اینجا فقط تصویر
-                                    را می‌پوشاند.
+                                    پایینِ کارت فقط عددهای همان مرحله می‌ماند، و
+                                    فقط از lg به بالا: شرح رفته کنارِ بیضیِ فعال و
+                                    نامِ مرحله روی خودِ بیضی است، پس تکرارشان اینجا
+                                    فقط تصویر را می‌پوشاند. زیر lg هم نام و شرح
+                                    بیرونِ کارت نوشته می‌شوند.
                                 --}}
-                                <div class="pointer-events-none absolute inset-x-0 bottom-0 flex flex-col justify-end bg-gradient-to-t from-black/85 via-black/35 to-transparent p-4 pt-12 transition-opacity duration-500 sm:p-5 md:p-7 md:pt-16"
+                                <div class="pointer-events-none absolute inset-x-0 bottom-0 hidden flex-col justify-end bg-gradient-to-t from-black/85 via-black/35 to-transparent p-4 pt-12 transition-opacity duration-500 sm:p-5 md:p-7 md:pt-16 lg:flex"
                                      :style="{ opacity: active({{ $i }}) ? 1 : 0 }">
 
-                                    {{--
-                                        روی گوشی فقط نامِ مرحله.
-
-                                        بالای lg این نام روی بیضیِ فعال نوشته شده و
-                                        تکرارش اینجا فقط تصویر را می‌پوشاند؛ زیر lg
-                                        بیضی‌ای در کار نیست، پس تنها جایی است که
-                                        معلوم می‌شود این عکسِ کدام مرحله است.
-                                    --}}
-                                    <p class="text-card font-extrabold leading-tight text-white lg:hidden">
-                                        {{ $slide['title'] }}
-                                    </p>
-
-                                    <div class="hidden flex-wrap items-center gap-2 lg:flex">
+                                    <div class="flex flex-wrap items-center gap-2">
                                         @if($slide['metric_value'])
                                             <span class="rounded-full border border-white/25 bg-black/25 px-3 py-1 text-micro text-white/80 backdrop-blur-sm">
                                                 {{ $slide['metric_label'] }}
@@ -291,6 +283,31 @@
                                         </div>
                                     @endif
                                 </div>
+                            </div>
+                        @endforeach
+                    </div>
+
+                    {{--
+                        نام و شرحِ مرحله، زیرِ عکس — فقط زیر lg.
+
+                        همه‌ی شرح‌ها رندر می‌شوند و در یک خانه‌ی grid روی هم
+                        می‌نشینند، پس ارتفاعِ کادر برابرِ بلندترینشان است و با
+                        هر تعویض بالا و پایین نمی‌پرد. جایگزینِ ساده‌ترش —
+                        نوشتنِ فقط شرحِ فعال — با هر مرحله ارتفاع را عوض می‌کرد
+                        و کلِ صفحه زیر انگشت می‌لرزید.
+
+                        aria-hidden جدا بسته می‌شود چون شفافیتِ صفر برای
+                        صفحه‌خوان معنایی ندارد؛ بدون آن هر ده شرح با هم خوانده
+                        می‌شدند.
+                    --}}
+                    <div class="mt-6 grid w-full max-w-[22rem] md:max-w-[26rem] lg:hidden">
+                        @foreach($slides as $i => $slide)
+                            <div class="col-start-1 row-start-1 text-center transition-opacity duration-500"
+                                 :style="{ opacity: active({{ $i }}) ? 1 : 0 }"
+                                 :aria-hidden="active({{ $i }}) ? 'false' : 'true'"
+                                 style="{{ $i === 0 ? '' : 'opacity: 0;' }}">
+                                <h3 class="text-card font-extrabold leading-tight text-ink-900">{{ $slide['title'] }}</h3>
+                                <p class="mt-2 text-meta leading-relaxed text-ink-500">{{ $slide['summary'] }}</p>
                             </div>
                         @endforeach
                     </div>
