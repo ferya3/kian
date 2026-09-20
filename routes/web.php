@@ -1,74 +1,34 @@
 <?php
 
-use App\Http\Controllers\AboutController;
 use App\Http\Controllers\Admin\ActivityLogController;
 use App\Http\Controllers\Admin\AuthController as AdminAuth;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\ResourceController;
-use App\Http\Controllers\ArticleController;
-use App\Http\Controllers\ContactController;
-use App\Http\Controllers\DistributorController;
-use App\Http\Controllers\DocumentController;
-use App\Http\Controllers\FactoryController;
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\ProductController;
-use App\Http\Controllers\ProductFinderController;
-use App\Http\Controllers\ProjectController;
-use App\Http\Controllers\SearchController;
 use App\Http\Controllers\SitemapController;
-use App\Http\Controllers\SolutionController;
-use App\Http\Controllers\SustainabilityController;
-use App\Http\Controllers\TechnicalController;
-use App\Http\Controllers\TechnologyController;
+use App\Http\Middleware\SetLocale;
+use App\Support\Locales;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', HomeController::class)->name('home');
 
 /*
-| محصولات — هر محصول URL مستقل و پایدار دارد: /products/ceramic-block-20
+|--------------------------------------------------------------------------
+| صفحه‌های عمومی — زیر پیشوند زبان
+|--------------------------------------------------------------------------
 */
-Route::get('/products', [ProductController::class, 'index'])->name('products.index');
-Route::get('/products/{product}', [ProductController::class, 'show'])->name('products.show');
+Route::prefix('{locale}')
+    ->where(['locale' => implode('|', Locales::codes())])
+    ->middleware(SetLocale::class)
+    ->group(base_path('routes/public.php'));
 
-/* موتور انتخاب محصول */
-Route::get('/product-finder', [ProductFinderController::class, 'show'])->name('finder.show');
-Route::get('/product-finder/results', [ProductFinderController::class, 'results'])->name('finder.results');
-
-/* راهکارها */
-Route::get('/solutions', [SolutionController::class, 'index'])->name('solutions.index');
-Route::get('/solutions/{solution}', [SolutionController::class, 'show'])->name('solutions.show');
-
-/* پروژه‌ها */
-Route::get('/projects', [ProjectController::class, 'index'])->name('projects.index');
-Route::get('/projects/{project}', [ProjectController::class, 'show'])->name('projects.show');
-
-/* فناوری و کارخانه */
-Route::get('/technology', TechnologyController::class)->name('technology');
-Route::get('/factory', FactoryController::class)->name('factory');
-Route::get('/sustainability', SustainabilityController::class)->name('sustainability');
-
-/* مرکز فنی — مهندس، معمار، پیمانکار */
-Route::get('/technical', [TechnicalController::class, 'index'])->name('technical.index');
-Route::get('/technical/downloads', [TechnicalController::class, 'downloads'])->name('technical.downloads');
-Route::get('/technical/installation', [TechnicalController::class, 'installation'])->name('technical.installation');
-Route::get('/technical/certificates', [TechnicalController::class, 'certificates'])->name('technical.certificates');
-Route::get('/technical/faq', [TechnicalController::class, 'faq'])->name('technical.faq');
-Route::get('/downloads/{document}', [DocumentController::class, 'download'])->name('documents.download');
-
-/* دانش فنی */
-Route::get('/articles', [ArticleController::class, 'index'])->name('articles.index');
-Route::get('/articles/{article}', [ArticleController::class, 'show'])->name('articles.show');
-
-/* شرکت */
-Route::get('/about', AboutController::class)->name('about');
-Route::get('/distributors', DistributorController::class)->name('distributors');
-Route::get('/contact', [ContactController::class, 'show'])->name('contact');
-Route::post('/contact', [ContactController::class, 'store'])
-    ->middleware('throttle:6,1')
-    ->name('contact.store');
-
-Route::get('/search', SearchController::class)->name('search');
+/*
+| ریشه‌ی سایت زبانی ندارد، پس بازدیدکننده را به زبان خودش می‌فرستد: انتخاب
+| قبلی‌اش، وگرنه Accept-Language مرورگر، وگرنه پیش‌فرض. ۳۰۲ و نه ۳۰۱، چون
+| مقصدش به بازدیدکننده بستگی دارد و نباید کش شود.
+*/
+Route::get('/', fn () => redirect()->route('home', ['locale' => Locales::preferred()], 302))
+    ->name('root');
 
 /* سئو */
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
@@ -103,4 +63,33 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::put('{resource}/{id}', [ResourceController::class, 'update'])->name('resource.update');
         Route::delete('{resource}/{id}', [ResourceController::class, 'destroy'])->name('resource.destroy');
     });
+});
+
+/*
+|--------------------------------------------------------------------------
+| نشانی‌های بی‌پیشوند
+|--------------------------------------------------------------------------
+| پیش از چندزبانه‌شدن، صفحه‌ها بدون پیشوند بودند. هر نشانی قدیمی که هنوز
+| جایی ذخیره شده باشد، با ۳۰۱ به همان صفحه در زبان پیش‌فرض می‌رود. اگر
+| چنین صفحه‌ای هم نباشد، ۴۰۴ عادی.
+*/
+Route::fallback(function (Request $request) {
+    $path = trim($request->path(), '/');
+    $target = '/'.Locales::default().'/'.$path;
+
+    /*
+    | match() خودش به مسیرِ fallback می‌رسد و همه‌چیز را «پیدا» می‌کند، پس
+    | باید صریح رد شود؛ وگرنه هر نشانی ناموجودی ۳۰۱ می‌گرفت به‌جای ۴۰۴.
+    */
+    try {
+        $match = app('router')->getRoutes()->match(Request::create($target, 'GET'));
+    } catch (\Throwable) {
+        abort(404);
+    }
+
+    if ($match->isFallback) {
+        abort(404);
+    }
+
+    return redirect($target.($request->getQueryString() ? '?'.$request->getQueryString() : ''), 301);
 });

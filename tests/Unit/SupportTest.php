@@ -4,8 +4,9 @@ namespace Tests\Unit;
 
 use App\Support\Digits;
 use App\Support\Jalali;
+use App\Support\Locales;
 use App\Support\Slug;
-use PHPUnit\Framework\TestCase;
+use Tests\TestCase;
 
 class SupportTest extends TestCase
 {
@@ -27,10 +28,26 @@ class SupportTest extends TestCase
         $this->assertSame('بلوک-20-سفالی', Slug::make('  بلوک ۲۰ —— سفالی!!! '));
     }
 
-    public function test_it_converts_latin_digits_to_persian(): void
+    /**
+     * ارقام به خطِ زبان جاری می‌روند.
+     *
+     * پیش از چندزبانه‌شدن این متد همیشه فارسی می‌داد؛ حالا به زبان درخواست
+     * بستگی دارد، پس تست هم باید هر سه را ببیند.
+     */
+    public function test_it_writes_numbers_in_the_script_of_the_current_language(): void
     {
+        app()->setLocale('fa');
         $this->assertSame('۱۲۰٬۰۰۰', Jalali::digits('120,000'));
         $this->assertSame('۶٫۵', Jalali::digits('6.5'));
+
+        app()->setLocale('en');
+        $this->assertSame('120,000', Jalali::digits('120,000'));
+        $this->assertSame('6.5', Jalali::digits('6.5'));
+
+        app()->setLocale('ar');
+        $this->assertSame('١٢٠٬٠٠٠', Jalali::digits('120,000'));
+
+        app()->setLocale(Locales::default());
     }
 
     public function test_it_normalises_persian_and_arabic_digits(): void

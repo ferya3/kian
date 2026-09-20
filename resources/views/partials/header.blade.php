@@ -115,10 +115,17 @@
             </nav>
 
             <div class="flex shrink-0 items-center gap-1 lg:mr-auto lg:gap-2">
+                {{-- سوئیچر زبان: روی گوشی در منوی کشویی است، نه اینجا --}}
+                <div class="hidden lg:block">
+                    @include('partials.language-switcher', [
+                        'tone' => "onDark ? 'text-sand-100 hover:bg-white/10' : 'text-ink-700 hover:bg-sand-200'",
+                    ])
+                </div>
+
                 <button type="button" @click="openSearch()"
                         class="tap-icon rounded-full transition"
                         :class="onDark ? 'text-sand-100 hover:bg-white/10' : 'text-ink-600 hover:bg-sand-200 hover:text-ink-900'"
-                        aria-label="جستجو در سایت">
+                        aria-label="{{ __('site.nav.search') }}">
                     <x-icon name="search" size="24" />
                 </button>
 

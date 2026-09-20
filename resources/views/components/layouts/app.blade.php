@@ -1,5 +1,7 @@
+@php use App\Support\Locales; @endphp
 <!DOCTYPE html>
-<html lang="fa" dir="rtl" class="scroll-smooth">
+{{-- زبان، جهت و قلم هر سه از config/locales.php می‌آیند --}}
+<html lang="{{ Locales::html() }}" dir="{{ Locales::dir() }}" data-font="{{ Locales::meta()['font'] ?? 'vazirmatn' }}" class="scroll-smooth">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -9,6 +11,17 @@
     <title>{{ $seo->fullTitle() }}</title>
     <meta name="description" content="{{ $seo->metaDescription() }}">
     <link rel="canonical" href="{{ $seo->canonicalUrl() }}">
+
+    {{--
+        hreflang — به موتور جستجو می‌گوید همین صفحه به زبان‌های دیگر کجاست.
+        x-default برای بازدیدکننده‌ای است که هیچ‌کدام زبانش نیست.
+    --}}
+    @foreach($seo->alternates() as $code => $href)
+        <link rel="alternate" hreflang="{{ Locales::html($code) }}" href="{{ $href }}">
+    @endforeach
+    @if($default = ($seo->alternates()[config('locales.fallback')] ?? null))
+        <link rel="alternate" hreflang="x-default" href="{{ $default }}">
+    @endif
     @if($seo->noindex)
         <meta name="robots" content="noindex, follow">
     @else
@@ -16,7 +29,11 @@
     @endif
 
     <meta property="og:site_name" content="{{ config('kian.brand.legal_name') }}">
-    <meta property="og:locale" content="fa_IR">
+    <meta property="og:locale" content="{{ str_replace('-', '_', Locales::html()) }}">
+    @foreach($seo->alternates() as $code => $href)
+        @continue($code === Locales::current())
+        <meta property="og:locale:alternate" content="{{ str_replace('-', '_', Locales::html($code)) }}">
+    @endforeach
     <meta property="og:type" content="{{ $seo->type }}">
     <meta property="og:title" content="{{ $seo->fullTitle() }}">
     <meta property="og:description" content="{{ $seo->metaDescription() }}">
@@ -51,9 +68,9 @@
 --}}
 <body class="min-h-dvh text-ink-900 antialiased">
     <a href="#main"
-       class="sr-only-focusable fixed right-4 z-[100] inline-flex min-h-11 items-center rounded-full bg-ink-900 px-5 text-sm font-semibold text-sand-50 shadow-float"
-       style="top: calc(1rem + var(--safe-top))">
-        پرش به محتوای اصلی
+       class="sr-only-focusable fixed z-[100] inline-flex min-h-11 items-center rounded-full bg-ink-900 px-5 text-sm font-semibold text-sand-50 shadow-float"
+       style="top: calc(1rem + var(--safe-top)); inset-inline-end: 1rem">
+        {{ __('site.nav.skip') }}
     </a>
 
     @include('partials.header')

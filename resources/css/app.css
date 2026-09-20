@@ -289,6 +289,14 @@
         overscroll-behavior: contain;
     }
 
+    /*
+    | قلم بر اساس زبان. صفت data-font را چیدمان از config/locales.php
+    | می‌گیرد، پس زبان تازه فقط یک مقدار در تنظیمات است و نه قاعده‌ی CSS.
+    */
+    html[data-font='inter'] {
+        --font-sans: 'InterVar', 'Segoe UI', system-ui, -apple-system, sans-serif;
+    }
+
     body {
         background-color: var(--color-sand-100);
         color: var(--color-ink-900);

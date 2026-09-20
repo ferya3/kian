@@ -8,6 +8,8 @@ use App\Support\Admin\Field;
 use App\Support\Admin\Registry;
 use App\Support\Admin\Resource;
 use App\Support\Digits;
+use App\Support\HasTranslations;
+use App\Support\Locales;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -79,6 +81,8 @@ class ResourceController extends Controller
 
         $record = $class::$model::create($data);
 
+        $this->saveTranslations($request, $record);
+
         ActivityLog::record('created', $record, array_keys($data), $class::titleFor($record));
 
         return redirect()
@@ -110,6 +114,8 @@ class ResourceController extends Controller
         $changed = array_keys($record->getDirty());
         $record->save();
 
+        $this->saveTranslations($request, $record);
+
         if ($changed) {
             ActivityLog::record('updated', $record, $changed, $class::titleFor($record));
         }
@@ -117,6 +123,37 @@ class ResourceController extends Controller
         return redirect()
             ->to($class::editUrl($record))
             ->with('success', $changed ? 'تغییرات ذخیره شد.' : 'تغییری برای ذخیره نبود.');
+    }
+
+    /**
+     * ترجمه‌های ارسالی فرم را می‌نویسد.
+     *
+     * دو نگهبان: زبان باید در config/locales.php باشد و زبان پیش‌فرض
+     * پذیرفته نمی‌شود — متنِ آن زبان ستونِ خود جدول است و نباید از این راه
+     * دور زده شود. فیلترِ فیلدها را خودِ putTranslations انجام می‌دهد.
+     */
+    protected function saveTranslations(Request $request, Model $record): void
+    {
+        if (! in_array(HasTranslations::class, class_uses_recursive($record), true)) {
+            return;
+        }
+
+        $submitted = $request->input('translations');
+
+        if (! is_array($submitted)) {
+            return;
+        }
+
+        foreach ($submitted as $locale => $values) {
+            if (! is_array($values) || ! Locales::supports($locale) || Locales::isDefault($locale)) {
+                continue;
+            }
+
+            $record->putTranslations($locale, array_map(
+                fn ($value) => is_string($value) ? trim($value) : null,
+                $values,
+            ));
+        }
     }
 
     public function destroy(string $resource, string $id)

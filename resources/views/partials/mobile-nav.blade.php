@@ -101,6 +101,12 @@
         </div>
 
         <div class="shrink-0 space-y-3 border-t border-sand-200 bg-sand-100 p-5">
+            {{-- زبان بالای کنش‌ها می‌نشیند: تصمیمی است که پیش از بقیه گرفته می‌شود --}}
+            <div class="flex items-center justify-between pb-1">
+                <span class="text-meta text-ink-500">{{ __('site.language.label') }}</span>
+                @include('partials.language-switcher')
+            </div>
+
             <a href="{{ route('finder.show') }}"
                class="flex items-center justify-center gap-2 rounded-xl bg-clay-500 py-3.5 font-semibold text-white">
                 <x-icon name="compass" size="18" />

@@ -1,5 +1,7 @@
 @php
     use App\Support\Admin\Field;
+    use App\Support\HasTranslations;
+    use App\Support\Locales;
 
     $fields = $resource::formFields($creating);
     $title = $creating ? $resource::$singular.' جدید' : $resource::titleFor($record);
@@ -15,6 +17,21 @@
     foreach ($fields as $field) {
         $sections[$field->section ?? ''][] = $field;
     }
+
+    /*
+    | ترجمه‌ها فقط وقتی نشان داده می‌شوند که مدل قابل ترجمه باشد و رکورد
+    | ساخته شده باشد — پیش از ذخیره، رکوردی نیست که ترجمه به آن بچسبد.
+    */
+    $translatable = in_array(HasTranslations::class, class_uses_recursive($record), true)
+        ? $record->translatableFields()
+        : [];
+
+    $others = $creating || ! $translatable
+        ? collect()
+        : Locales::all()->except(Locales::default());
+
+    // برچسب و نوع هر فیلد از خودِ فرم می‌آید، تا دوبار تعریف نشود
+    $meta = collect($fields)->keyBy('key');
 @endphp
 
 <x-layouts.admin :title="$title" :subtitle="$resource::$label">
@@ -66,6 +83,44 @@
             نوار چسبان آن را همیشه در دسترس نگه می‌دارد. «حذف» عمداً بیرون از
             این نوار و پایین فرم می‌ماند تا کنار دکمه‌ی ذخیره لمس نشود.
         --}}
+        @foreach($others as $code => $localeMeta)
+            <section class="mt-4 rounded-[var(--radius-panel)] border border-sand-300 bg-sand-50 p-5 lg:p-7">
+                <h2 class="mb-1 flex items-center gap-2 text-[0.9375rem] font-extrabold text-ink-800">
+                    <x-icon name="grid" size="16" class="text-clay-500" />
+                    ترجمه — {{ $localeMeta['name'] }}
+                </h2>
+                <p class="mb-5 border-b border-sand-200 pb-3 text-meta text-ink-400">
+                    هر فیلدی که خالی بماند، در این زبان همان متن
+                    {{ Locales::name(Locales::default()) }} را نشان می‌دهد.
+                </p>
+
+                <div class="grid grid-cols-1 gap-5">
+                    @foreach($translatable as $key)
+                        @php
+                            $field = $meta->get($key);
+                            $long = in_array($field?->type, ['textarea', 'longtext'], true);
+                            $name = "translations[{$code}][{$key}]";
+                            $value = old("translations.{$code}.{$key}", $record->translation($key, $code));
+                        @endphp
+                        <label class="block">
+                            <span class="mb-1.5 block text-meta font-semibold text-ink-700">
+                                {{ $field?->label ?? $key }}
+                            </span>
+                            @if($long)
+                                <textarea name="{{ $name }}" rows="{{ $field?->type === 'longtext' ? 8 : 3 }}"
+                                          dir="{{ $localeMeta['dir'] }}" lang="{{ $localeMeta['html'] }}"
+                                          class="w-full rounded-xl border border-sand-300 bg-white px-3.5 py-2.5 text-field transition focus:border-clay-400 focus:outline-none">{{ $value }}</textarea>
+                            @else
+                                <input type="text" name="{{ $name }}" value="{{ $value }}"
+                                       dir="{{ $localeMeta['dir'] }}" lang="{{ $localeMeta['html'] }}"
+                                       class="w-full rounded-xl border border-sand-300 bg-white px-3.5 py-2.5 text-field transition focus:border-clay-400 focus:outline-none">
+                            @endif
+                        </label>
+                    @endforeach
+                </div>
+            </section>
+        @endforeach
+
         <div data-mobile-action-bar
              class="sticky bottom-0 z-20 -mx-4 mt-5 border-t border-sand-300 bg-sand-100/95 px-4 py-3 backdrop-blur-md sm:static sm:mx-0 sm:border-0 sm:bg-transparent sm:px-0 sm:backdrop-blur-none"
              style="padding-bottom: calc(0.75rem + var(--safe-bottom))">

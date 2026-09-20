@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\HasTranslations;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -9,6 +10,19 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Project extends Model
 {
+    use HasTranslations;
+
+    /** فیلدهایی که در پنل برای هر زبان جداگانه پر می‌شوند. */
+    public array $translatable = [
+        'title',
+        'summary',
+        'description',
+        'client',
+        'architect',
+        'city',
+        'province',
+    ];
+
     protected $guarded = [];
 
     protected function casts(): array

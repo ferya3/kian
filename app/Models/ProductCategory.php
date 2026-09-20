@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\HasTranslations;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -9,6 +10,15 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class ProductCategory extends Model
 {
+    use HasTranslations;
+
+    /** فیلدهایی که در پنل برای هر زبان جداگانه پر می‌شوند. */
+    public array $translatable = [
+        'name',
+        'tagline',
+        'description',
+    ];
+
     protected $guarded = [];
 
     protected function casts(): array

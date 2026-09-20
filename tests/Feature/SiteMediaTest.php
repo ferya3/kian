@@ -81,8 +81,8 @@ class SiteMediaTest extends TestCase
         $this->assertSame('', SiteMedia::alt('hero.about'));
         $this->assertFalse(SiteMedia::has('hero.about'));
 
-        $this->get('/about')->assertOk();
-        $this->get('/')->assertOk();
+        $this->get(route('about'))->assertOk();
+        $this->get(route('home'))->assertOk();
     }
 
     // ------------------------------------------------------ سایت عمومی --
@@ -94,7 +94,7 @@ class SiteMediaTest extends TestCase
             'alt' => 'نمای هوایی کارخانه',
         ]);
 
-        $this->get('/about')
+        $this->get(route('about'))
             ->assertOk()
             ->assertSee('admin/site/about.jpg', false)
             ->assertSee('نمای هوایی کارخانه', false);
@@ -102,7 +102,7 @@ class SiteMediaTest extends TestCase
 
     public function test_a_page_without_an_uploaded_hero_keeps_the_vector_layout(): void
     {
-        $this->get('/about')
+        $this->get(route('about'))
             ->assertOk()
             ->assertDontSee('admin/site/', false);
     }
@@ -111,7 +111,7 @@ class SiteMediaTest extends TestCase
     {
         SiteMedia::query()->where('key', 'hero.home')->update(['image' => 'admin/site/hero.jpg']);
 
-        $this->get('/')->assertOk()->assertSee('admin/site/hero.jpg', false);
+        $this->get(route('home'))->assertOk()->assertSee('admin/site/hero.jpg', false);
     }
 
     /**
@@ -123,7 +123,7 @@ class SiteMediaTest extends TestCase
      */
     public function test_the_closing_process_card_takes_its_image_from_the_panel(): void
     {
-        $this->get('/')->assertOk()->assertDontSee('admin/site/outcome.jpg', false);
+        $this->get(route('home'))->assertOk()->assertDontSee('admin/site/outcome.jpg', false);
 
         // از طریق مدل، نه query builder — تا مثل پنل، کش نقشه‌ی رسانه پاک شود.
         SiteMedia::query()->where('key', 'process.outcome')->first()->update([
@@ -131,7 +131,7 @@ class SiteMediaTest extends TestCase
             'alt' => 'برج مسکونی نیایش، اجراشده با بلوک سفالی',
         ]);
 
-        $this->get('/')
+        $this->get(route('home'))
             ->assertOk()
             ->assertSee('admin/site/outcome.jpg', false)
             ->assertSee('برج مسکونی نیایش، اجراشده با بلوک سفالی', false);
@@ -142,7 +142,7 @@ class SiteMediaTest extends TestCase
         Setting::put('hero_video', '/media/factory.mp4');
         SiteMedia::query()->where('key', 'hero.home_poster')->update(['image' => 'admin/site/poster.jpg']);
 
-        $this->get('/')
+        $this->get(route('home'))
             ->assertOk()
             ->assertSee('poster="/storage/admin/site/poster.jpg"', false);
     }
@@ -152,7 +152,7 @@ class SiteMediaTest extends TestCase
         Setting::put('hero_video', '/media/factory.mp4');
         SiteMedia::query()->where('key', 'hero.home')->update(['image' => 'admin/site/hero.jpg']);
 
-        $this->get('/')
+        $this->get(route('home'))
             ->assertOk()
             ->assertSee('poster="/storage/admin/site/hero.jpg"', false);
     }
@@ -161,14 +161,14 @@ class SiteMediaTest extends TestCase
     {
         SiteMedia::query()->where('key', 'brand.logo')->update(['image' => 'admin/site/logo.png']);
 
-        $this->get('/')->assertOk()->assertSee('admin/site/logo.png', false);
+        $this->get(route('home'))->assertOk()->assertSee('admin/site/logo.png', false);
     }
 
     public function test_the_share_image_comes_from_the_panel(): void
     {
         SiteMedia::query()->where('key', 'brand.og')->update(['image' => 'admin/site/og.jpg']);
 
-        $this->get('/')
+        $this->get(route('home'))
             ->assertOk()
             ->assertSee('property="og:image" content="'.url('/storage/admin/site/og.jpg').'"', false);
     }
@@ -177,7 +177,7 @@ class SiteMediaTest extends TestCase
     {
         SiteMedia::query()->where('key', 'brand.favicon')->update(['image' => 'admin/site/icon.png']);
 
-        $this->get('/')
+        $this->get(route('home'))
             ->assertOk()
             ->assertSee('rel="icon" href="/storage/admin/site/icon.png"', false)
             ->assertDontSee('/favicon.svg', false);
@@ -188,7 +188,7 @@ class SiteMediaTest extends TestCase
         $category = ProductCategory::query()->whereNotNull('slug')->first();
         $category->update(['image' => 'admin/categories/wall.jpg']);
 
-        $this->get('/products?category='.$category->slug)
+        $this->get(route('products.index', ['category' => $category->slug]))
             ->assertOk()
             ->assertSee('admin/categories/wall.jpg', false);
     }

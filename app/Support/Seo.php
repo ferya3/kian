@@ -121,6 +121,18 @@ class Seo
         return $this->canonical ?: url()->current();
     }
 
+    /**
+     * همین صفحه به هر زبان — برای hreflang و نقشه‌ی سایت.
+     *
+     * @return array<string, string> کد زبان => نشانی
+     */
+    public function alternates(): array
+    {
+        return collect(Locales::codes())
+            ->mapWithKeys(fn (string $code) => [$code => Locales::urlFor($code)])
+            ->all();
+    }
+
     /** تمام بلوک‌های JSON-LD این صفحه، شامل Organization و BreadcrumbList. */
     public function jsonLd(): array
     {

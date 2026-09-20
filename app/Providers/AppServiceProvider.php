@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Models\ProductCategory;
+use App\Support\Locales;
 use App\Support\Navigation;
 use App\Support\Seo;
 use Illuminate\Pagination\Paginator;
@@ -26,6 +27,15 @@ class AppServiceProvider extends ServiceProvider
         if (str_starts_with((string) config('app.url'), 'https://')) {
             URL::forceScheme('https');
         }
+
+        /*
+        | پارامتر زبان برای هر route() پر می‌شود، حتی بیرون از گروهِ زبان.
+        |
+        | SetLocale همین را برای صفحه‌های عمومی با زبان درخواست بازنویسی
+        | می‌کند؛ این مقدار برای بقیه است: پنل مدیریت، نقشه‌ی سایت، صفحه‌ی
+        | خطا. بدون آن، هر route('home') بیرون از گروه استثنا می‌داد.
+        */
+        URL::defaults(['locale' => Locales::default()]);
 
         Paginator::defaultView('vendor.pagination.kian');
 
