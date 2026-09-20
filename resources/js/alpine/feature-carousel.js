@@ -99,7 +99,12 @@ export default (count = 0) => ({
 
         if (this.reduced || this.paused || this.count < 2) return;
 
-        this.timer = setInterval(() => this.step++, AUTOPLAY_MS);
+        this.timer = setInterval(() => {
+            // کاروسلی که با breakpoint پنهان شده نباید پشت پرده بچرخد
+            if (this.$el.offsetParent === null) return;
+
+            this.step++;
+        }, AUTOPLAY_MS);
     },
 
     get index() {

@@ -1,4 +1,26 @@
 @php
+    use App\Models\SiteMedia;
+
+    /*
+    | طیفِ کارتِ بی‌عکس.
+    |
+    | تا وقتی مدیر سایت تصویری برای ویژگی آپلود نکرده، کارت همین را نشان
+    | می‌دهد — نه یک مستطیل خالی. رنگ هر ویژگی از معنای خودش می‌آید: آتش
+    | نارنجیِ کوره است، صوت گرافیتِ خنثی، و ماده‌ی طبیعی زیتونیِ خاک. رگه‌های
+    | مورب همان‌هایی‌اند که کارت‌های «از خاک تا سازه» دارند، تا دو بخش از یک
+    | خانواده دیده شوند.
+    */
+    $strata = 'repeating-linear-gradient(115deg, rgb(255 255 255 / 0.05) 0 2px, transparent 2px 17px)';
+
+    $shades = [
+        'thermal' => ['#c87755', '#6f3018'],
+        'acoustic' => ['#6f6a63', '#2b2926'],
+        'fire' => ['#e2732f', '#8f4517'],
+        'weight' => ['#9a8262', '#4e452f'],
+        'durability' => ['#7d7667', '#332a21'],
+        'natural' => ['#6f7a56', '#2c331f'],
+    ];
+
     $pillars = [
         ['key' => 'thermal',   'icon' => 'thermal',  'en' => 'Thermal Insulation', 'title' => 'عایق حرارتی',
          'text' => 'هوای ساکن محبوس در حفره‌های چندردیفه، عایقی است که خودِ ماده می‌سازد. هرچه ردیف‌ها بیشتر و مسیر انتقال طولانی‌تر، ضریب λ کمتر.',
@@ -23,6 +45,13 @@
     // سه‌تای اول سمت راستِ بلوک می‌نشینند و سه‌تای دوم سمت چپ
     $rightPillars = array_slice($pillars, 0, 3);
     $leftPillars = array_slice($pillars, 3);
+
+    // تصویر و طیفِ هر ویژگی، برای کاروسلِ موبایل
+    $cards = collect($pillars)->map(fn (array $pillar) => $pillar + [
+        'image' => SiteMedia::url('why.'.$pillar['key']),
+        'alt' => SiteMedia::alt('why.'.$pillar['key'], $pillar['title']),
+        'tint' => $strata.', linear-gradient(155deg,'.$shades[$pillar['key']][0].','.$shades[$pillar['key']][1].')',
+    ]);
 @endphp
 
 <section class="relative overflow-hidden bg-ink-950 section-lg text-sand-50" aria-labelledby="why-heading">
@@ -55,7 +84,7 @@
         ])>
 
             {{-- خط پایانی فقط روی دسکتاپ برداشته می‌شود؛ زیر lg ادامه‌ی فهرست است --}}
-            <ul data-reveal-stagger="90" class="lg:[&>li:last-child]:border-b-0">
+            <ul data-reveal-stagger="90" class="hidden lg:block lg:[&>li:last-child]:border-b-0">
                 @foreach($rightPillars as $pillar)
                     @include('partials.home.pillar', ['pillar' => $pillar])
                 @endforeach
@@ -123,11 +152,76 @@
                 </div>
             @endif
 
-            <ul data-reveal-stagger="90" class="[&>li:last-child]:border-b-0">
+            <ul data-reveal-stagger="90" class="hidden lg:block [&>li:last-child]:border-b-0">
                 @foreach($leftPillars as $pillar)
                     @include('partials.home.pillar', ['pillar' => $pillar])
                 @endforeach
             </ul>
+
+            {{--
+                همان شش ویژگی، روی گوشی به شکل کاروسلِ کارت — فقط زیر lg.
+
+                فهرستِ دو ستونی روی دسکتاپ درست کار می‌کند، ولی زیر lg به یک
+                ستونِ شش‌تایی تبدیل می‌شد که چهار صفحه اسکرول می‌خواست و هیچ
+                تصویری هم نداشت. اینجا هر ویژگی یک کارت است و شرحش زیرِ کارت،
+                مثل «از خاک تا سازه» — کشیدنِ انگشت یا ضربه عوضش می‌کند.
+            --}}
+            <div class="lg:hidden" x-data="featureCarousel({{ $cards->count() }})"
+                 @focusin="paused = true" @focusout="paused = false">
+
+                <div role="group" aria-roledescription="کاروسل" aria-label="ویژگی‌های بلوک سفالی"
+                     aria-live="polite" tabindex="0"
+                     @click="onTap()"
+                     @touchstart.passive="onTouchStart($event)"
+                     @touchend.passive="onTouchEnd($event)"
+                     @keydown="onKey($event)"
+                     class="flex flex-col items-center rounded-[2rem] border border-white/10 bg-white/[0.04] px-6 py-6 focus-visible:outline-2 focus-visible:outline-offset-[-4px] focus-visible:outline-clay-400">
+
+                    <div class="relative aspect-square w-full max-w-[21rem] md:max-w-[26rem]">
+                        @foreach($cards as $i => $card)
+                            <div class="fc-card absolute inset-0 origin-center overflow-hidden rounded-[1.75rem] border-4 border-white/85 bg-ink-900 shadow-float md:rounded-[2.25rem] md:border-8"
+                                 :style="cardStyle({{ $i }})"
+                                 style="{{ $i === 0 ? '' : 'opacity: 0;' }}">
+
+                                @if($card['image'])
+                                    <img src="{{ $card['image'] }}" alt="{{ $card['alt'] }}"
+                                         loading="lazy" decoding="async" draggable="false"
+                                         class="h-full w-full object-cover transition-[filter] duration-700"
+                                         :class="active({{ $i }}) ? '' : 'grayscale brightness-75 blur-[2px]'">
+                                @else
+                                    <span aria-hidden="true" class="block h-full w-full transition-[filter] duration-700"
+                                          :class="active({{ $i }}) ? '' : 'grayscale brightness-75 blur-[2px]'"
+                                          style="background: {{ $card['tint'] }}"></span>
+                                @endif
+
+                                {{-- نشانِ ویژگی — روی کارتِ جمع‌شده هم تنها چیزی است که دیده می‌شود --}}
+                                <span class="absolute start-5 top-5 grid h-11 w-11 place-items-center rounded-full border border-white/20 bg-black/40 text-sand-50 backdrop-blur-sm"
+                                      aria-hidden="true">
+                                    <x-icon :name="$card['icon']" size="20" />
+                                </span>
+                            </div>
+                        @endforeach
+                    </div>
+
+                    {{-- شرح‌ها روی هم در یک خانه‌ی grid، تا ارتفاع با هر تعویض نپرد --}}
+                    <div data-captions class="mt-6 grid w-full max-w-[22rem] md:max-w-[26rem]">
+                        @foreach($cards as $i => $card)
+                            <div class="col-start-1 row-start-1 text-center transition-opacity duration-500"
+                                 :style="{ opacity: active({{ $i }}) ? 1 : 0 }"
+                                 :aria-hidden="active({{ $i }}) ? 'false' : 'true'"
+                                 style="{{ $i === 0 ? '' : 'opacity: 0;' }}">
+                                <h3 class="text-card font-extrabold leading-tight text-sand-50">{{ $card['title'] }}</h3>
+                                <p class="tech mt-1 text-micro uppercase tracking-[0.14em] text-sand-200/40">{{ $card['en'] }}</p>
+                                <p class="mt-3 text-meta leading-relaxed text-sand-200/65">{{ $card['text'] }}</p>
+                                <p class="mt-3 flex flex-wrap items-baseline justify-center gap-x-2">
+                                    <span class="tech text-[1.0625rem] font-extrabold leading-tight text-clay-300">{{ $card['metric'] }}</span>
+                                    <span class="text-meta text-sand-200/45">{{ $card['metricLabel'] }}</span>
+                                </p>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
 
         </div>
     </div>

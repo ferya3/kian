@@ -300,13 +300,26 @@
                         صفحه‌خوان معنایی ندارد؛ بدون آن هر ده شرح با هم خوانده
                         می‌شدند.
                     --}}
-                    <div class="mt-6 grid w-full max-w-[22rem] md:max-w-[26rem] lg:hidden">
+                    <div data-captions class="mt-6 grid w-full max-w-[22rem] md:max-w-[26rem] lg:hidden">
                         @foreach($slides as $i => $slide)
                             <div class="col-start-1 row-start-1 text-center transition-opacity duration-500"
                                  :style="{ opacity: active({{ $i }}) ? 1 : 0 }"
                                  :aria-hidden="active({{ $i }}) ? 'false' : 'true'"
                                  style="{{ $i === 0 ? '' : 'opacity: 0;' }}">
-                                <h3 class="text-card font-extrabold leading-tight text-ink-900">{{ $slide['title'] }}</h3>
+                                {{--
+                                    شماره کنار نام می‌ماند.
+
+                                    بدون آن معلوم نبود این عکسِ چندمین مرحله از
+                                    نُه مرحله است — بالای lg شماره کنار بیضی
+                                    نوشته شده، ولی اینجا بیضی‌ای نیست. کارت
+                                    پایانی مرحله نیست و شماره هم ندارد.
+                                --}}
+                                <h3 class="text-card font-extrabold leading-tight text-ink-900">
+                                    @if($slide['label'])
+                                        <span class="tech me-1.5 text-meta font-bold text-clay-600">{{ $slide['label'] }}</span>
+                                    @endif
+                                    {{ $slide['title'] }}
+                                </h3>
                                 <p class="mt-2 text-meta leading-relaxed text-ink-500">{{ $slide['summary'] }}</p>
                             </div>
                         @endforeach
