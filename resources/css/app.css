@@ -499,6 +499,261 @@
     }
 
     /*
+    | آکاردئون «پروژه‌های اجراشده» — منطقش در alpine/project-selector.js است.
+    |
+    | پانلِ باز flex-grow هفت می‌گیرد و بقیه یک؛ همین یک عدد کلِ چیدمان را
+    | می‌چرخاند، پس هیچ عرض یا ارتفاعی دستی حساب نمی‌شود و اضافه‌شدن پروژه‌ی
+    | هفتم چیزی را نمی‌شکند.
+    |
+    | ارتفاع ثابت است و از vh گرفته نمی‌شود: روی موبایل نوار آدرس مرورگر که
+    | جمع می‌شود، vh عوض می‌شود و کل آکاردئون وسطِ اسکرول می‌پرد.
+    */
+    .pj-rail {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        /*
+        | روی گوشی بلندتر است و این عمدی است: شش پانلِ جمع‌شده ۳۶۰ پیکسل
+        | می‌گیرند، پس هر پیکسلِ کمتر مستقیم از پانلِ باز کم می‌شود.
+        */
+        height: 40rem;
+        /*
+        | علامتِ جابه‌جایی‌ها یک‌جا تعریف می‌شود و همه‌ی فرزندها از آن می‌خوانند.
+        | slide ورودِ خودِ پانل است و nudge سُرخوردنِ متنِ برچسب؛ دو علامتِ
+        | مخالف، چون پانل از سمتی می‌آید که متن به همان سمت می‌رود.
+        */
+        --pj-slide: -3.5rem;
+        --pj-nudge: 1.5rem;
+
+        /*
+        | اندازه‌ی باریکه از روی خودِ نشان درمی‌آید و نه از حدس: قطرِ نشان
+        | به‌اضافه‌ی دو طرفِ padding. کمتر از این، نشان بی‌صدا بریده می‌شود —
+        | و نشانِ بریده روی پانلی که هیچ‌چیز دیگری ندارد، یعنی هیچ.
+        */
+        --pj-pad: 0.75rem;
+        --pj-mark: 2.5rem;
+        --pj-min: calc(var(--pj-mark) + 2 * var(--pj-pad));
+    }
+
+    [dir='rtl'] .pj-rail {
+        --pj-slide: 3.5rem;
+        --pj-nudge: -1.5rem;
+    }
+
+    @media (min-width: 768px) {
+        .pj-rail {
+            flex-direction: row;
+            height: 26rem;
+        }
+    }
+
+    @media (min-width: 1024px) {
+        .pj-rail {
+            height: 31rem;
+            --pj-pad: 1rem;
+            --pj-mark: 2.75rem;
+        }
+    }
+
+    /*
+    | سه لایه، چون سه حرکتِ هم‌زمانِ مستقل داریم و هر المان فقط یک transition
+    | دارد: slot بازوبسته می‌شود، enter از کنار وارد می‌شود، face سایه و قاب
+    | می‌گیرد. قاعده‌ی سراسریِ data-reveal در لایه‌ی utilities است و روی هر
+    | چیزی که خودش transform بخواهد سوار می‌شود؛ پس جدا نگهشان می‌داریم.
+    */
+    .pj-slot {
+        flex: 1 1 0%;
+        min-height: var(--pj-min);
+        min-width: 0;
+        transition: flex-grow 700ms var(--ease-out-expo);
+    }
+
+    @media (min-width: 768px) {
+        .pj-slot {
+            min-height: 0;
+            min-width: var(--pj-min);
+        }
+    }
+
+    /* پانل‌ها از سمتِ «بعدی» وارد می‌شوند؛ در فارسی راست، در انگلیسی چپ */
+    .pj-enter {
+        height: 100%;
+        --reveal-from: translateX(var(--pj-slide));
+    }
+
+    .pj-face {
+        position: relative;
+        height: 100%;
+        width: 100%;
+        overflow: hidden;
+        border-radius: var(--radius-panel);
+        background-color: var(--color-ink-900);
+        box-shadow: 0 10px 30px rgb(0 0 0 / 0.14);
+        transition: box-shadow 700ms var(--ease-out-expo);
+    }
+
+    .pj-face.is-open {
+        box-shadow: 0 22px 60px rgb(0 0 0 / 0.32);
+        outline: 2px solid var(--color-clay-500);
+        outline-offset: -2px;
+    }
+
+    /*
+    | نزدیک‌شدنِ تصویر.
+    |
+    | نسخه‌ی اصلی این را با background-size می‌ساخت، ولی جلدِ پروژه اینجا
+    | گاهی <img> است و گاهی SVGِ مولد؛ هیچ‌کدام زمینه‌ی CSS نیستند. transform
+    | روی لایه‌ی جلد همان اثر را می‌دهد و با هر دو کار می‌کند.
+    */
+    .pj-cover {
+        position: absolute;
+        inset: 0;
+        transform: scale(1.14);
+        transition: transform 900ms var(--ease-out-expo);
+    }
+
+    .pj-face.is-open .pj-cover { transform: scale(1); }
+
+    .pj-cover > * {
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+    }
+
+    .pj-scrim {
+        position: absolute;
+        inset-block-end: 0;
+        inset-inline: 0;
+        height: 72%;
+        /*
+        | تیرگی عمداً سنگین است. جلدِ مولدِ پروژه آسمانِ روشن دارد و عنوانِ
+        | سفید روی آن خوانده نمی‌شد؛ عکسِ واقعیِ آپلودی هم معلوم نیست روشن
+        | باشد یا تیره، پس خوانایی نباید به تصویر بند باشد.
+        */
+        background: linear-gradient(to top,
+            rgb(14 14 14 / 0.92),
+            rgb(14 14 14 / 0.66) 30%,
+            rgb(14 14 14 / 0.14) 66%,
+            transparent);
+        transition: opacity 700ms var(--ease-out-expo);
+        opacity: 0.85;
+    }
+
+    .pj-face.is-open .pj-scrim { opacity: 1; }
+
+    .pj-hit {
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        cursor: pointer;
+    }
+
+    .pj-hit:focus-visible {
+        outline: 2px solid var(--color-clay-300);
+        outline-offset: -6px;
+    }
+
+    .pj-label {
+        position: absolute;
+        inset-inline: 0;
+        inset-block-end: 0;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: var(--pj-pad);
+        /* روی باریکه چیزی جز نشان دیده نمی‌شود؛ بقیه باید عبور بدهد */
+        pointer-events: none;
+    }
+
+    .pj-mark {
+        display: grid;
+        place-items: center;
+        height: var(--pj-mark);
+        width: var(--pj-mark);
+        flex: 0 0 auto;
+        border-radius: 9999px;
+        border: 1px solid rgb(255 255 255 / 0.22);
+        background: rgb(20 20 20 / 0.55);
+        color: var(--color-sand-50);
+        backdrop-filter: blur(10px);
+        transition: background-color 500ms var(--ease-out-expo), border-color 500ms var(--ease-out-expo);
+    }
+
+    .pj-face.is-open .pj-mark {
+        background: var(--color-clay-500);
+        border-color: transparent;
+    }
+
+    /*
+    | متنِ برچسب.
+    |
+    | nowrap عمدی است: روی پانلِ جمع‌شده متن نباید بشکند و ارتفاع بگیرد،
+    | چون همان‌جا هم که نامرئی است، جا اشغال می‌کند. بیرونش overflow پنهان
+    | است، پس ادامه‌اش بی‌صدا بریده می‌شود.
+    */
+    .pj-text {
+        /* لنگرِ پیوندِ کشیده — بدون آن، ::after به کلِ نوارِ برچسب می‌چسبد */
+        position: relative;
+        min-width: 0;
+        white-space: nowrap;
+        opacity: 0;
+        transform: translateX(var(--pj-nudge));
+        transition:
+            opacity 600ms var(--ease-out-expo),
+            transform 600ms var(--ease-out-expo);
+    }
+
+    .pj-face.is-open .pj-text {
+        opacity: 1;
+        transform: none;
+    }
+
+    .pj-title {
+        font-size: var(--text-card);
+        line-height: 1.3;
+        font-weight: 800;
+        color: var(--color-sand-50);
+    }
+
+    /* پیوند فقط روی پانلِ باز در دسترس است — روی باریکه اصلاً دیده نمی‌شود */
+    .pj-title > a {
+        pointer-events: none;
+    }
+
+    .pj-face.is-open .pj-title > a {
+        pointer-events: auto;
+    }
+
+    .pj-title > a::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+    }
+
+    .pj-title > a:focus-visible {
+        outline: 2px solid var(--color-clay-300);
+        outline-offset: 3px;
+    }
+
+    .pj-meta {
+        margin-block-start: 0.25rem;
+        display: flex;
+        align-items: center;
+        gap: 0.625rem;
+        font-size: var(--text-meta);
+        color: color-mix(in oklab, var(--color-sand-200) 78%, transparent);
+    }
+
+    .pj-dot {
+        height: 0.25rem;
+        width: 0.25rem;
+        border-radius: 9999px;
+        background: currentColor;
+        opacity: 0.5;
+    }
+
+    /*
     | قابِ سایت — «اسلب».
     |
     | از lg به بالا کل سایت روی یک زمینه‌ی تیره می‌نشیند و مثل یک قطعه‌ی ضخیم
@@ -786,9 +1041,16 @@
 
 @layer utilities {
     /* ظاهر شدن تدریجی هنگام ورود به viewport — با JS مقدار data-reveal ست می‌شود */
+    /*
+    | جهتِ ورود قابل تعویض است.
+    |
+    | پیش‌فرض از پایین بالا می‌آید و اکثر سایت همین را می‌خواهد؛ هر جا حرکتِ
+    | دیگری لازم باشد — مثل پانل‌های پروژه که از کنار وارد می‌شوند — فقط
+    | --reveal-from را عوض می‌کند و به این قاعده دست نمی‌زند.
+    */
     [data-reveal] {
         opacity: 0;
-        transform: translateY(1.75rem);
+        transform: var(--reveal-from, translateY(1.75rem));
         transition:
             opacity 0.9s var(--ease-out-expo),
             transform 0.9s var(--ease-out-expo);
