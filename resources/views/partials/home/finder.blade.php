@@ -1,18 +1,14 @@
 {{--
     موتور انتخاب محصول — اولین چیز بعد از هیرو.
 
-    ترتیب عمداً وارونه‌ی حالت معمول است: اول فرم، بعد توضیح. بازدیدکننده‌ای که
-    با نیاز مشخص آمده، بدون اسکرول شروع می‌کند؛ توضیح برای کسی است که پایین‌تر
-    می‌آید و هنوز نمی‌داند این فرم چه کار می‌کند.
+    عنوان و توضیح بالای فرم می‌آیند: بازدیدکننده‌ای که تازه از هیرو پایین آمده،
+    اول باید بداند این چهار پرسش چه چیزی از او می‌خواهد و در ازایش چه می‌دهد؛
+    فرمِ بی‌مقدمه، سؤالِ بی‌زمینه است.
 --}}
 <section id="find-your-block" class="relative bg-sand-100 section-sm" aria-labelledby="finder-heading">
     <div class="container-page">
 
-        <div data-reveal>
-            @include('partials.finder-form')
-        </div>
-
-        <div class="mt-10 lg:mt-12">
+        <div>
             <p class="eyebrow text-clay-600" data-reveal>Find your block</p>
             <h2 id="finder-heading" class="mt-3 text-h2 font-extrabold text-balance" data-reveal>
                 محصول مناسب پروژه‌ی خود را پیدا کنید
@@ -21,6 +17,10 @@
                 چهار پرسش، سه پیشنهاد. به‌جای مرور کاتالوگ، از نیاز واقعی پروژه شروع کنید:
                 نوع سازه، جای دیوار در پلان، ضخامت مجاز و انتظار حرارتی.
             </p>
+        </div>
+
+        <div class="mt-8 lg:mt-10" data-reveal>
+            @include('partials.finder-form')
         </div>
 
         {{--
