@@ -69,11 +69,11 @@
                     <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-ember-500 opacity-75"></span>
                     <span class="relative inline-flex h-1.5 w-1.5 rounded-full bg-ember-500"></span>
                 </span>
-                {{ Setting::text('hero_eyebrow', 'کارخانه کیان بهساز') }}
+                {{ Setting::text('hero_eyebrow', __('site.home.hero.eyebrow', ['name' => \App\Support\Brand::name()])) }}
             </p>
 
             <h1 class="mt-3 text-display sm:mt-7 font-extrabold text-balance text-sand-50" data-reveal style="--reveal-delay: 90ms">
-                {{ Setting::text('hero_title', config('kian.brand.tagline')) }}
+                {{ Setting::text('hero_title', \App\Support\Brand::tagline()) }}
             </h1>
 
             <p class="mt-2.5 line-clamp-2 max-w-2xl text-lead text-sand-200/75 sm:mt-6 sm:line-clamp-none" data-reveal style="--reveal-delay: 180ms">
@@ -84,9 +84,9 @@
             <div class="mt-4 flex items-center gap-2.5 sm:mt-10 sm:gap-3" data-reveal style="--reveal-delay: 270ms">
                 {{-- آیکون روی گوشی پنهان می‌شود: در ۳۶۰ پیکسل، برچسب مهم‌تر از فلش است --}}
                 <x-cta :href="route('products.index')" variant="primary" size="lg"
-                       class="min-w-0 flex-1 justify-center whitespace-nowrap px-2 text-meta [&_svg]:hidden sm:flex-none sm:gap-2 sm:px-5 sm:text-[0.9375rem] sm:[&_svg]:block">مشاهده محصولات</x-cta>
+                       class="min-w-0 flex-1 justify-center whitespace-nowrap px-2 text-meta [&_svg]:hidden sm:flex-none sm:gap-2 sm:px-5 sm:text-[0.9375rem] sm:[&_svg]:block">{{ __('site.actions.products') }}</x-cta>
                 <x-cta :href="route('factory')" variant="light" size="lg" icon="play"
-                       class="min-w-0 flex-1 justify-center whitespace-nowrap px-2 text-meta [&_svg]:hidden sm:flex-none sm:gap-2 sm:px-5 sm:text-[0.9375rem] sm:[&_svg]:block">آشنایی با کارخانه</x-cta>
+                       class="min-w-0 flex-1 justify-center whitespace-nowrap px-2 text-meta [&_svg]:hidden sm:flex-none sm:gap-2 sm:px-5 sm:text-[0.9375rem] sm:[&_svg]:block">{{ __('site.actions.factory') }}</x-cta>
             </div>
         </div>
 
@@ -106,7 +106,7 @@
     --}}
     <a href="#find-your-block"
        class="group absolute inset-x-0 bottom-7 z-10 mx-auto hidden w-12 flex-col items-center [@media(min-width:1024px)_and_(min-height:760px)]:flex"
-       aria-label="رفتن به بخش انتخاب محصول">
+       aria-label="{{ __('site.home.hero.scroll') }}">
         <span class="relative block h-10 w-0.5 overflow-hidden rounded-full bg-white/20 transition-colors duration-300 group-hover:bg-white/35"
               aria-hidden="true">
             <span class="hero-rain-drop"></span>

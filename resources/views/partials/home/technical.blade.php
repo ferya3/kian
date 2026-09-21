@@ -1,11 +1,12 @@
 @php
+    // نشان و قالبِ فایل کدند؛ برچسب از پرونده‌ی زبان می‌آید
     $tiles = [
-        ['icon' => 'file',      'label' => 'دیتاشیت محصولات', 'meta' => 'PDF', 'route' => ['technical.downloads', ['category' => 'datasheet']]],
-        ['icon' => 'blueprint', 'label' => 'کاتالوگ فنی',      'meta' => 'PDF', 'route' => ['technical.downloads', ['category' => 'catalog']]],
-        ['icon' => 'grid',      'label' => 'فایل‌های CAD',      'meta' => 'DWG', 'route' => ['technical.downloads', ['category' => 'cad']]],
-        ['icon' => 'layers',    'label' => 'آبجکت‌های BIM',     'meta' => 'RVT · IFC', 'route' => ['technical.downloads', ['category' => 'bim']]],
-        ['icon' => 'trowel',    'label' => 'راهنمای اجرا',      'meta' => 'PDF', 'route' => ['technical.installation', []]],
-        ['icon' => 'shield',    'label' => 'گواهی‌نامه و استاندارد', 'meta' => 'PDF', 'route' => ['technical.certificates', []]],
+        ['icon' => 'file',      'key' => 'datasheet',    'meta' => 'PDF', 'route' => ['technical.downloads', ['category' => 'datasheet']]],
+        ['icon' => 'blueprint', 'key' => 'catalog',      'meta' => 'PDF', 'route' => ['technical.downloads', ['category' => 'catalog']]],
+        ['icon' => 'grid',      'key' => 'cad',          'meta' => 'DWG', 'route' => ['technical.downloads', ['category' => 'cad']]],
+        ['icon' => 'layers',    'key' => 'bim',          'meta' => 'RVT · IFC', 'route' => ['technical.downloads', ['category' => 'bim']]],
+        ['icon' => 'trowel',    'key' => 'installation', 'meta' => 'PDF', 'route' => ['technical.installation', []]],
+        ['icon' => 'shield',    'key' => 'certificates', 'meta' => 'PDF', 'route' => ['technical.certificates', []]],
     ];
 @endphp
 
@@ -15,12 +16,12 @@
             <div class="lg:col-span-5">
                 <x-section-heading
                     eyebrow="Technical center"
-                    title="برای مهندسان و معماران"
-                    lead="آنچه برای طراحی، مدل‌سازی و اجرا لازم دارید — بدون ثبت‌نام، بدون تماس با واحد فروش."
+                    :title="__('site.home.technical.title')"
+                    :lead="__('site.home.technical.lead')"
                     light id="technical-heading" />
 
                 <ul class="mt-8 space-y-4">
-                    @foreach(config('kian.audiences') as $key => $audience)
+                    @foreach(\App\Support\Options::audiences() as $key => $audience)
                         <li class="flex gap-4 border-b border-white/[0.08] pb-4 last:border-0">
                             <span class="mt-0.5 grid h-10 w-10 shrink-0 place-items-center rounded-lg border border-white/10 bg-white/[0.05] text-clay-400">
                                 <x-icon :name="$audience['icon']" size="19" />
@@ -48,7 +49,7 @@
                                 <x-icon :name="$tile['icon']" size="20" />
                             </span>
                             <span class="min-w-0 flex-1">
-                                <span class="block font-semibold">{{ $tile['label'] }}</span>
+                                <span class="block font-semibold">{{ __('site.home.technical.tile.'.$tile['key']) }}</span>
                                 <span class="tech block text-micro uppercase tracking-wider text-sand-200/45">{{ $tile['meta'] }}</span>
                             </span>
                             <x-icon name="download" size="18" class="shrink-0 text-sand-200/30 transition group-hover:text-clay-300" />
@@ -58,10 +59,10 @@
 
                 <div class="mt-6 rounded-2xl border border-white/10 bg-gradient-to-bl from-clay-900/60 to-transparent p-6">
                     <p class="text-[0.9375rem] leading-relaxed text-sand-200/75">
-                        فایل مورد نظرتان را پیدا نکردید؟ واحد فنی جزئیات اختصاصی پروژه — از دیتیل اجرایی تا محاسبه‌ی حرارتی — را برای شما تهیه می‌کند.
+                        {{ __('site.home.technical.missing') }}
                     </p>
                     <x-cta :href="route('contact', ['type' => 'technical'])" variant="primary" size="sm" class="mt-4">
-                        درخواست فایل یا محاسبه اختصاصی
+                        {{ __('site.home.technical.request') }}
                     </x-cta>
                 </div>
             </div>

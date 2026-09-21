@@ -69,15 +69,15 @@
         'cta' => false,
     ])->push([
         'label' => '',
-        'title' => 'و بعد، ساختمان',
+        'title' => __('site.home.process.outcome.title'),
         'title_en' => 'Output',
-        'summary' => 'هر پالتی که از این خط خارج می‌شود شناسه‌ی بچ تولید دارد — تا ده سال بعد هم قابل ردیابی باشد.',
+        'summary' => __('site.home.process.outcome.summary'),
         'metric_label' => null,
         'metric_value' => null,
         'duration' => null,
         'icon' => 'factory',
         'image' => SiteMedia::url('process.outcome'),
-        'alt' => SiteMedia::alt('process.outcome', 'ساختمان اجراشده با بلوک سفالی کیان'),
+        'alt' => SiteMedia::alt('process.outcome', __('site.home.process.outcome.alt')),
         'tint' => $strata.', linear-gradient(155deg,#2b2b2b,#0e0e0e)',
         'cta' => true,
     ]);
@@ -98,9 +98,9 @@
 
         <div class="max-w-2xl">
             <p class="eyebrow text-clay-600" data-reveal>From earth to architecture</p>
-            <h2 id="process-heading" class="mt-3 text-h2 font-extrabold text-balance" data-reveal>از خاک تا سازه</h2>
+            <h2 id="process-heading" class="mt-3 text-h2 font-extrabold text-balance" data-reveal>{{ __('site.home.process.title') }}</h2>
             <p class="mt-4 text-lead text-ink-500" data-reveal>
-                نُه مرحله، از برداشت خاک رس معدن تا پالت شرینک‌پیچ‌شده‌ی آماده‌ی بارگیری.
+                {{ __('site.home.process.lead') }}
             </p>
         </div>
 
@@ -141,7 +141,7 @@
                     --}}
                     <div class="fc-wheel absolute inset-0 flex items-center"
                          x-ref="wheel" @keydown="onKey"
-                         role="tablist" aria-label="مراحل تولید" aria-orientation="vertical">
+                         role="tablist" aria-label="{{ __('site.home.process.steps') }}" aria-orientation="vertical">
                         @foreach($slides as $i => $slide)
                             {{--
                                 هر پله‌ی چرخ یک ردیف تمام‌عرض است: بیضی، و زیرش
@@ -203,8 +203,8 @@
                 --}}
                 <div :id="$id('process') + '-panel'" aria-live="polite"
                      :role="wide ? 'tabpanel' : 'group'"
-                     :aria-roledescription="wide ? null : 'کاروسل'"
-                     :aria-label="wide ? null : 'مراحل تولید'"
+                     :aria-roledescription="wide ? null : @js(__('site.home.carousel'))"
+                     :aria-label="wide ? null : @js(__('site.home.process.steps'))"
                      :tabindex="wide ? null : 0"
                      @click="wide || onTap()"
                      @touchstart.passive="wide || onTouchStart($event)"
@@ -278,8 +278,8 @@
                                             فوتر هم هستند.
                                         --}}
                                         <div class="pointer-events-auto mt-4 hidden flex-wrap gap-2 lg:flex">
-                                            <x-cta :href="route('technology')" variant="primary" size="sm">جزئیات فناوری</x-cta>
-                                            <x-cta :href="route('factory')" variant="light" size="sm">بازدید از کارخانه</x-cta>
+                                            <x-cta :href="route('technology')" variant="primary" size="sm">{{ __('site.home.process.technology') }}</x-cta>
+                                            <x-cta :href="route('factory')" variant="light" size="sm">{{ __('site.home.process.visit') }}</x-cta>
                                         </div>
                                     @endif
                                 </div>

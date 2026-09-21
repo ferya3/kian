@@ -278,6 +278,124 @@ return [
             'list' => 'Popular products',
         ],
 
+        'carousel' => 'carousel',
+        'stats' => 'Factory figures',
+
+        'hero' => [
+            'eyebrow' => ':name — the factory',
+            'scroll' => 'Go to the product finder',
+        ],
+
+        'why' => [
+            'title' => 'Why ceramic?',
+            'lead' => 'Six properties, none of them added on — all of them come from the material itself and the geometry of the block.',
+            'interactive' => 'Interactive',
+            'view' => 'Block view',
+            'solid' => 'Solid',
+            'section' => 'Section',
+            'drag' => 'Drag to rotate — or use the arrow keys',
+            'pick_cavity' => 'Click the highlighted points on the section to see the block’s internal structure.',
+            'cards' => 'Ceramic block properties',
+
+            'thermal' => [
+                'title' => 'Thermal insulation',
+                'en' => '',
+                'text' => 'Still air trapped in multiple rows of cavities is insulation the material makes for itself. The more rows, and the longer the path heat has to travel, the lower the λ.',
+                'metric' => 'λ from 0.17',
+                'metric_label' => 'W/m·K',
+            ],
+            'acoustic' => [
+                'title' => 'Acoustic performance',
+                'en' => '',
+                'text' => 'Ceramic mass combined with air cavities damps airborne sound, and does it without adding load to the structure.',
+                'metric' => 'up to 55',
+                'metric_label' => 'dB sound reduction',
+            ],
+            'fire' => [
+                'title' => 'Fire resistance',
+                'en' => '',
+                'text' => 'Ceramic is fired at nine hundred degrees; there is nothing left in it to burn. It is non-combustible and releases no toxic gas in a fire.',
+                'metric' => 'up to 240',
+                'metric_label' => 'minutes fire resistance',
+            ],
+            'weight' => [
+                'title' => 'Lower dead load',
+                'en' => '',
+                'text' => 'Seismic lateral force is proportional to the mass of the structure. A lighter wall means lower base shear — and when adding a storey or retrofitting, those few percent decide it.',
+                'metric' => 'up to 28%',
+                'metric_label' => 'less wall weight',
+            ],
+            'durability' => [
+                'title' => 'Durability',
+                'en' => '',
+                'text' => 'No long-term shrinkage, no rot, and stable against moisture and frost. It lasts as long as the building does.',
+                'metric' => '50+',
+                'metric_label' => 'years of service life',
+            ],
+            'natural' => [
+                'title' => 'A natural material',
+                'en' => '',
+                'text' => 'Earth, water, fire. No persistent chemical additives, no volatile emissions — and at the end of the building’s life it can be crushed and returned to the cycle.',
+                'metric' => '100%',
+                'metric_label' => 'mineral raw material',
+            ],
+        ],
+
+        'technical' => [
+            'title' => 'For engineers and architects',
+            'lead' => 'Everything you need to design, model and build — no sign-up, no call to the sales desk.',
+            'missing' => 'Didn’t find the file you were after? Our engineers will prepare project-specific detail for you, from a construction detail to a thermal calculation.',
+            'request' => 'Request a file or a calculation',
+            'tile' => [
+                'datasheet' => 'Product datasheets',
+                'catalog' => 'Technical catalogue',
+                'cad' => 'CAD files',
+                'bim' => 'BIM objects',
+                'installation' => 'Installation guide',
+                'certificates' => 'Certificates and standards',
+            ],
+        ],
+
+        'process' => [
+            'title' => 'From earth to structure',
+            'lead' => 'Nine stages, from quarried clay to a shrink-wrapped pallet ready to load.',
+            'steps' => 'Production stages',
+            'technology' => 'Technology in detail',
+            'visit' => 'Visit the factory',
+            'outcome' => [
+                'title' => 'And then, the building',
+                'summary' => 'Every pallet leaving this line carries a production batch code — traceable ten years later.',
+                'alt' => 'A building completed with Kian ceramic block',
+            ],
+        ],
+        'factory' => [
+            'title' => 'The factory, not a photo of one',
+            'lead' => 'Click any area to see exactly what happens there, and at what capacity.',
+            'autoplay' => 'Touring automatically — click to take control',
+            'keys' => 'You can also move with the arrow keys',
+            'sections' => 'Factory areas',
+            'full' => 'Full factory page',
+            'visit' => 'Request a visit',
+        ],
+
+        'projects' => [
+            'title' => 'Completed projects',
+            'lead' => 'From a twenty-two storey office tower to twelve hundred public housing units — every project posed a different problem.',
+            'all' => 'All projects',
+            'show' => 'Show the :title project',
+        ],
+
+        'sustainability' => [
+            'title' => 'Clay, product, building',
+            'lead' => 'Ceramic runs a closed cycle with nothing foreign entering it: taken from the ground, fired, fifty years of service, and earth again at the end.',
+            'report' => 'Sustainability report',
+            'cycle' => [
+                'clay' => ['title' => 'Clay', 'en' => 'Extraction', 'text' => 'Quarried from our own site, with a restoration plan for the ground we take it from.'],
+                'product' => ['title' => 'Product', 'en' => 'Production', 'text' => 'Fired with recovered heat; every bit of green waste goes back into the line.'],
+                'building' => ['title' => 'Building', 'en' => 'In use', 'text' => 'Fifty years of performance with no decline, and a permanent cut in the building’s energy use.'],
+            ],
+        ],
+
         'solutions' => [
             'title' => 'A solution, not just a product',
             'lead' => 'Tell us the problem in the project and we will propose the right combination of products.',

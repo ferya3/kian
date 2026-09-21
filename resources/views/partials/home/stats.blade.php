@@ -3,7 +3,7 @@
     چهار عدد در یک ردیف روی همه‌ی اندازه‌ها، حتی گوشی. برای اینکه در ۹۰ پیکسل
     عرضِ هر ستون جا شود، عدد و برچسب روی موبایل کوچک‌تر و leading فشرده‌تر است.
 --}}
-<section aria-label="شاخص‌های کارخانه" class="border-b border-sand-300 bg-sand-50">
+<section aria-label="{{ __('site.home.stats') }}" class="border-b border-sand-300 bg-sand-50">
     <div class="mx-auto w-full max-w-[88rem] px-3 sm:px-6 lg:px-12">
         <dl class="grid grid-cols-4 divide-x divide-x-reverse divide-sand-200">
             @foreach($stats as $stat)

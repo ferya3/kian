@@ -2,8 +2,8 @@
     <div class="container-page">
         <x-section-heading
             eyebrow="Our factory"
-            title="کارخانه، نه یک عکس روی صفحه"
-            lead="روی هر بخش کلیک کنید تا ببینید آنجا دقیقاً چه اتفاقی می‌افتد و با چه ظرفیتی."
+            :title="__('site.home.factory.title')"
+            :lead="__('site.home.factory.lead')"
             id="factory-heading" />
 
         <div x-data="factoryMap(@js($factorySections->map(fn($s) => [
@@ -63,8 +63,8 @@
                 </div>
 
                 <p class="absolute bottom-4 right-5 text-micro text-sand-200/40">
-                    <span x-show="autoplay">در حال پیمایش خودکار — برای کنترل، کلیک کنید</span>
-                    <span x-show="!autoplay" x-cloak>با کلیدهای جهت هم می‌توانید جابه‌جا شوید</span>
+                    <span x-show="autoplay">{{ __('site.home.factory.autoplay') }}</span>
+                    <span x-show="!autoplay" x-cloak>{{ __('site.home.factory.keys') }}</span>
                 </p>
             </div>
 
@@ -81,7 +81,7 @@
                         </template>
                     </ul>
 
-                    <nav class="tap-row mt-6" aria-label="بخش‌های کارخانه">
+                    <nav class="tap-row mt-6" aria-label="{{ __('site.home.factory.sections') }}">
                         @foreach($factorySections as $index => $section)
                             <button type="button" @click="select({{ $index }})"
                                     class="tap rounded-full px-4 py-2 text-meta font-semibold transition"
@@ -95,8 +95,8 @@
         </div>
 
         <div class="mt-8 flex flex-wrap gap-3">
-            <x-cta :href="route('factory')" variant="dark">صفحه کامل کارخانه</x-cta>
-            <x-cta :href="route('contact', ['type' => 'general'])" variant="ghost" icon="pin">درخواست بازدید</x-cta>
+            <x-cta :href="route('factory')" variant="dark">{{ __('site.home.factory.full') }}</x-cta>
+            <x-cta :href="route('contact', ['type' => 'general'])" variant="ghost" icon="pin">{{ __('site.home.factory.visit') }}</x-cta>
         </div>
     </div>
 </section>

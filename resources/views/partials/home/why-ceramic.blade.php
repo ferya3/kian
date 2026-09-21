@@ -21,26 +21,27 @@
         'natural' => ['#6f7a56', '#2c331f'],
     ];
 
-    $pillars = [
-        ['key' => 'thermal',   'icon' => 'thermal',  'en' => 'Thermal Insulation', 'title' => 'عایق حرارتی',
-         'text' => 'هوای ساکن محبوس در حفره‌های چندردیفه، عایقی است که خودِ ماده می‌سازد. هرچه ردیف‌ها بیشتر و مسیر انتقال طولانی‌تر، ضریب λ کمتر.',
-         'metric' => 'λ از ۰٫۱۷', 'metricLabel' => 'وات بر متر کلوین'],
-        ['key' => 'acoustic',  'icon' => 'acoustic', 'en' => 'Acoustic Performance', 'title' => 'عملکرد صوتی',
-         'text' => 'ترکیب جرم حجمی سفال با حفره‌های هوا، هم صدای هوابرد را میرا می‌کند و هم بدون بار اضافی روی سازه اجرا می‌شود.',
-         'metric' => 'تا ۵۵', 'metricLabel' => 'دسی‌بل کاهش صوت'],
-        ['key' => 'fire',      'icon' => 'fire',     'en' => 'Fire Resistance', 'title' => 'مقاومت در برابر آتش',
-         'text' => 'سفال در نهصد درجه پخته شده؛ چیزی برای سوختن باقی نمانده. غیرقابل اشتعال است و در حریق گاز سمی منتشر نمی‌کند.',
-         'metric' => 'تا ۲۴۰', 'metricLabel' => 'دقیقه مقاومت آتش'],
-        ['key' => 'weight',    'icon' => 'weight',   'en' => 'Reduced Dead Load', 'title' => 'سبکی و بار مرده',
-         'text' => 'نیروی جانبی زلزله متناسب با جرم سازه است. دیوار سبک‌تر یعنی برش پایه‌ی کمتر — و در اضافه طبقه و مقاوم‌سازی، همین چند درصد تعیین‌کننده است.',
-         'metric' => 'تا ۲۸٪', 'metricLabel' => 'کاهش وزن دیوار'],
-        ['key' => 'durability','icon' => 'shield',   'en' => 'Durability', 'title' => 'دوام',
-         'text' => 'جمع‌شدگی بلندمدت ندارد، پوسیده نمی‌شود و در برابر رطوبت و یخبندان پایدار می‌ماند. عمرش برابر عمر ساختمان است.',
-         'metric' => '۵۰+', 'metricLabel' => 'سال عمر مفید'],
-        ['key' => 'natural',   'icon' => 'leaf',     'en' => 'Natural Material', 'title' => 'ماده‌ی طبیعی',
-         'text' => 'خاک، آب، آتش. بدون افزودنی شیمیایی پایدار، بدون انتشار ترکیبات فرار — و در پایان عمر ساختمان، قابل خردایش و بازگشت به چرخه.',
-         'metric' => '۱۰۰٪', 'metricLabel' => 'ماده اولیه معدنی'],
-    ];
+    /*
+    | شش ویژگی.
+    |
+    | نشان و کلید اینجا می‌مانند چون کدند — کلید، جایگاهِ تصویر در
+    | SiteMedia و طیفِ کارت را پیدا می‌کند. متن و عدد از پرونده‌ی زبان
+    | می‌آیند. برچسبِ لاتین هم ترجمه می‌شود: در نسخه‌ی انگلیسی همان عنوان
+    | است و دو بار نوشتنش خطِ دوم را به تکرار بدل می‌کند، پس آنجا خالی است.
+    */
+    $pillars = collect(['thermal' => 'thermal', 'acoustic' => 'acoustic', 'fire' => 'fire',
+                        'weight' => 'weight', 'durability' => 'shield', 'natural' => 'leaf'])
+        ->map(fn (string $icon, string $key) => [
+            'key' => $key,
+            'icon' => $icon,
+            'en' => __("site.home.why.{$key}.en"),
+            'title' => __("site.home.why.{$key}.title"),
+            'text' => __("site.home.why.{$key}.text"),
+            'metric' => __("site.home.why.{$key}.metric"),
+            'metricLabel' => __("site.home.why.{$key}.metric_label"),
+        ])
+        ->values()
+        ->all();
 
     // سه‌تای اول سمت راستِ بلوک می‌نشینند و سه‌تای دوم سمت چپ
     $rightPillars = array_slice($pillars, 0, 3);
@@ -61,8 +62,8 @@
     <div class="container-page relative">
         <x-section-heading
             eyebrow="Why ceramic?"
-            title="چرا سفال؟"
-            lead="شش ویژگی که هیچ‌کدام افزودنی نیستند — همه از خودِ ماده و هندسه‌ی بلوک می‌آیند."
+            :title="__('site.home.why.title')"
+            :lead="__('site.home.why.lead')"
             light id="why-heading" />
 
         {{--
@@ -103,20 +104,20 @@
 
                         <div class="flex flex-wrap items-center justify-between gap-3">
                             <div>
-                                <p class="eyebrow text-clay-400">Interactive</p>
+                                <p class="eyebrow text-clay-400">{{ __('site.home.why.interactive') }}</p>
                                 <p class="mt-1 font-bold">{{ $interactiveProduct->name }}</p>
                             </div>
 
-                            <div role="tablist" aria-label="نمای بلوک"
+                            <div role="tablist" aria-label="{{ __('site.home.why.view') }}"
                                  class="flex rounded-full border border-white/12 bg-ink-950/50 p-1 text-meta">
                                 <button type="button" role="tab" @click="mode = 'solid'"
                                         :aria-selected="mode === 'solid'"
                                         class="tap rounded-full px-4 py-2 transition"
-                                        :class="mode === 'solid' ? 'bg-clay-500 text-white' : 'text-sand-200/60 hover:text-sand-50'">حجم</button>
+                                        :class="mode === 'solid' ? 'bg-clay-500 text-white' : 'text-sand-200/60 hover:text-sand-50'">{{ __('site.home.why.solid') }}</button>
                                 <button type="button" role="tab" @click="mode = 'section'"
                                         :aria-selected="mode === 'section'"
                                         class="tap rounded-full px-4 py-2 transition"
-                                        :class="mode === 'section' ? 'bg-clay-500 text-white' : 'text-sand-200/60 hover:text-sand-50'">مقطع</button>
+                                        :class="mode === 'section' ? 'bg-clay-500 text-white' : 'text-sand-200/60 hover:text-sand-50'">{{ __('site.home.why.section') }}</button>
                             </div>
                         </div>
 
@@ -124,7 +125,7 @@
                             <div x-show="mode === 'solid'" x-transition.opacity.duration.300ms class="py-6">
                                 <x-block-3d :product="$interactiveProduct" :size="230" />
                                 <p class="mt-6 text-center text-xs text-sand-200/45">
-                                    بکشید تا بچرخد — یا با کلیدهای جهت
+                                    {{ __('site.home.why.drag') }}
                                 </p>
                             </div>
 
@@ -143,7 +144,7 @@
                                         </div>
                                     </template>
                                     <p x-show="!cavity" class="text-[0.875rem] text-sand-200/50">
-                                        روی نقاط روشن مقطع کلیک کنید تا ساختار داخلی بلوک را ببینید.
+                                        {{ __('site.home.why.pick_cavity') }}
                                     </p>
                                 </div>
                             </div>
@@ -169,7 +170,7 @@
             <div class="lg:hidden" x-data="featureCarousel({{ $cards->count() }})"
                  @focusin="paused = true" @focusout="paused = false">
 
-                <div role="group" aria-roledescription="کاروسل" aria-label="ویژگی‌های بلوک سفالی"
+                <div role="group" aria-roledescription="{{ __('site.home.carousel') }}" aria-label="{{ __('site.home.why.cards') }}"
                      aria-live="polite" tabindex="0"
                      @click="onTap()"
                      @touchstart.passive="onTouchStart($event)"
@@ -211,7 +212,9 @@
                                  :aria-hidden="active({{ $i }}) ? 'false' : 'true'"
                                  style="{{ $i === 0 ? '' : 'opacity: 0;' }}">
                                 <h3 class="text-card font-extrabold leading-tight text-sand-50">{{ $card['title'] }}</h3>
-                                <p class="tech mt-1 text-micro uppercase tracking-[0.14em] text-sand-200/40">{{ $card['en'] }}</p>
+                                @if($card['en'] !== '')
+                                    <p class="tech mt-1 text-micro uppercase tracking-[0.14em] text-sand-200/40">{{ $card['en'] }}</p>
+                                @endif
                                 <p class="mt-3 text-meta leading-relaxed text-sand-200/65">{{ $card['text'] }}</p>
                                 <p class="mt-3 flex flex-wrap items-baseline justify-center gap-x-2">
                                     <span class="tech text-[1.0625rem] font-extrabold leading-tight text-clay-300">{{ $card['metric'] }}</span>

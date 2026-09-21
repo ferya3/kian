@@ -4,21 +4,23 @@
             <div class="lg:col-span-5">
                 <x-section-heading
                     eyebrow="Sustainability"
-                    title="خاک، محصول، ساختمان"
-                    lead="سفال چرخه‌ی بسته‌ای دارد که در آن هیچ ماده‌ی غریبه‌ای وارد نمی‌شود: از زمین برداشته می‌شود، پخته می‌شود، پنجاه سال کار می‌کند و در پایان دوباره خاک است."
+                    :title="__('site.home.sustainability.title')"
+                    :lead="__('site.home.sustainability.lead')"
                     id="sustainability-heading" />
 
-                <x-cta :href="route('sustainability')" variant="ghost" class="mt-8">گزارش پایداری</x-cta>
+                <x-cta :href="route('sustainability')" variant="ghost" class="mt-8">{{ __('site.home.sustainability.report') }}</x-cta>
             </div>
 
             <div class="lg:col-span-7">
                 {{-- چرخه‌ی حیات — سه گام --}}
                 <ol class="relative grid grid-cols-1 gap-4 sm:grid-cols-3" data-reveal-stagger="120">
-                    @foreach([
-                        ['خاک رس', 'Extraction', 'برداشت از معدن اختصاصی، با طرح بازسازی محل برداشت.', 'leaf'],
-                        ['محصول', 'Production', 'پخت با حرارت بازیافتی؛ ضایعات خام صددرصد به خط برمی‌گردد.', 'factory'],
-                        ['ساختمان', 'In use', 'پنجاه سال عملکرد بدون افت، و کاهش دائمی مصرف انرژی ساختمان.', 'shield'],
-                    ] as $i => [$title, $en, $text, $icon])
+                    @foreach(['clay' => 'leaf', 'product' => 'factory', 'building' => 'shield'] as $step => $icon)
+                        @php
+                            $i = $loop->index;
+                            $title = __("site.home.sustainability.cycle.{$step}.title");
+                            $en = __("site.home.sustainability.cycle.{$step}.en");
+                            $text = __("site.home.sustainability.cycle.{$step}.text");
+                        @endphp
                         <li data-reveal class="relative rounded-2xl border border-sand-300 bg-sand-50 p-5">
                             <span class="tech text-micro uppercase tracking-[0.14em] text-ink-300">{{ $en }}</span>
                             <p class="mt-2 flex items-center gap-2 text-lg font-extrabold">

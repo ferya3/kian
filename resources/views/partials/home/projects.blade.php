@@ -20,12 +20,12 @@
         <div class="flex flex-wrap items-end justify-between gap-6">
             <x-section-heading
                 eyebrow="Reference projects"
-                title="پروژه‌های اجراشده"
-                lead="از برج اداری بیست‌ودو طبقه تا هزار و دویست واحد مسکن ملی — هر پروژه یک مسئله‌ی متفاوت داشت."
+                :title="__('site.home.projects.title')"
+                :lead="__('site.home.projects.lead')"
                 id="projects-heading" class="lg:max-w-2xl" />
 
             <div data-reveal>
-                <x-cta :href="route('projects.index')" variant="ghost">همه پروژه‌ها</x-cta>
+                <x-cta :href="route('projects.index')" variant="ghost">{{ __('site.home.projects.all') }}</x-cta>
             </div>
         </div>
 
@@ -63,7 +63,7 @@
                                 @focus="select({{ $i }})"
                                 :aria-expanded="active({{ $i }})"
                                 aria-controls="pj-label-{{ $project->id }}">
-                            <span class="sr-only">نمایش پروژه‌ی {{ $project->title }}</span>
+                            <span class="sr-only">{{ __('site.home.projects.show', ['title' => $project->title]) }}</span>
                         </button>
 
                         <div id="pj-label-{{ $project->id }}" class="pj-label">
