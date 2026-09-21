@@ -27,7 +27,7 @@ class CheckoutController extends Controller
             return redirect()->route('cart.show');
         }
 
-        $seo->title('تکمیل سفارش')->noindex();
+        $seo->title(__('site.shop.checkout'))->noindex();
 
         return view('pages.shop.checkout', [
             'lines' => $lines,
@@ -57,7 +57,7 @@ class CheckoutController extends Controller
 
         if ($lines->isEmpty()) {
             return redirect()->route('cart.show')
-                ->withErrors(['cart' => 'سبد خرید خالی است.']);
+                ->withErrors(['cart' => __('site.shop.cart_empty')]);
         }
 
         /*
@@ -100,7 +100,7 @@ class CheckoutController extends Controller
 
     public function done(Order $order, Seo $seo)
     {
-        $seo->title('سفارش '.$order->number)->noindex();
+        $seo->title(__('site.seo.order.title', ['number' => $order->number]))->noindex();
 
         $order->load('items');
 

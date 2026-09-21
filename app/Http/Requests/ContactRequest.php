@@ -30,25 +30,24 @@ class ContactRequest extends FormRequest
         ];
     }
 
+    /**
+     * نامِ فیلدها در پیام خطا — همان برچسبی که کاربر روی فرم دیده.
+     *
+     * از پرونده‌ی زبان می‌آید و نه از اینجا: خطایی که فیلد را به نامی
+     * صدا بزند که روی فرم ننوشته، کاربر را دنبال چیزی می‌فرستد که نیست.
+     */
     public function attributes(): array
     {
-        return [
-            'type' => 'موضوع درخواست',
-            'name' => 'نام و نام خانوادگی',
-            'company' => 'شرکت',
-            'email' => 'ایمیل',
-            'phone' => 'شماره تماس',
-            'city' => 'شهر',
-            'subject' => 'عنوان',
-            'message' => 'متن پیام',
-        ];
+        return collect(['type', 'name', 'company', 'email', 'phone', 'city', 'subject', 'message'])
+            ->mapWithKeys(fn (string $field) => [$field => __("site.contact.attribute.{$field}")])
+            ->all();
     }
 
     public function messages(): array
     {
         return [
-            'phone.regex' => 'شماره تماس را به شکل ۰۹۱۲۱۲۳۴۵۶۷ یا ۰۲۱۸۸۱۲۳۴۵۶ وارد کنید.',
-            'website.size' => 'درخواست نامعتبر است.',
+            'phone.regex' => __('site.contact.phone_format'),
+            'website.size' => __('site.contact.invalid'),
         ];
     }
 

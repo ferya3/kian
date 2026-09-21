@@ -3,8 +3,14 @@
 namespace Tests\Unit;
 
 use App\Models\Product;
-use PHPUnit\Framework\TestCase;
+use Tests\TestCase;
 
+/*
+| برنامه بالا می‌آید، هرچند اینجا به دیتابیس کاری نیست.
+|
+| specSheet برچسب‌هایش را از پرونده‌ی زبان می‌گیرد و __() بدون کانتینر کار
+| نمی‌کند. تستِ بی‌برنامه یعنی همان برچسب‌ها دوباره در کد نوشته شوند.
+*/
 class ProductTest extends TestCase
 {
     protected function block(array $overrides = []): Product

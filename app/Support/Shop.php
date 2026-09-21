@@ -16,9 +16,32 @@ class Shop
         return (bool) config('shop.enabled', false);
     }
 
+    /**
+     * واحد پول، به زبانِ صفحه.
+     *
+     * پیکربندی می‌گوید *کدام* واحد است (اگر روزی ریال شد، یک خط عوض می‌شود)
+     * و پرونده‌ی زبان می‌گوید چطور نوشته می‌شود. پرونده‌ی فارسی کلیدش را
+     * ندارد، پس همان مقدارِ پیکربندی می‌ماند.
+     */
     public static function currency(): string
     {
-        return (string) config('shop.currency', 'تومان');
+        $key = 'site.shop.currency.'.config('shop.currency', 'تومان');
+        $translated = __($key);
+
+        return is_string($translated) && $translated !== $key
+            ? $translated
+            : (string) config('shop.currency', 'تومان');
+    }
+
+    /** برچسب یک وضعیت سفارش. */
+    public static function status(string $status): string
+    {
+        $key = "site.shop.status_label.{$status}";
+        $translated = __($key);
+
+        return is_string($translated) && $translated !== $key
+            ? $translated
+            : (config('shop.statuses')[$status] ?? $status);
     }
 
     /**

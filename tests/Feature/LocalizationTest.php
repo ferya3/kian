@@ -6,7 +6,11 @@ use App\Models\Faq;
 use App\Models\Locale;
 use App\Models\Product;
 use App\Models\User;
+use App\Support\Brand;
+use App\Support\Jalali;
 use App\Support\Locales;
+use App\Support\Navigation;
+use App\Support\Options;
 use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
@@ -501,6 +505,138 @@ class LocalizationTest extends TestCase
     {
         Locale::query()->where('code', $code)->update(['is_active' => true]);
         Locale::forget();
+    }
+
+    // ------------------------------------------- متنِ رابط کاربری --
+
+    /**
+     * صفحه‌ی انگلیسی باید انگلیسی باشد.
+     *
+     * تا پیش از این، زیرساخت چندزبانه بود ولی متن نه: /en هدر و فوتر و
+     * منویش فارسی بود. این تست همان را می‌گیرد — و نه با شمردنِ کلیدها،
+     * بلکه با خواندنِ صفحه‌ی واقعی.
+     */
+    public function test_the_english_page_has_no_persian_chrome(): void
+    {
+        $page = $this->get('/en')->assertOk();
+
+        foreach (['Products', 'Solutions', 'Projects', 'Request a quote', 'All rights reserved.'] as $text) {
+            $page->assertSee($text, false);
+        }
+
+        /*
+         * رشته‌هایی که فقط در پوسته‌اند و نه در محتوا.
+         *
+         * «محصولات» عمداً اینجا نیست: نامِ یک دسته در دیتابیس هم همین است و
+         * تا وقتی مدیر ترجمه‌اش نکرده، درست است که فارسی بماند — برگشت به
+         * زبان پیش‌فرض، ویژگی است و نه اشکال.
+         */
+        foreach (['راهکارها', 'درخواست قیمت', 'تمام حقوق محفوظ است', 'پرش به محتوای اصلی'] as $persian) {
+            $page->assertDontSee($persian, false);
+        }
+    }
+
+    public function test_the_arabic_page_uses_the_arabic_strings(): void
+    {
+        $this->get('/ar')
+            ->assertOk()
+            ->assertSee('المنتجات', false)
+            ->assertDontSee('راهکارها', false);
+    }
+
+    /** برچسب منو از پرونده‌ی زبان می‌آید و نه از Navigation. */
+    public function test_navigation_labels_follow_the_language(): void
+    {
+        app()->setLocale('en');
+        $this->assertSame('Products', Navigation::labelFor('products.index'));
+        $this->assertSame('From clay to structure', Navigation::labelFor('technology', sub: true));
+
+        app()->setLocale('fa');
+        $this->assertSame('محصولات', Navigation::labelFor('products.index'));
+    }
+
+    /** نامِ شرکت: ترجمه اگر بود، وگرنه مقدارِ پیکربندی. */
+    public function test_the_brand_name_follows_the_language_and_falls_back_to_config(): void
+    {
+        app()->setLocale('en');
+        $this->assertSame('Kian Behsaz', Brand::name());
+
+        app()->setLocale('fa');
+        $this->assertSame(config('kian.brand.name'), Brand::name());
+
+        // کلیدی که هیچ زبانی ترجمه‌اش نکرده، از پیکربندی می‌آید
+        app()->setLocale('en');
+        $this->assertSame(config('kian.brand.wordmark'), config('kian.brand.wordmark'));
+    }
+
+    /**
+     * تقویم و خطِ ارقام با زبان عوض می‌شوند.
+     *
+     * پیش‌تر Jalali::format به fa_IR@calendar=persian سنجاق شده بود، پس
+     * تاریخ مقاله در نسخه‌ی انگلیسی هم شمسی و با ارقام فارسی بود.
+     */
+    public function test_dates_and_digits_follow_the_language(): void
+    {
+        $date = new \DateTimeImmutable('2026-03-12');
+
+        app()->setLocale('en');
+        $this->assertSame('12 March 2026', Jalali::format($date));
+        $this->assertSame('021-91002233', Jalali::digits('021-91002233'));
+
+        app()->setLocale('fa');
+        $this->assertStringContainsString('۱۴۰۴', Jalali::format($date));
+        $this->assertSame('۰۲۱-۹۱۰۰۲۲۳۳', Jalali::digits('021-91002233'));
+
+        app()->setLocale('ar');
+        $this->assertSame('٠٢١-٩١٠٠٢٢٣٣', Jalali::digits('021-91002233'));
+    }
+
+    /** ارقامِ از پیش فارسی هم باید به خطِ مقصد برسند. */
+    public function test_digits_are_normalised_before_they_are_converted(): void
+    {
+        app()->setLocale('en');
+
+        // مقداری که در .env یا در پنل با ارقام فارسی نوشته شده
+        $this->assertSame('021-91002233', Jalali::digits('۰۲۱-۹۱۰۰۲۲۳۳'));
+    }
+
+    /**
+     * گزینه‌های ساختاری ترجمه می‌شوند ولی کلیدشان عوض نمی‌شود.
+     *
+     * کلید در دیتابیس ذخیره می‌شود؛ اگر با زبان عوض می‌شد، فیلترِ انگلیسی
+     * هیچ رکوردی پیدا نمی‌کرد.
+     */
+    public function test_option_labels_translate_but_their_keys_do_not(): void
+    {
+        app()->setLocale('en');
+        $en = Options::finder('wall_types');
+
+        app()->setLocale('fa');
+        $fa = Options::finder('wall_types');
+
+        $this->assertSame(array_keys($fa), array_keys($en));
+        $this->assertSame('External wall', $en['exterior']['label']);
+        $this->assertNotSame($fa['exterior']['label'], $en['exterior']['label']);
+    }
+
+    /** پیام‌های اعتبارسنجی هم زبانِ صفحه را دارند. */
+    public function test_validation_errors_speak_the_page_language(): void
+    {
+        $this->post('/en/contact', ['type' => 'quote', 'name' => '', 'phone' => '', 'message' => ''])
+            ->assertSessionHasErrors('name');
+
+        $this->assertStringContainsString(
+            'required',
+            session('errors')->first('name'),
+            'خطای فرم در صفحه‌ی انگلیسی باید انگلیسی باشد.',
+        );
+    }
+
+    /** نشان‌های جهت‌دار در زبان چپ‌به‌راست آینه می‌شوند. */
+    public function test_directional_icons_mirror_in_a_left_to_right_language(): void
+    {
+        $this->get('/en')->assertOk()->assertSee('translate(24 0) scale(-1 1)', false);
+        $this->get('/fa')->assertOk()->assertDontSee('translate(24 0) scale(-1 1)', false);
     }
 
     // ------------------------------------------------------ پیکربندی --

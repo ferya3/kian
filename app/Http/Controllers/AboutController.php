@@ -11,9 +11,9 @@ class AboutController extends Controller
     public function __invoke()
     {
         $this->seo()
-            ->title('درباره ما')
-            ->description('بیش از دو دهه تولید بلوک سفالی مهندسی‌شده؛ از یک کوره‌ی سنتی تا خط تولید تمام‌اتوماتیک با ظرفیت سالانه صد و بیست هزار تن.')
-            ->breadcrumbs([['خانه', route('home')], ['درباره ما', null]]);
+            ->title(__('site.seo.about.title'))
+            ->description(__('site.seo.about.description'))
+            ->breadcrumbs([[__('site.nav.home'), route('home')], [__('site.nav.items.about'), null]]);
 
         return view('pages.about', [
             'stats' => Stat::query()->group('factory')->get(),

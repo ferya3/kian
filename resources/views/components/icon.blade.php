@@ -39,10 +39,28 @@
         'globe'        => '<circle cx="12" cy="12" r="9"/><path d="M3.5 9h17M3.5 15h17"/><path d="M12 3c2.5 2.4 3.8 5.5 3.8 9S14.5 18.6 12 21c-2.5-2.4-3.8-5.5-3.8-9S9.5 5.4 12 3Z"/>',
         'external'     => '<path d="M14 4h6v6"/><path d="M20 4 10 14"/><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>',
     ];
+
+    /*
+    | نشان‌های جهت‌دار، در زبانِ چپ‌به‌راست آینه می‌شوند.
+    |
+    | این مجموعه برای سایتِ راست‌به‌چپ کشیده شده: «جلو» یعنی چپ. در انگلیسی
+    | همان فلش، عقب را نشان می‌دهد — و ۳۳ جای سایت صدایش می‌زنند، پس تصمیم
+    | باید یک جا گرفته شود و نه در هر فراخوانی.
+    |
+    | آینه‌شدن داخل خودِ SVG انجام می‌شود و نه با transform روی عنصر: چند
+    | فراخوانی از قبل rotate-180 دارند (فلشِ «صفحه‌ی بعد») و دو transform روی
+    | یک عنصر، یکی دیگری را می‌خورد.
+    */
+    $mirrored = in_array($name, ['arrow-left', 'arrow-right', 'chevron-left'], true)
+        && ! \App\Support\Locales::isRtl();
 @endphp
 
 <svg {{ $attributes->merge(['class' => 'shrink-0', 'aria-hidden' => 'true', 'focusable' => 'false']) }}
      width="{{ $size }}" height="{{ $size }}" viewBox="0 0 24 24"
      fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-    {!! $paths[$name] ?? $paths['grid'] !!}
+    @if($mirrored)
+        <g transform="translate(24 0) scale(-1 1)">{!! $paths[$name] ?? $paths['grid'] !!}</g>
+    @else
+        {!! $paths[$name] ?? $paths['grid'] !!}
+    @endif
 </svg>

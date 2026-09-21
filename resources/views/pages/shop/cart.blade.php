@@ -3,7 +3,7 @@
 <x-layouts.app>
     <section class="bg-sand-100 section">
         <div class="container-page">
-            <h1 class="text-h2 font-extrabold">سبد خرید</h1>
+            <h1 class="text-h2 font-extrabold">{{ __('site.shop.cart') }}</h1>
 
             @if(session('status'))
                 <p class="mt-5 rounded-xl border border-clay-300 bg-clay-50 px-4 py-3 text-meta font-semibold text-clay-700">
@@ -12,8 +12,8 @@
             @endif
 
             @if($lines->isEmpty())
-                <p class="mt-6 text-ink-500">سبد خالی است.</p>
-                <x-cta :href="route('shop.index')" variant="primary" class="mt-6">رفتن به فروشگاه</x-cta>
+                <p class="mt-6 text-ink-500">{{ __('site.shop.cart_empty') }}</p>
+                <x-cta :href="route('shop.index')" variant="primary" class="mt-6">{{ __('site.shop.go') }}</x-cta>
             @else
                 {{--
                     ردیف‌ها به تفکیک فروشنده.
@@ -38,12 +38,12 @@
 
                                     <form action="{{ route('cart.update', $offer) }}" method="POST" class="flex items-center gap-2">
                                         @csrf @method('PATCH')
-                                        <label class="sr-only" for="line-{{ $offer->id }}">تعداد</label>
+                                        <label class="sr-only" for="line-{{ $offer->id }}">{{ __('site.shop.quantity') }}</label>
                                         <input id="line-{{ $offer->id }}" name="quantity" type="number" inputmode="numeric"
                                                value="{{ $line['quantity'] }}" min="0"
                                                class="h-11 w-24 rounded-xl border border-sand-300 bg-white px-3 text-field outline-none focus:border-clay-400">
                                         <button type="submit" class="tap rounded-full border border-sand-300 px-4 text-meta font-semibold transition hover:bg-sand-200">
-                                            به‌روزرسانی
+                                            {{ __('site.shop.update') }}
                                         </button>
                                     </form>
 
@@ -52,7 +52,7 @@
                                     <form action="{{ route('cart.destroy', $offer) }}" method="POST">
                                         @csrf @method('DELETE')
                                         <button type="submit" class="tap-icon rounded-lg text-ink-400 transition hover:bg-sand-200 hover:text-clay-600"
-                                                aria-label="برداشتن «{{ $offer->product->name }}» از سبد">
+                                                aria-label="{{ __('site.shop.remove', ['name' => $offer->product->name]) }}">
                                             <x-icon name="close" size="18" />
                                         </button>
                                     </form>
@@ -64,10 +64,10 @@
 
                 <div class="mt-8 flex flex-wrap items-center justify-between gap-4 rounded-[var(--radius-panel)] border border-sand-300 bg-sand-50 p-5">
                     <p class="text-lead">
-                        جمع کل:
+                        {{ __('site.shop.total') }}:
                         <span class="tech font-extrabold text-clay-600">{{ Shop::price($total) }}</span>
                     </p>
-                    <x-cta :href="route('checkout.show')" variant="primary">تکمیل سفارش</x-cta>
+                    <x-cta :href="route('checkout.show')" variant="primary">{{ __('site.shop.checkout') }}</x-cta>
                 </div>
             @endif
         </div>

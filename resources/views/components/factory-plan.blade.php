@@ -1,6 +1,6 @@
 {{-- نمای ایزومتریک محوطه‌ی کارخانه — پایه‌ی نقشه‌ی تعاملی --}}
 <svg {{ $attributes->merge(['class' => 'h-full w-full']) }} viewBox="0 0 1000 620" role="img"
-     aria-label="نمای هوایی کارخانه: خط تولید، کوره تونلی، خشک‌کن، آزمایشگاه، انبار و بسته‌بندی">
+     aria-label="{{ __('site.a11y.factory_plan') }}">
     <defs>
         <linearGradient id="ground" x1="0" y1="0" x2="1" y2="1">
             <stop offset="0" stop-color="#242424"/><stop offset="1" stop-color="#101010"/>

@@ -10,9 +10,9 @@ class TechnologyController extends Controller
     public function __invoke()
     {
         $this->seo()
-            ->title('از خاک تا سازه — فناوری تولید')
-            ->description('نُه مرحله تولید بلوک سفالی، از استخراج خاک رس تا کنترل کیفیت و بسته‌بندی؛ با دمای پخت، زمان خشک‌کن و شاخص‌های هر مرحله.')
-            ->breadcrumbs([['خانه', route('home')], ['فناوری', null]]);
+            ->title(__('site.seo.technology.title'))
+            ->description(__('site.seo.technology.description'))
+            ->breadcrumbs([[__('site.nav.home'), route('home')], [__('site.nav.items.technology'), null]]);
 
         return view('pages.technology', [
             'steps' => ProcessStep::query()->orderBy('step_no')->get(),

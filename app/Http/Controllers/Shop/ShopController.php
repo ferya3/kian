@@ -18,8 +18,8 @@ class ShopController extends Controller
 {
     public function index(Seo $seo)
     {
-        $seo->title('فروشگاه')
-            ->description('خرید مستقیم بلوک سفالی از فروشندگان — مقایسه‌ی قیمت چند فروشنده برای هر محصول.');
+        $seo->title(__('site.nav.items.shop_index'))
+            ->description(__('site.seo.shop.description'));
 
         /*
          * فقط محصولی که دست‌کم یک عرضه‌ی قابل فروش دارد.
@@ -54,8 +54,11 @@ class ShopController extends Controller
         // محصولی که هیچ فروشنده‌ای ندارد، صفحه‌ی فروشگاهی هم ندارد
         abort_if($offers->isEmpty(), 404);
 
-        $seo->title($product->name.' — خرید')
-            ->description('قیمت و شرایط فروش «'.$product->name.'» نزد '.$offers->count().' فروشنده.');
+        $seo->title(__('site.seo.shop_product.title', ['name' => $product->name]))
+            ->description(__('site.seo.shop_product.description', [
+                'name' => $product->name,
+                'count' => $offers->count(),
+            ]));
 
         return view('pages.shop.show', compact('product', 'offers'));
     }

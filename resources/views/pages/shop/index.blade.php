@@ -3,14 +3,14 @@
 <x-layouts.app>
     <x-page-hero
         eyebrow="Shop"
-        title="فروشگاه"
-        lead="هر محصول را چند فروشنده عرضه می‌کنند. قیمت‌ها را کنار هم ببینید و از همان فروشنده‌ای بخرید که شرایطش به پروژه‌تان می‌خورد." />
+        :title="__('site.nav.items.shop_index')"
+        :lead="__('site.shop.lead')" />
 
     <section class="bg-sand-100 section-b">
         <div class="container-page">
             @if($products->isEmpty())
                 <p class="rounded-[var(--radius-panel)] border border-sand-300 bg-sand-50 p-6 text-ink-500">
-                    هنوز محصولی برای فروش عرضه نشده است.
+                    {{ __('site.shop.empty') }}
                 </p>
             @else
                 <ul class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3" data-reveal-stagger="70">
@@ -35,10 +35,10 @@
                                 </h2>
 
                                 <div class="mt-auto pt-4">
-                                    <p class="text-meta text-ink-400">از</p>
+                                    <p class="text-meta text-ink-400">{{ __('site.shop.from') }}</p>
                                     <p class="tech text-lg font-extrabold text-clay-600">{{ Shop::price((int) $product->best_price) }}</p>
                                     <p class="mt-1 text-meta text-ink-400">
-                                        {{ Jalali::digits($product->vendors_count) }} فروشنده
+                                        {{ __('site.shop.vendors', ['count' => Jalali::digits($product->vendors_count)]) }}
                                     </p>
                                 </div>
                             </div>

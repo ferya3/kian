@@ -33,9 +33,9 @@ class ProductController extends Controller
             ->get();
 
         $this->seo()
-            ->title('محصولات — بلوک سفالی و مصالح ساختمانی سرامیکی')
-            ->description('کاتالوگ کامل بلوک‌های سفالی دیواری، تیغه‌ای، عایق و سقفی به‌همراه مشخصات فنی، ابعاد، مقاومت فشاری و ضریب هدایت حرارتی.')
-            ->breadcrumbs([['خانه', route('home')], ['محصولات', null]]);
+            ->title(__('site.seo.products.title'))
+            ->description(__('site.seo.products.description'))
+            ->breadcrumbs([[__('site.nav.home'), route('home')], [__('site.nav.items.products_index'), null]]);
 
         return view('pages.products.index', compact('categories', 'products', 'activeCategory'));
     }
@@ -63,13 +63,13 @@ class ProductController extends Controller
         }
 
         $this->seo()
-            ->title($product->meta_title ?: $product->name.' — مشخصات فنی و دیتاشیت')
+            ->title($product->meta_title ?: __('site.seo.product.title', ['name' => $product->name]))
             ->description($product->meta_description ?: $product->summary)
             ->image($product->hero_image)
             ->type('product')
             ->breadcrumbs(array_values(array_filter([
-                ['خانه', route('home')],
-                ['محصولات', route('products.index')],
+                [__('site.nav.home'), route('home')],
+                [__('site.nav.items.products_index'), route('products.index')],
                 $product->category ? [$product->category->name, route('products.index', ['category' => $product->category->slug])] : null,
                 [$product->name, null],
             ])))
@@ -79,7 +79,7 @@ class ProductController extends Controller
             'product' => $product,
             'related' => $related,
             'documentGroups' => $product->documents->groupBy('category'),
-            'documentLabels' => Document::CATEGORIES,
+            'documentLabels' => Document::categories(),
         ]);
     }
 }

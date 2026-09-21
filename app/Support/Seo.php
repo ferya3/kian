@@ -91,10 +91,10 @@ class Seo
 
     public function fullTitle(): string
     {
-        $brand = config('kian.brand.name');
+        $brand = Brand::name();
 
         if (! $this->title) {
-            return $brand.' — '.config('kian.seo.default_title');
+            return $brand.' — '.__('site.seo.default.title');
         }
 
         return Str::contains($this->title, $brand) ? $this->title : $this->title.' | '.$brand;
@@ -102,7 +102,7 @@ class Seo
 
     public function metaDescription(): string
     {
-        return $this->description ?: config('kian.seo.default_description');
+        return $this->description ?: __('site.seo.default.description');
     }
 
     /**

@@ -39,9 +39,9 @@ class SearchController extends Controller
         }
 
         $this->seo()
-            ->title($term ? "جستجو: {$term}" : 'جستجو')
+            ->title($term ? __('site.seo.search.title', ['term' => $term]) : __('site.nav.search'))
             ->noindex()
-            ->breadcrumbs([['خانه', route('home')], ['جستجو', null]]);
+            ->breadcrumbs([[__('site.nav.home'), route('home')], [__('site.nav.search'), null]]);
 
         return view('pages.search', compact('term', 'results'));
     }

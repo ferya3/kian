@@ -14,13 +14,13 @@ class TechnicalController extends Controller
     public function index()
     {
         $this->seo()
-            ->title('مرکز فنی — دیتاشیت، CAD، BIM و ضوابط اجرا')
-            ->description('همه‌ی آنچه مهندس، معمار و پیمانکار لازم دارد: دیتاشیت محصولات، کاتالوگ فنی، فایل‌های DWG و IFC، آبجکت‌های Revit، راهنمای اجرا و گواهی‌نامه‌ها.')
-            ->breadcrumbs([['خانه', route('home')], ['مرکز فنی', null]]);
+            ->title(__('site.seo.technical.title'))
+            ->description(__('site.seo.technical.description'))
+            ->breadcrumbs([[__('site.nav.home'), route('home')], [__('site.nav.sub.technical_index'), null]]);
 
         return view('pages.technical.index', [
             'groups' => Document::query()->orderBy('position')->get()->groupBy('category'),
-            'labels' => Document::CATEGORIES,
+            'labels' => Document::categories(),
             'products' => Product::query()->active()->orderBy('position')->get(),
             'certificates' => Certificate::query()->orderBy('position')->take(4)->get(),
         ]);
@@ -39,18 +39,18 @@ class TechnicalController extends Controller
             ->get();
 
         $this->seo()
-            ->title('مرکز دانلود فایل‌های فنی')
-            ->description('دانلود دیتاشیت، کاتالوگ، فایل‌های CAD و BIM، راهنمای اجرا و گواهی‌نامه‌های محصولات سفالی.')
+            ->title(__('site.seo.downloads.title'))
+            ->description(__('site.seo.downloads.description'))
             ->breadcrumbs([
-                ['خانه', route('home')],
-                ['مرکز فنی', route('technical.index')],
-                ['دانلودها', null],
+                [__('site.nav.home'), route('home')],
+                [__('site.nav.sub.technical_index'), route('technical.index')],
+                [__('site.seo.crumb_downloads'), null],
             ]);
 
         return view('pages.technical.downloads', [
             'documents' => $documents,
-            'labels' => Document::CATEGORIES,
-            'audiences' => Document::AUDIENCES,
+            'labels' => Document::categories(),
+            'audiences' => Document::audiences(),
             'formats' => Document::query()->distinct()->orderBy('format')->pluck('format'),
         ]);
     }
@@ -58,12 +58,12 @@ class TechnicalController extends Controller
     public function installation()
     {
         $this->seo()
-            ->title('راهنمای اجرا — روش صحیح چیدمان بلوک سفالی')
-            ->description('گام‌به‌گام اجرای دیوار سفالی: آماده‌سازی بستر، ملات، رگ‌چینی، نعل درگاه، اتصال به قاب و نکات کنترلی پیمانکار.')
+            ->title(__('site.seo.installation.title'))
+            ->description(__('site.seo.installation.description'))
             ->breadcrumbs([
-                ['خانه', route('home')],
-                ['مرکز فنی', route('technical.index')],
-                ['راهنمای اجرا', null],
+                [__('site.nav.home'), route('home')],
+                [__('site.nav.sub.technical_index'), route('technical.index')],
+                [__('site.nav.items.technical_installation'), null],
             ]);
 
         return view('pages.technical.installation', [
@@ -75,12 +75,12 @@ class TechnicalController extends Controller
     public function certificates()
     {
         $this->seo()
-            ->title('گواهی‌نامه‌ها و استانداردها')
-            ->description('استاندارد ملی ایران، مبحث ۱۹ مقررات ملی ساختمان، ISO 9001 و گزارش‌های آزمون مرکز تحقیقات راه، مسکن و شهرسازی.')
+            ->title(__('site.seo.certificates.title'))
+            ->description(__('site.seo.certificates.description'))
             ->breadcrumbs([
-                ['خانه', route('home')],
-                ['مرکز فنی', route('technical.index')],
-                ['گواهی‌نامه‌ها', null],
+                [__('site.nav.home'), route('home')],
+                [__('site.nav.sub.technical_index'), route('technical.index')],
+                [__('site.footer.certificates'), null],
             ]);
 
         return view('pages.technical.certificates', [
@@ -105,12 +105,12 @@ class TechnicalController extends Controller
             ->values();
 
         $this->seo()
-            ->title('پرسش‌های متداول فنی')
-            ->description('پاسخ کارشناسان به پرسش‌های رایج درباره بلوک سفالی، عایق‌کاری، اجرا و سفارش.')
+            ->title(__('site.seo.faq.title'))
+            ->description(__('site.seo.faq.description'))
             ->breadcrumbs([
-                ['خانه', route('home')],
-                ['مرکز فنی', route('technical.index')],
-                ['پرسش‌های متداول', null],
+                [__('site.nav.home'), route('home')],
+                [__('site.nav.sub.technical_index'), route('technical.index')],
+                [__('site.nav.items.technical_faq'), null],
             ])
             ->schema(Schema::faq($faqs));
 

@@ -5,7 +5,7 @@
         <div>
             <p class="eyebrow text-clay-600">Recommended</p>
             <h3 class="mt-1.5 text-card font-extrabold">
-                {{ count($matches) }} محصول برای پروژه‌ی شما
+                {{ __('site.finder.matches', ['count' => \App\Support\Jalali::digits(count($matches))]) }}
             </h3>
         </div>
 
@@ -41,7 +41,7 @@
                             </h4>
                             <span class="tech text-sm text-ink-400">{{ \App\Support\Jalali::digits($product->dimensionLabel()) }} cm</span>
                             @if($index === 0)
-                                <span class="rounded-full bg-ink-900 px-2.5 py-0.5 text-micro font-semibold text-sand-50">بهترین تطابق</span>
+                                <span class="rounded-full bg-ink-900 px-2.5 py-0.5 text-micro font-semibold text-sand-50">{{ __('site.finder.best_match') }}</span>
                             @endif
                         </div>
 
@@ -65,12 +65,12 @@
 
                     <div class="shrink-0 sm:w-40">
                         <div class="mb-2 flex items-baseline justify-between gap-2">
-                            <span class="text-micro text-ink-400">میزان تطابق</span>
+                            <span class="text-micro text-ink-400">{{ __('site.finder.score') }}</span>
                             <span class="tech text-sm font-bold text-clay-600">{{ \App\Support\Jalali::digits($match['score']) }}٪</span>
                         </div>
                         <div class="h-1.5 overflow-hidden rounded-full bg-sand-300"
                              role="meter" aria-valuenow="{{ $match['score'] }}" aria-valuemin="0" aria-valuemax="100"
-                             aria-label="میزان تطابق {{ $product->name }}">
+                             aria-label="{{ __('site.finder.score_of', ['name' => $product->name]) }}">
                             <div class="h-full rounded-full bg-gradient-to-l from-ember-500 to-clay-500"
                                  style="width: {{ $match['score'] }}%"></div>
                         </div>
@@ -83,11 +83,11 @@
 
     <div class="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-clay-200 pt-5">
         <p class="text-meta text-ink-400">
-            این پیشنهاد بر اساس معیارهای شماست. برای محاسبه‌ی دقیق مبحث ۱۹ با واحد فنی تماس بگیرید.
+            {{ __('site.finder.disclaimer') }}
         </p>
         <div class="flex flex-wrap gap-2">
-            <x-cta :href="route('contact', ['type' => 'technical'])" variant="ghost" size="sm">مشاوره فنی رایگان</x-cta>
-            <x-cta :href="route('products.index')" variant="dark" size="sm">مشاهده همه محصولات</x-cta>
+            <x-cta :href="route('contact', ['type' => 'technical'])" variant="ghost" size="sm">{{ __('site.finder.free_advice') }}</x-cta>
+            <x-cta :href="route('products.index')" variant="dark" size="sm">{{ __('site.actions.all_products') }}</x-cta>
         </div>
     </div>
 </div>

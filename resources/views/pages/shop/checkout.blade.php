@@ -3,9 +3,9 @@
 <x-layouts.app>
     <section class="bg-sand-100 section">
         <div class="container-page">
-            <h1 class="text-h2 font-extrabold">تکمیل سفارش</h1>
+            <h1 class="text-h2 font-extrabold">{{ __('site.shop.checkout') }}</h1>
             <p class="mt-3 max-w-2xl text-ink-500">
-                پرداخت آنلاین ندارد. سفارش ثبت می‌شود و فروشنده برای هماهنگی مقدار، کرایه‌ی حمل و زمان تحویل با شما تماس می‌گیرد.
+                {{ __('site.shop.checkout_lead') }}
             </p>
 
             <div class="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-12">
@@ -24,11 +24,11 @@
 
                     <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
                         @foreach([
-                            ['customer_name', 'نام و نام خانوادگی', 'text', 'name', true],
-                            ['customer_phone', 'تلفن همراه', 'tel', 'tel', true],
-                            ['customer_email', 'ایمیل (اختیاری)', 'email', 'email', false],
-                            ['province', 'استان', 'text', 'address-level1', false],
-                            ['city', 'شهر', 'text', 'address-level2', false],
+                            ['customer_name', __('site.shop.field.name'), 'text', 'name', true],
+                            ['customer_phone', __('site.shop.field.phone'), 'tel', 'tel', true],
+                            ['customer_email', __('site.shop.field.email'), 'email', 'email', false],
+                            ['province', __('site.shop.field.province'), 'text', 'address-level1', false],
+                            ['city', __('site.shop.field.city'), 'text', 'address-level2', false],
                         ] as [$name, $label, $type, $autocomplete, $required])
                             <label class="block @if($name === 'customer_name' || $name === 'customer_email') sm:col-span-2 @endif">
                                 <span class="block text-meta font-semibold text-ink-600">{{ $label }}</span>
@@ -41,26 +41,26 @@
                         @endforeach
 
                         <label class="block sm:col-span-2">
-                            <span class="block text-meta font-semibold text-ink-600">نشانی تحویل</span>
+                            <span class="block text-meta font-semibold text-ink-600">{{ __('site.shop.field.address') }}</span>
                             <textarea name="address" rows="3" autocomplete="street-address"
                                       class="mt-1.5 w-full rounded-xl border border-sand-300 bg-white p-4 text-field outline-none focus:border-clay-400">{{ old('address') }}</textarea>
                         </label>
 
                         <label class="block sm:col-span-2">
-                            <span class="block text-meta font-semibold text-ink-600">توضیح (اختیاری)</span>
+                            <span class="block text-meta font-semibold text-ink-600">{{ __('site.shop.field.note') }}</span>
                             <textarea name="note" rows="3"
                                       class="mt-1.5 w-full rounded-xl border border-sand-300 bg-white p-4 text-field outline-none focus:border-clay-400">{{ old('note') }}</textarea>
                         </label>
                     </div>
 
                     <button type="submit" class="tap mt-6 rounded-full bg-clay-500 px-6 font-semibold text-white transition hover:bg-clay-600">
-                        ثبت سفارش
+                        {{ __('site.shop.place') }}
                     </button>
                 </form>
 
                 <aside class="lg:col-span-5">
                     <div class="rounded-[var(--radius-panel)] border border-sand-300 bg-sand-50 p-5">
-                        <h2 class="font-extrabold">خلاصه‌ی سفارش</h2>
+                        <h2 class="font-extrabold">{{ __('site.shop.summary') }}</h2>
 
                         <ul class="mt-4 space-y-3 text-meta">
                             @foreach($lines as $line)
@@ -76,7 +76,7 @@
                         </ul>
 
                         <p class="mt-5 flex items-baseline justify-between border-t border-sand-300 pt-4 text-lead">
-                            <span>جمع کل</span>
+                            <span>{{ __('site.shop.total') }}</span>
                             <span class="tech font-extrabold text-clay-600">{{ Shop::price($total) }}</span>
                         </p>
                     </div>

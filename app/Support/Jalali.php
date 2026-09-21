@@ -73,7 +73,15 @@ class Jalali
      */
     public static function digits(string|int|float|null $value): string
     {
-        $value = (string) $value;
+        /*
+         * اول لاتین، بعد خطِ مقصد.
+         *
+         * ورودی همیشه لاتین نیست: یک مقدار در .env، یا متنی که مدیر در پنل
+         * وارد کرده، می‌تواند از پیش ارقام فارسی داشته باشد. بی این خط، همان
+         * «۰۲۱» در نسخه‌ی انگلیسی هم «۰۲۱» می‌ماند، چون چیزی برای تبدیل
+         * پیدا نمی‌شد.
+         */
+        $value = Digits::toLatin((string) $value);
 
         return match (Locales::digits()) {
             'fa' => strtr($value, [

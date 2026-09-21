@@ -12,7 +12,11 @@
 
 <div class="relative">
     <svg viewBox="0 0 {{ $vw }} {{ $vh }}" class="w-full" role="img"
-         aria-label="مقطع افقی {{ $product->name }} — {{ $pattern['rows'] }} ردیف و {{ $pattern['cols'] }} ستون حفره">
+         aria-label="{{ __('site.a11y.block_section', [
+             'name' => $product->name,
+             'rows' => \App\Support\Jalali::digits($pattern['rows']),
+             'cols' => \App\Support\Jalali::digits($pattern['cols']),
+         ]) }}">
         <defs>
             <linearGradient id="body-{{ $product->id }}" x1="0" y1="0" x2="1" y2="1">
                 <stop offset="0" stop-color="#d98f6c"/>

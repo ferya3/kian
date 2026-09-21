@@ -21,11 +21,6 @@ return [
         'tagline' => 'Born of Earth. Engineered for the Future.',
     ],
 
-    'contact' => [
-        'address' => 'Mobarakeh Industrial Estate, Sanat 12 St., Isfahan — Kian Behsaz plant',
-        'working_hours' => 'Sat–Wed 8:00–17:00 — Thu 8:00–13:00',
-    ],
-
     'language' => [
         'label' => 'Language',
         'switch' => 'Change site language',
@@ -180,6 +175,23 @@ return [
     'spec' => [
         'caption' => 'Technical specifications for :name',
         'feature' => 'Property',
+        'units' => 'pcs',
+        'litres_sqm' => 'litres/m²',
+        'row' => [
+            'dimensions' => 'Nominal dimensions',
+            'thickness' => 'Wall thickness',
+            'weight' => 'Weight each',
+            'strength' => 'Compressive strength',
+            'lambda' => 'Thermal conductivity (λ)',
+            'r_value' => 'Thermal resistance (R)',
+            'absorption' => 'Water absorption',
+            'acoustic' => 'Sound reduction',
+            'fire' => 'Fire resistance',
+            'void' => 'Void ratio',
+            'per_sqm' => 'Units per m²',
+            'per_pallet' => 'Units per pallet',
+            'mortar' => 'Mortar used',
+        ],
         'value' => 'Value',
     ],
 
@@ -217,6 +229,12 @@ return [
         ],
 
         'choose' => 'Choose…',
+        'matches' => ':count products for your project',
+        'best_match' => 'Best match',
+        'score' => 'Match',
+        'score_of' => 'Match score for :name',
+        'disclaimer' => 'This recommendation follows the criteria you gave. For an exact thermal calculation, talk to our engineers.',
+        'free_advice' => 'Free technical advice',
         'page_lead' => 'Four questions about the project, and three recommendations with reasons. If you do not know an answer, leave it blank — the finder works with partial information.',
         'results_title' => 'Products recommended for your project',
         'based_on' => 'Based on: :criteria',
@@ -537,8 +555,22 @@ return [
     // ------------------------------------- Contact and distributors --
 
     'contact' => [
+        'address' => 'Mobarakeh Industrial Estate, Sanat 12 St., Isfahan — Kian Behsaz plant',
+        'working_hours' => 'Sat–Wed 8:00–17:00 — Thu 8:00–13:00',
         'lead' => 'Fill in the form or call us directly. We answer within one working day at most.',
         'fix' => 'Please correct the following:',
+        'phone_format' => 'Enter the phone number as 09121234567 or 02188123456.',
+        'invalid' => 'That request is not valid.',
+        'attribute' => [
+            'type' => 'subject',
+            'name' => 'full name',
+            'company' => 'company',
+            'email' => 'email',
+            'phone' => 'phone',
+            'city' => 'city',
+            'subject' => 'title',
+            'message' => 'message',
+        ],
         'website' => 'Website',
         'subject' => 'What is this about?',
         'none' => 'Not selected',
@@ -724,6 +756,130 @@ return [
         '503' => [
             'title' => 'The site is briefly unavailable',
             'lead' => 'We are updating the site. Come back in a few minutes, or contact us directly.',
+        ],
+    ],
+
+    // ---------------------------------------- Shop and accessibility --
+
+    'shop' => [
+        'lead' => 'Several vendors supply each product. Compare their prices side by side and buy from whichever one suits your project.',
+        'empty' => 'Nothing is offered for sale yet.',
+        'from' => 'from',
+        'added' => '“:name” was added to the basket.',
+        'removed' => 'The line was removed from the basket.',
+        'vendors' => ':count vendors',
+        'full_specs' => 'Full specifications',
+        'offers_lead' => ':count vendors supply this product — cheapest first.',
+        'per_unit' => 'per :unit',
+        'min_order' => 'Minimum order: :value :unit',
+        'stock' => 'In stock: :value',
+        'lead_time' => 'Lead time: :days days',
+        'quantity' => 'Quantity',
+        'add' => 'Add to basket',
+        'cart' => 'Basket',
+        'cart_empty' => 'Your basket is empty.',
+        'go' => 'Go to the shop',
+        'update' => 'Update',
+        'remove' => 'Remove “:name” from the basket',
+        'total' => 'Total',
+        'checkout' => 'Checkout',
+        'checkout_lead' => 'There is no online payment. Your order is recorded and the vendor calls you to agree quantity, haulage and delivery time.',
+        'place' => 'Place order',
+        'summary' => 'Order summary',
+        'placed' => 'Order placed',
+        'placed_lead' => 'Your order number is :number. Bookmark this page — the order status updates here.',
+        'status' => 'Status',
+        'back' => 'Back to the shop',
+
+        'currency' => [
+            'تومان' => 'toman',
+        ],
+
+        'status_label' => [
+            'new' => 'Placed',
+            'confirmed' => 'Confirmed',
+            'shipped' => 'Shipped',
+            'done' => 'Delivered',
+            'canceled' => 'Cancelled',
+        ],
+
+        'field' => [
+            'name' => 'Full name',
+            'phone' => 'Mobile',
+            'email' => 'Email (optional)',
+            'province' => 'Province',
+            'city' => 'City',
+            'address' => 'Delivery address',
+            'note' => 'Note (optional)',
+        ],
+    ],
+
+    /*
+    | Labels only a screen reader reads.
+    |
+    | They are never seen, but for someone using a screen reader they are the
+    | only text that element has — so leaving them untranslated means that
+    | part of the site is, for that person, not translated at all.
+    */
+    'a11y' => [
+        'block_3d' => '3D view of :name, :size cm — rotate with the arrow keys',
+        'block_section' => 'Horizontal section of :name — :rows rows and :cols columns of cavities',
+        'score' => ':label :value out of 100',
+        'factory_plan' => 'Aerial view of the factory: the production line, tunnel kiln, dryer, laboratory, warehouse and packing',
+    ],
+
+    // ---------------------------------------- Page titles and meta (SEO) --
+    //
+    // These land in <title> and in the search snippet, so each language
+    // needs its own version — not a word-for-word translation, but what
+    // someone searching in that language actually types.
+
+    'seo' => [
+        'default' => [
+            'title' => 'Ceramic blocks and building materials',
+            'description' => 'Ceramic blocks and building materials made for durability, insulation and engineered performance — with datasheets, CAD files and BIM objects for engineers and architects.',
+        ],
+        'crumb_result' => 'Result',
+        'crumb_downloads' => 'Downloads',
+
+        'about' => ['title' => 'About us', 'description' => 'Over two decades of engineered ceramic block: from a single traditional kiln to a fully automated line producing a hundred and twenty thousand tonnes a year.'],
+        'articles' => ['title' => 'Technical knowledge — articles on ceramic and building', 'description' => 'Technical articles on thermal insulation, building codes, material comparisons, laying ceramic walls and saving energy.'],
+        'contact' => ['title' => 'Contact us and request a quote', 'description' => 'Request a proforma invoice, technical advice, a distribution partnership or a factory visit.'],
+        'distributors' => ['title' => 'Distributors nationwide', 'description' => 'Official ceramic block distributors by province, with phone numbers and addresses.'],
+        'factory' => ['title' => 'The factory — line, kiln and laboratory', 'description' => 'The whole plant: production line, tunnel kiln, dryer, quality control laboratory, warehouse and packing.'],
+        'products' => ['title' => 'Products — ceramic blocks and building materials', 'description' => 'The full catalogue of wall, partition, insulating and roofing ceramic blocks, with specifications, dimensions, compressive strength and thermal conductivity.'],
+        'product' => ['title' => ':name — specifications and datasheet'],
+        'finder' => ['title' => 'Find the right product for your project', 'description' => 'In four simple steps, find the ceramic block that matches your project type, wall type, thickness and insulation requirement.'],
+        'finder_results' => ['title' => 'Product finder result', 'description' => 'Products recommended from your project details.'],
+        'projects' => ['title' => 'Projects built with ceramic block', 'description' => 'Residential, commercial, industrial and mass-housing projects built with our ceramic blocks.'],
+        'search' => ['title' => 'Search: :term'],
+        'solutions' => ['title' => 'Building solutions', 'description' => 'Solutions for external walls, internal partitions, roofing and thermal insulation using ceramic block systems.'],
+        'sustainability' => ['title' => 'Sustainability — from earth to building and back', 'description' => 'Ceramic is an inert, recyclable mineral. Life-cycle performance, kiln heat recovery and waste management at the plant.'],
+        'technical' => ['title' => 'Technical centre — datasheets, CAD, BIM and code', 'description' => 'Everything an engineer, architect or contractor needs: product datasheets, the technical catalogue, DWG and IFC files, Revit objects, the installation guide and certificates.'],
+        'downloads' => ['title' => 'Technical file download centre', 'description' => 'Download datasheets, catalogues, CAD and BIM files, the installation guide and product certificates.'],
+        'installation' => ['title' => 'Installation guide — laying ceramic block correctly', 'description' => 'Laying a ceramic wall step by step: bed preparation, mortar, coursing, lintels, tying into the frame and the contractor’s check points.'],
+        'certificates' => ['title' => 'Certificates and standards', 'description' => 'National standards, building code requirements, ISO 9001 and test reports from accredited laboratories.'],
+        'faq' => ['title' => 'Technical FAQ', 'description' => 'Our engineers answer the common questions about ceramic block, insulation, laying and ordering.'],
+        'technology' => ['title' => 'From earth to structure — production technology', 'description' => 'The nine stages of making a ceramic block, from quarried clay to quality control and packing, with firing temperature, dryer time and the figures for each stage.'],
+        'shop' => ['description' => 'Buy ceramic block direct from vendors — compare several vendors’ prices for each product.'],
+        'shop_product' => ['title' => ':name — buy', 'description' => 'Price and terms for “:name” from :count vendors.'],
+        'order' => ['title' => 'Order :number'],
+    ],
+
+    'document' => [
+        'category' => [
+            'datasheet' => 'Product datasheet',
+            'catalog' => 'Technical catalogue',
+            'cad' => 'CAD file',
+            'bim' => 'BIM object',
+            'installation' => 'Installation guide',
+            'certificate' => 'Certificate',
+            'standard' => 'Standards and code',
+        ],
+        'audience' => [
+            'customer' => 'Client and buyer',
+            'engineer' => 'Engineer and architect',
+            'contractor' => 'Contractor and installer',
         ],
     ],
 

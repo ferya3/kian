@@ -10,7 +10,7 @@
             <dd class="flex flex-1 items-center gap-2">
                 <div class="h-1.5 flex-1 overflow-hidden rounded-full {{ $light ? 'bg-white/12' : 'bg-sand-300' }}"
                      role="meter" aria-valuenow="{{ $bar['value'] }}" aria-valuemin="0" aria-valuemax="100"
-                     aria-label="{{ $bar['label'] }} {{ $bar['value'] }} از ۱۰۰">
+                     aria-label="{{ __('site.a11y.score', ['label' => $bar['label'], 'value' => \App\Support\Jalali::digits($bar['value'])]) }}">
                     <div class="h-full rounded-full bg-gradient-to-l from-ember-500 to-clay-500 transition-[width] duration-700 ease-[var(--ease-out-expo)]"
                          style="width: {{ $bar['value'] }}%"></div>
                 </div>

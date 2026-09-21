@@ -117,28 +117,28 @@ class Product extends Model
     public function specSheet(): array
     {
         return array_values(array_filter([
-            ['key' => 'dimensions', 'label' => 'ابعاد اسمی', 'value' => $this->dimensionLabel(), 'unit' => 'cm'],
-            ['key' => 'thickness', 'label' => 'ضخامت دیوار', 'value' => $this->thicknessCm(), 'unit' => 'cm'],
-            ['key' => 'weight', 'label' => 'وزن هر عدد', 'value' => $this->weight_kg, 'unit' => 'kg'],
-            ['key' => 'strength', 'label' => 'مقاومت فشاری', 'value' => $this->compressive_strength_mpa, 'unit' => 'MPa'],
-            ['key' => 'lambda', 'label' => 'ضریب هدایت حرارتی (λ)', 'value' => $this->thermal_conductivity, 'unit' => 'W/m·K'],
+            ['key' => 'dimensions', 'label' => __('site.spec.row.dimensions'), 'value' => $this->dimensionLabel(), 'unit' => 'cm'],
+            ['key' => 'thickness', 'label' => __('site.spec.row.thickness'), 'value' => $this->thicknessCm(), 'unit' => 'cm'],
+            ['key' => 'weight', 'label' => __('site.spec.row.weight'), 'value' => $this->weight_kg, 'unit' => 'kg'],
+            ['key' => 'strength', 'label' => __('site.spec.row.strength'), 'value' => $this->compressive_strength_mpa, 'unit' => 'MPa'],
+            ['key' => 'lambda', 'label' => __('site.spec.row.lambda'), 'value' => $this->thermal_conductivity, 'unit' => 'W/m·K'],
             $this->thermal_resistance
-                ? ['key' => 'r_value', 'label' => 'مقاومت حرارتی (R)', 'value' => $this->thermal_resistance, 'unit' => 'm²·K/W']
+                ? ['key' => 'r_value', 'label' => __('site.spec.row.r_value'), 'value' => $this->thermal_resistance, 'unit' => 'm²·K/W']
                 : null,
-            ['key' => 'absorption', 'label' => 'جذب آب', 'value' => $this->water_absorption, 'unit' => '%'],
+            ['key' => 'absorption', 'label' => __('site.spec.row.absorption'), 'value' => $this->water_absorption, 'unit' => '%'],
             $this->sound_reduction_db
-                ? ['key' => 'acoustic', 'label' => 'کاهش صوت', 'value' => $this->sound_reduction_db, 'unit' => 'dB']
+                ? ['key' => 'acoustic', 'label' => __('site.spec.row.acoustic'), 'value' => $this->sound_reduction_db, 'unit' => 'dB']
                 : null,
             $this->fire_resistance_min
-                ? ['key' => 'fire', 'label' => 'مقاومت در برابر آتش', 'value' => $this->fire_resistance_min, 'unit' => 'دقیقه']
+                ? ['key' => 'fire', 'label' => __('site.spec.row.fire'), 'value' => $this->fire_resistance_min, 'unit' => __('site.product.minutes')]
                 : null,
             $this->void_ratio
-                ? ['key' => 'void', 'label' => 'درصد تخلخل', 'value' => $this->void_ratio, 'unit' => '%']
+                ? ['key' => 'void', 'label' => __('site.spec.row.void'), 'value' => $this->void_ratio, 'unit' => '%']
                 : null,
-            ['key' => 'per_sqm', 'label' => 'تعداد در متر مربع', 'value' => $this->units_per_sqm, 'unit' => 'عدد'],
-            ['key' => 'per_pallet', 'label' => 'تعداد در پالت', 'value' => $this->units_per_pallet, 'unit' => 'عدد'],
+            ['key' => 'per_sqm', 'label' => __('site.spec.row.per_sqm'), 'value' => $this->units_per_sqm, 'unit' => __('site.spec.units')],
+            ['key' => 'per_pallet', 'label' => __('site.spec.row.per_pallet'), 'value' => $this->units_per_pallet, 'unit' => __('site.spec.units')],
             $this->mortar_per_sqm
-                ? ['key' => 'mortar', 'label' => 'ملات مصرفی', 'value' => $this->mortar_per_sqm, 'unit' => 'لیتر/m²']
+                ? ['key' => 'mortar', 'label' => __('site.spec.row.mortar'), 'value' => $this->mortar_per_sqm, 'unit' => __('site.spec.litres_sqm')]
                 : null,
         ]));
     }

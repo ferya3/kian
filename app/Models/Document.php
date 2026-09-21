@@ -19,21 +19,34 @@ class Document extends Model
 
     protected $guarded = [];
 
+    /**
+     * کلیدهای دسته و مخاطب.
+     *
+     * خودِ کلیدها در دیتابیس ذخیره می‌شوند و قواعد اعتبارسنجی از رویشان
+     * ساخته می‌شود، پس کدند. برچسبشان در lang/<code>/site.php است و با
+     * categories() و audiences() خوانده می‌شود.
+     */
     public const CATEGORIES = [
-        'datasheet' => 'دیتاشیت محصول',
-        'catalog' => 'کاتالوگ فنی',
-        'cad' => 'فایل CAD',
-        'bim' => 'آبجکت BIM',
-        'installation' => 'راهنمای اجرا',
-        'certificate' => 'گواهی‌نامه',
-        'standard' => 'استاندارد و ضوابط',
+        'datasheet', 'catalog', 'cad', 'bim', 'installation', 'certificate', 'standard',
     ];
 
-    public const AUDIENCES = [
-        'customer' => 'کارفرما و مشتری',
-        'engineer' => 'مهندس و معمار',
-        'contractor' => 'پیمانکار و مجری',
-    ];
+    public const AUDIENCES = ['customer', 'engineer', 'contractor'];
+
+    /** @return array<string, string> کلید => برچسب، به زبان صفحه */
+    public static function categories(): array
+    {
+        return collect(self::CATEGORIES)
+            ->mapWithKeys(fn (string $key) => [$key => __("site.document.category.{$key}")])
+            ->all();
+    }
+
+    /** @return array<string, string> */
+    public static function audiences(): array
+    {
+        return collect(self::AUDIENCES)
+            ->mapWithKeys(fn (string $key) => [$key => __("site.document.audience.{$key}")])
+            ->all();
+    }
 
     public function getRouteKeyName(): string
     {
@@ -52,7 +65,7 @@ class Document extends Model
 
     public function categoryLabel(): string
     {
-        return self::CATEGORIES[$this->category] ?? $this->category;
+        return static::categories()[$this->category] ?? $this->category;
     }
 
     public function sizeLabel(): string

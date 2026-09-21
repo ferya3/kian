@@ -14,9 +14,9 @@ class ContactController extends Controller
     public function show(Request $request)
     {
         $this->seo()
-            ->title('تماس با ما و درخواست قیمت')
-            ->description('درخواست پیش‌فاکتور، مشاوره فنی، همکاری به‌عنوان نماینده فروش یا بازدید از کارخانه.')
-            ->breadcrumbs([['خانه', route('home')], ['تماس با ما', null]])
+            ->title(__('site.seo.contact.title'))
+            ->description(__('site.seo.contact.description'))
+            ->breadcrumbs([[__('site.nav.home'), route('home')], [__('site.nav.items.contact'), null]])
             ->schema(Schema::localBusiness());
 
         return view('pages.contact', [

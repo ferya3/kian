@@ -8,6 +8,7 @@ use App\Models\Product;
 use App\Models\Project;
 use App\Models\Solution;
 use App\Models\Stat;
+use App\Support\Brand;
 use App\Support\Schema;
 
 class HomeController extends Controller
@@ -15,8 +16,8 @@ class HomeController extends Controller
     public function __invoke()
     {
         $this->seo()
-            ->title(config('kian.brand.name').' — '.config('kian.seo.default_title'))
-            ->description(config('kian.seo.default_description'))
+            ->title(Brand::name().' — '.__('site.seo.default.title'))
+            ->description(__('site.seo.default.description'))
             ->schema(Schema::localBusiness());
 
         return view('pages.home', [

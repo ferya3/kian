@@ -12,7 +12,7 @@ class CartController extends Controller
 {
     public function show(Seo $seo)
     {
-        $seo->title('سبد خرید')->noindex();
+        $seo->title(__('site.shop.cart'))->noindex();
 
         return view('pages.shop.cart', [
             'lines' => Cart::lines(),
@@ -38,7 +38,7 @@ class CartController extends Controller
 
         Cart::put($offer, (int) ($data['quantity'] ?? $offer->min_order));
 
-        return back()->with('status', '«'.$offer->product->name.'» به سبد اضافه شد.');
+        return back()->with('status', __('site.shop.added', ['name' => $offer->product->name]));
     }
 
     public function update(Request $request, Offer $offer)
@@ -56,6 +56,6 @@ class CartController extends Controller
     {
         Cart::forget($offer->id);
 
-        return back()->with('status', 'ردیف از سبد برداشته شد.');
+        return back()->with('status', __('site.shop.removed'));
     }
 }

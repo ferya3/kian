@@ -4,15 +4,16 @@
     <section class="bg-sand-100 section">
         <div class="container-page max-w-3xl">
             <p class="eyebrow text-clay-600">Order</p>
-            <h1 class="mt-2 text-h2 font-extrabold">سفارش ثبت شد</h1>
+            <h1 class="mt-2 text-h2 font-extrabold">{{ __('site.shop.placed') }}</h1>
 
             <p class="mt-4 text-ink-500">
-                شماره‌ی سفارش شما <span class="tech font-extrabold text-ink-900">{{ Jalali::digits($order->number) }}</span> است.
-                این صفحه را نشان کنید — وضعیت سفارش همین‌جا به‌روز می‌شود.
+                {!! __('site.shop.placed_lead', [
+                    'number' => '<span class="tech font-extrabold text-ink-900">'.e(Jalali::digits($order->number)).'</span>',
+                ]) !!}
             </p>
 
             <p class="mt-2 text-meta text-ink-400">
-                وضعیت: <span class="font-bold text-ink-700">{{ $order->statusLabel() }}</span>
+                {{ __('site.shop.status') }}: <span class="font-bold text-ink-700">{{ $order->statusLabel() }}</span>
             </p>
 
             {{--
@@ -43,11 +44,11 @@
             @endforeach
 
             <p class="mt-6 flex items-baseline justify-between rounded-[var(--radius-panel)] border border-sand-300 bg-sand-50 p-5 text-lead">
-                <span>جمع کل</span>
+                <span>{{ __('site.shop.total') }}</span>
                 <span class="tech font-extrabold text-clay-600">{{ Shop::price($order->total) }}</span>
             </p>
 
-            <x-cta :href="route('shop.index')" variant="ghost" class="mt-8">بازگشت به فروشگاه</x-cta>
+            <x-cta :href="route('shop.index')" variant="ghost" class="mt-8">{{ __('site.shop.back') }}</x-cta>
         </div>
     </section>
 </x-layouts.app>

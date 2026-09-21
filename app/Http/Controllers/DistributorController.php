@@ -18,9 +18,9 @@ class DistributorController extends Controller
             ->get();
 
         $this->seo()
-            ->title('نمایندگان فروش در سراسر کشور')
-            ->description('فهرست نمایندگی‌های رسمی فروش بلوک سفالی به تفکیک استان، همراه با شماره تماس و آدرس.')
-            ->breadcrumbs([['خانه', route('home')], ['نمایندگان', null]]);
+            ->title(__('site.seo.distributors.title'))
+            ->description(__('site.seo.distributors.description'))
+            ->breadcrumbs([[__('site.nav.home'), route('home')], [__('site.nav.items.distributors'), null]]);
 
         return view('pages.distributors', [
             'distributors' => $distributors->groupBy('province'),

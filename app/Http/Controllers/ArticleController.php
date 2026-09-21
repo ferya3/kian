@@ -10,9 +10,9 @@ class ArticleController extends Controller
     public function index()
     {
         $this->seo()
-            ->title('دانش فنی — مقالات تخصصی سفال و ساختمان')
-            ->description('مقالات فنی درباره عایق‌کاری حرارتی، مبحث ۱۹، مقایسه مصالح، اجرای دیوار سفالی و صرفه‌جویی انرژی.')
-            ->breadcrumbs([['خانه', route('home')], ['دانش فنی', null]]);
+            ->title(__('site.seo.articles.title'))
+            ->description(__('site.seo.articles.description'))
+            ->breadcrumbs([[__('site.nav.home'), route('home')], [__('site.nav.items.technical_index'), null]]);
 
         return view('pages.articles.index', [
             'articles' => Article::query()->published()->paginate(9),
@@ -29,8 +29,8 @@ class ArticleController extends Controller
             ->image($article->cover_image)
             ->type('article')
             ->breadcrumbs([
-                ['خانه', route('home')],
-                ['دانش فنی', route('articles.index')],
+                [__('site.nav.home'), route('home')],
+                [__('site.nav.items.technical_index'), route('articles.index')],
                 [$article->title, null],
             ])
             ->schema(Schema::article($article));

@@ -9,9 +9,9 @@ class SolutionController extends Controller
     public function index()
     {
         $this->seo()
-            ->title('راهکارهای ساختمانی')
-            ->description('راهکارهای دیوار خارجی، جداکننده داخلی، سقف و عایق‌کاری حرارتی با سیستم‌های بلوک سفالی.')
-            ->breadcrumbs([['خانه', route('home')], ['راهکارها', null]]);
+            ->title(__('site.seo.solutions.title'))
+            ->description(__('site.seo.solutions.description'))
+            ->breadcrumbs([[__('site.nav.home'), route('home')], [__('site.nav.items.solutions_index'), null]]);
 
         return view('pages.solutions.index', [
             'solutions' => Solution::query()->with('products')->orderBy('position')->get(),
@@ -27,8 +27,8 @@ class SolutionController extends Controller
             ->description($solution->summary)
             ->image($solution->image)
             ->breadcrumbs([
-                ['خانه', route('home')],
-                ['راهکارها', route('solutions.index')],
+                [__('site.nav.home'), route('home')],
+                [__('site.nav.items.solutions_index'), route('solutions.index')],
                 [$solution->title, null],
             ]);
 

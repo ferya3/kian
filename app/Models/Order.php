@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\Shop;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
@@ -40,7 +41,7 @@ class Order extends Model
 
     public function statusLabel(): string
     {
-        return config('shop.statuses')[$this->status] ?? $this->status;
+        return Shop::status($this->status);
     }
 
     /** ردیف‌ها به تفکیک فروشنده — هر فروشنده بخش خودش را جدا پیگیری می‌کند. */

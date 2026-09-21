@@ -37,7 +37,7 @@
              @keydown.arrow-down.prevent="nudge('x', 8)"
              tabindex="0"
              role="img"
-             aria-label="نمای سه‌بعدی {{ $product->name }} با ابعاد {{ $product->dimensionLabel() }} سانتی‌متر — با کلیدهای جهت بچرخانید"
+             aria-label="{{ __('site.a11y.block_3d', ['name' => $product->name, 'size' => \App\Support\Jalali::digits($product->dimensionLabel())]) }}"
          @endif>
 
         {{-- وجه جلو --}}

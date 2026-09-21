@@ -11,9 +11,9 @@ class FactoryController extends Controller
     public function __invoke()
     {
         $this->seo()
-            ->title('کارخانه — خط تولید، کوره و آزمایشگاه')
-            ->description('نمای کامل کارخانه: خط تولید، کوره تونلی، خشک‌کن، آزمایشگاه کنترل کیفیت، انبار و بسته‌بندی.')
-            ->breadcrumbs([['خانه', route('home')], ['کارخانه', null]]);
+            ->title(__('site.seo.factory.title'))
+            ->description(__('site.seo.factory.description'))
+            ->breadcrumbs([[__('site.nav.home'), route('home')], [__('site.nav.items.factory'), null]]);
 
         return view('pages.factory', [
             'sections' => FactorySection::query()->orderBy('position')->get(),

@@ -14,9 +14,9 @@ class ProductFinderController extends Controller
     public function show(Request $request)
     {
         $this->seo()
-            ->title('انتخاب محصول مناسب پروژه')
-            ->description('در چهار گام ساده، بلوک سفالی مناسب نوع پروژه، نوع دیوار، ضخامت و سطح عایق‌کاری مورد نیاز خود را پیدا کنید.')
-            ->breadcrumbs([['خانه', route('home')], ['انتخاب محصول', null]]);
+            ->title(__('site.seo.finder.title'))
+            ->description(__('site.seo.finder.description'))
+            ->breadcrumbs([[__('site.nav.home'), route('home')], [__('site.actions.finder'), null]]);
 
         return view('pages.finder', ['criteria' => $this->criteria($request)]);
     }
@@ -27,13 +27,13 @@ class ProductFinderController extends Controller
         $matches = $this->finder->search($criteria);
 
         $this->seo()
-            ->title('نتیجه انتخاب محصول')
-            ->description('محصولات پیشنهادی بر اساس مشخصات پروژه شما.')
+            ->title(__('site.seo.finder_results.title'))
+            ->description(__('site.seo.finder_results.description'))
             ->noindex()
             ->breadcrumbs([
-                ['خانه', route('home')],
-                ['انتخاب محصول', route('finder.show')],
-                ['نتیجه', null],
+                [__('site.nav.home'), route('home')],
+                [__('site.actions.finder'), route('finder.show')],
+                [__('site.seo.crumb_result'), null],
             ]);
 
         $view = view('pages.finder-results', [

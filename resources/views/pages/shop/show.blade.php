@@ -20,7 +20,7 @@
                     <p class="mt-5 leading-relaxed text-ink-500">{{ $product->summary }}</p>
 
                     <x-cta :href="route('products.show', $product)" variant="ghost" size="sm" class="mt-5">
-                        مشخصات فنی کامل
+                        {{ __('site.shop.full_specs') }}
                     </x-cta>
                 </div>
 
@@ -29,7 +29,7 @@
                     <p class="eyebrow text-clay-600">Vendors</p>
                     <h1 class="mt-2 text-h2 font-extrabold text-balance">{{ $product->name }}</h1>
                     <p class="mt-3 text-ink-500">
-                        {{ Jalali::digits($offers->count()) }} فروشنده این محصول را عرضه می‌کنند — از ارزان‌ترین.
+                        {{ __('site.shop.offers_lead', ['count' => Jalali::digits($offers->count())]) }}
                     </p>
 
                     @if(session('status'))
@@ -53,19 +53,19 @@
 
                                     <div class="text-end">
                                         <p class="tech text-xl font-extrabold text-clay-600">{{ Shop::price($offer->price) }}</p>
-                                        <p class="text-meta text-ink-400">هر {{ $offer->unit }}</p>
+                                        <p class="text-meta text-ink-400">{{ __('site.shop.per_unit', ['unit' => $offer->unit]) }}</p>
                                     </div>
                                 </div>
 
                                 <p class="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-meta text-ink-500">
-                                    <span>حداقل سفارش: {{ Jalali::digits($offer->min_order) }} {{ $offer->unit }}</span>
+                                    <span>{{ __('site.shop.min_order', ['value' => Jalali::digits($offer->min_order), 'unit' => $offer->unit]) }}</span>
 
                                     @if($offer->stock !== null)
-                                        <span>موجودی: {{ Jalali::digits($offer->stock) }}</span>
+                                        <span>{{ __('site.shop.stock', ['value' => Jalali::digits($offer->stock)]) }}</span>
                                     @endif
 
                                     @if($offer->lead_time_days)
-                                        <span>زمان تحویل: {{ Jalali::digits($offer->lead_time_days) }} روز</span>
+                                        <span>{{ __('site.shop.lead_time', ['days' => Jalali::digits($offer->lead_time_days)]) }}</span>
                                     @endif
                                 </p>
 
@@ -73,7 +73,7 @@
                                     @csrf
                                     <input type="hidden" name="offer" value="{{ $offer->id }}">
 
-                                    <label class="sr-only" for="qty-{{ $offer->id }}">تعداد</label>
+                                    <label class="sr-only" for="qty-{{ $offer->id }}">{{ __('site.shop.quantity') }}</label>
                                     <input id="qty-{{ $offer->id }}" name="quantity" type="number" inputmode="numeric"
                                            value="{{ $offer->min_order }}"
                                            min="{{ $offer->min_order }}"
@@ -81,7 +81,7 @@
                                            class="h-11 w-24 rounded-xl border border-sand-300 bg-white px-3 text-field outline-none focus:border-clay-400">
 
                                     <button type="submit" class="tap rounded-full bg-clay-500 px-5 font-semibold text-white transition hover:bg-clay-600">
-                                        افزودن به سبد
+                                        {{ __('site.shop.add') }}
                                     </button>
                                 </form>
                             </li>

@@ -21,9 +21,9 @@ class ProjectController extends Controller
             ->get();
 
         $this->seo()
-            ->title('پروژه‌های اجراشده با بلوک سفالی')
-            ->description('نمونه پروژه‌های مسکونی، تجاری، صنعتی و انبوه‌سازی که با بلوک‌های سفالی ما اجرا شده‌اند.')
-            ->breadcrumbs([['خانه', route('home')], ['پروژه‌ها', null]]);
+            ->title(__('site.seo.projects.title'))
+            ->description(__('site.seo.projects.description'))
+            ->breadcrumbs([[__('site.nav.home'), route('home')], [__('site.nav.items.projects_index'), null]]);
 
         return view('pages.projects.index', compact('categories', 'projects'));
     }
@@ -46,8 +46,8 @@ class ProjectController extends Controller
             ->image($project->cover_image)
             ->type('article')
             ->breadcrumbs([
-                ['خانه', route('home')],
-                ['پروژه‌ها', route('projects.index')],
+                [__('site.nav.home'), route('home')],
+                [__('site.nav.items.projects_index'), route('projects.index')],
                 [$project->title, null],
             ]);
 

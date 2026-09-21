@@ -41,8 +41,8 @@ class DocumentResource extends Resource
             Field::text('title', 'عنوان فایل')->rules(['required'])->inList(true),
             Field::text('title_en', 'عنوان انگلیسی')->rules(['nullable'])->half(),
             Field::slug('slug')->rules(['required'])->half(),
-            Field::select('category', 'نوع فایل', Document::CATEGORIES)->rules(['required'])->inList()->third(),
-            Field::select('audience', 'مخاطب', Document::AUDIENCES)->rules(['required'])->inList()->third(),
+            Field::select('category', 'نوع فایل', Document::categories())->rules(['required'])->inList()->third(),
+            Field::select('audience', 'مخاطب', Document::audiences())->rules(['required'])->inList()->third(),
             Field::select('format', 'فرمت', [
                 'pdf' => 'PDF', 'dwg' => 'DWG', 'dxf' => 'DXF', 'rvt' => 'Revit',
                 'ifc' => 'IFC', 'skp' => 'SketchUp', 'xlsx' => 'Excel', 'zip' => 'ZIP',
