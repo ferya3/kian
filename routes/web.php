@@ -49,7 +49,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/', DashboardController::class)->name('dashboard');
 
         // پیش از مسیر عمومی {resource} تعریف می‌شود، وگرنه media یک منبع تلقی می‌شود
-        Route::get('media', MediaController::class)->name('media');
+        Route::get('media', MediaController::class)
+            ->middleware('admin:staff')
+            ->name('media');
 
         Route::get('activity', ActivityLogController::class)
             ->middleware('admin:admin')

@@ -5,6 +5,7 @@ namespace App\Models;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -17,6 +18,7 @@ class User extends Authenticatable
     public const ROLES = [
         'admin' => 'مدیر کل',
         'editor' => 'ویرایشگر محتوا',
+        'vendor' => 'فروشنده',
     ];
 
     protected $fillable = [
@@ -25,6 +27,7 @@ class User extends Authenticatable
         'password',
         'role',
         'is_active',
+        'vendor_id',
     ];
 
     protected $hidden = [
@@ -51,6 +54,23 @@ class User extends Authenticatable
     public function isAdmin(): bool
     {
         return $this->role === 'admin';
+    }
+
+    /**
+     * فروشنده: همان پنل، ولی فقط عرضه‌ها و سفارش‌های خودش.
+     *
+     * نقش به‌تنهایی کافی نیست و vendor_id هم باید باشد. کاربری با نقش
+     * فروشنده و بدون فروشگاه، اگر «فروشنده» شمرده می‌شد، فهرستی بدون قید
+     * می‌دید — یعنی عرضه‌های همه.
+     */
+    public function isVendor(): bool
+    {
+        return $this->role === 'vendor' && $this->vendor_id !== null;
+    }
+
+    public function vendor(): BelongsTo
+    {
+        return $this->belongsTo(Vendor::class);
     }
 
     public function roleLabel(): string

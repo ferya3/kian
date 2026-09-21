@@ -37,6 +37,18 @@ abstract class Resource
     public static bool $adminOnly = false;
 
     /**
+     * نقش‌هایی که این منبع را می‌بینند. آرایه‌ی خالی یعنی «کارکنان سایت».
+     *
+     * تا پیش از فروشگاه، هرکه وارد پنل می‌شد کارمندِ سایت بود و همه‌چیز را
+     * می‌دید؛ فروشنده کارمند نیست. پس به‌جای افزودنِ شرطِ «و فروشنده نباشد»
+     * به هر منبع — که یکی‌اش فراموش می‌شد و دادهٔ بقیه را لو می‌داد — خودِ
+     * منبع اعلام می‌کند مالِ چه کسی است.
+     *
+     * @var array<int, string>
+     */
+    public static array $roles = [];
+
+    /**
      * در فهرست گروه‌بندی‌شده‌ی منو دیده شود؟
      *
      * منبعی که پیوند سنجاق‌شده‌ی خودش را در بالای منو دارد، اینجا false می‌شود
@@ -63,6 +75,33 @@ abstract class Resource
     public static function with(): array
     {
         return [];
+    }
+
+    /**
+     * یک رکورد — از همان کوئریِ منبع و نه مستقیم از مدل.
+     *
+     * تفاوتش امنیتی است: منبعی که query را قید می‌زند (مثل عرضه‌ها که به
+     * فروشگاهِ کاربر محدود می‌شود) باید همان قید را در ویرایش و حذف هم
+     * داشته باشد. با findOrFail روی مدل، فهرست قید می‌خورد ولی نشانیِ
+     * ویرایش نه — و حدسِ یک id کافی بود.
+     */
+    public static function findOrFail(string|int $id): Model
+    {
+        return static::query()->findOrFail($id);
+    }
+
+    /**
+     * آخرین فرصتِ منبع پیش از ذخیره.
+     *
+     * برای مقدارهایی که نباید از فرم بیایند — مثل شناسه‌ی فروشگاه، که از
+     * کاربرِ واردشده خوانده می‌شود و نه از چیزی که مرورگر فرستاده.
+     *
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
+    public static function beforeSave(array $data, ?Model $record): array
+    {
+        return $data;
     }
 
     public static function query(): Builder

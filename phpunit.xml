@@ -32,5 +32,12 @@
         <env name="PULSE_ENABLED" value="false"/>
         <env name="TELESCOPE_ENABLED" value="false"/>
         <env name="NIGHTWATCH_ENABLED" value="false"/>
+        <!--
+            فروشگاه در تست‌ها همیشه از «خاموش» شروع می‌کند، مستقل از .env
+            توسعه‌دهنده. تست‌هایی که خاموشی را می‌سنجند وگرنه روی ماشینی که
+            کلید را روشن کرده بی‌صدا سبز یا قرمز می‌شدند، و همان تست‌ها دقیقاً
+            برای همان حالت نوشته شده‌اند.
+        -->
+        <env name="SHOP_ENABLED" value="false"/>
     </php>
 </phpunit>

@@ -77,7 +77,7 @@ class ResourceController extends Controller
         $class = $this->resolve($resource);
         abort_unless($class::$creatable, 404);
 
-        $data = $this->validated($request, $class, null);
+        $data = $class::beforeSave($this->validated($request, $class, null), null);
 
         $record = $class::$model::create($data);
 
@@ -96,7 +96,7 @@ class ResourceController extends Controller
 
         return view('admin.resource.form', [
             'resource' => $class,
-            'record' => $class::$model::findOrFail($id),
+            'record' => $class::findOrFail($id),
             'creating' => false,
         ]);
     }
@@ -104,11 +104,11 @@ class ResourceController extends Controller
     public function update(Request $request, string $resource, string $id)
     {
         $class = $this->resolve($resource);
-        $record = $class::$model::findOrFail($id);
+        $record = $class::findOrFail($id);
 
         $this->guardSelfLockout($class, $record, $request);
 
-        $data = $this->validated($request, $class, $record);
+        $data = $class::beforeSave($this->validated($request, $class, $record), $record);
 
         $record->fill($data);
         $changed = array_keys($record->getDirty());
@@ -161,7 +161,7 @@ class ResourceController extends Controller
         $class = $this->resolve($resource);
         abort_unless($class::$deletable, 404);
 
-        $record = $class::$model::findOrFail($id);
+        $record = $class::findOrFail($id);
 
         // مدیر نمی‌تواند حساب خودش را حذف کند
         if ($record instanceof User && $record->is(auth()->user())) {

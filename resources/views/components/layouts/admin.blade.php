@@ -49,6 +49,12 @@
         </div>
 
         <nav class="flex-1 overflow-y-auto px-3 py-4" aria-label="بخش‌های پنل">
+            {{--
+                سه پیوندِ سنجاق‌شده‌ی زیر از Registry نمی‌گذرند، پس قیدِ نقش را
+                خودشان باید داشته باشند. فروشنده روی هر سه ۴۰۳ می‌گیرد؛ پیوندی
+                که به بن‌بست می‌رسد، بدتر از نبودنش است.
+            --}}
+            @unless(auth()->user()?->isVendor())
             <a href="{{ route('admin.dashboard') }}"
                @class([
                    'mb-4 flex items-center gap-3 rounded-xl px-3 py-2.5 text-[0.9375rem] font-semibold transition',
@@ -82,6 +88,7 @@
                 <x-icon name="image" size="18" />
                 {{ \App\Admin\Resources\SiteMediaResource::$label }}
             </a>
+            @endunless
 
             @foreach(Registry::navigation() as $group => $resources)
                 <p class="eyebrow px-3 pb-2 pt-4 text-sand-200/35">{{ $group }}</p>

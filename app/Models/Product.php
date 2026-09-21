@@ -65,6 +65,18 @@ class Product extends Model
         return $this->hasMany(Document::class)->orderBy('position');
     }
 
+    /**
+     * عرضه‌های این محصول — فروشگاه.
+     *
+     * محصول خودش قیمت ندارد و نباید داشته باشد: قیمت خاصیتِ رابطه‌ی
+     * «فروشنده و محصول» است. تا وقتی کلید فروشگاه خاموش است، این رابطه
+     * فقط خالی برمی‌گردد و هیچ‌جا خوانده نمی‌شود.
+     */
+    public function offers(): HasMany
+    {
+        return $this->hasMany(Offer::class);
+    }
+
     public function projects(): BelongsToMany
     {
         return $this->belongsToMany(Project::class);

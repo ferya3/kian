@@ -27,6 +27,7 @@ use App\Http\Controllers\SolutionController;
 use App\Http\Controllers\SustainabilityController;
 use App\Http\Controllers\TechnicalController;
 use App\Http\Controllers\TechnologyController;
+use App\Support\Shop;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class)->name('home');
@@ -75,3 +76,13 @@ Route::post('/contact', [ContactController::class, 'store'])
     ->name('contact.store');
 
 Route::get('/search', SearchController::class)->name('search');
+
+/*
+| فروشگاه — فقط وقتی کلیدش روشن باشد.
+|
+| ثبت‌نکردنِ مسیر، و نه پنهان‌کردنِ پیوندش: با کلیدِ خاموش هیچ نشانیِ فروشگاهی
+| وجود ندارد و کسی هم با حدسِ نشانی به نیمه‌کاره‌ای نمی‌رسد.
+*/
+if (Shop::enabled()) {
+    require __DIR__.'/shop.php';
+}

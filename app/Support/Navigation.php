@@ -2,6 +2,8 @@
 
 namespace App\Support;
 
+use Illuminate\Support\Facades\Route;
+
 /**
  * ساختار ناوبری اصلی. یک منبع حقیقت واحد برای هدر دسکتاپ، منوی موبایل و فوتر.
  */
@@ -10,7 +12,7 @@ class Navigation
     /** @return array<int, array{label: string, route: string, mega?: bool, children?: array}> */
     public static function items(): array
     {
-        return [
+        $items = [
             [
                 'label' => 'محصولات',
                 'route' => 'products.index',
@@ -55,6 +57,26 @@ class Navigation
                 ],
             ],
         ];
+
+        /*
+        | فروشگاه، اگر روشن باشد.
+        |
+        | کنارِ «محصولات» می‌نشیند و نه ته فهرست: کسی که آمده بخرد، اول از
+        | همه دنبال همین است.
+        |
+        | شرطِ دوم — وجودِ خودِ مسیر — تشریفاتی نیست. مسیرها کش می‌شوند
+        | (route:cache) ولی پیکربندی از .env می‌آید؛ اگر کسی کلید را روشن
+        | کند و کشِ مسیرها را نسازد، منو نشانیِ مسیری را می‌سازد که وجود
+        | ندارد و *هر صفحه‌ی سایت* با خطا می‌افتد، نه فقط فروشگاه.
+        */
+        if (Shop::enabled() && Route::has('shop.index')) {
+            array_splice($items, 1, 0, [[
+                'label' => 'فروشگاه',
+                'route' => 'shop.index',
+            ]]);
+        }
+
+        return $items;
     }
 
     /**

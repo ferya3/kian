@@ -53,6 +53,15 @@ const ADMIN_PATHS = [
     '/admin/users', '/admin/activity', '/admin/media', '/admin/certificates',
 ];
 
+/*
+ * صفحه‌های فروشگاه فقط وقتی بررسی می‌شوند که فروشگاه روشن باشد.
+ *
+ * اسکریپت به پیکربندی PHP دسترسی ندارد، پس می‌پرسد: اگر /shop پاسخ دهد،
+ * روشن است. این از یک متغیرِ جداگانه بهتر است — متغیر می‌تواند با واقعیتِ
+ * سرور ناهماهنگ شود و آن‌وقت یا صفحه‌ی ۴۰۴ ممیزی می‌شود یا ویترین اصلاً نه.
+ */
+const SHOP_PATHS = ['/shop', '/cart', '/checkout'];
+
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || '';
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || '';
 
@@ -190,6 +199,7 @@ const chromiumPath = [process.env.CHROMIUM_PATH, '/opt/pw-browsers/chromium']
 const browser = await chromium.launch({ executablePath: chromiumPath });
 
 let failures = 0;
+let shopAudited = false;
 
 for (const vp of VIEWPORTS) {
     const page = await browser.newPage({
@@ -201,6 +211,13 @@ for (const vp of VIEWPORTS) {
     const found = { zoom: new Set(), tap: new Set(), gap: new Set(), tiny: new Set(), touchNone: new Set(), overflow: new Set() };
 
     const paths = [...PATHS];
+
+    const shopProbe = await page.goto(BASE + '/shop', { waitUntil: 'domcontentloaded' });
+
+    if (shopProbe && shopProbe.status() === 200) {
+        paths.push(...SHOP_PATHS);
+        shopAudited = true;
+    }
 
     if (ADMIN_EMAIL && ADMIN_PASSWORD) {
         // صفحه‌ی ورود باید پیش از احراز هویت بررسی شود، وگرنه به داشبورد می‌رود.
@@ -265,5 +282,6 @@ for (const vp of VIEWPORTS) {
 
 await browser.close();
 
+console.log(shopAudited ? 'صفحه‌های فروشگاه هم بررسی شدند.' : 'فروشگاه خاموش است — صفحه‌هایش بررسی نشد.');
 console.log(failures === 0 ? '\nممیزی موبایل: قبول\n' : `\nممیزی موبایل: ${failures} ایراد\n`);
 process.exit(failures === 0 ? 0 : 1);

@@ -15,6 +15,17 @@ class DashboardController extends Controller
 {
     public function __invoke()
     {
+        /*
+         * فروشنده داشبوردِ سایت را نمی‌بیند.
+         *
+         * ۴۰۳ نمی‌دهیم چون این صفحه‌ی اولِ پنل است و بلافاصله پس از ورود
+         * باز می‌شود؛ فرستادنش به عرضه‌های خودش، هم درست است و هم کاری که
+         * برای انجامش آمده.
+         */
+        if (auth()->user()?->isVendor()) {
+            return redirect()->route('admin.resource.index', 'offers');
+        }
+
         return view('admin.dashboard', [
             'tiles' => [
                 [
