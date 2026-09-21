@@ -108,6 +108,20 @@ trait HasTranslations
 
         $this->translationCache = null;
         $this->unsetRelation('translations');
+
+        $this->afterTranslationsSaved();
+    }
+
+    /**
+     * قلابی برای مدلی که بیرون از خودش هم چیزی برای به‌روز کردن دارد.
+     *
+     * Setting نقشه‌اش را برای هر زبان کش می‌کند و آن کش با نوشتنِ ترجمه کهنه
+     * می‌شود. رویدادهای خودِ Translation کافی نبودند: پاک‌کردنِ ترجمه‌ی خالی
+     * از راه Query Builder انجام می‌شود و رویدادِ مدل ندارد.
+     */
+    protected function afterTranslationsSaved(): void
+    {
+        //
     }
 
     /** @return array<string, array<string, string>> locale => field => value */

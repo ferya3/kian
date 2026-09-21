@@ -2,11 +2,17 @@
 
 namespace App\Models;
 
+use App\Support\HasTranslations;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 class Stat extends Model
 {
+    use HasTranslations;
+
+    /** عدد و پیشوند و پسوند کدند؛ برچسب و شرحش متن‌اند. */
+    public array $translatable = ['label', 'description'];
+
     protected $guarded = [];
 
     protected function casts(): array

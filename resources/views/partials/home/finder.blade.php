@@ -9,13 +9,12 @@
     <div class="container-page">
 
         <div>
-            <p class="eyebrow text-clay-600" data-reveal>Find your block</p>
+            <p class="eyebrow text-clay-600" data-reveal>{{ __('site.home.finder.eyebrow') }}</p>
             <h2 id="finder-heading" class="mt-3 text-h2 font-extrabold text-balance" data-reveal>
-                محصول مناسب پروژه‌ی خود را پیدا کنید
+                {{ __('site.home.finder.title') }}
             </h2>
             <p class="mt-4 max-w-2xl text-lead text-ink-500" data-reveal>
-                چهار پرسش، سه پیشنهاد. به‌جای مرور کاتالوگ، از نیاز واقعی پروژه شروع کنید:
-                نوع سازه، جای دیوار در پلان، ضخامت مجاز و انتظار حرارتی.
+                {{ __('site.home.finder.lead') }}
             </p>
         </div>
 
@@ -30,7 +29,7 @@
             خوانا نمی‌ماند.
         --}}
         <ul class="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-3" data-reveal-stagger="80">
-            @foreach(config('kian.audiences') as $key => $audience)
+            @foreach(\App\Support\Options::audiences() as $key => $audience)
                 <li>
                     <a href="{{ route($audience['route']) }}" data-reveal
                        class="group flex h-full items-center gap-3 rounded-xl border border-sand-300 bg-sand-50 px-4 py-3.5 transition hover:border-clay-300 hover:bg-clay-50">

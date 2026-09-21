@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Services\ProductFinder;
+use App\Support\Options;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
@@ -57,10 +58,10 @@ class ProductFinderController extends Controller
     protected function criteria(Request $request): array
     {
         $validated = $request->validate([
-            'project_type' => ['nullable', Rule::in(array_keys(config('kian.finder.project_types')))],
-            'wall_type' => ['nullable', Rule::in(array_keys(config('kian.finder.wall_types')))],
+            'project_type' => ['nullable', Rule::in(array_keys(Options::finder('project_types')))],
+            'wall_type' => ['nullable', Rule::in(array_keys(Options::finder('wall_types')))],
             'thickness' => ['nullable', Rule::in(config('kian.finder.thicknesses'))],
-            'insulation' => ['nullable', Rule::in(array_keys(config('kian.finder.insulation_levels')))],
+            'insulation' => ['nullable', Rule::in(array_keys(Options::finder('insulation_levels')))],
         ]);
 
         return [

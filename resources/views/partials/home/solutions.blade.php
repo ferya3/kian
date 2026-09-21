@@ -3,11 +3,11 @@
         <div class="flex flex-wrap items-end justify-between gap-6">
             <x-section-heading
                 eyebrow="Solutions"
-                title="راهکار، نه فقط محصول"
-                lead="مسئله‌ی پروژه را بگویید تا ترکیب درست محصولات را پیشنهاد بدهیم."
+                :title="__('site.home.solutions.title')"
+                :lead="__('site.home.solutions.lead')"
                 id="solutions-heading" class="lg:max-w-2xl" />
             <div data-reveal>
-                <x-cta :href="route('solutions.index')" variant="ghost">همه راهکارها</x-cta>
+                <x-cta :href="route('solutions.index')" variant="ghost">{{ __('site.home.solutions.all') }}</x-cta>
             </div>
         </div>
 
@@ -22,7 +22,7 @@
                         <p class="mt-3 flex-1 text-[0.9375rem] leading-relaxed text-ink-500">{{ $solution->summary }}</p>
 
                         <span class="mt-5 inline-flex items-center gap-1.5 text-[0.875rem] font-semibold text-ink-700 transition group-hover:text-clay-600">
-                            مشاهده راهکار
+                            {{ __('site.home.solutions.view') }}
                             <x-icon name="arrow-left" size="15" class="transition-transform duration-300 group-hover:-translate-x-1" />
                         </span>
                     </a>

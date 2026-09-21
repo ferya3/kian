@@ -6,6 +6,7 @@ use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Support\Admin\Field;
 use App\Support\Admin\Resource;
+use App\Support\Options;
 use Illuminate\Database\Eloquent\Model;
 
 class ProductResource extends Resource
@@ -90,13 +91,13 @@ class ProductResource extends Resource
             Field::number('sustainability_score', 'امتیاز پایداری')->rules(['nullable', 'min:0', 'max:100'])->suffix('۰ تا ۱۰۰')->third()->section('امتیازهای عملکرد'),
 
             Field::checkboxes('project_types', 'نوع پروژه‌های مناسب',
-                collect(config('kian.finder.project_types'))->map(fn ($t) => $t['label'])->all())
+                collect(Options::finder('project_types'))->map(fn ($t) => $t['label'])->all())
                 ->rules(['nullable'])->half()->section('موتور انتخاب محصول'),
             Field::checkboxes('wall_types', 'کاربرد در دیوار',
-                collect(config('kian.finder.wall_types'))->map(fn ($t) => $t['label'])->all())
+                collect(Options::finder('wall_types'))->map(fn ($t) => $t['label'])->all())
                 ->rules(['nullable'])->half()->section('موتور انتخاب محصول'),
             Field::select('insulation_level', 'سطح عایق حرارتی',
-                collect(config('kian.finder.insulation_levels'))->map(fn ($t) => $t['label'])->all())
+                collect(Options::finder('insulation_levels'))->map(fn ($t) => $t['label'])->all())
                 ->rules(['required'])->half()->section('موتور انتخاب محصول'),
             Field::boolean('is_loadbearing', 'باربر است')->half()->section('موتور انتخاب محصول'),
 

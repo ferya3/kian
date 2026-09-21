@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Product;
+use App\Support\Options;
 use Illuminate\Support\Collection;
 
 /**
@@ -49,23 +50,23 @@ class ProductFinder
 
         // ۱) نوع پروژه
         if ($type = $criteria['project_type'] ?? null) {
-            $label = config("kian.finder.project_types.$type.label", $type);
+            $label = Options::finderLabel('project_types', $type);
             if (in_array($type, $product->project_types ?? [], true)) {
                 $score += $this->weights['project_type'];
-                $reasons[] = "مناسب پروژه‌های {$label}";
+                $reasons[] = __('site.finder.reason.project_fit', ['label' => $label]);
             } else {
-                $gaps[] = "برای {$label} گزینه‌ی بهینه‌تری هم داریم";
+                $gaps[] = __('site.finder.gap.project_fit', ['label' => $label]);
             }
         }
 
         // ۲) نوع دیوار
         if ($wall = $criteria['wall_type'] ?? null) {
-            $label = config("kian.finder.wall_types.$wall.label", $wall);
+            $label = Options::finderLabel('wall_types', $wall);
             if (in_array($wall, $product->wall_types ?? [], true)) {
                 $score += $this->weights['wall_type'];
-                $reasons[] = "طراحی‌شده برای {$label}";
+                $reasons[] = __('site.finder.reason.wall_fit', ['label' => $label]);
             } else {
-                $gaps[] = "کاربرد اصلی این محصول {$label} نیست";
+                $gaps[] = __('site.finder.gap.wall_fit', ['label' => $label]);
             }
         }
 
@@ -77,16 +78,19 @@ class ProductFinder
 
             if ($delta < 0.01) {
                 $score += $max;
-                $reasons[] = 'ضخامت دقیقاً برابر با نیاز شما ('.$this->num($requested).' سانتی‌متر)';
+                $reasons[] = __('site.finder.reason.thickness_exact', ['value' => $this->num($requested)]);
             } elseif ($delta <= 5) {
                 $score += (int) round($max * (1 - $delta / 5) * 0.7);
-                $gaps[] = 'ضخامت '.$this->num($product->thicknessCm()).' سانتی‌متر به‌جای '.$this->num($requested);
+                $gaps[] = __('site.finder.gap.thickness_near', [
+                    'value' => $this->num($product->thicknessCm()),
+                    'wanted' => $this->num($requested),
+                ]);
             }
         }
 
         // ۴) سطح عایق حرارتی — یک پله بالاتر هم قابل قبول است
         if ($insulation = $criteria['insulation'] ?? null) {
-            $ladder = array_keys(config('kian.finder.insulation_levels'));
+            $ladder = array_keys(Options::finder('insulation_levels'));
             $want = array_search($insulation, $ladder, true);
             $has = array_search($product->insulation_level, $ladder, true);
             $max = $this->weights['insulation'];
@@ -95,13 +99,13 @@ class ProductFinder
                 $step = $has - $want;
                 if ($step === 0) {
                     $score += $max;
-                    $reasons[] = 'سطح عایق حرارتی دقیقاً مطابق درخواست';
+                    $reasons[] = __('site.finder.reason.insulation_exact');
                 } elseif ($step > 0) {
                     $score += (int) round($max * 0.85);
-                    $reasons[] = 'عایق حرارتی بالاتر از حد درخواستی شما';
+                    $reasons[] = __('site.finder.reason.insulation_higher');
                 } else {
                     $score += (int) round($max * max(0, 1 + $step / 2) * 0.4);
-                    $gaps[] = 'برای عایق‌کاری بیشتر، بلوک ضخیم‌تر را ببینید';
+                    $gaps[] = __('site.finder.gap.insulation_lower');
                 }
             }
         }
@@ -125,16 +129,18 @@ class ProductFinder
         $labels = [];
 
         if ($v = $criteria['project_type'] ?? null) {
-            $labels[] = config("kian.finder.project_types.$v.label", $v);
+            $labels[] = Options::finderLabel('project_types', $v);
         }
         if ($v = $criteria['wall_type'] ?? null) {
-            $labels[] = config("kian.finder.wall_types.$v.label", $v);
+            $labels[] = Options::finderLabel('wall_types', $v);
         }
         if ($v = $criteria['thickness'] ?? null) {
-            $labels[] = $this->num((float) $v).' سانتی‌متر';
+            $labels[] = $this->num((float) $v).' '.__('site.card.cm');
         }
         if ($v = $criteria['insulation'] ?? null) {
-            $labels[] = 'عایق '.config("kian.finder.insulation_levels.$v.label", $v);
+            $labels[] = __('site.finder.criteria.insulation', [
+                'label' => Options::finderLabel('insulation_levels', $v),
+            ]);
         }
 
         return $labels;
