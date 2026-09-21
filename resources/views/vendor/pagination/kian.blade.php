@@ -1,12 +1,12 @@
 @if ($paginator->hasPages())
     {{-- فاصله روی موبایل ۸ پیکسل: «۲» و «۳» شش‌پیکسلی، زیر انگشت یکی می‌شوند --}}
-    <nav role="navigation" aria-label="صفحه‌بندی" class="tap-row items-center justify-center">
+    <nav role="navigation" aria-label="{{ __('site.pagination.label') }}" class="tap-row items-center justify-center">
         @if ($paginator->onFirstPage())
             <span class="tap-icon rounded-full text-ink-300" aria-disabled="true">
                 <x-icon name="chevron-left" size="18" />
             </span>
         @else
-            <a href="{{ $paginator->previousPageUrl() }}" rel="prev" aria-label="صفحه قبل"
+            <a href="{{ $paginator->previousPageUrl() }}" rel="prev" aria-label="{{ __('site.pagination.previous') }}"
                class="tap-icon rounded-full text-ink-600 transition hover:bg-sand-200">
                 <x-icon name="chevron-left" size="18" />
             </a>
@@ -33,7 +33,7 @@
         @endforeach
 
         @if ($paginator->hasMorePages())
-            <a href="{{ $paginator->nextPageUrl() }}" rel="next" aria-label="صفحه بعد"
+            <a href="{{ $paginator->nextPageUrl() }}" rel="next" aria-label="{{ __('site.pagination.next') }}"
                class="tap-icon rounded-full text-ink-600 transition hover:bg-sand-200">
                 <x-icon name="chevron-left" size="18" class="rotate-180" />
             </a>

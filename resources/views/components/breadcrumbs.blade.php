@@ -3,7 +3,7 @@
 @php $items = $items ?? $seo->breadcrumbs; @endphp
 
 @if(count($items) > 1)
-    <nav aria-label="مسیر صفحه" {{ $attributes->merge(['class' => 'text-meta']) }}>
+    <nav aria-label="{{ __('site.nav.breadcrumb') }}" {{ $attributes->merge(['class' => 'text-meta']) }}>
         <ol class="flex flex-wrap items-center gap-x-1.5 gap-y-1 text-ink-400">
             @foreach($items as $item)
                 <li class="flex items-center gap-1.5">

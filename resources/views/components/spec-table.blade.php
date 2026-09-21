@@ -2,11 +2,11 @@
 
 <div class="overflow-hidden rounded-2xl border border-sand-300">
     <table class="w-full text-right">
-        <caption class="sr-only">جدول مشخصات فنی {{ $product->name }}</caption>
+        <caption class="sr-only">{{ __('site.spec.caption', ['name' => $product->name]) }}</caption>
         <thead class="bg-sand-200/70">
             <tr>
-                <th scope="col" class="px-5 py-3 text-meta font-bold text-ink-600">ویژگی</th>
-                <th scope="col" class="px-5 py-3 text-left text-meta font-bold text-ink-600">مقدار</th>
+                <th scope="col" class="px-5 py-3 text-meta font-bold text-ink-600">{{ __('site.spec.feature') }}</th>
+                <th scope="col" class="px-5 py-3 text-left text-meta font-bold text-ink-600">{{ __('site.spec.value') }}</th>
             </tr>
         </thead>
         <tbody class="divide-y divide-sand-200 bg-sand-50">

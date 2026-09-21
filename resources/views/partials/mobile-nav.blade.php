@@ -1,4 +1,6 @@
 {{-- منوی موبایل — طراحی مستقل، نه نسخه‌ی کوچک‌شده‌ی دسکتاپ --}}
+@php use App\Support\Brand; @endphp
+
 <div x-data="mobileNav"
      @toggle-mobile-nav.window="toggle()"
      @keydown.escape.window="open && hide()"
@@ -19,33 +21,33 @@
          class="fixed inset-y-0 right-0 z-[70] flex h-dvh w-[min(24rem,90vw)] flex-col bg-sand-50 shadow-float"
          style="padding-top: var(--safe-top); padding-bottom: var(--safe-bottom)"
          style="display: none"
-         role="dialog" aria-modal="true" aria-label="منوی اصلی">
+         role="dialog" aria-modal="true" aria-label="{{ __('site.nav.panel') }}">
 
         <div class="flex h-16 shrink-0 items-center justify-between border-b border-sand-200 px-5">
             <a href="{{ route('home') }}" class="flex items-center gap-2.5">
                 <x-brand-mark class="h-8 w-8" />
-                <span class="font-extrabold">{{ config('kian.brand.name') }}</span>
+                <span class="font-extrabold">{{ Brand::name() }}</span>
             </a>
             <button type="button" @click="hide()" x-ref="trigger"
                     class="grid h-10 w-10 place-items-center rounded-full text-ink-500 transition hover:bg-sand-200"
-                    aria-label="بستن منو">
+                    aria-label="{{ __('site.nav.close') }}">
                 <x-icon name="close" size="20" />
             </button>
         </div>
 
         <div class="flex-1 overflow-y-auto overscroll-contain px-5 py-4" data-lenis-prevent style="-webkit-overflow-scrolling: touch">
             <form action="{{ route('search') }}" method="GET" class="relative mb-5">
-                <label for="mobile-search" class="sr-only">جستجو</label>
-                <input id="mobile-search" name="q" type="search" placeholder="جستجوی محصول یا فایل فنی…"
+                <label for="mobile-search" class="sr-only">{{ __('site.nav.search') }}</label>
+                <input id="mobile-search" name="q" type="search" placeholder="{{ __('site.search.placeholder_short') }}"
                        class="w-full rounded-xl border border-sand-300 bg-sand-100 py-3 pr-11 pl-4 outline-none focus:border-clay-400">
                 <x-icon name="search" size="18" class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-ink-300" />
             </form>
 
-            <nav aria-label="ناوبری موبایل">
+            <nav aria-label="{{ __('site.nav.mobile') }}">
                 <ul class="divide-y divide-sand-200">
                     <li>
                         <a href="{{ route('products.index') }}" class="flex items-center justify-between py-4 text-lg font-bold">
-                            محصولات
+                            {{ __('site.nav.items.products_index') }}
                             <x-icon name="chevron-left" size="18" class="text-ink-300" />
                         </a>
                         <ul class="-mt-1 mb-3 space-y-0.5 pr-3">
@@ -110,17 +112,17 @@
             <a href="{{ route('finder.show') }}"
                class="flex items-center justify-center gap-2 rounded-xl bg-clay-500 py-3.5 font-semibold text-white">
                 <x-icon name="compass" size="18" />
-                محصول مناسب پروژه‌ام را پیدا کن
+                {{ __('site.actions.finder_mobile') }}
             </a>
             <div class="grid grid-cols-2 gap-3">
                 <a href="tel:{{ config('kian.contact.phone_raw') }}"
                    class="flex items-center justify-center gap-2 rounded-xl border border-sand-300 bg-sand-50 py-3 text-sm font-semibold">
                     <x-icon name="phone" size="16" />
-                    تماس
+                    {{ __('site.actions.call') }}
                 </a>
                 <a href="{{ route('contact') }}"
                    class="flex items-center justify-center gap-2 rounded-xl bg-ink-900 py-3 text-sm font-semibold text-sand-50">
-                    درخواست قیمت
+                    {{ __('site.actions.quote') }}
                 </a>
             </div>
         </div>

@@ -36,15 +36,21 @@ return [
     ],
 
     'contact' => [
-        'phone' => env('KIAN_PHONE', '۰۲۱-۹۱۰۰۲۲۳۳'),
+        /*
+        | شماره‌ها با ارقام لاتین نوشته می‌شوند و خطِ نمایششان را
+        | App\Support\Jalali::digits تعیین می‌کند — فارسی ۰۲۱، عربی ٠٢١،
+        | انگلیسی 021. پیش‌تر ارقام فارسی همین‌جا نوشته شده بودند و در نسخه‌ی
+        | انگلیسی هم فارسی می‌ماندند.
+        */
+        'phone' => env('KIAN_PHONE', '021-91002233'),
         'phone_raw' => env('KIAN_PHONE_RAW', '+982191002233'),
-        'sales_phone' => env('KIAN_SALES_PHONE', '۰۹۱۲-۱۲۳۴۵۶۷'),
+        'sales_phone' => env('KIAN_SALES_PHONE', '0912-1234567'),
         'email' => env('KIAN_EMAIL', 'info@kianbehsaz.ir'),
         'technical_email' => env('KIAN_TECH_EMAIL', 'technical@kianbehsaz.ir'),
         'address' => env('KIAN_ADDRESS', 'اصفهان، شهرک صنعتی مبارکه، خیابان صنعت ۱۲، کارخانه کیان بهساز'),
         'address_locality' => 'اصفهان',
         'address_region' => 'اصفهان',
-        'postal_code' => '۸۴۸۱۱۳۳۴۵۶',
+        'postal_code' => '8481133456',
         'lat' => 32.3456,
         'lng' => 51.5041,
         'working_hours' => 'شنبه تا چهارشنبه ۸:۰۰ تا ۱۷:۰۰ — پنجشنبه ۸:۰۰ تا ۱۳:۰۰',

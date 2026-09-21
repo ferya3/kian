@@ -1,4 +1,5 @@
 @php
+    use App\Support\Brand;
     use App\Support\Navigation;
     // صفحاتی که قهرمان تیره‌ی تمام‌قد دارند، هدر شفاف با متن روشن می‌گیرند.
     $overHero = Navigation::overHero();
@@ -25,20 +26,20 @@
                 <a href="tel:{{ config('kian.contact.phone_raw') }}"
                    class="flex h-10 items-center gap-2 transition hover:text-clay-300">
                     <x-icon name="phone" size="15" />
-                    <span class="tech">{{ config('kian.contact.phone') }}</span>
+                    <span class="tech">{{ Brand::phone() }}</span>
                 </a>
                 <span class="flex items-center gap-2 text-sand-200/55">
                     <x-icon name="clock" size="15" />
-                    {{ config('kian.contact.working_hours') }}
+                    {{ Brand::workingHours() }}
                 </span>
             </div>
             <div class="flex items-center gap-5">
                 <a href="{{ route('technical.downloads') }}" class="flex items-center gap-1.5 transition hover:text-clay-300">
                     <x-icon name="download" size="15" />
-                    دانلود دیتاشیت، CAD و BIM
+                    {{ __('site.topbar.datasheets') }}
                 </a>
                 <span class="h-4 w-px bg-sand-200/20"></span>
-                <a href="{{ route('distributors') }}" class="transition hover:text-clay-300">نمایندگان فروش</a>
+                <a href="{{ route('distributors') }}" class="transition hover:text-clay-300">{{ __('site.topbar.distributors') }}</a>
             </div>
         </div>
     </div>
@@ -62,17 +63,17 @@
             <button type="button" @click="$dispatch('toggle-mobile-nav')"
                     class="tap-icon shrink-0 rounded-full transition lg:hidden"
                     :class="onDark ? 'text-sand-50 hover:bg-white/10' : 'text-ink-800 hover:bg-sand-200'"
-                    aria-label="باز کردن منو">
+                    aria-label="{{ __('site.nav.menu') }}">
                 <x-icon name="menu" size="24" />
             </button>
 
             <a href="{{ route('home') }}"
                class="flex min-h-11 flex-1 items-center justify-center gap-2.5 lg:min-w-11 lg:flex-none lg:justify-start lg:gap-3"
-               aria-label="{{ config('kian.brand.legal_name') }} — صفحه اصلی">
+               aria-label="{{ __('site.nav.brand_home', ['name' => Brand::legalName()]) }}">
                 <x-brand-mark class="h-8 w-8 shrink-0 sm:h-9 sm:w-9 lg:h-10 lg:w-10" />
                 <span class="leading-tight">
                     <span class="block text-[1.0625rem] font-extrabold tracking-tight transition-colors"
-                          :class="onDark ? 'text-sand-50' : 'text-ink-900'">{{ config('kian.brand.name') }}</span>
+                          :class="onDark ? 'text-sand-50' : 'text-ink-900'">{{ Brand::name() }}</span>
                     <span class="tech hidden text-micro uppercase tracking-[0.18em] transition-colors sm:block"
                           :class="onDark ? 'text-sand-200/55' : 'text-ink-400'">{{ config('kian.brand.descriptor_en') }}</span>
                 </span>
@@ -83,7 +84,7 @@
                 فاصله‌ی خالی به سمت چپ منتقل شده: نوار ابزار (جستجو و درخواست
                 قیمت) با mr-auto به لبه‌ی چپ می‌رود و منو کنار برند می‌ماند.
             --}}
-            <nav class="hidden items-center lg:flex" aria-label="ناوبری اصلی">
+            <nav class="hidden items-center lg:flex" aria-label="{{ __('site.nav.main') }}">
                 @foreach($navigation as $item)
                     @php
                         $active = Navigation::isActive($item);
@@ -97,7 +98,7 @@
                                aria-haspopup="true"
                            @endif
                            @if($active) aria-current="page" @endif
-                           class="relative flex items-center gap-1 px-4 py-2.5 text-[0.9375rem] font-semibold transition-colors"
+                           class="relative flex items-center gap-1 whitespace-nowrap px-4 py-2.5 text-[0.9375rem] font-semibold transition-colors"
                            :class="onDark
                                 ? ({{ $active ? 'true' : 'false' }} ? 'text-clay-300' : 'text-sand-100/85 hover:text-white')
                                 : ({{ $active ? 'true' : 'false' }} ? 'text-clay-600' : 'text-ink-700 hover:text-clay-600')">
@@ -132,7 +133,7 @@
                 <a href="{{ route('contact') }}"
                    class="hidden items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition lg:flex"
                    :class="onDark ? 'bg-clay-500 text-white hover:bg-clay-400' : 'bg-ink-900 text-sand-50 hover:bg-clay-600'">
-                    درخواست قیمت
+                    {{ __('site.actions.quote') }}
                 </a>
             </div>
         </div>

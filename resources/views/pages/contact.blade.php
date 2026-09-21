@@ -144,7 +144,7 @@
                                 <x-icon name="phone" size="18" class="mt-1 shrink-0 text-clay-500" />
                                 <span>
                                     <span class="block text-meta text-ink-400">دفتر مرکزی</span>
-                                    <a href="tel:{{ config('kian.contact.phone_raw') }}" class="tech tap font-bold transition hover:text-clay-600">{{ config('kian.contact.phone') }}</a>
+                                    <a href="tel:{{ config('kian.contact.phone_raw') }}" class="tech tap font-bold transition hover:text-clay-600">{{ \App\Support\Brand::phone() }}</a>
                                 </span>
                             </li>
                             <li class="flex gap-3">

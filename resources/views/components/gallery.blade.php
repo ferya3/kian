@@ -1,4 +1,4 @@
-@props(['images' => [], 'title' => 'تصاویر', 'eyebrow' => 'Gallery'])
+@props(['images' => [], 'title' => null, 'eyebrow' => 'Gallery'])
 
 @php $urls = \App\Support\Media::gallery($images); @endphp
 
@@ -10,7 +10,7 @@
 @if($urls)
     <section {{ $attributes->merge(['class' => 'bg-sand-100 section']) }}>
         <div class="container-page">
-            <x-section-heading :eyebrow="$eyebrow" :title="$title" />
+            <x-section-heading :eyebrow="$eyebrow" :title="$title ?? __('site.gallery.title')" />
 
             <ul class="mt-10 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 lg:gap-4"
                 data-reveal-stagger="70">

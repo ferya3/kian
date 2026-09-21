@@ -11,7 +11,7 @@
                 <div class="mt-9 flex flex-wrap justify-center gap-3">
                     <x-cta :href="route('home')" variant="dark">صفحه اصلی</x-cta>
                     <x-cta href="tel:{{ config('kian.contact.phone_raw') }}" variant="ghost" icon="phone">
-                        {{ config('kian.contact.phone') }}
+                        {{ \App\Support\Brand::phone() }}
                     </x-cta>
                 </div>
             </div>

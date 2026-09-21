@@ -17,15 +17,15 @@
     <div x-show="openMenu === 'products.index'" class="container-page py-10">
         <div class="grid grid-cols-12 gap-10">
             <div class="col-span-3">
-                <p class="eyebrow text-clay-600">Product System</p>
-                <h2 class="mt-3 text-2xl font-extrabold leading-snug">سیستم محصولات سفالی</h2>
+                <p class="eyebrow text-clay-600">{{ __('site.mega.eyebrow') }}</p>
+                <h2 class="mt-3 text-2xl font-extrabold leading-snug">{{ __('site.mega.title') }}</h2>
                 <p class="mt-3 text-[0.9375rem] leading-relaxed text-ink-400">
-                    از تیغه‌ی ۷ سانتی تا بلوک عایق ۳۰ — یک خانواده‌ی ماژولار که ابعادش با هم هماهنگ است.
+                    {{ __('site.mega.lead') }}
                 </p>
                 <a href="{{ route('finder.show') }}"
                    class="mt-6 inline-flex items-center gap-2 rounded-full bg-clay-500 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-clay-600">
                     <x-icon name="compass" size="17" />
-                    انتخاب محصول مناسب پروژه
+                    {{ __('site.actions.finder_long') }}
                 </a>
             </div>
 
@@ -54,14 +54,14 @@
 
             <div class="col-span-3">
                 <div class="rounded-[var(--radius-panel)] bg-ink-900 p-6 text-sand-100">
-                    <p class="eyebrow text-clay-300">Featured</p>
-                    <h3 class="mt-2 text-card font-bold">بلوک عایق ۲۵</h3>
+                    <p class="eyebrow text-clay-300">{{ __('site.mega.featured') }}</p>
+                    <h3 class="mt-2 text-card font-bold">{{ __('site.mega.featured_title') }}</h3>
                     <p class="mt-2 text-sm leading-relaxed text-sand-200/70">
-                        دیوار خارجی تک‌لایه بدون عایق افزوده. ضریب λ برابر ۰٫۲۱.
+                        {{ __('site.mega.featured_lead') }}
                     </p>
                     <a href="{{ route('products.show', 'insulating-block-25') }}"
                        class="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-clay-300 transition hover:text-clay-200">
-                        مشاهده محصول
+                        {{ __('site.actions.view_product') }}
                         <x-icon name="arrow-left" size="15" />
                     </a>
                 </div>
@@ -70,12 +70,12 @@
 
         <div class="mt-8 flex items-center justify-between border-t border-sand-300 pt-5">
             <a href="{{ route('products.index') }}" class="flex items-center gap-2 text-sm font-bold text-clay-600 hover:text-clay-700">
-                مشاهده همه محصولات
+                {{ __('site.actions.all_products') }}
                 <x-icon name="arrow-left" size="16" />
             </a>
             <a href="{{ route('technical.downloads') }}" class="flex items-center gap-2 text-sm text-ink-400 hover:text-ink-900">
                 <x-icon name="download" size="16" />
-                دانلود دیتاشیت و فایل‌های فنی
+                {{ __('site.mega.downloads') }}
             </a>
         </div>
     </div>

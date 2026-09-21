@@ -15,7 +15,7 @@
 
         @if($product->is_featured)
             <span class="eyebrow absolute right-4 top-4 rounded-full bg-ink-900/90 px-3 py-1 text-micro text-sand-50">
-                پرکاربرد
+                {{ __('site.card.featured') }}
             </span>
         @endif
 
@@ -44,7 +44,7 @@
         </h3>
 
         <p class="tech mt-1 text-sm text-ink-400">
-            {{ \App\Support\Jalali::digits($product->dimensionLabel()) }} سانتی‌متر
+            {{ \App\Support\Jalali::digits($product->dimensionLabel()) }} {{ __('site.card.cm') }}
         </p>
 
         <p class="mt-3 line-clamp-2 text-[0.9375rem] leading-relaxed text-ink-500">
@@ -55,8 +55,8 @@
         <dl class="mt-auto grid grid-cols-3 gap-px overflow-hidden rounded-xl border border-sand-200 bg-sand-200 pt-px">
             @foreach([
                 ['λ', $product->thermal_conductivity, 'W/m·K'],
-                ['وزن', $product->weight_kg, 'kg'],
-                ['مقاومت', $product->compressive_strength_mpa, 'MPa'],
+                [__('site.card.weight'), $product->weight_kg, 'kg'],
+                [__('site.card.strength'), $product->compressive_strength_mpa, 'MPa'],
             ] as [$label, $value, $unit])
                 <div class="bg-sand-50 px-2 py-2.5 text-center">
                     <dt class="text-micro text-ink-400">{{ $label }}</dt>

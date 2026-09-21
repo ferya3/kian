@@ -1,6 +1,6 @@
 @props([
     'primaryHref',
-    'primaryLabel' => 'استعلام قیمت',
+    'primaryLabel' => null,
     'secondaryHref' => null,
     'secondaryLabel' => null,
     'secondaryIcon' => 'download',
@@ -20,7 +20,7 @@
     <div class="container-page flex items-center gap-2 py-3">
         <a href="tel:{{ config('kian.contact.phone_raw') }}"
            class="tap-icon shrink-0 rounded-xl border border-sand-300 bg-sand-100 text-ink-700 transition active:bg-sand-200"
-           aria-label="تماس تلفنی با واحد فروش">
+           aria-label="{{ __('site.actions.call_sales') }}">
             <x-icon name="phone" size="20" />
         </a>
 
@@ -34,7 +34,7 @@
 
         <a href="{{ $primaryHref }}"
            class="tap flex-[1.4] justify-center rounded-xl bg-clay-500 px-3 text-[0.9375rem] font-semibold text-white transition active:bg-clay-600">
-            {{ $primaryLabel }}
+            {{ $primaryLabel ?? __('site.actions.price_enquiry') }}
         </a>
     </div>
 </div>

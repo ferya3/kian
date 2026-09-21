@@ -6,6 +6,10 @@ use Illuminate\Support\Facades\Route;
 
 /**
  * ساختار ناوبری اصلی. یک منبع حقیقت واحد برای هدر دسکتاپ، منوی موبایل و فوتر.
+ *
+ * برچسب‌ها اینجا نوشته نمی‌شوند، از lang/<code>/site.php می‌آیند و کلیدشان
+ * نامِ همان مسیر است. پس فهرست یک جا تعریف می‌شود و ترجمه‌اش جای دیگر، و
+ * افزودن یک آیتم یعنی یک ردیف اینجا و یک ردیف در هر پرونده‌ی زبان.
  */
 class Navigation
 {
@@ -14,47 +18,33 @@ class Navigation
     {
         $items = [
             [
-                'label' => 'محصولات',
                 'route' => 'products.index',
                 'mega' => true,
             ],
             [
-                'label' => 'راهکارها',
                 'route' => 'solutions.index',
             ],
             [
-                'label' => 'پروژه‌ها',
                 'route' => 'projects.index',
             ],
             [
-                'label' => 'فناوری',
                 'route' => 'technology',
-                'children' => [
-                    ['label' => 'از خاک تا سازه', 'route' => 'technology'],
-                    ['label' => 'کارخانه', 'route' => 'factory'],
-                    ['label' => 'پایداری', 'route' => 'sustainability'],
-                ],
+                'children' => ['technology', 'factory', 'sustainability'],
             ],
             [
-                'label' => 'دانش فنی',
                 'route' => 'technical.index',
                 'children' => [
-                    ['label' => 'مرکز فنی', 'route' => 'technical.index'],
-                    ['label' => 'دانلود دیتاشیت، CAD و BIM', 'route' => 'technical.downloads'],
-                    ['label' => 'راهنمای اجرا', 'route' => 'technical.installation'],
-                    ['label' => 'گواهی‌نامه‌ها و استانداردها', 'route' => 'technical.certificates'],
-                    ['label' => 'پرسش‌های متداول', 'route' => 'technical.faq'],
-                    ['label' => 'مقالات تخصصی', 'route' => 'articles.index'],
+                    'technical.index',
+                    'technical.downloads',
+                    'technical.installation',
+                    'technical.certificates',
+                    'technical.faq',
+                    'articles.index',
                 ],
             ],
             [
-                'label' => 'درباره ما',
                 'route' => 'about',
-                'children' => [
-                    ['label' => 'معرفی شرکت', 'route' => 'about'],
-                    ['label' => 'نمایندگان فروش', 'route' => 'distributors'],
-                    ['label' => 'تماس با ما', 'route' => 'contact'],
-                ],
+                'children' => ['about', 'distributors', 'contact'],
             ],
         ];
 
@@ -70,13 +60,66 @@ class Navigation
         | ندارد و *هر صفحه‌ی سایت* با خطا می‌افتد، نه فقط فروشگاه.
         */
         if (Shop::enabled() && Route::has('shop.index')) {
-            array_splice($items, 1, 0, [[
-                'label' => 'فروشگاه',
-                'route' => 'shop.index',
-            ]]);
+            array_splice($items, 1, 0, [['route' => 'shop.index']]);
         }
 
-        return $items;
+        return array_map(static::label(...), $items);
+    }
+
+    /**
+     * برچسب‌گذاریِ یک آیتم و فرزندانش از پرونده‌ی زبان.
+     *
+     * فرزندان در فهرست بالا فقط نامِ مسیرند؛ اینجا به ساختار کاملِ
+     * [label, route] بازمی‌شوند، تا ویوها دست‌نخورده بمانند.
+     *
+     * @param  array{route: string, mega?: bool, children?: array<int, string>}  $item
+     * @return array{label: string, route: string, mega?: bool, children?: array}
+     */
+    protected static function label(array $item): array
+    {
+        $item['label'] = static::labelFor($item['route']);
+
+        if (! empty($item['children'])) {
+            $item['children'] = array_map(
+                fn (string $route) => [
+                    'label' => static::labelFor($route, sub: true),
+                    'route' => $route,
+                ],
+                $item['children'],
+            );
+        }
+
+        return $item;
+    }
+
+    /**
+     * برچسبِ یک مسیر.
+     *
+     * زیرمنو گاهی برچسبِ دیگری از خودِ صفحه می‌خواهد — «از خاک تا سازه» در
+     * منو و «فناوری» در نوار بالا. کلیدِ nav.sub اگر نبود، به nav.items
+     * برمی‌گردد؛ پس فقط استثناها دو بار نوشته می‌شوند.
+     */
+    public static function labelFor(string $route, bool $sub = false): string
+    {
+        /*
+         * نقطه‌ی نام مسیر به زیرخط بدل می‌شود.
+         *
+         * کلیدِ ترجمه با نقطه، یعنی آرایه‌ی تودرتو: «technical.downloads»
+         * دنبال items → technical → downloads می‌گشت و چیزی نمی‌یافت. با
+         * زیرخط، کلید یک‌تکه می‌ماند و فهرست هم تخت و خواندنی.
+         */
+        $key = str_replace('.', '_', $route);
+
+        foreach ($sub ? ["site.nav.sub.{$key}", "site.nav.items.{$key}"] : ["site.nav.items.{$key}"] as $candidate) {
+            $label = __($candidate);
+
+            if ($label !== $candidate) {
+                return $label;
+            }
+        }
+
+        // ترجمه‌ی نبوده، خودِ کلید را برمی‌گرداند — که برچسب نیست
+        return $route;
     }
 
     /**
