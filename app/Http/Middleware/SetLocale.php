@@ -21,6 +21,19 @@ class SetLocale
     {
         $locale = $request->route('locale');
 
+        /*
+        | زبانی که مدیر خاموشش کرده، همین‌جا تمام می‌شود.
+        |
+        | مسیرش هنوز می‌خورد (قیدِ پیشوند از declaredCodes می‌آید تا کشِ مسیرها
+        | به حالتِ متغیر گره نخورد)، پس اگر اینجا رد می‌شد، همان صفحه زیر دو
+        | نشانی منتشر می‌ماند — یک‌بار /fa/products و یک‌بار /en/products با
+        | متنِ فارسی. ۳۰۱ و نه ۴۰۴: نشانی‌های زبانِ خاموش پیش‌تر ایندکس شده‌اند
+        | و باید اعتبارشان به صفحه‌ی زنده منتقل شود.
+        */
+        if (Locales::isDisabled($locale)) {
+            return $this->moveToDefault($request);
+        }
+
         if (! Locales::supports($locale)) {
             $locale = Locales::default();
         }
@@ -50,5 +63,32 @@ class SetLocale
         }
 
         return $response;
+    }
+
+    /**
+     * همین صفحه، در زبان پیش‌فرض.
+     *
+     * از مسیر ساخته می‌شود و نه با جایگزینیِ رشته در نشانی، تا پارامترها —
+     * شناسه‌ی محصول، فیلتر، شماره‌ی صفحه — سرِ جایشان بمانند. اگر مسیر نامی
+     * نداشت (که نباید داشته باشد) به خانه‌ی همان زبان می‌رسیم و نه به ۵۰۰.
+     */
+    protected function moveToDefault(Request $request): Response
+    {
+        $default = Locales::default();
+        $route = $request->route();
+        $name = $route?->getName();
+
+        if (! $name) {
+            return redirect('/'.$default, 301);
+        }
+
+        return redirect(
+            route($name, array_merge(
+                $route->parameters(),
+                $request->query(),
+                ['locale' => $default],
+            )),
+            301,
+        );
     }
 }

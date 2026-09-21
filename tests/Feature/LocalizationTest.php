@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Faq;
+use App\Models\Locale;
 use App\Models\Product;
 use App\Models\User;
 use App\Support\Locales;
@@ -274,6 +275,232 @@ class LocalizationTest extends TestCase
         }
 
         $page->assertDontSee('translations['.Locales::default().']', false);
+    }
+
+    // --------------------------------------------- روشن و خاموش کردن --
+
+    /** خاموش‌کردن یک زبان از پنل، بی‌درنگ و بی‌استقرار اثر می‌کند. */
+    public function test_a_language_can_be_switched_off_from_the_panel(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin', 'is_active' => true]);
+        $arabic = Locale::query()->where('code', 'ar')->firstOrFail();
+
+        $this->actingAs($admin)
+            ->put("/admin/locales/{$arabic->id}", ['is_active' => '0', 'order' => $arabic->order])
+            ->assertRedirect();
+
+        $this->assertNotContains('ar', Locales::codes());
+    }
+
+    /**
+     * نشانی‌های زبانِ خاموش ۳۰۱ می‌گیرند و نه ۴۰۴.
+     *
+     * پیش‌تر ایندکس شده‌اند؛ اعتبارشان باید به صفحه‌ی زنده منتقل شود. و
+     * پارامترها باید سرِ جایشان بمانند، وگرنه هر صفحه‌ی داخلی به خانه می‌رفت.
+     */
+    public function test_a_switched_off_language_redirects_instead_of_vanishing(): void
+    {
+        $this->disable('ar');
+
+        $this->get('/ar/products')
+            ->assertRedirect('/'.Locales::default().'/products')
+            ->assertStatus(301);
+
+        $product = Product::query()->active()->firstOrFail();
+
+        $this->get(route('products.show', ['locale' => 'ar', 'product' => $product]))
+            ->assertRedirect(route('products.show', ['locale' => Locales::default(), 'product' => $product]));
+    }
+
+    /** پرسش‌های نشانی هم باید از ریدایرکت جان سالم به در ببرند. */
+    public function test_the_redirect_keeps_the_query_string(): void
+    {
+        $this->disable('en');
+
+        $this->get('/en/products?category=hourdi&page=2')
+            ->assertRedirect('/'.Locales::default().'/products?category=hourdi&page=2');
+    }
+
+    public function test_a_switched_off_language_leaves_the_switcher_and_the_seo_tags(): void
+    {
+        $this->disable('ar');
+
+        $page = $this->get('/fa/products')->assertOk();
+
+        $page->assertDontSee('/ar/products', false);
+        $page->assertDontSee('hreflang="ar"', false);
+        $page->assertSee('hreflang="en"', false);
+
+        $this->get(route('sitemap'))
+            ->assertOk()
+            ->assertDontSee('/ar/', false);
+    }
+
+    /** ترجمه‌ها با خاموش‌شدنِ زبان پاک نمی‌شوند و با روشن‌شدن برمی‌گردند. */
+    public function test_switching_a_language_off_and_on_keeps_its_translations(): void
+    {
+        $faq = Faq::query()->firstOrFail();
+        $faq->putTranslations('en', ['question' => 'Kept through the dark']);
+
+        $this->disable('en');
+        $this->assertSame(1, $faq->translations()->count());
+
+        $this->enable('en');
+        app()->setLocale('en');
+
+        $this->assertSame('Kept through the dark', $faq->fresh()->question);
+    }
+
+    /**
+     * زبان پیش‌فرض خاموش نمی‌شود.
+     *
+     * سایتی که زبان پیش‌فرضش خاموش باشد، سایتی نیست: محتوای ستون‌های خودِ
+     * جدول‌ها به همان زبان است و هر زبان دیگری رویش می‌نشیند.
+     */
+    public function test_the_default_language_refuses_to_be_switched_off(): void
+    {
+        $default = Locale::query()->where('code', Locales::default())->firstOrFail();
+
+        $default->update(['is_active' => false]);
+
+        $this->assertTrue($default->fresh()->is_active);
+        $this->assertContains(Locales::default(), Locales::codes());
+    }
+
+    /** حتی اگر کسی مستقیم روی دیتابیس بنویسد و از مدل رد شود. */
+    public function test_the_default_language_survives_a_raw_update(): void
+    {
+        DB::table('locales')->update(['is_active' => false]);
+        Locale::forget();
+
+        $this->assertSame([Locales::default()], Locales::codes());
+        $this->get('/'.Locales::default())->assertOk();
+    }
+
+    /** با یک زبانِ روشن، سوئیچر اصلاً رندر نمی‌شود. */
+    public function test_one_language_means_no_switcher(): void
+    {
+        $this->disable('en');
+        $this->disable('ar');
+
+        $this->get('/fa')
+            ->assertOk()
+            ->assertDontSee(__('site.language.switch'), false);
+    }
+
+    /** کوکیِ زبانی که دیگر روشن نیست، کاربر را به بن‌بست نمی‌برد. */
+    public function test_a_cookie_for_a_switched_off_language_is_ignored(): void
+    {
+        $this->disable('ar');
+
+        $this->withCookie(Locales::COOKIE, 'ar')
+            ->get('/', ['Accept-Language' => 'en-GB,en;q=0.9'])
+            ->assertRedirect(route('home', ['locale' => 'en']));
+    }
+
+    /**
+     * قیدِ مسیرها به حالت گره نمی‌خورد.
+     *
+     * مسیرها یک‌بار ساخته و کش می‌شوند؛ اگر قیدشان زبان‌های *روشن* بود،
+     * خاموش‌کردنِ یک زبان تا route:clear هیچ اثری نداشت. پس هر زبانِ
+     * اعلام‌شده باید در قید باشد — و ریدایرکت کارِ میدل‌ور است.
+     */
+    public function test_the_route_constraint_covers_every_declared_language(): void
+    {
+        $this->disable('ar');
+
+        $home = collect(Route::getRoutes())->first(fn ($r) => $r->getName() === 'home');
+
+        $this->assertMatchesRegularExpression(
+            '/'.$home->wheres['locale'].'/',
+            'ar',
+            'مسیرها زبانِ خاموش را هم باید بشناسند تا بتوانند ۳۰۱ بدهند.',
+        );
+    }
+
+    /** زبانِ تازه‌ی تنظیمات، خاموش متولد می‌شود. */
+    public function test_a_newly_declared_language_arrives_switched_off(): void
+    {
+        config(['locales.available.tr' => [
+            'name' => 'Türkçe', 'english' => 'Turkish', 'short' => 'TR',
+            'dir' => 'ltr', 'html' => 'tr', 'font' => 'inter',
+            'digits' => 'latn', 'calendar' => 'gregorian', 'enabled' => true,
+        ]]);
+
+        Locale::sync();
+
+        $this->assertDatabaseHas('locales', ['code' => 'tr', 'is_active' => false]);
+        $this->assertNotContains('tr', Locales::codes());
+        $this->assertContains('tr', Locales::declaredCodes());
+    }
+
+    /** زبانی که از تنظیمات حذف شده، ردیفِ جامانده‌اش سایت را نمی‌شکند. */
+    public function test_a_row_without_a_config_entry_is_not_a_language(): void
+    {
+        Locale::query()->create(['code' => 'zz', 'is_active' => true, 'order' => 99]);
+
+        $this->assertNotContains('zz', Locales::codes());
+    }
+
+    /**
+     * ترجمه‌ی زبانِ خاموش، پیش از روشن‌کردنش وارد می‌شود.
+     *
+     * ترتیب کار همین است و بی این، پنجره‌ی آماده‌سازی وجود نداشت: مدیر برای
+     * وارد کردن ترجمه مجبور بود اول زبانِ نصفه را منتشر کند.
+     */
+    public function test_a_switched_off_language_can_still_be_translated_in_the_panel(): void
+    {
+        $this->disable('ar');
+
+        $admin = User::factory()->create(['role' => 'admin', 'is_active' => true]);
+        $faq = Faq::query()->firstOrFail();
+
+        $this->actingAs($admin)
+            ->get("/admin/faqs/{$faq->id}/edit")
+            ->assertOk()
+            ->assertSee('translations[ar][question]', false);
+
+        $this->actingAs($admin)
+            ->put("/admin/faqs/{$faq->id}", [
+                'group' => $faq->group,
+                'question' => $faq->question,
+                'answer' => $faq->answer,
+                'order' => $faq->order ?? 0,
+                'translations' => ['ar' => ['question' => 'سؤال مترجَم']],
+            ])
+            ->assertRedirect();
+
+        $this->assertSame('سؤال مترجَم', $faq->fresh()->translation('question', 'ar'));
+
+        // و تا روشن نشده، روی سایت دیده نمی‌شود
+        $this->enable('ar');
+        app()->setLocale('ar');
+        $this->assertSame('سؤال مترجَم', $faq->fresh()->question);
+    }
+
+    /** پنل باید هر زبانِ اعلام‌شده را نشان دهد، روشن یا خاموش. */
+    public function test_the_panel_lists_every_declared_language(): void
+    {
+        $this->disable('ar');
+
+        $admin = User::factory()->create(['role' => 'admin', 'is_active' => true]);
+        $page = $this->actingAs($admin)->get('/admin/locales')->assertOk();
+
+        foreach (Locales::declared() as $meta) {
+            $page->assertSee($meta['name'], false);
+        }
+    }
+
+    protected function disable(string $code): void
+    {
+        Locale::query()->where('code', $code)->update(['is_active' => false]);
+        Locale::forget();
+    }
+
+    protected function enable(string $code): void
+    {
+        Locale::query()->where('code', $code)->update(['is_active' => true]);
+        Locale::forget();
     }
 
     // ------------------------------------------------------ پیکربندی --

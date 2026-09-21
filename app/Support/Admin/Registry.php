@@ -9,6 +9,7 @@ use App\Admin\Resources\DistributorResource;
 use App\Admin\Resources\DocumentResource;
 use App\Admin\Resources\FactorySectionResource;
 use App\Admin\Resources\FaqResource;
+use App\Admin\Resources\LocaleResource;
 use App\Admin\Resources\OfferResource;
 use App\Admin\Resources\OrderResource;
 use App\Admin\Resources\ProcessStepResource;
@@ -51,6 +52,7 @@ class Registry
             DistributorResource::class,
             ContactMessageResource::class,
             SettingResource::class,
+            LocaleResource::class,
             UserResource::class,
         ];
 

@@ -2,15 +2,30 @@
 
 namespace App\Support;
 
+use App\Models\Locale;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 
 /**
  * زبان‌های سایت.
  *
- * فهرست در config/locales.php است و این کلاس تنها راه خواندنش. هر جای سایت
- * که به زبان کار دارد — مسیر، جهت، قلم، hreflang، نقشه‌ی سایت — از اینجا
- * می‌پرسد، تا افزودن زبان تازه فقط یک مدخل در تنظیمات باشد.
+ * دو منبع دارد و این کلاس تنها جایی است که هر دو را می‌شناسد:
+ *
+ *   • config/locales.php — چه زبان‌هایی *وجود دارند* و مشخصاتشان چیست. کد
+ *     است، چون هر زبان پوشه‌ی lang و ترجمه‌ی محتوا می‌خواهد.
+ *   • جدول locales — کدام‌ها *همین حالا روشن‌اند*. تصمیم مدیر است و از پنل
+ *     عوض می‌شود، بی‌آنکه کسی به پرونده‌ای دست بزند.
+ *
+ * پس دو فهرست داریم و خلط‌شدنشان گران تمام می‌شود:
+ *   declared() = هرچه اعلام شده → قیدِ مسیرها. ثابت است و به دیتابیس کار
+ *     ندارد، پس route:cache سالم می‌ماند و خاموش‌کردن زبان مسیرها را کهنه
+ *     نمی‌کند.
+ *   all() = هرچه روشن است → هر چیزی که کاربر می‌بیند: سوئیچر، hreflang،
+ *     نقشه‌ی سایت، فرم ترجمه‌ی پنل.
+ *
+ * فاصله‌ی میان این دو، همان زبانِ خاموش است: مسیرش هنوز می‌خورد تا SetLocale
+ * بتواند با ۳۰۱ به زبان پیش‌فرض بفرستدش، و نه ۴۰۴ بدهد یا — بدتر — همان صفحه
+ * را زیر نشانیِ دیگری دوباره منتشر کند.
  *
  * نکته‌ی مسیرها: همه‌ی صفحه‌های عمومی پیشوند زبان دارند، حتی زبان پیش‌فرض.
  * تقارنِ /fa/products و /en/products ارزشش را دارد: با پیشوندِ اختیاری،
@@ -20,17 +35,76 @@ class Locales
 {
     public const COOKIE = 'locale';
 
-    /** @return Collection<string, array> فقط زبان‌های روشن */
+    /**
+     * هر زبانی که اعلام شده — روشن یا خاموش.
+     *
+     * قیدِ پیشوند مسیرها از همین‌جا می‌آید و نه از all(): مسیرها یک‌بار هنگام
+     * بوت ساخته می‌شوند و کش می‌شوند، پس قیدشان نباید به حالتی وابسته باشد
+     * که مدیر وسط کار عوضش می‌کند.
+     *
+     * @return Collection<string, array>
+     */
+    public static function declared(): Collection
+    {
+        return collect(config('locales.available', []));
+    }
+
+    /** @return array<int, string> */
+    public static function declaredCodes(): array
+    {
+        return static::declared()->keys()->all();
+    }
+
+    /**
+     * فقط زبان‌های روشن، به ترتیبی که مدیر خواسته.
+     *
+     * حالت از جدول می‌آید و مشخصات از تنظیمات. اگر جدول هنوز نباشد — نصبِ
+     * تازه، پیش از اجرای مهاجرت‌ها — به کلید enabledِ خودِ تنظیمات برمی‌گردیم
+     * تا سایت بالا بیاید.
+     *
+     * @return Collection<string, array>
+     */
     public static function all(): Collection
     {
-        return collect(config('locales.available'))
-            ->filter(fn (array $meta) => $meta['enabled'] ?? true);
+        $state = Locale::mapOrNull();
+
+        if ($state === null) {
+            return static::declared()->filter(fn (array $meta) => $meta['enabled'] ?? true);
+        }
+
+        $declared = static::declared();
+
+        $on = collect($state)
+            // زبانی که ردیف دارد ولی دیگر در تنظیمات نیست، زبان نیست
+            ->filter(fn (array $row, string $code) => $declared->has($code) && $row['is_active'])
+            ->map(fn (array $row, string $code) => $declared->get($code));
+
+        /*
+         * زبان پیش‌فرض همیشه هست.
+         *
+         * مدل هم جلوی خاموش‌کردنش را می‌گیرد، ولی یک UPDATE مستقیم روی
+         * دیتابیس از مدل رد می‌شود و از این خط نه. بی این، یک دستور SQL
+         * می‌توانست سایت را بدون هیچ زبانی بگذارد.
+         */
+        $default = static::default();
+
+        if (! $on->has($default) && $declared->has($default)) {
+            $on = $on->prepend($declared->get($default), $default);
+        }
+
+        return $on;
     }
 
     /** @return array<int, string> */
     public static function codes(): array
     {
         return static::all()->keys()->all();
+    }
+
+    /** زبانی که اعلام شده ولی مدیر خاموشش کرده. */
+    public static function isDisabled(?string $code): bool
+    {
+        return $code !== null && static::declared()->has($code) && ! static::supports($code);
     }
 
     public static function default(): string

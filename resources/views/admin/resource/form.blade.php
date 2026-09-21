@@ -26,9 +26,17 @@
         ? $record->translatableFields()
         : [];
 
+    /*
+    | جعبه‌ی ترجمه برای هر زبانِ *اعلام‌شده* باز می‌شود و نه فقط روشن‌ها.
+    |
+    | ترتیبِ کار همین است: زبان تازه خاموش متولد می‌شود، مدیر ترجمه‌ها را وارد
+    | می‌کند، و وقتی کامل شد روشنش می‌کند. اگر اینجا Locales::all بود، پنجره‌ی
+    | آماده‌سازی اصلاً وجود نداشت — برای وارد کردن ترجمه باید زبانِ نصفه را
+    | منتشر می‌کرد.
+    */
     $others = $creating || ! $translatable
         ? collect()
-        : Locales::all()->except(Locales::default());
+        : Locales::declared()->except(Locales::default());
 
     // برچسب و نوع هر فیلد از خودِ فرم می‌آید، تا دوبار تعریف نشود
     $meta = collect($fields)->keyBy('key');
@@ -85,9 +93,19 @@
         --}}
         @foreach($others as $code => $localeMeta)
             <section class="mt-4 rounded-[var(--radius-panel)] border border-sand-300 bg-sand-50 p-5 lg:p-7">
-                <h2 class="mb-1 flex items-center gap-2 text-[0.9375rem] font-extrabold text-ink-800">
-                    <x-icon name="grid" size="16" class="text-clay-500" />
+                <h2 class="mb-1 flex flex-wrap items-center gap-2 text-[0.9375rem] font-extrabold text-ink-800">
+                    <x-icon name="globe" size="16" class="text-clay-500" />
                     ترجمه — {{ $localeMeta['name'] }}
+                    {{--
+                        زبانِ خاموش هم جعبه دارد، ولی مدیر باید بداند نوشته‌اش
+                        هنوز روی سایت دیده نمی‌شود — وگرنه دنبال اشکالی می‌گردد
+                        که اشکال نیست.
+                    --}}
+                    @unless(Locales::supports($code))
+                        <span class="rounded-full bg-sand-200 px-2.5 py-0.5 text-micro font-bold text-ink-500">
+                            خاموش — روی سایت دیده نمی‌شود
+                        </span>
+                    @endunless
                 </h2>
                 <p class="mb-5 border-b border-sand-200 pb-3 text-meta text-ink-400">
                     هر فیلدی که خالی بماند، در این زبان همان متن

@@ -128,9 +128,13 @@ class ResourceController extends Controller
     /**
      * ترجمه‌های ارسالی فرم را می‌نویسد.
      *
-     * دو نگهبان: زبان باید در config/locales.php باشد و زبان پیش‌فرض
-     * پذیرفته نمی‌شود — متنِ آن زبان ستونِ خود جدول است و نباید از این راه
-     * دور زده شود. فیلترِ فیلدها را خودِ putTranslations انجام می‌دهد.
+     * دو نگهبان: زبان باید در config/locales.php اعلام شده باشد و زبان
+     * پیش‌فرض پذیرفته نمی‌شود — متنِ آن زبان ستونِ خود جدول است و نباید از این
+     * راه دور زده شود. فیلترِ فیلدها را خودِ putTranslations انجام می‌دهد.
+     *
+     * قید «اعلام‌شده» است و نه «روشن»: زبانِ خاموش هم در پنل جعبه‌ی ترجمه
+     * دارد، چون ترجمه پیش از روشن‌کردن وارد می‌شود. با قیدِ روشن، همان فرم
+     * نوشته را بی‌صدا می‌انداخت.
      */
     protected function saveTranslations(Request $request, Model $record): void
     {
@@ -145,7 +149,7 @@ class ResourceController extends Controller
         }
 
         foreach ($submitted as $locale => $values) {
-            if (! is_array($values) || ! Locales::supports($locale) || Locales::isDefault($locale)) {
+            if (! is_array($values) || ! Locales::declared()->has($locale) || Locales::isDefault($locale)) {
                 continue;
             }
 
