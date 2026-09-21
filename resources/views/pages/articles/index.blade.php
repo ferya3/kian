@@ -1,8 +1,8 @@
 <x-layouts.app>
     <x-page-hero
         eyebrow="Knowledge"
-        title="دانش فنی"
-        lead="مقالاتی که واحد فنی ما می‌نویسد: مقایسه‌ی صادقانه‌ی مصالح، محاسبات مبحث ۱۹، و آنچه در کارگاه‌ها بیشتر از همه اشتباه اجرا می‌شود." />
+        :title="__('site.articles.title')"
+        :lead="__('site.articles.lead')" />
 
     <section class="bg-sand-100 section-b">
         <div class="container-page">
@@ -27,7 +27,7 @@
                             <p class="mt-5 flex items-center gap-3 border-t border-sand-200 pt-4 text-micro text-ink-400">
                                 <span>{{ \App\Support\Jalali::format($article->published_at) }}</span>
                                 <span class="h-1 w-1 rounded-full bg-ink-300"></span>
-                                <span class="tech">{{ \App\Support\Jalali::digits($article->reading_time) }} دقیقه مطالعه</span>
+                                <span class="tech">{{ __('site.articles.reading', ['minutes' => \App\Support\Jalali::digits($article->reading_time)]) }}</span>
                             </p>
                         </div>
                     </article>

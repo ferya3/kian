@@ -1,19 +1,19 @@
 <x-layouts.app>
     <x-page-hero
         eyebrow="Reference projects"
-        title="پروژه‌های اجراشده"
-        lead="هر پروژه یک مسئله‌ی متفاوت داشت: یکی گواهی انرژی می‌خواست، یکی سرعت اجرا، یکی کاهش بار مرده. اینجا نوشته‌ایم چه چیزی و چرا انتخاب شد." />
+        :title="__('site.home.projects.title')"
+        :lead="__('site.projects.lead')" />
 
     <section class="bg-sand-100 section-b" x-data="filterable('{{ request('type') ?: 'all' }}')">
         <div class="container-page">
             <div class="sticky z-30 -mx-5 border-b border-sand-300 bg-sand-100/95 px-5 py-4 backdrop-blur-md lg:-mx-12 lg:px-12"
                  style="top: calc(var(--header-h) + var(--safe-top))">
                 <div class="flex flex-wrap items-center gap-x-5 gap-y-3">
-                    <div class="tap-row" role="group" aria-label="فیلتر نوع پروژه">
+                    <div class="tap-row" role="group" aria-label="{{ __('site.projects.filter') }}">
                         <button type="button" @click="setFilter('all')"
                                 :class="filter === 'all' ? 'bg-ink-900 text-sand-50' : 'bg-sand-200 text-ink-600 hover:bg-sand-300'"
                                 class="tap rounded-full px-4 py-2 text-[0.875rem] font-semibold transition">
-                            همه
+                            {{ __('site.products.all') }}
                             <span class="tech mr-1 text-micro opacity-60">{{ \App\Support\Jalali::digits($projects->count()) }}</span>
                         </button>
                         @foreach($categories as $category)

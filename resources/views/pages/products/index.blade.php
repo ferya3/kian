@@ -3,8 +3,8 @@
         :image="$activeCategory?->image"
         :image-alt="$activeCategory?->name"
         eyebrow="Product system"
-        title="محصولات"
-        lead="یک خانواده‌ی ماژولار از بلوک سفالی: تیغه‌ای، دیواری، عایق، سبک، سقفی و متعلقات. ابعاد همه با هم می‌خوانند تا رگ‌چینی بدون برش اضافه پیش برود.">
+        :title="__('site.products.title')"
+        :lead="__('site.products.lead')">
     </x-page-hero>
 
     <section class="bg-sand-100 section-b">
@@ -14,9 +14,9 @@
                  style="top: calc(var(--header-h) + var(--safe-top))">
                 <div class="flex flex-wrap items-center gap-x-6 gap-y-3">
                     <div class="tap-row items-center">
-                        <span class="ml-1 text-meta font-semibold text-ink-400">دسته:</span>
+                        <span class="ml-1 text-meta font-semibold text-ink-400">{{ __('site.products.category') }}</span>
                         <a href="{{ route('products.index') }}"
-                           class="tap rounded-full px-4 py-2 text-[0.875rem] font-semibold transition {{ request('category') ? 'bg-sand-200 text-ink-600 hover:bg-sand-300' : 'bg-ink-900 text-sand-50' }}">همه</a>
+                           class="tap rounded-full px-4 py-2 text-[0.875rem] font-semibold transition {{ request('category') ? 'bg-sand-200 text-ink-600 hover:bg-sand-300' : 'bg-ink-900 text-sand-50' }}">{{ __('site.products.all') }}</a>
 
                         @foreach($categories as $group)
                             @foreach($group->children as $child)
@@ -29,22 +29,22 @@
                     </div>
 
                     <p class="tech mr-auto text-meta text-ink-400">
-                        {{ \App\Support\Jalali::digits($products->count()) }} محصول
+                        {{ __('site.products.count', ['count' => \App\Support\Jalali::digits($products->count())]) }}
                     </p>
 
                     <a href="{{ route('finder.show') }}"
                        class="tap gap-2 rounded-full bg-clay-500 px-4 py-2.5 text-[0.875rem] font-semibold text-white transition hover:bg-clay-600">
                         <x-icon name="compass" size="16" />
-                        نمی‌دانید کدام؟
+                        {{ __('site.products.unsure') }}
                     </a>
                 </div>
             </div>
 
             @if($products->isEmpty())
                 <div class="mt-16 rounded-[var(--radius-panel)] border border-dashed border-sand-300 py-20 text-center">
-                    <p class="text-lg font-bold">محصولی با این فیلتر پیدا نشد</p>
-                    <p class="mt-2 text-ink-400">فیلتر را بردارید یا از موتور انتخاب محصول استفاده کنید.</p>
-                    <x-cta :href="route('products.index')" variant="ghost" class="mt-6">همه محصولات</x-cta>
+                    <p class="text-lg font-bold">{{ __('site.products.empty') }}</p>
+                    <p class="mt-2 text-ink-400">{{ __('site.products.empty_hint') }}</p>
+                    <x-cta :href="route('products.index')" variant="ghost" class="mt-6">{{ __('site.home.products.all') }}</x-cta>
                 </div>
             @else
                 <div class="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" data-reveal-stagger="80">
@@ -56,27 +56,24 @@
 
             {{-- جدول مقایسه‌ای — چیزی که مهندس واقعاً می‌خواهد --}}
             <div class="mt-16">
-                <h2 class="text-h3 font-extrabold" data-reveal>جدول مقایسه‌ای</h2>
-                <p class="mt-2 text-ink-500" data-reveal>همه‌ی اعداد در یک نگاه. برای دیدن ستون‌های بیشتر، جدول را افقی بکشید.</p>
+                <h2 class="text-h3 font-extrabold" data-reveal>{{ __('site.products.compare') }}</h2>
+                <p class="mt-2 text-ink-500" data-reveal>{{ __('site.products.compare_lead') }}</p>
 
                 <p class="mt-4 flex items-center gap-2 text-meta text-ink-400 lg:hidden">
                     <x-icon name="arrow-right" size="15" />
-                    جدول را افقی بکشید
+                    {{ __('site.products.drag_table') }}
                 </p>
 
                 <div class="-mx-5 mt-4 overflow-x-auto overscroll-x-contain border-y border-sand-300 md:mx-0 md:rounded-[var(--radius-panel)] md:border lg:mt-6" data-reveal style="-webkit-overflow-scrolling: touch">
                     <table class="w-full min-w-[56rem] text-right">
-                        <caption class="sr-only">مقایسه مشخصات فنی محصولات</caption>
+                        <caption class="sr-only">{{ __('site.products.compare_caption') }}</caption>
                         <thead class="bg-sand-200/80">
                             <tr>
-                                <th scope="col" class="px-4 py-3.5 text-meta font-bold text-ink-600">محصول</th>
-                                <th scope="col" class="px-4 py-3.5 text-meta font-bold text-ink-600">ابعاد (cm)</th>
-                                <th scope="col" class="px-4 py-3.5 text-meta font-bold text-ink-600">وزن (kg)</th>
-                                <th scope="col" class="px-4 py-3.5 text-meta font-bold text-ink-600">مقاومت (MPa)</th>
-                                <th scope="col" class="px-4 py-3.5 text-meta font-bold text-ink-600">λ (W/m·K)</th>
-                                <th scope="col" class="px-4 py-3.5 text-meta font-bold text-ink-600">صوت (dB)</th>
-                                <th scope="col" class="px-4 py-3.5 text-meta font-bold text-ink-600">آتش (دقیقه)</th>
-                                <th scope="col" class="px-4 py-3.5 text-meta font-bold text-ink-600">تعداد در m²</th>
+                                @foreach(['product', 'dimensions', 'weight', 'strength', 'lambda', 'sound', 'fire', 'per_sqm'] as $column)
+                                    <th scope="col" class="px-4 py-3.5 text-meta font-bold text-ink-600">
+                                        {{ __("site.products.column.{$column}") }}
+                                    </th>
+                                @endforeach
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-sand-200 bg-sand-50">

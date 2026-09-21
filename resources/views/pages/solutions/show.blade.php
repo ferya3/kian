@@ -19,7 +19,7 @@
                     @endforeach
                 </div>
 
-                <h3 class="mt-10 text-h3 font-extrabold">مزایای این راهکار</h3>
+                <h3 class="mt-10 text-h3 font-extrabold">{{ __('site.solutions.its_benefits') }}</h3>
                 <ul class="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2" data-reveal-stagger="80">
                     @foreach($solution->benefits ?? [] as $benefit)
                         <li data-reveal class="flex gap-3 rounded-xl border border-sand-300 bg-sand-100 p-4">
@@ -32,7 +32,7 @@
 
             <aside class="lg:col-span-5">
                 <div class="sticky top-28 rounded-[var(--radius-panel)] border border-sand-300 bg-sand-100 p-6">
-                    <h2 class="font-bold">محصولات پیشنهادی این راهکار</h2>
+                    <h2 class="font-bold">{{ __('site.solutions.suggested') }}</h2>
                     <ul class="mt-4 space-y-3">
                         @foreach($solution->products as $product)
                             <li>
@@ -54,7 +54,7 @@
                     </ul>
 
                     <x-cta :href="route('contact', ['type' => 'technical'])" variant="primary" size="sm" class="mt-6 w-full">
-                        مشاوره برای این راهکار
+                        {{ __('site.solutions.advice') }}
                     </x-cta>
                 </div>
             </aside>
@@ -62,8 +62,8 @@
     </section>
     <x-mobile-action-bar
         :primary-href="route('contact', ['type' => 'technical'])"
-        primary-label="مشاوره فنی"
+        :primary-label="__('site.product.advice')"
         :secondary-href="route('products.index')"
-        secondary-label="محصولات"
+        :secondary-label="__('site.solutions.products')"
         secondary-icon="grid" />
 </x-layouts.app>

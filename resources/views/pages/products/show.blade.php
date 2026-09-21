@@ -1,15 +1,12 @@
 <x-layouts.app>
     @php
         $benefits = [
-            ['icon' => 'thermal',  'en' => 'Thermal',    'label' => 'عایق حرارتی',
-             'value' => 'λ = '.$product->thermal_conductivity,
-             'note' => 'ضریب هدایت حرارتی بر حسب وات بر متر کلوین'],
-            ['icon' => 'acoustic', 'en' => 'Acoustic',   'label' => 'عایق صوتی',
-             'value' => $product->sound_reduction_db.' dB',
-             'note' => 'کاهش صوت هوابرد در دیوار اجراشده'],
-            ['icon' => 'fire',     'en' => 'Fire',       'label' => 'مقاومت آتش',
-             'value' => $product->fire_resistance_min.' دقیقه',
-             'note' => 'ماده‌ی غیرقابل اشتعال، بدون انتشار گاز سمی'],
+            ['icon' => 'thermal',  'en' => 'Thermal',  'label' => __('site.product.benefit.thermal'),
+             'value' => 'λ = '.$product->thermal_conductivity],
+            ['icon' => 'acoustic', 'en' => 'Acoustic', 'label' => __('site.product.benefit.acoustic'),
+             'value' => $product->sound_reduction_db.' dB'],
+            ['icon' => 'fire',     'en' => 'Fire',     'label' => __('site.product.benefit.fire'),
+             'value' => $product->fire_resistance_min.' '.__('site.product.minutes')],
         ];
     @endphp
 
@@ -34,27 +31,27 @@
 
                     <div class="relative overflow-hidden rounded-[var(--radius-panel)] border border-sand-300 bg-gradient-to-bl from-sand-200 via-sand-100 to-sand-300">
                         <div class="absolute right-5 top-5 z-10 flex rounded-full border border-ink-900/10 bg-sand-50/90 p-1 text-meta backdrop-blur"
-                             role="tablist" aria-label="نمای محصول">
+                             role="tablist" aria-label="{{ __('site.product.view') }}">
                             <button type="button" role="tab" @click="mode = 'solid'" :aria-selected="mode === 'solid'"
                                     class="tap rounded-full px-4 py-2 font-semibold transition"
-                                    :class="mode === 'solid' ? 'bg-ink-900 text-sand-50' : 'text-ink-500 hover:text-ink-900'">نمای حجمی</button>
+                                    :class="mode === 'solid' ? 'bg-ink-900 text-sand-50' : 'text-ink-500 hover:text-ink-900'">{{ __('site.product.solid') }}</button>
                             <button type="button" role="tab" @click="mode = 'section'" :aria-selected="mode === 'section'"
                                     class="tap rounded-full px-4 py-2 font-semibold transition"
-                                    :class="mode === 'section' ? 'bg-ink-900 text-sand-50' : 'text-ink-500 hover:text-ink-900'">مقطع داخلی</button>
+                                    :class="mode === 'section' ? 'bg-ink-900 text-sand-50' : 'text-ink-500 hover:text-ink-900'">{{ __('site.product.section') }}</button>
                         </div>
 
                         <div class="grid min-h-[24rem] place-items-center p-8 lg:min-h-[28rem]">
                             <div x-show="mode === 'solid'" x-transition.opacity.duration.300ms class="w-full">
                                 <x-block-3d :product="$product" :size="300" />
                                 <p class="mt-8 text-center text-meta text-ink-400">
-                                    برای چرخاندن بکشید — یا از کلیدهای جهت استفاده کنید
+                                    {{ __('site.product.drag') }}
                                 </p>
                             </div>
 
                             <div x-show="mode === 'section'" x-cloak x-transition.opacity.duration.300ms class="w-full">
                                 <x-block-section :product="$product" />
                                 <p class="mt-5 text-center text-meta text-ink-400">
-                                    روی نقاط مقطع کلیک کنید
+                                    {{ __('site.product.tap_points') }}
                                 </p>
                             </div>
                         </div>
@@ -73,7 +70,7 @@
                             </div>
                         </template>
                         <p x-show="!cavity" class="text-[0.9375rem] text-ink-400">
-                            نقاط روشن روی مقطع، ساختار داخلی بلوک را توضیح می‌دهند.
+                            {{ __('site.product.cavity_hint') }}
                         </p>
                     </div>
                 </div>
@@ -88,7 +85,7 @@
                     </div>
 
                     <p class="tech mt-2 text-lg text-ink-400">
-                        {{ \App\Support\Jalali::digits($product->dimensionLabel()) }} سانتی‌متر
+                        {{ \App\Support\Jalali::digits($product->dimensionLabel()) }} {{ __('site.card.cm') }}
                     </p>
 
                     <p class="mt-5 text-lead text-ink-600">{{ $product->summary }}</p>
@@ -108,7 +105,7 @@
                     {{-- جدول مشخصات فنی --}}
                     <h2 class="mt-9 flex items-center gap-2 text-lg font-bold">
                         <x-icon name="ruler" size="19" class="text-clay-500" />
-                        مشخصات فنی
+                        {{ __('site.product.specs') }}
                     </h2>
                     <x-spec-table :product="$product" class="mt-4" dense />
 
@@ -117,14 +114,14 @@
                         @php $datasheet = $product->documents->firstWhere('category', 'datasheet'); @endphp
                         @if($datasheet)
                             <x-cta :href="route('documents.download', $datasheet)" variant="dark" icon="download">
-                                دانلود دیتاشیت
+                                {{ __('site.product.datasheet') }}
                             </x-cta>
                         @endif
                         <x-cta :href="route('contact', ['type' => 'quote', 'product' => $product->id])" variant="primary">
-                            درخواست قیمت
+                            {{ __('site.actions.quote') }}
                         </x-cta>
                         <x-cta :href="route('contact', ['type' => 'technical', 'product' => $product->id])" variant="ghost">
-                            مشاوره فنی
+                            {{ __('site.product.advice') }}
                         </x-cta>
                     </div>
 
@@ -145,13 +142,13 @@
 
     {{-- ==================== تصاویر ==================== --}}
     <x-gallery :images="array_filter([$product->hero_image, $product->section_image, ...(array) $product->gallery])"
-               title="تصاویر محصول" eyebrow="Gallery" />
+               :title="__('site.product.gallery')" eyebrow="Gallery" />
 
     {{-- ==================== عملکرد و کاربرد ==================== --}}
     <section class="bg-ink-950 section text-sand-50">
         <div class="container-page grid grid-cols-1 gap-10 lg:grid-cols-12 lg:gap-14">
             <div class="lg:col-span-5">
-                <h2 class="text-h2 font-extrabold">چرا این محصول؟</h2>
+                <h2 class="text-h2 font-extrabold">{{ __('site.product.why') }}</h2>
                 <p class="mt-4 leading-relaxed text-sand-200/65">{{ $product->description ?: $product->summary }}</p>
 
                 <x-perf-bars :product="$product" light class="mt-8" />
@@ -162,7 +159,7 @@
                     <div class="rounded-2xl border border-white/10 bg-white/[0.04] p-6">
                         <h3 class="flex items-center gap-2 font-bold">
                             <x-icon name="sparkle" size="18" class="text-clay-400" />
-                            ویژگی‌ها
+                            {{ __('site.product.features') }}
                         </h3>
                         <ul class="mt-4 space-y-2.5">
                             @foreach($product->features ?? [] as $feature)
@@ -177,7 +174,7 @@
                     <div class="rounded-2xl border border-white/10 bg-white/[0.04] p-6">
                         <h3 class="flex items-center gap-2 font-bold">
                             <x-icon name="compass" size="18" class="text-clay-400" />
-                            کاربردها
+                            {{ __('site.product.applications') }}
                         </h3>
                         <ul class="mt-4 space-y-2.5">
                             @foreach($product->applications ?? [] as $application)
@@ -192,7 +189,7 @@
 
                 @if($product->solutions->isNotEmpty())
                     <div class="mt-4 rounded-2xl border border-white/10 bg-gradient-to-bl from-clay-900/50 to-transparent p-6">
-                        <h3 class="font-bold">راهکارهایی که این محصول در آن‌ها به‌کار می‌رود</h3>
+                        <h3 class="font-bold">{{ __('site.product.in_solutions') }}</h3>
                         <ul class="mt-4 flex flex-wrap gap-2">
                             @foreach($product->solutions as $solution)
                                 <li>
@@ -215,10 +212,10 @@
         <section class="bg-sand-100 section">
             <div class="container-page">
                 <div class="flex flex-wrap items-end justify-between gap-4">
-                    <x-section-heading eyebrow="Downloads" title="فایل‌های فنی این محصول"
-                        lead="دیتاشیت، مقطع DWG و آبجکت‌های BIM با پارامترهای حرارتی و صوتی." class="lg:max-w-2xl" />
+                    <x-section-heading eyebrow="Downloads" :title="__('site.product.files')"
+                        :lead="__('site.product.files_lead')" class="lg:max-w-2xl" />
                     <div data-reveal>
-                        <x-cta :href="route('technical.downloads')" variant="ghost" size="sm">مرکز دانلود</x-cta>
+                        <x-cta :href="route('technical.downloads')" variant="ghost" size="sm">{{ __('site.product.download_centre') }}</x-cta>
                     </div>
                 </div>
 
@@ -235,19 +232,17 @@
     <section class="bg-sand-50 section">
         <div class="container-page grid grid-cols-1 gap-10 lg:grid-cols-12 lg:gap-14">
             <div class="lg:col-span-4">
-                <x-section-heading eyebrow="Installation" title="روش اجرا"
-                    lead="پنج نکته‌ای که بیشترین تأثیر را روی عملکرد نهایی دیوار دارد." />
-                <x-cta :href="route('technical.installation')" variant="ghost" class="mt-7">راهنمای کامل اجرا</x-cta>
+                <x-section-heading eyebrow="Installation" :title="__('site.product.install')"
+                    :lead="__('site.product.install_lead')" />
+                <x-cta :href="route('technical.installation')" variant="ghost" class="mt-7">{{ __('site.product.install_full') }}</x-cta>
             </div>
 
             <ol class="lg:col-span-8" data-reveal-stagger="80">
-                @foreach([
-                    ['بستر را تراز کنید', 'رگ اول روی بستر ملاتی کاملاً تراز اجرا می‌شود. هر میلی‌متر انحراف در رگ اول، در ارتفاع دیوار چند برابر می‌شود.'],
-                    ['بلوک را مرطوب کنید، نه اشباع', 'سطح بلوک باید نم‌دار باشد تا آب ملات را نمکد. بلوک خیس، برعکس، چسبندگی را از بین می‌برد.'],
-                    ['درز افقی را کامل پر کنید', 'درز ناقص هم مقاومت را کم می‌کند و هم مسیر عبور صوت و حرارت می‌سازد. با درز نر و ماده، درز قائم حذف می‌شود.'],
-                    ['بازشو بدون نعل درگاه اجرا نشود', 'حتی دهانه‌های کوچک نیاز به نعل درگاه دارند. نعل درگاه سفالی، پیوستگی حرارتی نما را هم حفظ می‌کند.'],
-                    ['حداکثر یک و نیم متر در روز', 'اجرای بلندتر در یک نوبت، ملات تازه‌ی رگ‌های پایین را می‌فشارد و شاقولی دیوار را به هم می‌زند.'],
-                ] as $i => [$title, $text])
+                @foreach(['level', 'damp', 'joint', 'lintel', 'height'] as $i => $step)
+                    @php
+                        $title = __("site.product.step.{$step}.title");
+                        $text = __("site.product.step.{$step}.text");
+                    @endphp
                     <li data-reveal class="flex gap-5 border-b border-sand-200 py-5 first:pt-0 last:border-0">
                         <span class="tech grid h-9 w-9 shrink-0 place-items-center rounded-full bg-clay-100 text-sm font-bold text-clay-700">
                             {{ \App\Support\Jalali::digits($i + 1) }}
@@ -266,7 +261,7 @@
     @if($product->projects->isNotEmpty())
         <section class="bg-sand-100 section">
             <div class="container-page">
-                <x-section-heading eyebrow="Used in" title="پروژه‌هایی که با این محصول اجرا شده‌اند" />
+                <x-section-heading eyebrow="Used in" :title="__('site.product.used_in')" />
                 <div class="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3" data-reveal-stagger="100">
                     @foreach($product->projects->take(3) as $project)
                         <x-project-card :project="$project" data-reveal />
@@ -280,14 +275,14 @@
     @php $datasheetDoc = $product->documents->firstWhere('category', 'datasheet'); @endphp
     <x-mobile-action-bar
         :primary-href="route('contact', ['type' => 'quote', 'product' => $product->id])"
-        primary-label="استعلام قیمت"
+        :primary-label="__('site.actions.price_enquiry')"
         :secondary-href="$datasheetDoc ? route('documents.download', $datasheetDoc) : null"
-        secondary-label="دیتاشیت" />
+        :secondary-label="__('site.product.datasheet_short')" />
 
     {{-- ==================== محصولات مشابه ==================== --}}
     <section class="bg-sand-50 section">
         <div class="container-page">
-            <x-section-heading eyebrow="Related" title="محصولات مشابه" />
+            <x-section-heading eyebrow="Related" :title="__('site.product.related')" />
             <div class="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3" data-reveal-stagger="100">
                 @foreach($related as $item)
                     <x-product-card :product="$item" data-reveal />

@@ -7,7 +7,7 @@
                 <span class="h-1 w-1 rounded-full bg-ink-300"></span>
                 <span>{{ \App\Support\Jalali::format($article->published_at) }}</span>
                 <span class="h-1 w-1 rounded-full bg-ink-300"></span>
-                <span class="tech">{{ \App\Support\Jalali::digits($article->reading_time) }} دقیقه مطالعه</span>
+                <span class="tech">{{ __('site.articles.reading', ['minutes' => \App\Support\Jalali::digits($article->reading_time)]) }}</span>
             </p>
         </x-page-hero>
 
@@ -26,9 +26,9 @@
                     @endforeach
 
                     <div class="mt-12 rounded-[var(--radius-panel)] border border-sand-300 bg-sand-50 p-6">
-                        <h2 class="font-bold">پرسشی درباره‌ی این مطلب دارید؟</h2>
-                        <p class="mt-2 text-ink-500">واحد فنی ما محاسبه‌ی اختصاصی پروژه‌ی شما را رایگان انجام می‌دهد.</p>
-                        <x-cta :href="route('contact', ['type' => 'technical'])" variant="primary" size="sm" class="mt-5">مشاوره فنی</x-cta>
+                        <h2 class="font-bold">{{ __('site.articles.question') }}</h2>
+                        <p class="mt-2 text-ink-500">{{ __('site.articles.question_lead') }}</p>
+                        <x-cta :href="route('contact', ['type' => 'technical'])" variant="primary" size="sm" class="mt-5">{{ __('site.product.advice') }}</x-cta>
                     </div>
                 </div>
             </div>
@@ -37,7 +37,7 @@
         @if($more->isNotEmpty())
             <section class="bg-sand-50 section">
                 <div class="container-page">
-                    <x-section-heading eyebrow="More" title="مطالب دیگر" />
+                    <x-section-heading eyebrow="More" :title="__('site.articles.more')" />
                     <ul class="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
                         @foreach($more as $item)
                             <li>
@@ -45,7 +45,7 @@
                                    class="group flex h-full flex-col rounded-2xl border border-sand-300 bg-sand-100 p-5 transition hover:border-clay-300">
                                     <span class="eyebrow text-clay-600">{{ $item->category }}</span>
                                     <span class="mt-2 font-bold leading-snug group-hover:text-clay-700">{{ $item->title }}</span>
-                                    <span class="tech mt-auto pt-4 text-micro text-ink-400">{{ \App\Support\Jalali::digits($item->reading_time) }} دقیقه</span>
+                                    <span class="tech mt-auto pt-4 text-micro text-ink-400">{{ __('site.articles.minutes', ['minutes' => \App\Support\Jalali::digits($item->reading_time)]) }}</span>
                                 </a>
                             </li>
                         @endforeach
