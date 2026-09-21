@@ -1,7 +1,7 @@
 <x-layouts.app>
     <x-page-hero
         eyebrow="About us"
-        title="درباره ما"
+        :title="__('site.nav.items.about')"
         :lead="\App\Models\Setting::text('about_lead')"
         variant="dark">
         <x-stat-band :stats="$stats" light class="mt-12" />
@@ -10,28 +10,36 @@
     <section class="bg-sand-50 section-lg">
         <div class="container-page grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-16">
             <div class="lg:col-span-5">
-                <x-section-heading eyebrow="Story" title="از یک کوره تا دو خط اکستروژن" />
+                <x-section-heading eyebrow="Story" :title="__('site.about.story')" />
             </div>
 
             <div class="space-y-5 text-lead text-ink-600 lg:col-span-7">
-                <p>سال {{ \App\Support\Jalali::digits(1380) }} کار با یک کوره‌ی سنتی و پنج نفر شروع شد. آن‌موقع بازار ایران هنوز بلوک سفالی را جایگزین آجر نمی‌دانست و بیشتر سفارش‌ها از پیمانکارانی می‌آمد که یک‌بار امتحان کرده بودند.</p>
-                <p>نقطه‌ی چرخش سال {{ \App\Support\Jalali::digits(1392) }} بود: خط اکستروژن با کنترل خلأ و کوره‌ی تونلی جایگزین روش قبلی شد. رواداری ابعادی از چند میلی‌متر به کمتر از دو میلی‌متر رسید — و همین یک عدد بود که در ورود به پروژه‌های بزرگ تفاوت ایجاد کرد.</p>
-                <p>امروز دو خط موازی، ظرفیت سالانه‌ی صد و بیست هزار تن و شبکه‌ی نمایندگی در بیش از چهل استان داریم. اما آنچه از روز اول تغییر نکرده این است: هر بچ تولید، پیش از بارگیری آزمون می‌شود.</p>
+                {{--
+                    سال‌ها در متنِ ترجمه نمی‌نشینند، پارامتر می‌شوند: در فارسی
+                    ۱۳۸۰ و در انگلیسی ۲۰۰۱ — همان لحظه، در دو تقویم.
+                --}}
+                @php
+                    $founded = \App\Support\Jalali::digits(\App\Support\Locales::calendar() === 'jalali' ? 1380 : 2001);
+                    $turning = \App\Support\Jalali::digits(\App\Support\Locales::calendar() === 'jalali' ? 1392 : 2013);
+                @endphp
+                <p>{{ __('site.about.p1', ['year' => $founded]) }}</p>
+                <p>{{ __('site.about.p2', ['year' => $turning]) }}</p>
+                <p>{{ __('site.about.p3') }}</p>
             </div>
         </div>
     </section>
 
     <section class="bg-sand-100 section">
         <div class="container-page">
-            <x-section-heading eyebrow="Principles" title="سه اصلی که سرِ آن‌ها مذاکره نمی‌کنیم"
-                lead="این‌ها شعار نیستند؛ اگر رعایتشان نکنیم، مشتری‌مان یک بار بیشتر از ما خرید نمی‌کند." />
+            <x-section-heading eyebrow="Principles" :title="__('site.about.principles')"
+                :lead="__('site.about.principles_lead')" />
 
             <ul class="mt-10 grid grid-cols-1 gap-4 lg:grid-cols-3" data-reveal-stagger="100">
-                @foreach([
-                    ['ruler', 'رواداری ابعادی', 'اگر ابعاد بلوک‌ها یکنواخت نباشد، سرعت اجرا و مصرف ملات به هم می‌ریزد. رواداری ما زیر دو میلی‌متر کنترل می‌شود — و شاهدش در گزارش هر بچ هست.'],
-                    ['shield', 'شفافیت عددی', 'هیچ عددی را گرد نمی‌کنیم تا بهتر به‌نظر برسد. دیتاشیت‌های ما نتیجه‌ی آزمون‌اند، نه ادعای بازاریابی.'],
-                    ['trowel', 'پشتیبانی بعد از فروش', 'اگر در کارگاه مشکلی پیش بیاید، کارشناس فنی ما می‌آید — چه تقصیر ما باشد چه نباشد.'],
-                ] as [$icon, $title, $text])
+                @foreach(['tolerance' => 'ruler', 'honesty' => 'shield', 'support' => 'trowel'] as $key => $icon)
+                    @php
+                        $title = __("site.about.principle.{$key}.title");
+                        $text = __("site.about.principle.{$key}.text");
+                    @endphp
                     <li data-reveal class="rounded-[var(--radius-panel)] border border-sand-300 bg-sand-50 p-6">
                         <span class="grid h-11 w-11 place-items-center rounded-xl bg-clay-100 text-clay-600">
                             <x-icon :name="$icon" size="21" />
@@ -47,8 +55,8 @@
     <section class="bg-sand-50 section">
         <div class="container-page grid grid-cols-1 gap-10 lg:grid-cols-12 lg:gap-14">
             <div class="lg:col-span-5">
-                <x-section-heading eyebrow="Certificates" title="تأییدیه‌ها" />
-                <x-cta :href="route('technical.certificates')" variant="ghost" class="mt-7">صفحه گواهی‌نامه‌ها</x-cta>
+                <x-section-heading eyebrow="Certificates" :title="__('site.about.approvals')" />
+                <x-cta :href="route('technical.certificates')" variant="ghost" class="mt-7">{{ __('site.about.certificates_page') }}</x-cta>
             </div>
             <ul class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:col-span-7">
                 @foreach($certificates->take(6) as $certificate)

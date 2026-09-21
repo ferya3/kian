@@ -2,14 +2,13 @@
     <section class="bg-sand-100 section-lg">
         <div class="container-page">
             <div class="mx-auto max-w-2xl text-center">
-                <p class="tech text-7xl font-extrabold text-clay-500/30">۵۰۰</p>
-                <h1 class="mt-4 text-h1 font-extrabold">خطایی در سرور رخ داد</h1>
+                <p class="tech text-7xl font-extrabold text-clay-500/30">{{ \App\Support\Jalali::digits(500) }}</p>
+                <h1 class="mt-4 text-h1 font-extrabold">{{ __('site.error.500.title') }}</h1>
                 <p class="mt-5 text-lead text-ink-500">
-                    مشکل از سمت ماست و به آن رسیدگی می‌شود. لطفاً چند دقیقه دیگر دوباره تلاش کنید
-                    یا مستقیم با ما تماس بگیرید.
+                    {{ __('site.error.500.lead') }}
                 </p>
                 <div class="mt-9 flex flex-wrap justify-center gap-3">
-                    <x-cta :href="route('home')" variant="dark">صفحه اصلی</x-cta>
+                    <x-cta :href="route('home')" variant="dark">{{ __('site.nav.home') }}</x-cta>
                     <x-cta href="tel:{{ config('kian.contact.phone_raw') }}" variant="ghost" icon="phone">
                         {{ \App\Support\Brand::phone() }}
                     </x-cta>

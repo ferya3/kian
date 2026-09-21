@@ -1,21 +1,21 @@
 <x-layouts.app>
     @php
         $groupLabels = [
-            'technical' => 'مشخصات فنی',
-            'installation' => 'اجرا و کارگاه',
-            'order' => 'سفارش و تحویل',
-            'general' => 'عمومی',
+            'technical' => __('site.faq.group.technical'),
+            'installation' => __('site.faq.group.installation'),
+            'order' => __('site.faq.group.order'),
+            'general' => __('site.faq.group.general'),
         ];
     @endphp
 
     <x-page-hero
         eyebrow="FAQ"
-        title="پرسش‌های متداول"
-        lead="پاسخ‌های کوتاه و صریح کارشناسان فنی به پرسش‌هایی که بیشتر از همه می‌شنویم." />
+        :title="__('site.nav.items.technical_faq')"
+        :lead="__('site.faq.lead')" />
 
     <section class="bg-sand-100 section-b">
         <div class="container-page grid grid-cols-1 gap-10 lg:grid-cols-12 lg:gap-14">
-            <nav class="lg:col-span-3" aria-label="دسته‌های پرسش">
+            <nav class="lg:col-span-3" aria-label="{{ __('site.faq.groups') }}">
                 <ul class="sticky top-28 space-y-1">
                     @foreach($groups as $group => $items)
                         <li>
@@ -63,9 +63,9 @@
                 @endforeach
 
                 <div class="rounded-[var(--radius-panel)] bg-ink-950 p-7 text-sand-50">
-                    <h2 class="text-h3 font-extrabold">پاسخ پرسشتان را پیدا نکردید؟</h2>
-                    <p class="mt-3 text-sand-200/65">کارشناسان فنی ما حداکثر تا یک روز کاری پاسخ می‌دهند.</p>
-                    <x-cta :href="route('contact', ['type' => 'technical'])" variant="primary" class="mt-6">پرسش خود را بفرستید</x-cta>
+                    <h2 class="text-h3 font-extrabold">{{ __('site.faq.not_found') }}</h2>
+                    <p class="mt-3 text-sand-200/65">{{ __('site.faq.not_found_lead') }}</p>
+                    <x-cta :href="route('contact', ['type' => 'technical'])" variant="primary" class="mt-6">{{ __('site.faq.ask') }}</x-cta>
                 </div>
             </div>
         </div>

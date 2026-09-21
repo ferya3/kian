@@ -1,15 +1,15 @@
 <x-layouts.app>
     <x-page-hero
         eyebrow="Distributors"
-        title="نمایندگان فروش"
-        lead="برای مقادیر کمتر از یک تریلی، نزدیک‌ترین نمایندگی سریع‌تر و ارزان‌تر از تحویل مستقیم کارخانه است." />
+        :title="__('site.nav.items.distributors')"
+        :lead="__('site.distributors.lead')" />
 
     <section class="bg-sand-100 section-b">
         <div class="container-page">
             <div class="tap-row items-center border-b border-sand-300 pb-5">
-                <span class="ml-2 text-meta font-semibold text-ink-400">استان:</span>
+                <span class="ml-2 text-meta font-semibold text-ink-400">{{ __('site.distributors.province') }}</span>
                 <a href="{{ route('distributors') }}"
-                   class="tap rounded-full px-4 py-2 text-[0.875rem] font-semibold transition {{ $selected ? 'bg-sand-200 text-ink-600 hover:bg-sand-300' : 'bg-ink-900 text-sand-50' }}">همه</a>
+                   class="tap rounded-full px-4 py-2 text-[0.875rem] font-semibold transition {{ $selected ? 'bg-sand-200 text-ink-600 hover:bg-sand-300' : 'bg-ink-900 text-sand-50' }}">{{ __('site.products.all') }}</a>
                 @foreach($provinces as $province)
                     <a href="{{ route('distributors', ['province' => $province]) }}"
                        class="tap rounded-full px-4 py-2 text-[0.875rem] font-semibold transition {{ $selected === $province ? 'bg-ink-900 text-sand-50' : 'bg-sand-200 text-ink-600 hover:bg-sand-300' }}">{{ $province }}</a>
@@ -55,12 +55,12 @@
             <div class="mt-12 rounded-[var(--radius-panel)] bg-ink-950 p-7 text-sand-50 lg:p-10">
                 <div class="flex flex-wrap items-center justify-between gap-6">
                     <div class="max-w-2xl">
-                        <h2 class="text-h3 font-extrabold">در استان شما نماینده نداریم؟</h2>
+                        <h2 class="text-h3 font-extrabold">{{ __('site.distributors.none_title') }}</h2>
                         <p class="mt-3 text-sand-200/65">
-                            اگر در حوزه‌ی مصالح ساختمانی فعال هستید و انبار و شبکه‌ی توزیع دارید، شرایط نمایندگی را بررسی می‌کنیم.
+                            {{ __('site.distributors.none_lead') }}
                         </p>
                     </div>
-                    <x-cta :href="route('contact', ['type' => 'distributor'])" variant="primary">درخواست نمایندگی</x-cta>
+                    <x-cta :href="route('contact', ['type' => 'distributor'])" variant="primary">{{ __('site.footer.become_distributor') }}</x-cta>
                 </div>
             </div>
         </div>

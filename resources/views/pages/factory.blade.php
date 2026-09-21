@@ -1,8 +1,8 @@
 <x-layouts.app>
     <x-page-hero
         eyebrow="Our factory"
-        title="کارخانه"
-        lead="شهرک صنعتی مبارکه، دو خط اکستروژن موازی، کوره‌ی تونلی صد و ده متری و آزمایشگاهی که هر بچ تولید را پیش از بارگیری تأیید می‌کند."
+        :title="__('site.nav.items.factory')"
+        :lead="__('site.factory.lead')"
         variant="dark" />
 
     <section class="bg-sand-100 section">
@@ -64,7 +64,7 @@
                                 <li class="tech rounded-full border border-sand-300 bg-sand-100 px-3 py-1 text-meta text-ink-600" x-text="stat"></li>
                             </template>
                         </ul>
-                        <nav class="tap-row mt-6" aria-label="بخش‌های کارخانه">
+                        <nav class="tap-row mt-6" aria-label="{{ __('site.home.factory.sections') }}">
                             @foreach($sections as $index => $section)
                                 <button type="button" @click="select({{ $index }})"
                                         class="tap rounded-full px-4 py-2 text-meta font-semibold transition"
@@ -81,8 +81,8 @@
 
     <section class="bg-sand-50 section">
         <div class="container-page">
-            <x-section-heading eyebrow="Certificates" title="گواهی‌نامه‌ها و تأییدیه‌ها"
-                lead="اعداد این صفحه بی‌معنی‌اند اگر کسی آن‌ها را تأیید نکرده باشد." />
+            <x-section-heading eyebrow="Certificates" :title="__('site.factory.certificates')"
+                :lead="__('site.factory.certificates_lead')" />
 
             <ul class="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3" data-reveal-stagger="80">
                 @foreach($certificates as $certificate)
@@ -104,8 +104,8 @@
             </ul>
 
             <div class="mt-10 flex flex-wrap gap-3">
-                <x-cta :href="route('technical.certificates')" variant="dark">دانلود گواهی‌نامه‌ها</x-cta>
-                <x-cta :href="route('contact')" variant="ghost" icon="pin">درخواست بازدید از کارخانه</x-cta>
+                <x-cta :href="route('technical.certificates')" variant="dark">{{ __('site.factory.download_certificates') }}</x-cta>
+                <x-cta :href="route('contact')" variant="ghost" icon="pin">{{ __('site.factory.visit') }}</x-cta>
             </div>
         </div>
     </section>

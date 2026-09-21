@@ -106,6 +106,12 @@ return [
         'placeholder_short' => 'Search products or technical files…',
         'close' => 'Close search',
         'popular' => 'Popular searches:',
+        'results_for' => 'Results for “:term”',
+        'start' => 'Type something in the box above to begin.',
+        'none' => 'Nothing found',
+        'none_hint' => 'Try a different spelling, or use the product finder.',
+        'count' => ':count results',
+        'files' => 'Technical files',
         'hints' => ['Ceramic block 20', 'Insulating block', 'Datasheet', 'BIM file', 'Installation'],
     ],
 
@@ -211,6 +217,17 @@ return [
         ],
 
         'choose' => 'Choose…',
+        'page_lead' => 'Four questions about the project, and three recommendations with reasons. If you do not know an answer, leave it blank — the finder works with partial information.',
+        'results_title' => 'Products recommended for your project',
+        'based_on' => 'Based on: :criteria',
+        'based_on_chosen' => 'Based on the criteria you chose',
+        'change' => 'Want to change the criteria?',
+
+        'tip' => [
+            'thickness' => ['title' => 'Take the thickness from the project requirement', 'text' => 'External wall thickness usually comes out of the thermal calculation, and internal wall thickness out of the acoustic requirement.'],
+            'insulation' => ['title' => 'Insulation is a running cost', 'text' => 'Each step up in insulation raises the initial cost a little and lowers energy use for fifty years.'],
+            'weight' => ['title' => 'Weight is a structural question', 'text' => 'When adding a storey or retrofitting, a lighter wall can matter more than a better-insulated one.'],
+        ],
         'any' => 'No preference',
         'hint' => 'Pick at least two options and we can be more precise.',
         'ready' => 'Ready for a recommendation',
@@ -515,6 +532,199 @@ return [
         'question' => 'A question about this piece?',
         'question_lead' => 'Our engineers will run a calculation for your project at no cost.',
         'more' => 'More reading',
+    ],
+
+    // ------------------------------------- Contact and distributors --
+
+    'contact' => [
+        'lead' => 'Fill in the form or call us directly. We answer within one working day at most.',
+        'fix' => 'Please correct the following:',
+        'website' => 'Website',
+        'subject' => 'What is this about?',
+        'none' => 'Not selected',
+        'phone_placeholder' => '09121234567',
+        'message_placeholder' => 'Project area, city, when you need it, and anything else that helps us answer precisely.',
+        'required_note' => 'Fields marked with a star are required.',
+        'submit' => 'Send request',
+        'direct' => 'Direct contact',
+        'head_office' => 'Head office',
+        'sales' => 'Sales',
+        'technical' => 'Engineering',
+        'plant' => 'Plant',
+        'hours' => 'Opening hours',
+        'faster' => 'This may be quicker',
+
+        'type' => [
+            'quote' => ['label' => 'Request a quote', 'hint' => 'Proforma invoice and delivery terms'],
+            'technical' => ['label' => 'Technical advice', 'hint' => 'Calculations, product choice, technical files'],
+            'distributor' => ['label' => 'Become a distributor', 'hint' => 'Partnering on distribution'],
+            'general' => ['label' => 'Something else', 'hint' => 'A visit, a partnership, a general question'],
+        ],
+
+        'field' => [
+            'name' => 'Full name',
+            'company' => 'Company or project',
+            'phone' => 'Phone',
+            'email' => 'Email',
+            'city' => 'City',
+            'product' => 'Product of interest (optional)',
+            'message' => 'Your message',
+        ],
+
+        'shortcut' => [
+            'finder' => 'Find the right product for a project',
+            'downloads' => 'Download datasheets and technical files',
+            'faq' => 'Frequently asked questions',
+            'distributor' => 'Nearest distributor',
+        ],
+    ],
+
+    'distributors' => [
+        'lead' => 'For anything less than a full truckload, your nearest distributor is faster and cheaper than delivery straight from the plant.',
+        'province' => 'Province:',
+        'none_title' => 'No distributor in your province?',
+        'none_lead' => 'If you work in building materials and have storage and a distribution network, we will look at the terms with you.',
+    ],
+
+    // -------------------------------------------------- Company pages --
+
+    'about' => [
+        'story' => 'From one kiln to two extrusion lines',
+        'p1' => 'It began in :year with a traditional kiln and five people. At the time the market still did not see ceramic block as a replacement for brick, and most orders came from contractors who had tried it once.',
+        'p2' => 'The turn came in :year: a vacuum-controlled extrusion line and a tunnel kiln replaced the old method. Dimensional tolerance went from several millimetres to under two — and that single figure was what opened the door to large projects.',
+        'p3' => 'Today we run two parallel lines, a capacity of a hundred and twenty thousand tonnes a year, and a distributor network across more than forty provinces. What has not changed since day one: every production batch is tested before it is loaded.',
+        'principles' => 'Three things we do not negotiate on',
+        'principles_lead' => 'These are not slogans; if we broke them, a customer would not buy from us twice.',
+        'approvals' => 'Approvals',
+        'certificates_page' => 'Certificates page',
+
+        'principle' => [
+            'tolerance' => ['title' => 'Dimensional tolerance', 'text' => 'If block dimensions are not uniform, laying speed and mortar consumption both go out of control. Ours is held under two millimetres — and the evidence is in every batch report.'],
+            'honesty' => ['title' => 'Honest numbers', 'text' => 'We do not round a figure to make it look better. Our datasheets are test results, not marketing claims.'],
+            'support' => ['title' => 'Support after the sale', 'text' => 'If something goes wrong on site, our engineer comes out — whether it is our fault or not.'],
+        ],
+    ],
+
+    'factory' => [
+        'lead' => 'Mobarakeh Industrial Estate: two parallel extrusion lines, a hundred-and-ten-metre tunnel kiln, and a laboratory that signs off every batch before it is loaded.',
+        'certificates' => 'Certificates and approvals',
+        'certificates_lead' => 'The figures on this page mean nothing if nobody has verified them.',
+        'download_certificates' => 'Download certificates',
+        'visit' => 'Request a factory visit',
+    ],
+
+    'technology' => [
+        'lead' => 'Making ceramic comes down to three simple things: earth, water and fire. What separates a modern plant from a traditional kiln is precise control of all three.',
+        'stages' => 'Nine stages, from quarry to pallet',
+        'stages_lead' => 'Each stage has one controlled variable that ruins the finished product if it leaves the permitted window.',
+        'duration' => 'Duration',
+        'why_900' => 'Why exactly nine hundred degrees?',
+        'why_900_p1' => 'Below eight hundred, the mineralogical conversion of the clay does not complete and the product stays vulnerable to moisture. Above a thousand, deformation and local melting begin and dimensional tolerance is lost.',
+        'why_900_p2' => 'The working window is narrow. A tunnel kiln with eighteen independently controlled temperature zones exists precisely to stay inside it — and its exhaust heat goes back to the dryer instead of being wasted.',
+        'why_900_p3' => 'That one decision cut the energy used per tonne of product by around thirty-eight percent compared with ten years ago.',
+        'visit_title' => 'Want to see the line for yourself?',
+        'visit_lead' => 'Guided visits for consulting engineers, clients and students can be arranged in advance.',
+        'map' => 'Factory map',
+    ],
+
+    'sustainability' => [
+        'title' => 'Earth → product → building',
+        'lead' => 'Ceramic runs a closed cycle with nothing foreign entering it. This page says what we have done — and what we have not done yet.',
+        'lifecycle' => 'The life of a block',
+        'unsolved' => 'What is still unsolved',
+        'unsolved_text' => 'Firing ceramic is inherently energy-intensive. Kiln heat recovery solves part of the problem, not all of it. Replacing a share of the fossil fuel and improving the kiln shell insulation is our plan for the next three years. Every figure written on this page comes from our internal monitoring report and can be shown to a client.',
+        'request_report' => 'Request the monitoring report',
+
+        'phase' => [
+            'extraction' => ['title' => 'Extraction', 'text' => 'Clay is quarried from our own site eighteen kilometres from the plant. The short haul means lower transport emissions. Every working face carries a mandatory restoration plan.'],
+            'production' => ['title' => 'Production', 'text' => 'Kiln exhaust heat returns to the dryer. Green waste from before firing goes back into the line in full; fired waste is crushed and used as sub-base material.'],
+            'use' => ['title' => 'In service', 'text' => 'This is where the largest effect happens: the energy saved over fifty years of service is several times the energy used to make the product.'],
+            'end_of_life' => ['title' => 'End of life', 'text' => 'Ceramic is an inert mineral material. At demolition it can be crushed and used as fill or sub-base — with no soil contamination.'],
+        ],
+    ],
+
+    // ------------------------------------ Technical centre and errors --
+
+    'technical' => [
+        'lead' => 'Datasheets, catalogues, CAD files, BIM objects, the installation guide and certificates — no sign-up, no call to the sales desk.',
+        'files' => ':count files',
+        'see_all' => 'See all :count :label files',
+        'per_product' => 'Files by product',
+        'per_product_lead' => 'If you already know which product you want, this is quicker.',
+    ],
+
+    'downloads' => [
+        'lead' => 'Every technical file on one page, filtered by kind, audience and format.',
+        'name_placeholder' => 'File name…',
+        'kind' => 'File kind',
+        'audience' => 'Audience',
+        'format' => 'Format',
+        'clear' => 'Clear filters',
+        'apply' => 'Apply filters',
+        'empty' => 'No file matches these filters',
+        'empty_hint' => 'Clear the filters, or ask our engineers for it.',
+        'request' => 'Request a file',
+    ],
+
+    'installation' => [
+        'lead' => 'Even the best block loses its performance if it is laid wrongly. This page is written for the person laying it, not for the archive.',
+        'stages' => 'Laying a ceramic wall, stage by stage',
+        'faq' => 'What installers ask most',
+        'files' => 'Installation guide files',
+        'on_site' => 'Technical support on site',
+        'on_site_lead' => 'For projects over a thousand square metres, our engineer comes to the site at the start and briefs the crew.',
+        'request' => 'Request an engineer',
+
+        'stage' => [
+            'bed' => ['title' => 'Prepare the bed', 'text' => 'The surface under the first course must be clean, level and free of dust. Check the first course with a straightedge and a laser level; an error here is amplified up the height of the wall.'],
+            'mortar' => ['title' => 'The right mortar', 'text' => 'A 1:5 sand–cement mortar or a ready-mixed masonry mortar. It should be workable but not sloppy. Consumption for each product is on its datasheet.'],
+            'damp' => ['title' => 'Damp the block', 'text' => 'Damp on the surface, not soaked. A dry block draws the water out of the mortar; a wet one destroys adhesion.'],
+            'coursing' => ['title' => 'Coursing', 'text' => 'A full, even bed joint. With tongue-and-groove the perpend joint disappears. Check plumb and level every third course.'],
+            'lintel' => ['title' => 'Lintels', 'text' => 'No opening is built without a lintel. A ceramic lintel acts as permanent formwork and keeps the thermal continuity of the facade.'],
+            'frame' => ['title' => 'Tying into the frame', 'text' => 'An infill wall must be restrained to the frame with posts and ties per the seismic requirements. This is the stage inspections pick up most often.'],
+            'chasing' => ['title' => 'Chasing for services', 'text' => 'Vertical chases are allowed. A horizontal chase must not exceed one third of the wall thickness and must be cut with a disc, not knocked out.'],
+            'finish' => ['title' => 'Finishing', 'text' => 'Give the wall at least forty-eight hours before plastering. The block’s grooved face provides the key for the render.'],
+        ],
+    ],
+
+    'certificates' => [
+        'lead' => 'Every figure in our datasheets has a test behind it. This page lists those tests.',
+        'company' => 'Company certificates',
+        'number' => 'No. :number',
+        'standards' => 'Reference codes and standards',
+        'report' => 'Need a test report of your own?',
+        'report_lead' => 'For large projects we provide a test report for that project’s own production batch, from our laboratory or an accredited one.',
+        'report_cta' => 'Request a test report',
+    ],
+
+    'faq' => [
+        'lead' => 'Short, direct answers from our engineers to the questions we hear most.',
+        'groups' => 'Question groups',
+        'not_found' => 'Didn’t find your answer?',
+        'not_found_lead' => 'Our engineers answer within one working day at most.',
+        'ask' => 'Send us your question',
+        'group' => [
+            'technical' => 'Specifications',
+            'installation' => 'On site',
+            'order' => 'Ordering and delivery',
+            'general' => 'General',
+        ],
+    ],
+
+    'error' => [
+        '404' => [
+            'title' => 'This page was not found',
+            'lead' => 'The address may have changed, or the product may have left the catalogue. You can carry on from here:',
+            'search' => 'What were you looking for?',
+        ],
+        '500' => [
+            'title' => 'Something went wrong on the server',
+            'lead' => 'This is our problem and we are on it. Please try again in a few minutes, or contact us directly.',
+        ],
+        '503' => [
+            'title' => 'The site is briefly unavailable',
+            'lead' => 'We are updating the site. Come back in a few minutes, or contact us directly.',
+        ],
     ],
 
     'gallery' => [

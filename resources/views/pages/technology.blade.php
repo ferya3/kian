@@ -1,8 +1,8 @@
 <x-layouts.app>
     <x-page-hero
         eyebrow="From earth to architecture"
-        title="از خاک تا سازه"
-        lead="تولید سفال ترکیبی است از سه چیز ساده: خاک، آب و آتش. آنچه کارخانه‌ی مدرن را از کوره‌ی سنتی جدا می‌کند، کنترل دقیق هر سه است."
+        :title="__('site.home.process.title')"
+        :lead="__('site.technology.lead')"
         variant="dark">
 
         <x-stat-band :stats="$stats" light class="mt-12" />
@@ -10,8 +10,8 @@
 
     <section class="bg-sand-50 section-lg">
         <div class="container-page">
-            <x-section-heading eyebrow="Process" title="نُه مرحله، از معدن تا پالت"
-                lead="هر مرحله یک متغیر کنترلی دارد که اگر از پنجره‌ی مجاز خارج شود، محصول نهایی را خراب می‌کند." />
+            <x-section-heading eyebrow="Process" :title="__('site.technology.stages')"
+                :lead="__('site.technology.stages_lead')" />
 
             <ol class="mt-10 space-y-0" data-reveal-stagger="70">
                 @foreach($steps as $step)
@@ -37,7 +37,7 @@
                             @endif
                             @if($step->duration)
                                 <div class="text-right lg:text-left">
-                                    <dt class="text-micro text-ink-400">زمان</dt>
+                                    <dt class="text-micro text-ink-400">{{ __('site.technology.duration') }}</dt>
                                     <dd class="mt-0.5 text-xl font-extrabold text-ink-700"><x-num :value="$step->duration" /></dd>
                                 </div>
                             @endif
@@ -51,12 +51,12 @@
     <section class="bg-ink-950 section text-sand-50">
         <div class="container-page grid grid-cols-1 gap-10 lg:grid-cols-12 lg:gap-14">
             <div class="lg:col-span-5">
-                <x-section-heading eyebrow="Why 900°C" title="چرا دقیقاً نهصد درجه؟" light />
+                <x-section-heading eyebrow="Why 900°C" :title="__('site.technology.why_900')" light />
             </div>
             <div class="lg:col-span-7 space-y-5 text-lead text-sand-200/70">
-                <p>زیر هشتصد درجه، تبدیل کانی‌شناسی خاک کامل نمی‌شود و محصول در برابر رطوبت آسیب‌پذیر می‌ماند. بالای هزار درجه، تغییر شکل و ذوب موضعی شروع می‌شود و رواداری ابعادی از دست می‌رود.</p>
-                <p>پنجره‌ی کاری باریک است. کوره‌ی تونلی با هجده زون کنترل مستقل دما، دقیقاً برای ماندن در همین پنجره طراحی شده — و حرارت خروجی‌اش، به‌جای هدررفت، به خشک‌کن بازمی‌گردد.</p>
-                <p class="text-sand-200/50">همین یک تصمیم، مصرف انرژی هر تن محصول را نسبت به سال ۱۳۹۵ حدود سی‌وهشت درصد کاهش داده است.</p>
+                <p>{{ __('site.technology.why_900_p1') }}</p>
+                <p>{{ __('site.technology.why_900_p2') }}</p>
+                <p class="text-sand-200/50">{{ __('site.technology.why_900_p3') }}</p>
             </div>
         </div>
     </section>
@@ -64,12 +64,12 @@
     <section class="bg-sand-100 section">
         <div class="container-page flex flex-wrap items-center justify-between gap-6">
             <div>
-                <h2 class="text-h3 font-extrabold">می‌خواهید خط تولید را از نزدیک ببینید؟</h2>
-                <p class="mt-2 text-ink-500">بازدید کارشناسی برای مهندسان مشاور، کارفرمایان و دانشجویان با هماهنگی قبلی امکان‌پذیر است.</p>
+                <h2 class="text-h3 font-extrabold">{{ __('site.technology.visit_title') }}</h2>
+                <p class="mt-2 text-ink-500">{{ __('site.technology.visit_lead') }}</p>
             </div>
             <div class="flex flex-wrap gap-3">
-                <x-cta :href="route('factory')" variant="dark">نقشه‌ی کارخانه</x-cta>
-                <x-cta :href="route('contact')" variant="ghost">درخواست بازدید</x-cta>
+                <x-cta :href="route('factory')" variant="dark">{{ __('site.technology.map') }}</x-cta>
+                <x-cta :href="route('contact')" variant="ghost">{{ __('site.home.factory.visit') }}</x-cta>
             </div>
         </div>
     </section>

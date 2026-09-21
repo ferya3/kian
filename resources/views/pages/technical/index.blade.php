@@ -1,12 +1,12 @@
 <x-layouts.app>
     <x-page-hero
         eyebrow="Technical center"
-        title="مرکز فنی"
-        lead="دیتاشیت، کاتالوگ، فایل CAD، آبجکت BIM، راهنمای اجرا و گواهی‌نامه — بدون ثبت‌نام و بدون تماس با واحد فروش."
+        :title="__('site.nav.sub.technical_index')"
+        :lead="__('site.technical.lead')"
         variant="dark">
 
         <div class="mt-12 grid grid-cols-1 gap-4 sm:grid-cols-3">
-            @foreach(config('kian.audiences') as $key => $audience)
+            @foreach(\App\Support\Options::audiences() as $key => $audience)
                 <a href="{{ route($audience['route']) }}"
                    class="group rounded-2xl border border-white/10 bg-white/[0.05] p-6 transition hover:border-clay-500/40 hover:bg-clay-500/10">
                     <x-icon :name="$audience['icon']" size="24" class="text-clay-400" />
@@ -30,7 +30,7 @@
                 <div>
                     <div class="flex flex-wrap items-end justify-between gap-3 border-b border-sand-300 pb-4">
                         <h2 class="text-h3 font-extrabold">{{ $label }}</h2>
-                        <p class="tech text-meta text-ink-400">{{ \App\Support\Jalali::digits($documents->count()) }} فایل</p>
+                        <p class="tech text-meta text-ink-400">{{ __('site.technical.files', ['count' => \App\Support\Jalali::digits($documents->count())]) }}</p>
                     </div>
 
                     <div class="mt-5 grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3" data-reveal-stagger="60">
@@ -41,7 +41,10 @@
 
                     @if($documents->count() > 6)
                         <x-cta :href="route('technical.downloads', ['category' => $category])" variant="plain" class="mt-4">
-                            مشاهده همه‌ی {{ \App\Support\Jalali::digits($documents->count()) }} فایل {{ $label }}
+                            {{ __('site.technical.see_all', [
+                                'count' => \App\Support\Jalali::digits($documents->count()),
+                                'label' => $label,
+                            ]) }}
                         </x-cta>
                     @endif
                 </div>
@@ -51,8 +54,8 @@
 
     <section class="bg-sand-50 section">
         <div class="container-page">
-            <x-section-heading eyebrow="Per product" title="فایل‌ها به تفکیک محصول"
-                lead="اگر می‌دانید کدام محصول را می‌خواهید، از اینجا سریع‌تر است." />
+            <x-section-heading eyebrow="Per product" :title="__('site.technical.per_product')"
+                :lead="__('site.technical.per_product_lead')" />
 
             <ul class="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3" data-reveal-stagger="60">
                 @foreach($products as $product)
