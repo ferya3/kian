@@ -859,11 +859,13 @@
             line-height: 1;
             white-space: nowrap;
             /*
-            | حالتِ خاموش — نشانِ حک‌شده روی لبه، نه چراغ. تقریباً همان
-            | کنتراستِ قبلی: باید دیده شود، ولی آن‌قدر کم که وقتی نور از
-            | رویش می‌گذرد، گذر دیده شود.
+            | حالتِ خاموش — زیرِ آستانه‌ی خواندن، و این عمدی است.
+            |
+            | نه صفر: جای حرف باید معلوم باشد تا نور که می‌رسد، از دلِ چیزی
+            | دربیاید و نه از هیچ. ولی آن‌قدر کم که کسی بی‌نور نتواند
+            | بخواندش — خواندن کارِ نور است.
             */
-            color: color-mix(in oklab, var(--color-sand-200) 26%, transparent);
+            color: color-mix(in oklab, var(--color-sand-200) 9%, transparent);
             user-select: none;
         }
 
@@ -889,12 +891,17 @@
             position: absolute;
             inset: 0;
             color: color-mix(in oklab, var(--color-sand-50) 82%, var(--color-ember-400));
+            /*
+            | هاله کم‌جان‌تر از جوهر است و این نسبت مهم است: چیزی که باید
+            | خوانده شود خطِ حرف است، نه نورِ دورش. با هاله‌ی پُرزور، حرف
+            | در درخشش خودش گم می‌شود.
+            */
             text-shadow:
-                0 0 0.05em color-mix(in oklab, var(--color-sand-50) 60%, transparent),
-                0 0 0.18em color-mix(in oklab, var(--color-ember-400) 70%, transparent),
-                0 0 0.5em color-mix(in oklab, var(--color-ember-400) 55%, transparent),
-                0 0 1.2em color-mix(in oklab, var(--color-clay-500) 55%, transparent),
-                0 0 2.4em color-mix(in oklab, var(--color-clay-500) 40%, transparent);
+                0 0 0.05em color-mix(in oklab, var(--color-sand-50) 30%, transparent),
+                0 0 0.18em color-mix(in oklab, var(--color-ember-400) 34%, transparent),
+                0 0 0.5em color-mix(in oklab, var(--color-ember-400) 26%, transparent),
+                0 0 1.2em color-mix(in oklab, var(--color-clay-500) 24%, transparent),
+                0 0 2.4em color-mix(in oklab, var(--color-clay-500) 16%, transparent);
 
             /*
             | تصویرِ ماسک سه برابرِ خودِ نشان است و نوار در میانه‌اش — یعنی
@@ -929,6 +936,17 @@
             | جهشی دیده می‌شود؛ linear همان کشیدنِ یکنواختِ چراغ است.
             */
             animation: frame-mark-sweep 9s linear infinite;
+
+            /*
+            | شدتِ کلِ چراغ — یک پیچ، روی جوهر و هاله با هم. جداکردنشان
+            | وسوسه‌انگیز است ولی بعد دو عدد می‌شود که باید هم‌زمان تنظیم
+            | شوند و از هم می‌افتند.
+            |
+            | کفِ این عدد را خوانایی تعیین می‌کند و نه سلیقه: پایین‌تر از
+            | این، گذرِ نور دیگر کلمه را خوانا نمی‌کند و کلِ کار بی‌معنا
+            | می‌شود. سنجیده‌شده روی زمینه‌ی قاب.
+            */
+            opacity: 0.85;
         }
 
         @keyframes frame-mark-sweep {
