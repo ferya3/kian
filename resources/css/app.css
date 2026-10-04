@@ -282,14 +282,14 @@
     | پس «وسطِ حاشیه نشستن» نتیجه‌ی حساب است و نه تنظیمِ چشمی.
     |
     | اندازه سیال است تا در عرضِ ۱۰۲۴ محتوا را نخورد و روی نمایشگر پهن، که
-    | حاشیه مفت است، بزرگ و خوانا شود: ۳۶ پیکسل تا ۱۲۸۰، و از آنجا تا ۵۶.
+    | حاشیه مفت است، بزرگ و خوانا شود: ۴۲ پیکسل تا ۱۲۳۵، و از آنجا تا ۷۰.
     */
     @media (min-width: 1024px) {
         :root {
             --header-h: 4.5rem;
             --shell-radius: 1.5rem;
 
-            --frame-mark-size: clamp(2.25rem, 2.8vw, 3.5rem);
+            --frame-mark-size: clamp(2.625rem, 3.4vw, 4.375rem);
             --frame-mark-air: 0.75rem;
             --shell-gap: calc(var(--frame-mark-size) * 1.06 + 2 * var(--frame-mark-air));
 
@@ -858,8 +858,58 @@
             font-weight: 400;
             line-height: 1;
             white-space: nowrap;
-            color: color-mix(in oklab, var(--color-sand-200) 38%, transparent);
+            /*
+            | خودِ جوهر: عاجِ گرم، نه سفیدِ خالص. هاله‌ی کهربایی روی حرفِ
+            | سفید، خاکستری به نظر می‌رسد؛ با این ته‌رنگ، حرف و هاله یک
+            | منبعِ نور دیده می‌شوند و نه دو چیز روی هم.
+            */
+            color: color-mix(in oklab, var(--color-sand-50) 82%, var(--color-ember-400));
+            /*
+            | هاله‌ی تنگ — همیشه روشن. تکانِ صفر دارد، پس چرخشِ ۹۰ درجه‌ی
+            | نشان جهتش را به هم نمی‌زند. واحدها em است تا با بزرگ‌شدنِ
+            | قلم، هاله هم به همان نسبت باز شود.
+            */
+            text-shadow:
+                0 0 0.05em color-mix(in oklab, var(--color-sand-50) 60%, transparent),
+                0 0 0.16em color-mix(in oklab, var(--color-ember-400) 55%, transparent);
             user-select: none;
+        }
+
+        /*
+        | هاله‌ی پهن، روی یک لایه‌ی جدا.
+        |
+        | چرا تکرارِ کلمه و نه چند لایه‌ی text-shadow روی خودِ نشان: نبضِ نور
+        | باید متحرک باشد، و انیمیشنِ text-shadow یعنی رسمِ دوباره‌ی کل
+        | ناحیه در هر فریم. اینجا فقط opacity تغییر می‌کند — همان چیزی که
+        | مرورگر روی لایه‌ی خودش و بی‌رسمِ دوباره انجام می‌دهد.
+        |
+        | جوهرش شفاف است: این لایه فقط نور است. حرفِ خوانا همان زیرین است،
+        | پس اگر قلم دیر برسد یا انیمیشن نگیرد، نشان باز هم سرِ جایش است.
+        */
+        .frame-mark::before {
+            content: attr(data-word);
+            position: absolute;
+            inset: 0;
+            color: transparent;
+            text-shadow:
+                0 0 0.45em color-mix(in oklab, var(--color-ember-400) 55%, transparent),
+                0 0 1.1em color-mix(in oklab, var(--color-clay-500) 55%, transparent),
+                0 0 2.2em color-mix(in oklab, var(--color-clay-500) 40%, transparent);
+            /*
+            | نفسِ کوره: کُند و کم‌دامنه.
+            |
+            | fill-mode عمداً نیست. با prefers-reduced-motion، قاعده‌ی
+            | سراسریِ پایینِ همین پرونده مدت را به ۰٫۰۱ms و تکرار را به یک
+            | می‌رساند؛ انیمیشنِ بی‌fill پس از پایان به حالتِ پایه برمی‌گردد
+            | و آن حالت opacity: 1 است. یعنی نشان روشن می‌ماند و نه نیم‌سوز
+            | — راستی‌آزمایی‌شده با reducedMotion: reduce.
+            */
+            animation: frame-mark-breathe 7s ease-in-out infinite;
+        }
+
+        @keyframes frame-mark-breathe {
+            0%, 100% { opacity: 0.72; }
+            50% { opacity: 1; }
         }
 
         /*

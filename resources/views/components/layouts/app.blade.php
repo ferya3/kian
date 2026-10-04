@@ -86,8 +86,9 @@
     @php $wordmark = config('kian.brand.wordmark'); @endphp
     @if($wordmark)
         <div class="frame-mark-rail" aria-hidden="true">
-            <span class="frame-mark frame-mark-left" dir="ltr">{{ $wordmark }}</span>
-            <span class="frame-mark frame-mark-right" dir="ltr">{{ $wordmark }}</span>
+            {{-- data-word همان کلمه است برای لایه‌ی هاله (‎.frame-mark::before‎) --}}
+            <span class="frame-mark frame-mark-left" dir="ltr" data-word="{{ $wordmark }}">{{ $wordmark }}</span>
+            <span class="frame-mark frame-mark-right" dir="ltr" data-word="{{ $wordmark }}">{{ $wordmark }}</span>
         </div>
     @endif
 
