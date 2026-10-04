@@ -11,9 +11,20 @@
             </div>
         </div>
 
-        <ul class="mt-10 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4" data-reveal-stagger="90">
+        {{--
+            یک فهرست، دو چیدمان — همان الگوی بخش محصولات.
+
+            زیر md ریلِ افقیِ قابل‌کشیدن است و از md به بالا با همان مارک‌آپ به
+            شبکه برمی‌گردد. پیش‌تر زیر md یک ستونِ چهارتایی بود که چهار کارتِ
+            بلند پشت سر هم می‌شد و بخش‌های بعدی را دور می‌کرد.
+
+            مارک‌آپ یکی است و نه دو نسخه‌ی موازی: دو نسخه از هم عقب می‌مانند.
+        --}}
+        <ul class="scroll-rail mt-10 md:mx-0 md:grid md:snap-none md:grid-cols-2 md:gap-4 md:overflow-visible md:px-0 xl:grid-cols-4"
+            data-reveal-stagger="90"
+            aria-label="{{ __('site.home.solutions.list') }}">
             @foreach($solutions as $solution)
-                <li data-reveal>
+                <li data-reveal class="w-[78vw] max-w-xs md:w-auto md:max-w-none">
                     <a href="{{ route('solutions.show', $solution) }}"
                        class="group flex h-full flex-col rounded-[var(--radius-panel)] border border-sand-300 bg-sand-100 p-6 transition-all duration-500 ease-[var(--ease-out-expo)] hover:-translate-y-1 hover:border-clay-300 hover:bg-clay-50">
                         <p class="tech text-micro uppercase tracking-[0.14em] text-ink-300">{{ $solution->title_en }}</p>
@@ -29,5 +40,11 @@
                 </li>
             @endforeach
         </ul>
+
+        {{-- راهنمای کشیدن — فقط آنجا که ریل هست --}}
+        <p class="mt-4 flex items-center gap-2 text-meta text-ink-400 md:hidden">
+            <x-icon name="arrow-right" size="15" />
+            {{ __('site.home.swipe') }}
+        </p>
     </div>
 </section>

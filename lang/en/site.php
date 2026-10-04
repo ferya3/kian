@@ -436,6 +436,7 @@ return [
             'lead' => 'Tell us the problem in the project and we will propose the right combination of products.',
             'all' => 'All solutions',
             'view' => 'View solution',
+            'list' => 'Kianbehsaz solutions',
         ],
     ],
 
