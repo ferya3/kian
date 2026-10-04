@@ -1,7 +1,13 @@
 @props(['project', 'featured' => false])
 
 <article {{ $attributes->merge(['class' => 'group relative flex flex-col overflow-hidden rounded-[var(--radius-panel)] bg-sand-50 transition-transform duration-500 ease-[var(--ease-out-expo)] hover:-translate-y-1']) }}>
-    <div class="relative overflow-hidden {{ $featured ? 'aspect-[16/10]' : 'aspect-[4/3]' }}">
+    {{--
+        نسبت در هر دو حالت یکی است و این عمدی است: عکسِ شاخصِ پروژه یک پرونده
+        است و در همه‌ی کارت‌ها همان دیده می‌شود. با دو نسبتِ متفاوت، همان عکس
+        در کارتِ «پروژه‌های مرتبط» از کناره بریده می‌شد و در فهرست نه.
+        featured فقط متنِ زیرِ کارت را اضافه می‌کند.
+    --}}
+    <div class="relative aspect-[16/10] overflow-hidden">
         <div class="absolute inset-0 transition-transform duration-[900ms] ease-[var(--ease-out-expo)] group-hover:scale-105">
             <x-project-cover :project="$project" />
         </div>

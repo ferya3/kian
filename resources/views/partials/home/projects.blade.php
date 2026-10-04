@@ -41,10 +41,26 @@
             کلیک است. تودرتو کردنشان نامعتبر بود، و یکی‌کردنشان یعنی کاربرِ
             لمسی برای دیدنِ تصویر مجبور شود صفحه را ترک کند.
         --}}
+        {{--
+            ظرفِ پرس‌وجوی اندازه.
+
+            ارتفاعِ نوار از عرضِ پانلِ باز درمی‌آید (در app.css)، و آن عرض
+            خودش از عرضِ همین ظرف. پس نوار باید عرضِ کسی را بتواند بخواند —
+            ‎cqw‎ همان را می‌دهد، بی‌آنکه چیزی در جاوااسکریپت اندازه گرفته شود.
+
+            سه عدد از اینجا می‌روند چون تعدادِ پروژه‌ها را فقط سرور می‌داند و
+            فرمولِ فلکس‌باکس به آن گره خورده است: n−۱ باریکه‌ی جمع‌شده،
+            سهمِ پانلِ باز از رشدِ فلکس (۷ در برابر n−۱)، و وارونش.
+        --}}
+        @php $pjN = max(1, $projects->count()); @endphp
+        <div class="pj-rail-wrap mt-12"
+             style="--pj-n1: {{ $pjN - 1 }};
+                    --pj-share: {{ round(7 / ($pjN + 6), 6) }};
+                    --pj-share-inv: {{ round(($pjN + 6) / 7, 6) }}">
         <ul x-data="projectSelector({{ $projects->count() }})"
             x-ref="rail"
             @keydown="onKey"
-            class="pj-rail mt-12"
+            class="pj-rail"
             data-reveal-stagger="140">
             @foreach($projects as $i => $project)
                 <li class="pj-slot" :style="{ flexGrow: active({{ $i }}) ? 7 : 1 }">
@@ -91,5 +107,6 @@
                 </li>
             @endforeach
         </ul>
+        </div>
     </div>
 </section>

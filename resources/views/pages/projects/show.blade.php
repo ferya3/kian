@@ -29,7 +29,8 @@
             </div>
         </section>
 
-        <x-gallery :images="$project->gallery" :title="__('site.projects.gallery')" eyebrow="Gallery" class="bg-sand-100 section" />
+        <x-gallery :images="$project->gallery" :title="__('site.projects.gallery')" eyebrow="Gallery"
+                   aspect="16/10" class="bg-sand-100 section" />
 
         <section class="bg-sand-50 section">
             <div class="container-page grid grid-cols-1 gap-10 lg:grid-cols-12 lg:gap-14">
