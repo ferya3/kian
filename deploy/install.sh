@@ -85,6 +85,72 @@ fi
 command -v composer >/dev/null || die "composer نصب نشد."
 command -v npm >/dev/null || die "npm نصب نشد."
 
+# -------------------------------------------------------------- بازگشت ----
+#
+# از اینجا به بعد سایتِ زنده دست می‌خورد.
+#
+# git reset کلِ کد را یک‌باره عوض می‌کند، ولی وابستگی و assetها و مهاجرت و
+# کش دقایقی بعد می‌رسند. در آن فاصله سایت با کدِ تازه و بقیه‌ی چیزهای کهنه
+# کار می‌کند — و اگر چیزی در میانه بشکند (ساختِ assets روی سرورِ کم‌حافظه،
+# شبکه، مهاجرت)، اسکریپت می‌ایستد و سایت همان‌طور خراب می‌ماند.
+#
+# پس پیش از هر تغییر، نقطه‌ی بازگشت برمی‌داریم و یک تله می‌گذاریم: هر
+# شکستی، همه‌چیز را به حالت پیش از اجرا برمی‌گرداند.
+#
+# فقط برای نصبِ موجود. نصبِ تازه چیزی ندارد که به آن برگردد.
+ROLLBACK_DIR=""
+ROLLBACK_REF=""
+
+snapshot() {
+    [ -d "$APP_DIR/.git" ] || return 0
+
+    ROLLBACK_REF="$(git -C "$APP_DIR" rev-parse HEAD 2>/dev/null || true)"
+    ROLLBACK_DIR="$(mktemp -d)"
+
+    # assetهای ساخته‌شده و کشِ پیکربندی: هر دو پس از شکست، نیمه‌کاره می‌مانند
+    [ -d "$APP_DIR/public/build" ] && cp -a "$APP_DIR/public/build" "$ROLLBACK_DIR/build"
+    [ -d "$APP_DIR/bootstrap/cache" ] && cp -a "$APP_DIR/bootstrap/cache" "$ROLLBACK_DIR/cache"
+
+    step "نقطه‌ی بازگشت: ${ROLLBACK_REF:0:8}"
+}
+
+rollback() {
+    local code=$?
+
+    trap - ERR EXIT
+    [ "$code" -eq 0 ] && return 0
+    [ -n "$ROLLBACK_REF" ] || return 0
+
+    printf '\n\033[1;31m✗ به‌روزرسانی شکست خورد — برگرداندن سایت به حالت قبل…\033[0m\n' >&2
+
+    git -C "$APP_DIR" reset --hard "$ROLLBACK_REF" >/dev/null 2>&1 || true
+
+    if [ -d "$ROLLBACK_DIR/build" ]; then
+        rm -rf "$APP_DIR/public/build"
+        cp -a "$ROLLBACK_DIR/build" "$APP_DIR/public/build"
+    fi
+
+    if [ -d "$ROLLBACK_DIR/cache" ]; then
+        rm -rf "$APP_DIR/bootstrap/cache"
+        cp -a "$ROLLBACK_DIR/cache" "$APP_DIR/bootstrap/cache"
+    fi
+
+    # ساختِ نیمه‌کاره نباید در public بماند؛ nginx سرو می‌کندش
+    rm -rf "$APP_DIR/public/build-next"
+
+    chown -R www-data:www-data "$APP_DIR" 2>/dev/null || true
+    systemctl reload "php$PHP_VERSION-fpm" 2>/dev/null || true
+
+    printf '\033[1;33m  سایت به کامیت %s برگشت و باید بالا باشد.\033[0m\n' "${ROLLBACK_REF:0:8}" >&2
+    printf '  خطای بالا را بفرستید؛ دیتابیس و .env دست نخورده‌اند.\n\n' >&2
+
+    exit "$code"
+}
+
+trap rollback ERR EXIT
+
+snapshot
+
 # ------------------------------------------------------------------ سورس ----
 step "دریافت سورس در $APP_DIR"
 
@@ -134,7 +200,49 @@ step "نصب وابستگی‌ها و ساخت assets"
 export COMPOSER_ALLOW_SUPERUSER=1
 composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
 npm ci --no-audit --no-fund
-npm run build
+
+#
+# حافظه‌ی مبادله، اگر رم کم است و swap ندارد.
+#
+# ساختِ assets سنگین‌ترین مرحله‌ی این اسکریپت است و روی سرورِ دو گیگابایتیِ
+# بی‌swap، کرنل فرایندِ node را می‌کُشد. پیامش هم گویا نیست: «Killed» و
+# کدِ ۱۳۷. نتیجه‌اش public/build نیمه‌کاره است، یعنی مانیفستِ ناقص و ۵۰۰
+# روی هر صفحه — همان خرابی‌ای که پس از به‌روزرسانی دیده می‌شد.
+#
+# یک‌بار ساخته می‌شود و می‌ماند؛ اجرای دوباره دست نمی‌زند.
+TOTAL_RAM_MB="$(free -m | awk '/^Mem:/{print $2}')"
+SWAP_MB="$(free -m | awk '/^Swap:/{print $2}')"
+
+if [ "${TOTAL_RAM_MB:-0}" -lt 3000 ] && [ "${SWAP_MB:-0}" -lt 512 ] && [ ! -f /swapfile ]; then
+    step "ساختن ۲ گیگابایت swap (رم ${TOTAL_RAM_MB}MB، بی‌swap)"
+
+    if fallocate -l 2G /swapfile 2>/dev/null || dd if=/dev/zero of=/swapfile bs=1M count=2048 status=none; then
+        chmod 600 /swapfile
+        mkswap /swapfile >/dev/null
+        swapon /swapfile
+        grep -q '^/swapfile' /etc/fstab || echo '/swapfile none swap sw 0 0' >> /etc/fstab
+    else
+        printf '  \033[1;33mswap ساخته نشد؛ ساختِ assets ممکن است با کمبود حافظه بمیرد.\033[0m\n'
+    fi
+fi
+
+#
+# ساخت در جای دیگر، و جابه‌جایی در پایان.
+#
+# vite پیش از ساختن، پوشه‌ی مقصد را خالی می‌کند. اگر مستقیم روی
+# public/build می‌ساخت و وسطِ کار می‌مُرد، assetهای سالمِ قبلی هم رفته
+# بودند و سایت تا پایانِ عیب‌یابی پایین می‌ماند. این‌طور، تا لحظه‌ی آخر
+# نسخه‌ی قبلی سرِ جایش است.
+BUILD_TMP="$APP_DIR/public/build-next"
+rm -rf "$BUILD_TMP"
+
+npm run build -- --outDir "$BUILD_TMP" --emptyOutDir
+
+[ -f "$BUILD_TMP/manifest.json" ] || [ -f "$BUILD_TMP/.vite/manifest.json" ] \
+    || die "ساختِ assets مانیفست نداد — جابه‌جایی انجام نشد و سایت دست‌نخورده ماند."
+
+rm -rf "$APP_DIR/public/build"
+mv "$BUILD_TMP" "$APP_DIR/public/build"
 
 # -------------------------------------------------------------------- env ---
 step "پیکربندی محیط"
@@ -316,6 +424,46 @@ if [ "$SSL" = "1" ] && [ -n "$DOMAIN" ]; then
     # shellcheck disable=SC2086
     certbot --nginx $CERT_DOMAINS --non-interactive --agree-tos --register-unsafely-without-email --redirect
 fi
+
+# ------------------------------------------------------------- سلامت ----
+#
+# آخرین حرف را خودِ سایت می‌زند و نه موفق‌بودنِ دستورها.
+#
+# تا حالا اسکریپت «نصب کامل شد» می‌گفت چون هیچ فرمانی خطا نداده بود، در
+# حالی که صفحه می‌توانست ۵۰۰ بدهد — مانیفستِ ناقص، کشِ کهنه، سرویسی که
+# بالا نیامده. تنها سنجشِ معتبر، خواستنِ خودِ صفحه است.
+#
+# شکستش به تله‌ی بالا می‌خورد و همه‌چیز به حالت قبل برمی‌گردد.
+step "بررسی سلامت سایت"
+
+systemctl reload "php$PHP_VERSION-fpm" >/dev/null 2>&1 || true
+systemctl reload nginx >/dev/null 2>&1 || true
+
+HEALTH_HOST="${DOMAIN:-localhost}"
+HEALTH_CODE=""
+
+# چند ثانیه مهلت: php-fpm پس از reload بی‌درنگ آماده نیست
+for _ in 1 2 3 4 5 6 7 8 9 10; do
+    HEALTH_CODE="$(curl -s -o /dev/null -w '%{http_code}' --max-time 10 \
+        -H "Host: $HEALTH_HOST" http://127.0.0.1/ 2>/dev/null || true)"
+
+    case "$HEALTH_CODE" in
+        2*|3*) break ;;
+    esac
+
+    sleep 2
+done
+
+case "$HEALTH_CODE" in
+    2*|3*)
+        printf '  صفحه‌ی اصلی: HTTP %s ✓\n' "$HEALTH_CODE"
+        ;;
+    *)
+        printf '\n  آخرین خطای لاراول:\n' >&2
+        tail -n 20 "$APP_DIR/storage/logs/laravel.log" 2>/dev/null | sed 's/^/    /' >&2
+        die "سایت پس از به‌روزرسانی بالا نیامد (HTTP ${HEALTH_CODE:-بی‌پاسخ})."
+        ;;
+esac
 
 # ------------------------------------------------------------------ پایان ---
 printf '\n\033[1;32m✓ نصب کامل شد.\033[0m\n'
