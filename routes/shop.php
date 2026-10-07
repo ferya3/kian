@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Shop\CartController;
 use App\Http\Controllers\Shop\CheckoutController;
+use App\Http\Controllers\Shop\ReceiptController;
 use App\Http\Controllers\Shop\ShopController;
 use Illuminate\Support\Facades\Route;
 
@@ -32,3 +33,13 @@ Route::post('checkout', [CheckoutController::class, 'store'])
 
 /* پیگیری سفارش با نشانیِ غیرقابل‌حدس، بدون حساب کاربری */
 Route::get('orders/{order:token}', [CheckoutController::class, 'done'])->name('orders.show');
+
+/*
+| رسیدِ حواله. همان نشانیِ غیرقابل‌حدس مجوزش است.
+|
+| throttle سخت‌گیرانه‌تر از تسویه است چون این مسیر فایل می‌پذیرد: هر
+| درخواست یک نوشتن روی دیسک است و نه فقط یک ردیف در دیتابیس.
+*/
+Route::post('orders/{order:token}/receipt', [ReceiptController::class, 'store'])
+    ->middleware('throttle:6,1')
+    ->name('orders.receipt');

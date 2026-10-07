@@ -45,6 +45,11 @@ class Order extends Model
     }
 
     /** ردیف‌ها به تفکیک فروشنده — هر فروشنده بخش خودش را جدا پیگیری می‌کند. */
+    public function receipts(): HasMany
+    {
+        return $this->hasMany(Receipt::class);
+    }
+
     public function byVendor()
     {
         return $this->items->groupBy('vendor_name');

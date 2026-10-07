@@ -44,6 +44,17 @@ class Shop
             : (config('shop.statuses')[$status] ?? $status);
     }
 
+    /** برچسب یک وضعیت رسید. */
+    public static function receiptStatus(string $status): string
+    {
+        $key = "site.shop.receipt_status.{$status}";
+        $translated = __($key);
+
+        return is_string($translated) && $translated !== $key
+            ? $translated
+            : (config('shop.receipt_statuses')[$status] ?? $status);
+    }
+
     /**
      * مبلغ، با جداکننده‌ی هزارگان و ارقام فارسی.
      *

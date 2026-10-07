@@ -43,6 +43,22 @@ class Vendor extends Model
         return $this->hasMany(OrderItem::class);
     }
 
+    public function receipts(): HasMany
+    {
+        return $this->hasMany(Receipt::class);
+    }
+
+    /**
+     * آیا می‌شود به این فروشنده حواله کرد؟
+     *
+     * کارت یا شبا، یکی کافی است. بی هیچ‌کدام، فرمِ آپلودِ رسید نشان داده
+     * نمی‌شود: مشتری نباید رسیدی بفرستد برای حسابی که نمی‌داند کجاست.
+     */
+    public function acceptsTransfer(): bool
+    {
+        return filled($this->bank_card) || filled($this->bank_iban);
+    }
+
     /** کاربرانی که با این فروشنده وارد پنل می‌شوند. */
     public function users(): HasMany
     {

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Shop;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
+use App\Models\Vendor;
 use App\Support\Cart;
 use App\Support\Seo;
 use Illuminate\Http\Request;
@@ -102,8 +103,20 @@ class CheckoutController extends Controller
     {
         $seo->title(__('site.seo.order.title', ['number' => $order->number]))->noindex();
 
-        $order->load('items');
+        $order->load('items', 'receipts');
 
-        return view('pages.shop.order', compact('order'));
+        /*
+         * فروشنده‌های همین سفارش، با شماره‌ی حسابشان — برای فرمِ حواله.
+         *
+         * نامِ فروشنده روی خودِ ردیف کپی شده (vendor_name) تا سفارش با
+         * تغییرِ بعدیِ نام به هم نریزد؛ ولی شماره‌ی حساب باید زنده باشد، پس
+         * از خودِ جدولِ فروشنده خوانده می‌شود.
+         */
+        $vendors = Vendor::query()
+            ->whereIn('id', $order->items->pluck('vendor_id')->unique())
+            ->get()
+            ->keyBy('id');
+
+        return view('pages.shop.order', compact('order', 'vendors'));
     }
 }

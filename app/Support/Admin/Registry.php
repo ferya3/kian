@@ -12,6 +12,7 @@ use App\Admin\Resources\FaqResource;
 use App\Admin\Resources\LocaleResource;
 use App\Admin\Resources\OfferResource;
 use App\Admin\Resources\OrderResource;
+use App\Admin\Resources\ReceiptResource;
 use App\Admin\Resources\ProcessStepResource;
 use App\Admin\Resources\ProductCategoryResource;
 use App\Admin\Resources\ProductResource;
@@ -69,6 +70,7 @@ class Registry
                 OfferResource::class,
                 OrderResource::class,
                 VendorOrderResource::class,
+                ReceiptResource::class,
             ]);
         }
 
