@@ -291,6 +291,29 @@ sed -i "s|^APP_ENV=.*|APP_ENV=production|" .env
 sed -i "s|^APP_DEBUG=.*|APP_DEBUG=false|" .env
 sed -i "s|^APP_URL=.*|APP_URL=$APP_URL|" .env
 
+#
+# بی DOMAIN، دامنه را از APP_URL درمی‌آوریم.
+#
+# چون اجرای بعدی — یک به‌روزرسانیِ ساده‌ی کد — بلوکِ nginx را از نو
+# می‌نویسد. اگر ندانیم دامنه چیست، server_name می‌شود catch-all و گواهیِ
+# گرفته‌شده هم با همان بازنویسی پاک می‌شود: سایت بی‌صدا از https می‌افتد.
+# مدیر یک‌بار دامنه را گفته و در .env هست؛ همان کافی است.
+if [ -z "$DOMAIN" ]; then
+    CAND="${APP_URL#http://}"
+    CAND="${CAND#https://}"
+    CAND="${CAND%%/*}"
+    CAND="${CAND%%:*}"
+    CAND="${CAND#www.}"   # وگرنه server_name می‌شود «www.x www.www.x»
+
+    case "$CAND" in
+        *[!0-9.]*)                       # IP خالی نیست
+            case "$CAND" in
+                localhost) ;;
+                *.*) DOMAIN="$CAND" ;;   # و شکلِ دامنه دارد
+            esac ;;
+    esac
+fi
+
 if [ "$DB" = "mysql" ]; then
     if [ -z "$DB_PASSWORD" ]; then
         DB_PASSWORD="$(openssl rand -base64 24 | tr -d '/+=' | head -c 24)"
@@ -421,8 +444,24 @@ else
 fi
 
 # -------------------------------------------------------------------- ssl ---
+#
+# گواهیِ گرفته‌شده در هر اجرا دوباره سر جایش می‌نشیند.
+#
+# بلوکِ nginx بالاتر از نو نوشته شد و هر چه certbot اضافه کرده بود — بلوکِ
+# ۴۴۳ و ریدایرکتِ http→https — با همان بازنویسی رفت. بی این، یک
+# به‌روزرسانیِ ساده‌ی کد (بدون SSL=1) سایت را بی‌صدا از https می‌انداخت و
+# چون APP_URL همچنان https بود، از بیرون بسته می‌شد.
+SSL_AUTO=0
+
+if [ "$SSL" != "1" ] && [ -n "$DOMAIN" ] && [ -f "/etc/letsencrypt/live/$DOMAIN/fullchain.pem" ]; then
+    SSL=1
+    SSL_AUTO=1
+fi
+
 if [ "$SSL" = "1" ] && [ -n "$DOMAIN" ]; then
-    step "گرفتن گواهی SSL برای $DOMAIN"
+    [ "$SSL_AUTO" = "1" ] \
+        && step "گواهیِ موجودِ $DOMAIN دوباره نصب می‌شود" \
+        || step "گرفتن گواهی SSL برای $DOMAIN"
     apt-get install -y -qq certbot python3-certbot-nginx >/dev/null
 
     #
@@ -438,15 +477,34 @@ if [ "$SSL" = "1" ] && [ -n "$DOMAIN" ]; then
         step "www.$DOMAIN هم در گواهی می‌آید"
     fi
 
-    # shellcheck disable=SC2086
-    certbot --nginx $CERT_DOMAINS --non-interactive --agree-tos --register-unsafely-without-email --redirect
+    #
+    # روی مسیرِ خودکار، شکستِ certbot نباید استقرار را برگرداند.
+    #
+    # آنجا هدف فقط بازنشاندنِ گواهیِ موجود است؛ اگر نشد، سایت روی http
+    # می‌ماند و بالا هست — که بهتر از برگرداندنِ یک به‌روزرسانیِ درستِ کد
+    # است. ولی وقتی مدیر خودش SSL=1 زده، شکست یعنی شکست.
+    CERT_OK=1
 
-    # حالا که گواهی گرفته شد و ۴۴۳ شنونده دارد، نشانی هم https می‌شود
-    APP_URL="https://$DOMAIN"
-    sed -i "s|^APP_URL=.*|APP_URL=$APP_URL|" .env
-    php artisan config:cache >/dev/null
-    chown www-data:www-data "$APP_DIR/.env"
-    chown -R www-data:www-data "$APP_DIR/bootstrap/cache"
+    if [ "$SSL_AUTO" = "1" ]; then
+        # shellcheck disable=SC2086
+        certbot --nginx $CERT_DOMAINS --non-interactive --agree-tos \
+            --register-unsafely-without-email --redirect || CERT_OK=0
+
+        [ "$CERT_OK" = "1" ] || printf '\n\033[1;33m  ! نصبِ دوباره‌ی گواهی نشد؛ سایت روی http بالا می‌ماند.\033[0m\n'
+    else
+        # shellcheck disable=SC2086
+        certbot --nginx $CERT_DOMAINS --non-interactive --agree-tos \
+            --register-unsafely-without-email --redirect
+    fi
+
+    # حالا که گواهی سر جایش است و ۴۴۳ شنونده دارد، نشانی هم https می‌شود
+    if [ "$CERT_OK" = "1" ]; then
+        APP_URL="https://$DOMAIN"
+        sed -i "s|^APP_URL=.*|APP_URL=$APP_URL|" .env
+        php artisan config:cache >/dev/null
+        chown www-data:www-data "$APP_DIR/.env"
+        chown -R www-data:www-data "$APP_DIR/bootstrap/cache"
+    fi
 fi
 
 # ------------------------------------------------------------- سلامت ----
@@ -479,12 +537,16 @@ hit() {
 }
 
 #
-# دنبالِ ریدایرکت می‌رویم، ولی در هر پرش https را به http برمی‌گردانیم.
+# اگر ۴۴۳ شنونده دارد، ریدایرکت را همان‌طور که هست دنبال می‌کنیم.
 #
-# چون اینجا روی خودِ سرور ایستاده‌ایم و TLS ممکن است جای دیگری تمام شود —
-# کلودفلر، یک لودبالانسر — پس نبودنِ شنونده روی ۴۴۳ لزوماً خرابی نیست.
-# این پیمایش همان کاری را می‌کند که آن لایه می‌کند: درخواست را با http به
-# مبدأ می‌رساند. اگر اپ سالم باشد، آخرش ۲xx می‌دهد.
+# وگرنه در هر پرش https را به http برمی‌گردانیم: TLS ممکن است جای دیگری
+# تمام شود — کلودفلر، یک لودبالانسر — و آن لایه هم دقیقاً همین کار را با
+# درخواست می‌کند. پس نبودِ شنونده روی ۴۴۳ به‌تنهایی خرابی نیست.
+HAS_443=0
+ss -ltn 2>/dev/null | grep -q ':443' && HAS_443=1
+
+#
+# دنبالِ ریدایرکت می‌رویم و فقط به کدِ آخر اعتماد می‌کنیم.
 #
 # نتیجه در HEALTH_CODE، و نخستین ریدایرکت در HEALTH_REDIRECT.
 walk() {
@@ -501,7 +563,16 @@ walk() {
         case "$HEALTH_CODE" in
             3*) [ -n "$next" ] || break
                 [ "$hop" -eq 0 ] && HEALTH_REDIRECT="$next"
-                url="http://${next#http*://}"
+
+                #
+                # پایین‌آوردنِ اسکیم فقط وقتی ۴۴۳ خالی است.
+                #
+                # وگرنه ریدایرکتِ http→https خودِ nginx را خنثی می‌کند و
+                # همان نشانی دوباره درخواست می‌شود: حلقه‌ای که آخرش ۳۰۱
+                # می‌ماند و یک استقرارِ درست را برمی‌گرداند. همین یک‌بار
+                # پیش آمد، درست بعد از آنکه certbot گواهی را گرفته بود.
+                [ "$HAS_443" = "1" ] && url="$next" || url="http://${next#http*://}"
+
                 hop=$((hop + 1)) ;;
             *) break ;;
         esac
