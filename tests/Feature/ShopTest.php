@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Models\Vendor;
 use App\Support\Admin\Registry;
 use App\Support\Cart;
+use App\Support\Jalali;
 use App\Support\Locales;
 use App\Support\Navigation;
 use Database\Seeders\DatabaseSeeder;
@@ -188,6 +189,66 @@ class ShopTest extends TestCase
 
         $this->assertSame($before - 1, Vendor::query()->count());
         $this->assertNull(Vendor::query()->find($removed->id));
+    }
+
+    /**
+     * تکمیل سفارش باید بگوید پرداخت چطور است.
+     *
+     * شماره‌ی حساب اما عمداً اینجا نیست: سفارش هنوز وجود ندارد و کسی که
+     * پیش از ثبت کارت‌به‌کارت کند، پولی فرستاده که به هیچ سفارشی بند نیست
+     * و رسیدش را هم جایی نمی‌تواند بگذارد.
+     */
+    public function test_checkout_explains_the_payment_before_the_order_is_placed(): void
+    {
+        $this->enableShop();
+
+        $product = Product::query()->active()->firstOrFail();
+        $vendor = Vendor::create([
+            'name' => 'فروشنده آزمایشی',
+            'slug' => 'v',
+            'is_active' => true,
+            'bank_card' => '6104337712345678',
+        ]);
+        $offer = Offer::create([
+            'vendor_id' => $vendor->id,
+            'product_id' => $product->id,
+            'price' => 1000,
+            'min_order' => 1,
+        ]);
+
+        $this->post(route('cart.store'), ['offer' => $offer->id, 'quantity' => 2]);
+
+        $this->get(route('checkout.show'))->assertOk()
+            ->assertSee(__('site.shop.payment'), false)
+            ->assertSee(__('site.shop.payment_step_2'), false)
+            ->assertDontSee($vendor->bank_card, false)
+            ->assertDontSee(Jalali::digits($vendor->bank_card), false);
+    }
+
+    /** یک فروشنده یعنی یک حواله — تفکیک، نوفه است. */
+    public function test_checkout_splits_the_amount_only_when_there_are_two_vendors(): void
+    {
+        $this->enableShop();
+
+        $products = Product::query()->active()->take(2)->get();
+        $offers = $products->map(fn (Product $p, int $i) => Offer::create([
+            'vendor_id' => Vendor::create([
+                'name' => 'فروشنده '.$i,
+                'slug' => 'v'.$i,
+                'is_active' => true,
+            ])->id,
+            'product_id' => $p->id,
+            'price' => 1000,
+            'min_order' => 1,
+        ]));
+
+        $this->post(route('cart.store'), ['offer' => $offers[0]->id, 'quantity' => 1]);
+        $this->get(route('checkout.show'))->assertOk()
+            ->assertDontSee(__('site.shop.payment_split'), false);
+
+        $this->post(route('cart.store'), ['offer' => $offers[1]->id, 'quantity' => 1]);
+        $this->get(route('checkout.show'))->assertOk()
+            ->assertSee(__('site.shop.payment_split'), false);
     }
 
     /** نشانِ تعداد فقط وقتی می‌آید که چیزی در سبد باشد. */

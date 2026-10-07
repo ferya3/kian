@@ -80,6 +80,48 @@
                             <span class="tech font-extrabold text-clay-600">{{ Shop::price($total) }}</span>
                         </p>
                     </div>
+
+                    {{--
+                        پرداخت، پیش از زدنِ دکمه.
+
+                        تا حالا این صفحه هیچ حرفی از پرداخت نمی‌زد: خریدار
+                        فرم را پر می‌کرد و «ثبت سفارش» را می‌زد بی‌آنکه بداند
+                        قرار است چطور پول بدهد.
+
+                        شماره‌ی حساب اما اینجا نمی‌آید و در صفحه‌ی سفارش
+                        می‌آید — عمداً. سفارش هنوز وجود ندارد؛ کسی که همین
+                        حالا کارت‌به‌کارت کند، پولی فرستاده که به هیچ سفارشی
+                        بند نیست و رسیدش را هم جایی نمی‌تواند بگذارد.
+
+                        تفکیکِ فروشنده‌ها اما همین‌جا لازم است: سبدی که نزد
+                        دو فروشنده رفته، دو حواله‌ی جدا دارد و نه یک مبلغ.
+                    --}}
+                    @php
+                        $byVendor = $lines->groupBy(fn ($line) => $line['offer']->vendor->name);
+                    @endphp
+
+                    <div class="mt-5 rounded-[var(--radius-panel)] border border-sand-300 bg-white p-5">
+                        <h2 class="font-extrabold">{{ __('site.shop.payment') }}</h2>
+                        <p class="mt-2 text-meta text-ink-500">{{ __('site.shop.payment_lead') }}</p>
+
+                        @if($byVendor->count() > 1)
+                            <p class="mt-4 text-meta font-semibold text-ink-600">{{ __('site.shop.payment_split') }}</p>
+                            <ul class="mt-2 space-y-2 text-meta">
+                                @foreach($byVendor as $vendorName => $vendorLines)
+                                    <li class="flex items-baseline justify-between gap-3">
+                                        <span class="min-w-0">{{ $vendorName }}</span>
+                                        <span class="tech shrink-0 font-bold">{{ Shop::price($vendorLines->sum('total')) }}</span>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        @endif
+
+                        <ol class="mt-4 space-y-1.5 border-t border-sand-200 pt-4 text-meta text-ink-500">
+                            <li>{{ __('site.shop.payment_step_1') }}</li>
+                            <li>{{ __('site.shop.payment_step_2') }}</li>
+                            <li>{{ __('site.shop.payment_step_3') }}</li>
+                        </ol>
+                    </div>
                 </aside>
             </div>
         </div>
