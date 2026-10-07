@@ -222,11 +222,19 @@ step "پیکربندی nginx"
 IPV6_LISTEN=""
 [ -f /proc/net/if_inet6 ] && IPV6_LISTEN="listen [::]:80;"
 
+# بی دامنه، بلوک باید catch-all باشد؛ با دامنه، هم apex و هم www را بگیرد —
+# وگرنه www به بلوکِ پیش‌فرضِ nginx می‌افتد و نه به سایت.
+if [ -n "$DOMAIN" ]; then
+    SERVER_NAME="$DOMAIN www.$DOMAIN"
+else
+    SERVER_NAME="_"
+fi
+
 cat > /etc/nginx/sites-available/kian << NGINX
 server {
     listen 80;
     $IPV6_LISTEN
-    server_name ${DOMAIN:-_};
+    server_name $SERVER_NAME;
     root $APP_DIR/public;
 
     index index.php;
@@ -291,7 +299,22 @@ fi
 if [ "$SSL" = "1" ] && [ -n "$DOMAIN" ]; then
     step "گرفتن گواهی SSL برای $DOMAIN"
     apt-get install -y -qq certbot python3-certbot-nginx >/dev/null
-    certbot --nginx -d "$DOMAIN" --non-interactive --agree-tos --register-unsafely-without-email --redirect
+
+    #
+    # www هم در گواهی می‌آید، اگر رکوردش به همین سرور اشاره کند.
+    #
+    # شرطی است و نه همیشگی: certbot برای هر دامنه‌ای که در خط فرمان بیاید
+    # چالش می‌گیرد، و اگر www جایی اشاره نکند کلِ درخواست شکست می‌خورد —
+    # یعنی apex هم بی‌گواهی می‌ماند. پس اول می‌پرسیم DNS چه می‌گوید.
+    CERT_DOMAINS="-d $DOMAIN"
+
+    if [ "${WWW:-auto}" != "0" ] && getent hosts "www.$DOMAIN" >/dev/null 2>&1; then
+        CERT_DOMAINS="$CERT_DOMAINS -d www.$DOMAIN"
+        step "www.$DOMAIN هم در گواهی می‌آید"
+    fi
+
+    # shellcheck disable=SC2086
+    certbot --nginx $CERT_DOMAINS --non-interactive --agree-tos --register-unsafely-without-email --redirect
 fi
 
 # ------------------------------------------------------------------ پایان ---

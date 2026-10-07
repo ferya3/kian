@@ -56,6 +56,53 @@ curl -fsSL https://raw.githubusercontent.com/ferya3/kian/claude/loving-babbage-3
 
 ---
 
+## دامنه و SSL — و حالتِ کلودفلر
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/ferya3/kian/claude/loving-babbage-3kd7tm/deploy/install.sh \
+  | sudo SKIP_SYSTEM=1 DOMAIN=example.com SSL=1 bash
+```
+
+نصب‌کننده `server_name` را روی apex و `www` می‌گذارد و گواهی را هم برای هر
+دو می‌گیرد — ولی `www` فقط اگر رکوردش در DNS به همین سرور اشاره کند.
+شرطی است چون certbot برای هر دامنه‌ای که در خط فرمان بیاید چالش می‌گیرد و
+اگر یکی‌شان اشاره نکند، کلِ درخواست شکست می‌خورد و apex هم بی‌گواهی
+می‌ماند. با `WWW=0` می‌شود صریحاً حذفش کرد.
+
+### اگر DNS روی کلودفلر است
+
+ترتیب مهم است، چون ابر نارنجی سه چیز را هم‌زمان خراب می‌کند.
+
+**۱) هنگام گرفتن گواهی، پراکسی باید خاموش باشد (ابر خاکستری).** چالشِ
+HTTP-01 باید به خودِ سرور برسد؛ با ابر نارنجی، کلودفلر جواب می‌دهد و
+certbot شکست می‌خورد.
+
+**۲) بعدش اگر ابر را نارنجی کردید، حالت SSL/TLS باید Full (strict) باشد**
+و نه Flexible. با Flexible کلودفلر با http به سرور وصل می‌شود، nginx هم
+(به‌خاطر `--redirect` خودِ certbot) به https برمی‌گرداند — و حلقه‌ی
+بی‌پایانِ ریدایرکت می‌سازد.
+
+**۳) و `TRUSTED_PROXIES=cloudflare` را در `.env` بگذارید.** بی آن، آی‌پیِ
+هر بازدیدکننده همان آی‌پیِ کلودفلر دیده می‌شود. پیامدش بی‌صدا نیست:
+سهمیه‌ی `throttle` مشترک می‌شود — `throttle:10,1` روی تسویه یعنی ده سفارش
+در دقیقه برای کلِ اینترنت، و یک نفر می‌تواند همان را برای بقیه ببندد —
+و `isSecure()` کاذب می‌شود، پس لینک‌های مطلق با `http` ساخته می‌شوند.
+شرحِ کامل و فهرستِ بازه‌ها در `config/proxies.php`.
+
+```bash
+echo 'TRUSTED_PROXIES=cloudflare' | sudo tee -a /var/www/kian/.env
+sudo -u www-data php /var/www/kian/artisan optimize:clear
+sudo -u www-data php /var/www/kian/artisan optimize
+```
+
+راستی‌آزمایی — آی‌پیِ واقعی باید در لاگ دسترسی بیاید و نه بازه‌ی کلودفلر:
+
+```bash
+sudo tail -n 20 /var/log/nginx/access.log | awk '{print $1}' | sort -u
+```
+
+---
+
 ## پشتیبان‌گیری و بازگردانی
 
 سه چیز روی سرور هست که در گیت نیست و با پاک‌شدنِ سرور از بین می‌رود. بقیه‌ی
