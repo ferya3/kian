@@ -89,12 +89,23 @@ class PublicPagesTest extends TestCase
         }
     }
 
+    /**
+     * سنجش روی نشانیِ محصول است و نه نامش.
+     *
+     * پیش‌تر این تست نامِ نمایشی را می‌سنجید و توخالی بود: «بلوک عایق ۲۵»
+     * یک برچسبِ ثابت در مگامنو هم هست و در هر صفحه‌ای می‌آید، پس حتی وقتی
+     * آن محصول از کاتالوگ حذف شد، تست همچنان سبز ماند. نشانی فقط جایی
+     * می‌آید که خودِ محصول فهرست شده باشد.
+     */
     public function test_category_filter_narrows_the_catalogue(): void
     {
-        $this->get(route('products.index', ['category' => 'insulating-blocks']))
+        $wall = Product::where('slug', 'ceramic-block-25')->firstOrFail();
+        $partition = Product::where('slug', 'partition-block-8')->firstOrFail();
+
+        $this->get(route('products.index', ['category' => 'wall-blocks']))
             ->assertOk()
-            ->assertSee('بلوک عایق ۲۵')
-            ->assertDontSee('بلوک تیغه‌ای ۷');
+            ->assertSee(route('products.show', $wall), escape: false)
+            ->assertDontSee(route('products.show', $partition), escape: false);
     }
 
     public function test_search_finds_products_by_name(): void

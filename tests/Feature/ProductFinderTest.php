@@ -18,7 +18,7 @@ class ProductFinderTest extends TestCase
         $this->seed(DatabaseSeeder::class);
     }
 
-    public function test_an_exterior_wall_needing_heavy_insulation_gets_an_insulating_block(): void
+    public function test_an_exterior_wall_needing_heavy_insulation_gets_the_thickest_block(): void
     {
         $matches = app(ProductFinder::class)->search([
             'project_type' => 'residential',
@@ -27,7 +27,7 @@ class ProductFinderTest extends TestCase
             'insulation' => 'high',
         ]);
 
-        $this->assertSame('insulating-block-25', $matches->first()['product']->slug);
+        $this->assertSame('ceramic-block-25', $matches->first()['product']->slug);
         $this->assertSame(100, $matches->first()['score']);
         $this->assertNotEmpty($matches->first()['reasons']);
     }
@@ -37,11 +37,23 @@ class ProductFinderTest extends TestCase
         $best = app(ProductFinder::class)->search([
             'project_type' => 'residential',
             'wall_type' => 'partition',
-            'thickness' => 10,
+            'thickness' => 13,
             'insulation' => 'low',
         ])->first();
 
-        $this->assertSame('partition-block-10', $best['product']->slug);
+        $this->assertSame('partition-block-13', $best['product']->slug);
+    }
+
+    /** ضخامتی که تولید نمی‌شود، به نزدیک‌ترین سایزِ موجود می‌رسد. */
+    public function test_a_thickness_the_factory_does_not_make_falls_to_the_nearest_one(): void
+    {
+        $best = app(ProductFinder::class)->search([
+            'wall_type' => 'partition',
+            'thickness' => 10,          // بین ۸ و ۱۳، نزدیک‌تر به ۸
+            'insulation' => 'low',
+        ])->first();
+
+        $this->assertSame('partition-block-8', $best['product']->slug);
     }
 
     public function test_it_always_returns_suggestions_even_with_no_perfect_match(): void
@@ -84,8 +96,31 @@ class ProductFinderTest extends TestCase
             ->assertSee('name="robots" content="noindex, follow"', escape: false);
     }
 
+    /**
+     * محصولی که از هیچ راهی پیشنهاد نمی‌شود، در عمل وجود ندارد.
+     *
+     * این تست پیش‌تر فقط تعداد محصول‌ها را می‌شمرد — نامش چیزی می‌گفت و
+     * کارش چیز دیگری. با عوض‌شدنِ کاتالوگ به پنج سایزِ واقعی، همان شمارش
+     * هم شکست و معلوم شد چیزی را نگه نمی‌داشته.
+     */
     public function test_every_seeded_product_is_reachable_by_some_criteria(): void
     {
-        $this->assertGreaterThanOrEqual(10, Product::query()->active()->count());
+        $products = Product::query()->active()->get();
+
+        $this->assertNotEmpty($products);
+
+        $reachable = collect(array_keys(config('kian.finder.wall_types')))
+            ->flatMap(fn (string $wallType) => app(ProductFinder::class)
+                ->search(['wall_type' => $wallType])
+                ->pluck('product.slug'))
+            ->unique();
+
+        foreach ($products as $product) {
+            $this->assertContains(
+                $product->slug,
+                $reachable->all(),
+                "محصول «{$product->slug}» با هیچ نوع دیواری پیشنهاد نمی‌شود."
+            );
+        }
     }
 }

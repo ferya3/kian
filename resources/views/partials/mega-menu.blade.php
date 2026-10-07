@@ -59,7 +59,7 @@
                     <p class="mt-2 text-sm leading-relaxed text-sand-200/70">
                         {{ __('site.mega.featured_lead') }}
                     </p>
-                    <a href="{{ route('products.show', 'insulating-block-25') }}"
+                    <a href="{{ route('products.show', 'ceramic-block-25') }}"
                        class="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-clay-300 transition hover:text-clay-200">
                         {{ __('site.actions.view_product') }}
                         <x-icon name="arrow-left" size="15" />

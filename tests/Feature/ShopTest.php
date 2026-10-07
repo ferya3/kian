@@ -285,10 +285,17 @@ class ShopTest extends TestCase
 
         Offer::create(['vendor_id' => $vendor->id, 'product_id' => $sold->id, 'price' => 120000, 'min_order' => 2]);
 
+        /*
+        | سنجش روی نشانی است و نه نامِ نمایشی.
+        |
+        | نام محصول در جاهای دیگرِ صفحه هم می‌آید — راهنمای جستجو، مگامنو —
+        | پس «ندیدنِ نام» چیزی درباره‌ی ویترین نمی‌گوید. نشانی فقط جایی
+        | می‌آید که محصول واقعاً فهرست شده باشد.
+        */
         $this->get(route('shop.index'))
             ->assertOk()
-            ->assertSee($sold->name, false)
-            ->assertDontSee($unsold->name, false);
+            ->assertSee(route('shop.show', $sold), false)
+            ->assertDontSee(route('shop.show', $unsold), false);
     }
 
     public function test_an_offer_disappears_when_its_vendor_is_switched_off(): void
