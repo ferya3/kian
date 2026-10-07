@@ -168,6 +168,28 @@ class ShopTest extends TestCase
         }
     }
 
+    /**
+     * کاشتِ فروشگاه از بارِ دوم دخالت نمی‌کند.
+     *
+     * نصب‌کننده در هر به‌روزرسانی صدایش می‌زند، پس بی این شرط فروشنده‌ای که
+     * مدیر عمداً حذف کرده بود در اجرای بعد برمی‌گشت.
+     */
+    public function test_seeding_the_shop_again_does_not_bring_back_what_was_removed(): void
+    {
+        $before = Vendor::query()->count();
+
+        $this->assertGreaterThan(0, $before, 'کاشتِ نخست باید فروشنده ساخته باشد.');
+
+        $removed = Vendor::query()->orderBy('id')->firstOrFail();
+        Offer::query()->where('vendor_id', $removed->id)->delete();
+        $removed->delete();
+
+        $this->seed(\Database\Seeders\ShopSeeder::class);
+
+        $this->assertSame($before - 1, Vendor::query()->count());
+        $this->assertNull(Vendor::query()->find($removed->id));
+    }
+
     /** نشانِ تعداد فقط وقتی می‌آید که چیزی در سبد باشد. */
     public function test_the_basket_badge_counts_what_is_in_it(): void
     {
