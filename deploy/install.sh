@@ -2,7 +2,7 @@
 #
 # نصب سایت کیان بهساز روی سرور اوبونتو (۲۲.۰۴ / ۲۴.۰۴)
 #
-#   curl -fsSL https://raw.githubusercontent.com/ferya3/kian/claude/ceramic-factory-website-p5je97/deploy/install.sh | sudo bash
+#   curl -fsSL https://raw.githubusercontent.com/ferya3/kian/claude/loving-babbage-3kd7tm/deploy/install.sh | sudo bash
 #
 # متغیرهای قابل تنظیم (همه اختیاری):
 #   DOMAIN=kianbehsaz.ir     دامنه‌ی سایت؛ پیش‌فرض: هر هاستی
@@ -20,8 +20,10 @@
 set -euo pipefail
 
 REPO="${REPO:-https://github.com/ferya3/kian.git}"
-SELF_URL="${SELF_URL:-https://raw.githubusercontent.com/ferya3/kian/claude/ceramic-factory-website-p5je97/deploy/install.sh}"
-BRANCH="${BRANCH:-claude/ceramic-factory-website-p5je97}"
+SELF_URL="${SELF_URL:-https://raw.githubusercontent.com/ferya3/kian/claude/loving-babbage-3kd7tm/deploy/install.sh}"
+DEFAULT_BRANCH="claude/loving-babbage-3kd7tm"
+# خالی یعنی «هرچه روی سرور هست»؛ پایین‌تر، پس از پیداشدن نصبِ قبلی، پر می‌شود
+BRANCH="${BRANCH:-}"
 APP_DIR="${APP_DIR:-/var/www/kian}"
 DOMAIN="${DOMAIN:-}"
 DB="${DB:-sqlite}"
@@ -90,6 +92,25 @@ step "دریافت سورس در $APP_DIR"
 # «dubious ownership» گیت می‌خورد؛ این خط اجازه‌ی به‌روزرسانی را می‌دهد.
 git config --global --add safe.directory "$APP_DIR" 2>/dev/null || true
 
+# ---------------------------------------------------------------- برنچ ----
+#
+# اگر کاربر BRANCH نداده و نصبِ قبلی هست، همان برنچی که روی سرور است می‌ماند.
+#
+# پیش‌تر اینجا یک عددِ ثابت بود و به‌روزرسانیِ بدونِ BRANCH سرور را با
+# reset --hard به آن برنچ می‌برد — یعنی سروری که روی برنچ تازه بود، بی‌صدا
+# صدوشصت کامیت عقب می‌رفت. دستورِ به‌روزرسانیِ خودِ README هم همین تله را
+# داشت.
+if [ -z "$BRANCH" ] && [ -d "$APP_DIR/.git" ]; then
+    BRANCH="$(git -C "$APP_DIR" rev-parse --abbrev-ref HEAD 2>/dev/null || true)"
+
+    # HEAD جداافتاده نامِ برنچ ندارد و رشته‌ی «HEAD» برمی‌گرداند
+    [ "$BRANCH" = "HEAD" ] && BRANCH=""
+
+    [ -n "$BRANCH" ] && step "برنچِ روی سرور: $BRANCH"
+fi
+
+BRANCH="${BRANCH:-$DEFAULT_BRANCH}"
+
 if [ -d "$APP_DIR/.git" ]; then
     # refspec صریح لازم است: کلون با --branch تک‌برنچی است و فقط برنچِ همان
     # کلون را در refs/remotes نگه می‌دارد. با fetch ساده، origin/$BRANCH برای
@@ -124,7 +145,21 @@ grep -q '^APP_KEY=base64' .env || php artisan key:generate --force
 if [ -n "$DOMAIN" ]; then
     [ "$SSL" = "1" ] && APP_URL="https://$DOMAIN" || APP_URL="http://$DOMAIN"
 else
-    APP_URL="http://$(hostname -I | awk '{print $1}')"
+    #
+    # بی DOMAIN، نشانیِ موجود دست نمی‌خورد.
+    #
+    # پیش‌تر اینجا بی‌قید و شرط IP سرور می‌نشست، یعنی اولین به‌روزرسانیِ
+    # بدونِ DOMAIN، دامنه‌ای را که مدیر دستی در .env گذاشته بود پاک می‌کرد.
+    # اثرش بی‌صداست: سایت بالا می‌آید ولی canonical و sitemap و لینک‌های
+    # مطلق به IP اشاره می‌کنند.
+    #
+    # فقط نصبِ تازه — یا .env ای که هنوز روی مقدارِ نمونه مانده — IP می‌گیرد.
+    APP_URL="$(sed -n 's/^APP_URL=//p' .env | head -1 | tr -d '\r"')"
+
+    case "$APP_URL" in
+        ''|http://localhost*|https://localhost*)
+            APP_URL="http://$(hostname -I | awk '{print $1}')" ;;
+    esac
 fi
 
 sed -i "s|^APP_ENV=.*|APP_ENV=production|" .env

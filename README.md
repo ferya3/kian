@@ -15,13 +15,13 @@
 ## نصب روی سرور اوبونتو — تک دستور
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/ferya3/kian/claude/ceramic-factory-website-p5je97/deploy/install.sh | sudo bash
+curl -fsSL https://raw.githubusercontent.com/ferya3/kian/claude/loving-babbage-3kd7tm/deploy/install.sh | sudo bash
 ```
 
 با دامنه، SSL و MySQL:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/ferya3/kian/claude/ceramic-factory-website-p5je97/deploy/install.sh \
+curl -fsSL https://raw.githubusercontent.com/ferya3/kian/claude/loving-babbage-3kd7tm/deploy/install.sh \
   | sudo DOMAIN=kianbehsaz.ir SSL=1 DB=mysql bash
 ```
 
@@ -35,13 +35,13 @@ curl -fsSL https://raw.githubusercontent.com/ferya3/kian/claude/ceramic-factory-
 | `SSL` | `0` | گرفتن گواهی Let's Encrypt (نیازمند DNS آماده) |
 | `DB` | `sqlite` | یا `mysql` — کاربر و دیتابیس خودکار ساخته می‌شود |
 | `APP_DIR` | `/var/www/kian` | مسیر نصب |
-| `BRANCH` | برنچ توسعه | برنچ گیت؛ روی نصب موجود هم قابل تعویض است |
+| `BRANCH` | روی نصب موجود: همان برنچِ سرور — وگرنه برنچ توسعه | روی نصب موجود هم قابل تعویض است |
 | `SKIP_SYSTEM` | `0` | پرش از نصب بسته‌های سیستمی |
 
 **به‌روزرسانی** (pull، build مجدد، فقط مهاجرت‌های جدید — بدون seed دوباره):
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/ferya3/kian/claude/ceramic-factory-website-p5je97/deploy/install.sh | sudo SKIP_SYSTEM=1 bash
+curl -fsSL https://raw.githubusercontent.com/ferya3/kian/claude/loving-babbage-3kd7tm/deploy/install.sh | sudo SKIP_SYSTEM=1 bash
 ```
 
 اسکریپت را از روی curl اجرا کنید، نه نسخه‌ی داخل سرور: نسخه‌ی داخل سرور تا قبل از
@@ -53,6 +53,103 @@ curl -fsSL https://raw.githubusercontent.com/ferya3/kian/claude/ceramic-factory-
 > `config/kian.php` مقدم است. اگر اطلاعات برند یا تماس عوض شد، همان
 > کلیدها را در `.env` سرور هم دستی اصلاح کنید و بعد `php artisan
 > config:clear` بزنید.
+
+---
+
+## پشتیبان‌گیری و بازگردانی
+
+سه چیز روی سرور هست که در گیت نیست و با پاک‌شدنِ سرور از بین می‌رود. بقیه‌ی
+سرور — کد، `vendor`، `node_modules`، کانفیگ nginx — از همین مخزن و نصب‌کننده
+دوباره ساخته می‌شود.
+
+| چه چیزی | کجا | چرا جبران‌ناپذیر است |
+|---|---|---|
+| `.env` | `/var/www/kian/.env` | `APP_KEY` داخلش است؛ بی آن، مقدارهای رمزنگاری‌شده و نشست‌ها باز نمی‌شوند |
+| دیتابیس | `database/database.sqlite` | همه‌ی محتوا: محصول، پروژه، مقاله، تنظیمات، کاربرِ پنل |
+| عکس‌های آپلودشده | `storage/app/public/` | هر تصویری که از پنل بالا رفته |
+
+### گرفتن پشتیبان
+
+```bash
+sudo bash -c '
+set -euo pipefail
+APP=/var/www/kian
+OUT=/home/ubuntu/kian-backup-$(date +%Y%m%d-%H%M%S)
+mkdir -p "$OUT"
+
+# دیتابیس با VACUUM INTO گرفته می‌شود و نه با cp: کپیِ خام از پرونده‌ای که
+# ممکن است همان لحظه نوشته شود، نیم‌نوشته درمی‌آید و سکوت می‌کند.
+php -r "(new PDO(\"sqlite:\$argv[1]\"))->exec(\"VACUUM INTO \x27\$argv[2]\x27\");" \
+    "$APP/database/database.sqlite" "$OUT/database.sqlite"
+
+cp "$APP/.env" "$OUT/.env"
+tar -czf "$OUT/uploads.tar.gz" -C "$APP/storage/app" public
+cp /etc/nginx/sites-available/kian "$OUT/nginx-kian.conf" 2>/dev/null || true
+
+# شناسنامه: بدونش، شش ماه بعد معلوم نیست این پشتیبان از کِی و از کدام کد است
+{
+    echo "تاریخ: $(date -Is)"
+    echo "کامیت: $(git -C "$APP" rev-parse HEAD 2>/dev/null || echo ناشناس)"
+    echo "برنچ: $(git -C "$APP" rev-parse --abbrev-ref HEAD 2>/dev/null || echo ناشناس)"
+    echo "عکس‌ها: $(find "$APP/storage/app/public" -type f | wc -l) پرونده"
+    echo "جدول‌ها: $(php -r "foreach((new PDO(\"sqlite:\$argv[1]\"))->query(\"SELECT name FROM sqlite_master WHERE type=\x27table\x27\") as \$r) echo \$r[0],\" \";" "$OUT/database.sqlite")"
+} > "$OUT/MANIFEST.txt"
+
+tar -czf "$OUT.tar.gz" -C "$(dirname "$OUT")" "$(basename "$OUT")"
+rm -rf "$OUT"
+chown ubuntu:ubuntu "$OUT.tar.gz"
+sha256sum "$OUT.tar.gz"
+ls -lh "$OUT.tar.gz"
+'
+```
+
+بسته در `/home/ubuntu/` می‌نشیند و مالکش کاربر `ubuntu` است، تا بی‌دردسر
+دانلود شود:
+
+```bash
+scp ubuntu@SERVER:/home/ubuntu/kian-backup-*.tar.gz .
+```
+
+**پیش از پاک‌کردنِ سرور، پشتیبان را روی دستگاه خودتان باز کنید و بیازمایید.**
+پشتیبانی که آزموده نشده، پشتیبان نیست:
+
+```bash
+sha256sum kian-backup-*.tar.gz        # با آنچه سرور چاپ کرد بسنجید
+tar -xzf kian-backup-*.tar.gz && cd kian-backup-*/
+cat MANIFEST.txt
+grep -c '^APP_KEY=base64:' .env       # باید ۱ باشد
+php -r '
+$db = new PDO("sqlite:database.sqlite");
+echo "integrity: ", $db->query("PRAGMA integrity_check")->fetchColumn(), PHP_EOL;
+foreach (["products","projects","articles","settings","users"] as $t)
+    printf("%-12s %d\n", $t, $db->query("SELECT COUNT(*) FROM $t")->fetchColumn());
+'
+tar -tzf uploads.tar.gz | head
+```
+
+`integrity: ok` و شمارشِ ردیف‌هایی که با سایت می‌خواند، یعنی پشتیبان سالم است.
+
+### بازگردانی روی سرور تازه
+
+```bash
+# ۱) نصبِ خالی
+curl -fsSL https://raw.githubusercontent.com/ferya3/kian/claude/loving-babbage-3kd7tm/deploy/install.sh | sudo bash
+
+# ۲) جای‌گذاریِ داده
+tar -xzf kian-backup-*.tar.gz
+cd kian-backup-*/
+sudo install -o www-data -g www-data -m 664 database.sqlite /var/www/kian/database/database.sqlite
+sudo install -o www-data -g www-data -m 644 .env            /var/www/kian/.env
+sudo tar -xzf uploads.tar.gz -C /var/www/kian/storage/app
+sudo chown -R www-data:www-data /var/www/kian/storage
+
+# ۳) APP_URL را با نشانیِ سرورِ تازه یکی کنید، بعد کش را نو کنید
+sudo -u www-data php /var/www/kian/artisan optimize:clear
+sudo -u www-data php /var/www/kian/artisan optimize
+```
+
+`APP_KEY` باید همان کلیدِ پشتیبان بماند. با کلیدِ تازه سایت بالا می‌آید ولی
+هر مقدارِ رمزنگاری‌شده‌ای که در دیتابیس هست، دیگر باز نمی‌شود.
 
 ---
 
