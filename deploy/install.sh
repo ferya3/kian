@@ -442,13 +442,39 @@ systemctl reload nginx >/dev/null 2>&1 || true
 HEALTH_HOST="${DOMAIN:-localhost}"
 HEALTH_CODE=""
 
-# چند ثانیه مهلت: php-fpm پس از reload بی‌درنگ آماده نیست
+#
+# ناسازگاریِ APP_URL با آنچه واقعاً سرو می‌شود.
+#
+# اگر APP_URL با https شروع شود، لاراول همه‌ی نشانی‌ها را https می‌سازد و
+# ریشه یک ۳۰۲ به https می‌دهد. بی شنونده روی ۴۴۳، مرورگر به بن‌بست
+# می‌خورد: سایت از داخل سالم است و از بیرون باز نمی‌شود. این دقیقاً همان
+# حالتی است که یک‌بار پیش آمد و بررسیِ سلامت هم نگرفتش، چون ۳۰۲ را سالم
+# شمرد و دنبالش نرفت.
+APP_URL_NOW="$(sed -n 's/^APP_URL=//p' .env | head -1 | tr -d '\r"')"
+
+case "$APP_URL_NOW" in
+    https://*)
+        if ! ss -ltn 2>/dev/null | grep -q ':443'; then
+            die "APP_URL روی https است ولی چیزی روی ۴۴۳ گوش نمی‌دهد؛ سایت از بیرون باز نمی‌شود.
+  یا گواهی بگیرید:  DOMAIN=${HEALTH_HOST} SSL=1
+  یا APP_URL را به http برگردانید."
+        fi
+        ;;
+esac
+
+#
+# دنبالِ ریدایرکت هم می‌رویم و فقط به کدِ نهایی اعتماد می‌کنیم.
+#
+# --resolve دامنه را به همین سرور می‌بندد تا سنجش به DNS و شبکه‌ی بیرون
+# گره نخورد، و -k چون اینجا سلامتِ اپ سنجیده می‌شود و نه اعتبارِ گواهی.
 for _ in 1 2 3 4 5 6 7 8 9 10; do
-    HEALTH_CODE="$(curl -s -o /dev/null -w '%{http_code}' --max-time 10 \
-        -H "Host: $HEALTH_HOST" http://127.0.0.1/ 2>/dev/null || true)"
+    HEALTH_CODE="$(curl -sL -o /dev/null -w '%{http_code}' --max-time 15 -k \
+        --resolve "$HEALTH_HOST:80:127.0.0.1" \
+        --resolve "$HEALTH_HOST:443:127.0.0.1" \
+        -H "Host: $HEALTH_HOST" "http://$HEALTH_HOST/" 2>/dev/null || true)"
 
     case "$HEALTH_CODE" in
-        2*|3*) break ;;
+        2*) break ;;
     esac
 
     sleep 2
