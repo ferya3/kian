@@ -70,6 +70,9 @@ curl -fsSL https://raw.githubusercontent.com/ferya3/kian/claude/loving-babbage-3
 
 ### گرفتن پشتیبان
 
+یک دستور: می‌سازد و همان‌جا می‌آزماید. روی خودِ سرور اجرا می‌شود، چون `php`
+آنجا هست و لازم نیست روی دستگاه شما چیزی نصب باشد.
+
 ```bash
 sudo bash -c '
 set -euo pipefail
@@ -79,11 +82,12 @@ STAMP=$(date +%Y%m%d-%H%M%S)
 WORK=$BASE/kian-backup-$STAMP
 mkdir -p "$WORK"
 
+printf "\n\033[1;33m==>\033[0m ساختن پشتیبان\n"
+
 # دیتابیس با VACUUM INTO گرفته می‌شود و نه با cp: کپیِ خام از پرونده‌ای که
 # ممکن است همان لحظه نوشته شود، نیم‌نوشته درمی‌آید و سکوت می‌کند.
 php -r "(new PDO(\"sqlite:\$argv[1]\"))->exec(\"VACUUM INTO \x27\$argv[2]\x27\");" \
     "$APP/database/database.sqlite" "$WORK/database.sqlite"
-
 cp "$APP/.env" "$WORK/.env"
 tar -czf "$WORK/uploads.tar.gz" -C "$APP/storage/app" public
 cp /etc/nginx/sites-available/kian "$WORK/nginx-kian.conf" 2>/dev/null || true
@@ -94,52 +98,59 @@ cp /etc/nginx/sites-available/kian "$WORK/nginx-kian.conf" 2>/dev/null || true
     echo "کامیت: $(git -C "$APP" rev-parse HEAD 2>/dev/null || echo ناشناس)"
     echo "برنچ: $(git -C "$APP" rev-parse --abbrev-ref HEAD 2>/dev/null || echo ناشناس)"
     echo "عکس‌ها: $(find "$APP/storage/app/public" -type f | wc -l) پرونده"
-    echo "جدول‌ها: $(php -r "foreach((new PDO(\"sqlite:\$argv[1]\"))->query(\"SELECT name FROM sqlite_master WHERE type=\x27table\x27\") as \$r) echo \$r[0],\" \";" "$WORK/database.sqlite")"
 } > "$WORK/MANIFEST.txt"
 
 TAR=$BASE/kian-backup-$STAMP.tar.gz
 tar -czf "$TAR" -C "$BASE" "kian-backup-$STAMP"
+
+printf "\n\033[1;33m==>\033[0m آزمودن پشتیبان\n\n"
+php -r "
+\$ok = true;
+\$db = new PDO(\"sqlite:\$argv[1]/database.sqlite\");
+\$i = \$db->query(\"PRAGMA integrity_check\")->fetchColumn();
+printf(\"  %s سلامت دیتابیس: %s\n\", \$i === \"ok\" ? \"✓\" : \"✗\", \$i);
+if (\$i !== \"ok\") \$ok = false;
+foreach ([\"products\",\"projects\",\"articles\",\"solutions\",\"factory_sections\",\"settings\",\"users\"] as \$t) {
+    \$n = \$db->query(\"SELECT COUNT(*) FROM \$t\")->fetchColumn();
+    printf(\"  %s %-18s %d ردیف\n\", \$n > 0 ? \"✓\" : \"✗\", \$t, \$n);
+    if (\$n == 0) \$ok = false;
+}
+\$k = (bool) preg_match(\"/^APP_KEY=base64:.+/m\", file_get_contents(\"\$argv[1]/.env\"));
+printf(\"  %s کلید APP_KEY داخل .env\n\", \$k ? \"✓\" : \"✗\");
+if (! \$k) \$ok = false;
+echo PHP_EOL, \$ok ? \"  \033[1;32mپشتیبان سالم است.\033[0m\" : \"  \033[1;31mپشتیبان ایراد دارد — سرور را پاک نکنید.\033[0m\", PHP_EOL;
+" "$WORK"
 rm -rf "$WORK"
 
 # نسخه‌ی دوم برای کاربرِ غیرِ روت، اگر هست — شرطی است چون روی هر سروری
 # کاربر ubuntu وجود ندارد و یک chown ناکام، کلِ اسکریپت را می‌انداخت.
 if id -u ubuntu >/dev/null 2>&1; then
     cp "$TAR" /home/ubuntu/ && chown ubuntu:ubuntu "/home/ubuntu/$(basename "$TAR")"
-    echo "نسخه‌ی دوم برای کاربر ubuntu: /home/ubuntu/$(basename "$TAR")"
 fi
 
-sha256sum "$TAR"
-ls -lh "$TAR"
+printf "\n\033[1;33m==>\033[0m بسته\n\n"
+echo "  مسیر: $TAR"
+ls -lh "$TAR" | awk "{print \"  حجم: \" \$5}"
+echo "  sha256: $(sha256sum "$TAR" | cut -d\  -f1)"
+echo
 '
 ```
 
-بسته در `/root/` می‌نشیند، و اگر کاربر `ubuntu` روی سرور باشد یک نسخه هم
-در `/home/ubuntu/` با مالکیتِ همان کاربر. با هر کدام که SSH می‌زنید:
+تا وقتی **«پشتیبان سالم است»** را ندیده‌اید، سرور را پاک نکنید.
+
+بعد دانلودش کنید و فقط `sha256` را با آنچه سرور چاپ کرد بسنجید — همین کافی
+است و به ابزار دیگری نیاز ندارد:
 
 ```bash
 scp root@SERVER:/root/kian-backup-*.tar.gz .
-# یا
-scp ubuntu@SERVER:/home/ubuntu/kian-backup-*.tar.gz .
+
+sha256sum kian-backup-*.tar.gz              # لینوکس و مک
+certutil -hashfile kian-backup-*.tar.gz SHA256   # ویندوز (cmd)
+Get-FileHash kian-backup-*.tar.gz                # ویندوز (PowerShell)
 ```
 
-**پیش از پاک‌کردنِ سرور، پشتیبان را روی دستگاه خودتان باز کنید و بیازمایید.**
-پشتیبانی که آزموده نشده، پشتیبان نیست:
-
-```bash
-sha256sum kian-backup-*.tar.gz        # با آنچه سرور چاپ کرد بسنجید
-tar -xzf kian-backup-*.tar.gz && cd kian-backup-*/
-cat MANIFEST.txt
-grep -c '^APP_KEY=base64:' .env       # باید ۱ باشد
-php -r '
-$db = new PDO("sqlite:database.sqlite");
-echo "integrity: ", $db->query("PRAGMA integrity_check")->fetchColumn(), PHP_EOL;
-foreach (["products","projects","articles","settings","users"] as $t)
-    printf("%-12s %d\n", $t, $db->query("SELECT COUNT(*) FROM $t")->fetchColumn());
-'
-tar -tzf uploads.tar.gz | head
-```
-
-`integrity: ok` و شمارشِ ردیف‌هایی که با سایت می‌خواند، یعنی پشتیبان سالم است.
+اگر کاربر `ubuntu` روی سرور باشد، یک نسخه هم در `/home/ubuntu/` با مالکیتِ
+همان کاربر گذاشته می‌شود.
 
 ### بازگردانی روی سرور تازه
 
