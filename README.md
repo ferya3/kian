@@ -74,17 +74,19 @@ curl -fsSL https://raw.githubusercontent.com/ferya3/kian/claude/loving-babbage-3
 sudo bash -c '
 set -euo pipefail
 APP=/var/www/kian
-OUT=/home/ubuntu/kian-backup-$(date +%Y%m%d-%H%M%S)
-mkdir -p "$OUT"
+BASE=/root
+STAMP=$(date +%Y%m%d-%H%M%S)
+WORK=$BASE/kian-backup-$STAMP
+mkdir -p "$WORK"
 
 # دیتابیس با VACUUM INTO گرفته می‌شود و نه با cp: کپیِ خام از پرونده‌ای که
 # ممکن است همان لحظه نوشته شود، نیم‌نوشته درمی‌آید و سکوت می‌کند.
 php -r "(new PDO(\"sqlite:\$argv[1]\"))->exec(\"VACUUM INTO \x27\$argv[2]\x27\");" \
-    "$APP/database/database.sqlite" "$OUT/database.sqlite"
+    "$APP/database/database.sqlite" "$WORK/database.sqlite"
 
-cp "$APP/.env" "$OUT/.env"
-tar -czf "$OUT/uploads.tar.gz" -C "$APP/storage/app" public
-cp /etc/nginx/sites-available/kian "$OUT/nginx-kian.conf" 2>/dev/null || true
+cp "$APP/.env" "$WORK/.env"
+tar -czf "$WORK/uploads.tar.gz" -C "$APP/storage/app" public
+cp /etc/nginx/sites-available/kian "$WORK/nginx-kian.conf" 2>/dev/null || true
 
 # شناسنامه: بدونش، شش ماه بعد معلوم نیست این پشتیبان از کِی و از کدام کد است
 {
@@ -92,21 +94,31 @@ cp /etc/nginx/sites-available/kian "$OUT/nginx-kian.conf" 2>/dev/null || true
     echo "کامیت: $(git -C "$APP" rev-parse HEAD 2>/dev/null || echo ناشناس)"
     echo "برنچ: $(git -C "$APP" rev-parse --abbrev-ref HEAD 2>/dev/null || echo ناشناس)"
     echo "عکس‌ها: $(find "$APP/storage/app/public" -type f | wc -l) پرونده"
-    echo "جدول‌ها: $(php -r "foreach((new PDO(\"sqlite:\$argv[1]\"))->query(\"SELECT name FROM sqlite_master WHERE type=\x27table\x27\") as \$r) echo \$r[0],\" \";" "$OUT/database.sqlite")"
-} > "$OUT/MANIFEST.txt"
+    echo "جدول‌ها: $(php -r "foreach((new PDO(\"sqlite:\$argv[1]\"))->query(\"SELECT name FROM sqlite_master WHERE type=\x27table\x27\") as \$r) echo \$r[0],\" \";" "$WORK/database.sqlite")"
+} > "$WORK/MANIFEST.txt"
 
-tar -czf "$OUT.tar.gz" -C "$(dirname "$OUT")" "$(basename "$OUT")"
-rm -rf "$OUT"
-chown ubuntu:ubuntu "$OUT.tar.gz"
-sha256sum "$OUT.tar.gz"
-ls -lh "$OUT.tar.gz"
+TAR=$BASE/kian-backup-$STAMP.tar.gz
+tar -czf "$TAR" -C "$BASE" "kian-backup-$STAMP"
+rm -rf "$WORK"
+
+# نسخه‌ی دوم برای کاربرِ غیرِ روت، اگر هست — شرطی است چون روی هر سروری
+# کاربر ubuntu وجود ندارد و یک chown ناکام، کلِ اسکریپت را می‌انداخت.
+if id -u ubuntu >/dev/null 2>&1; then
+    cp "$TAR" /home/ubuntu/ && chown ubuntu:ubuntu "/home/ubuntu/$(basename "$TAR")"
+    echo "نسخه‌ی دوم برای کاربر ubuntu: /home/ubuntu/$(basename "$TAR")"
+fi
+
+sha256sum "$TAR"
+ls -lh "$TAR"
 '
 ```
 
-بسته در `/home/ubuntu/` می‌نشیند و مالکش کاربر `ubuntu` است، تا بی‌دردسر
-دانلود شود:
+بسته در `/root/` می‌نشیند، و اگر کاربر `ubuntu` روی سرور باشد یک نسخه هم
+در `/home/ubuntu/` با مالکیتِ همان کاربر. با هر کدام که SSH می‌زنید:
 
 ```bash
+scp root@SERVER:/root/kian-backup-*.tar.gz .
+# یا
 scp ubuntu@SERVER:/home/ubuntu/kian-backup-*.tar.gz .
 ```
 
