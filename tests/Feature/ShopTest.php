@@ -47,6 +47,7 @@ class ShopTest extends TestCase
     protected function enableShop(): void
     {
         $this->shopIsOn();
+        $this->emptyShop();
 
         Route::prefix('{locale}')
             ->where(['locale' => implode('|', Locales::codes())])
@@ -60,6 +61,23 @@ class ShopTest extends TestCase
     protected function shopIsOn(): void
     {
         Config::set('shop.enabled', true);
+    }
+
+    /**
+     * فروشنده‌ها و عرضه‌های نمونه را برمی‌دارد.
+     *
+     * تست‌های پایین هرکدام دقیقاً همان چند عرضه‌ای را می‌سازند که می‌خواهند
+     * بیازمایند و بعد می‌گویند «جز این، چیزی در ویترین نیست». تا پیش از
+     * ShopSeeder این شرط مفت به دست می‌آمد چون DatabaseSeeder هیچ عرضه‌ای
+     * نمی‌ساخت — یعنی تست به چیزی تکیه داشت که هیچ‌جا نگفته بود.
+     *
+     * حالا صریح است. اگر روزی باز هم داده‌ی نمونه‌ی فروشگاه عوض شود، این
+     * تست‌ها همچنان همان چیزی را می‌سنجند که نامشان می‌گوید.
+     */
+    protected function emptyShop(): void
+    {
+        Offer::query()->delete();
+        Vendor::query()->delete();
     }
 
     // ------------------------------------------------------------ خاموش --
