@@ -10,6 +10,7 @@ use App\Support\Brand;
 use App\Support\Jalali;
 use App\Support\Locales;
 use App\Support\Navigation;
+use Illuminate\Support\Facades\Config;
 use App\Support\Options;
 use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -49,14 +50,38 @@ class LocalizationTest extends TestCase
             ->assertRedirect(route('home', ['locale' => Locales::default()]));
     }
 
-    public function test_the_root_follows_the_browser_language(): void
+    /**
+     * ریشه زبانِ مرورگر را دنبال نمی‌کند — مگر اینکه صریحاً خواسته شود.
+     *
+     * بسیاری از مخاطبانِ فارسی‌زبانِ این سایت مرورگرِ انگلیسی دارند؛ با
+     * دنبال‌کردنِ Accept-Language، بازدیدکننده‌ی تهرانی روی نسخه‌ی انگلیسی
+     * می‌افتاد.
+     */
+    public function test_the_root_ignores_the_browser_language_by_default(): void
     {
+        $this->assertFalse(config('locales.follow_browser'));
+
+        $this->get('/', ['Accept-Language' => 'en-GB,en;q=0.9'])
+            ->assertRedirect(route('home', ['locale' => Locales::default()]));
+    }
+
+    public function test_the_root_follows_the_browser_language_when_asked(): void
+    {
+        Config::set('locales.follow_browser', true);
+
         $this->get('/', ['Accept-Language' => 'en-GB,en;q=0.9'])
             ->assertRedirect(route('home', ['locale' => 'en']));
     }
 
-    public function test_a_remembered_choice_beats_the_browser_language(): void
+    /** انتخابِ صریحِ کاربر بالاتر از همه است — چه کلید روشن باشد چه خاموش. */
+    public function test_a_remembered_choice_wins(): void
     {
+        $this->withCookie(Locales::COOKIE, 'ar')
+            ->get('/', ['Accept-Language' => 'en-GB,en;q=0.9'])
+            ->assertRedirect(route('home', ['locale' => 'ar']));
+
+        Config::set('locales.follow_browser', true);
+
         $this->withCookie(Locales::COOKIE, 'ar')
             ->get('/', ['Accept-Language' => 'en-GB,en;q=0.9'])
             ->assertRedirect(route('home', ['locale' => 'ar']));
@@ -399,7 +424,7 @@ class LocalizationTest extends TestCase
 
         $this->withCookie(Locales::COOKIE, 'ar')
             ->get('/', ['Accept-Language' => 'en-GB,en;q=0.9'])
-            ->assertRedirect(route('home', ['locale' => 'en']));
+            ->assertRedirect(route('home', ['locale' => Locales::default()]));
     }
 
     /**

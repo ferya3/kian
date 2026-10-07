@@ -189,7 +189,15 @@ class Locales
     /**
      * زبانی که بازدیدکننده احتمالاً می‌خواهد.
      *
-     * اول انتخاب قبلی خودش، بعد Accept-Language مرورگر، و در نهایت پیش‌فرض.
+     * اول انتخابِ صریحِ خودش (کوکیِ سوئیچر)، و بعد زبانِ پیش‌فرضِ سایت.
+     *
+     * Accept-Language فقط وقتی خوانده می‌شود که locales.follow_browser روشن
+     * باشد، و پیش‌فرضش خاموش است: مخاطبِ این سایت فارسی‌زبان است ولی
+     * بسیاری‌شان مرورگرِ انگلیسی دارند، و با دنبال‌کردنِ آن سربرگ،
+     * بازدیدکننده‌ی تهرانی روی نسخه‌ی انگلیسی می‌افتاد.
+     *
+     * کوکی بالاتر از هر دو می‌ماند: اگر کسی با سوئیچر زبانی را انتخاب
+     * کرده، نشانیِ ریشه نباید او را به فارسی برگرداند.
      */
     public static function preferred(?Request $request = null): string
     {
@@ -199,6 +207,10 @@ class Locales
 
         if (static::supports($chosen)) {
             return $chosen;
+        }
+
+        if (! config('locales.follow_browser', false)) {
+            return static::default();
         }
 
         return $request->getPreferredLanguage(static::codes()) ?? static::default();
