@@ -147,6 +147,52 @@ class ShopTest extends TestCase
         }
     }
 
+    public function test_the_header_has_no_basket_while_the_shop_is_off(): void
+    {
+        $this->get(route('home'))->assertOk()->assertDontSee('/fa/cart', false);
+    }
+
+    /**
+     * سبد از هر صفحه‌ای در دسترس است.
+     *
+     * تا پیش از این، تنها راهِ رسیدن به سبد دکمه‌ی «افزودن» در صفحه‌ی محصول
+     * بود: مشتری چیزی اضافه می‌کرد و بعد هیچ راهی به آن نداشت — نه از
+     * خانه، نه از ویترین.
+     */
+    public function test_the_header_shows_a_basket_on_every_page_when_the_shop_is_on(): void
+    {
+        $this->enableShop();
+
+        foreach ([route('home'), route('shop.index'), route('contact')] as $url) {
+            $this->get($url)->assertOk()->assertSee(route('cart.show'), false);
+        }
+    }
+
+    /** نشانِ تعداد فقط وقتی می‌آید که چیزی در سبد باشد. */
+    public function test_the_basket_badge_counts_what_is_in_it(): void
+    {
+        $this->enableShop();
+
+        $product = Product::query()->active()->firstOrFail();
+        $vendor = Vendor::create(['name' => 'آزمایشی', 'slug' => 'v', 'is_active' => true]);
+        $offer = Offer::create([
+            'vendor_id' => $vendor->id,
+            'product_id' => $product->id,
+            'price' => 1000,
+            'min_order' => 1,
+        ]);
+
+        // خالی: حلقه‌ی خالی روی هر صفحه نوفه است
+        $this->get(route('home'))->assertOk()->assertDontSee('bg-clay-500 px-1', false);
+
+        $this->post(route('cart.store'), ['offer' => $offer->id, 'quantity' => 7]);
+
+        // ترتیب، تا رقم را داخلِ خودِ نشان بسنجد و نه هر جای صفحه —
+        // و ارقام فارسی، چون همان چیزی است که مشتری می‌بیند
+        $this->get(route('home'))->assertOk()
+            ->assertSeeInOrder(['bg-clay-500 px-1', '۷'], false);
+    }
+
     public function test_the_storefront_lists_only_products_that_have_a_sellable_offer(): void
     {
         $this->enableShop();

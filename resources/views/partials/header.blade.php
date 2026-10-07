@@ -130,6 +130,33 @@
                     <x-icon name="search" size="24" />
                 </button>
 
+                {{--
+                    سبد خرید — کنار جستجو، روی گوشی هم دیده می‌شود.
+
+                    تا حالا سبد فقط از دکمه‌ی «افزودن» در صفحه‌ی محصول
+                    دیده می‌شد: مشتری چیزی اضافه می‌کرد و بعد راهی به آن
+                    نداشت. شرطِ دوم همان قاعده‌ی Navigation است — کلید در
+                    ‎.env روشن شود ولی route:cache ساخته نشود، route()
+                    روی هر صفحه‌ی سایت خطا می‌دهد و نه فقط اینجا.
+
+                    نشانِ تعداد فقط وقتی می‌آید که چیزی در سبد باشد؛ حلقه‌ی
+                    خالی روی هر صفحه، نوفه است.
+                --}}
+                @if(\App\Support\Shop::enabled() && \Illuminate\Support\Facades\Route::has('cart.show'))
+                    @php($cartCount = \App\Support\Cart::count())
+                    <a href="{{ route('cart.show') }}"
+                       class="tap-icon relative rounded-full transition"
+                       :class="onDark ? 'text-sand-100 hover:bg-white/10' : 'text-ink-600 hover:bg-sand-200 hover:text-ink-900'"
+                       aria-label="{{ __('site.shop.cart') }}">
+                        <x-icon name="cart" size="24" />
+                        @if($cartCount > 0)
+                            <span class="tech absolute end-1 top-1 flex h-[1.125rem] min-w-[1.125rem] items-center justify-center rounded-full bg-clay-500 px-1 text-[0.6875rem] font-bold leading-none text-white">
+                                {{ \App\Support\Jalali::digits((string) min($cartCount, 99)) }}{{ $cartCount > 99 ? '+' : '' }}
+                            </span>
+                        @endif
+                    </a>
+                @endif
+
                 <a href="{{ route('contact') }}"
                    class="hidden items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition lg:flex"
                    :class="onDark ? 'bg-clay-500 text-white hover:bg-clay-400' : 'bg-ink-900 text-sand-50 hover:bg-clay-600'">
