@@ -20,8 +20,7 @@ class CatalogSeeder extends Seeder
         | منو می‌آید و به صفحه‌ی خالی می‌رسد، پس فقط سه دسته‌ای می‌ماند که
         | واقعاً محصول دارند.
         */
-        $blocks = ProductCategory::create([
-            'slug' => 'ceramic-blocks',
+        $blocks = ProductCategory::updateOrCreate(['slug' => 'ceramic-blocks'], [
             'name' => 'بلوک‌های سفالی',
             'name_en' => 'Ceramic Blocks',
             'tagline' => 'ستون فقرات دیوارچینی مدرن',
@@ -30,7 +29,7 @@ class CatalogSeeder extends Seeder
             'is_featured' => true,
         ]);
 
-        $c = fn (array $data) => ProductCategory::create($data);
+        $c = fn (array $data) => ProductCategory::updateOrCreate(['slug' => $data['slug']], $data);
 
         $partition = $c(['parent_id' => $blocks->id, 'slug' => 'partition-blocks', 'name' => 'بلوک تیغه‌ای', 'name_en' => 'Partition Blocks', 'tagline' => 'جداکننده سبک داخلی — ۸ و ۱۳', 'position' => 1]);
         $wall = $c(['parent_id' => $blocks->id, 'slug' => 'wall-blocks', 'name' => 'بلوک دیواری', 'name_en' => 'Wall Blocks', 'tagline' => 'دیوار باربر و میان‌قاب — ۲۰ و ۲۵', 'position' => 2]);
@@ -140,7 +139,10 @@ class CatalogSeeder extends Seeder
         ];
 
         foreach ($products as $data) {
-            $product = Product::create($data);
+            $product = Product::updateOrCreate(['slug' => $data['slug']], $data);
+
+            // حفره‌ها از نو ساخته می‌شوند، وگرنه هر اجرا چهارتا به قبلی‌ها اضافه می‌کند
+            $product->cavities()->delete();
             $this->seedCavities($product);
         }
 
@@ -237,7 +239,7 @@ class CatalogSeeder extends Seeder
             $slugs = $data['products'];
             unset($data['products']);
 
-            $solution = Solution::create($data);
+            $solution = Solution::updateOrCreate(['slug' => $data['slug']], $data);
             $solution->products()->sync(Product::whereIn('slug', $slugs)->pluck('id'));
         }
     }
