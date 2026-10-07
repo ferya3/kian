@@ -111,6 +111,12 @@ snapshot() {
     [ -d "$APP_DIR/public/build" ] && cp -a "$APP_DIR/public/build" "$ROLLBACK_DIR/build"
     [ -d "$APP_DIR/bootstrap/cache" ] && cp -a "$APP_DIR/bootstrap/cache" "$ROLLBACK_DIR/cache"
 
+    #
+    # ‏.env هم، چون همین اسکریپت دست‌کاری‌اش می‌کند.
+    #
+    # پیام شکست می‌گفت «‎.env دست نخورده» و راست نبود.
+    [ -f "$APP_DIR/.env" ] && cp -a "$APP_DIR/.env" "$ROLLBACK_DIR/env"
+
     step "نقطه‌ی بازگشت: ${ROLLBACK_REF:0:8}"
 }
 
@@ -135,6 +141,8 @@ rollback() {
         cp -a "$ROLLBACK_DIR/cache" "$APP_DIR/bootstrap/cache"
     fi
 
+    [ -f "$ROLLBACK_DIR/env" ] && cp -a "$ROLLBACK_DIR/env" "$APP_DIR/.env"
+
     # ساختِ نیمه‌کاره نباید در public بماند؛ nginx سرو می‌کندش
     rm -rf "$APP_DIR/public/build-next"
 
@@ -142,7 +150,7 @@ rollback() {
     systemctl reload "php$PHP_VERSION-fpm" 2>/dev/null || true
 
     printf '\033[1;33m  سایت به کامیت %s برگشت و باید بالا باشد.\033[0m\n' "${ROLLBACK_REF:0:8}" >&2
-    printf '  خطای بالا را بفرستید؛ دیتابیس و .env دست نخورده‌اند.\n\n' >&2
+    printf '  خطای بالا را بفرستید؛ دیتابیس دست نخورده است و .env هم به حالت قبل برگشت.\n\n' >&2
 
     exit "$code"
 }
@@ -251,7 +259,16 @@ step "پیکربندی محیط"
 grep -q '^APP_KEY=base64' .env || php artisan key:generate --force
 
 if [ -n "$DOMAIN" ]; then
-    [ "$SSL" = "1" ] && APP_URL="https://$DOMAIN" || APP_URL="http://$DOMAIN"
+    #
+    # با SSL=1 هم فعلاً http می‌نشیند؛ https بعد از موفقیتِ certbot.
+    #
+    # ترتیب مهم است. تا گرفتنِ گواهی صد خط مانده، و اگر certbot شکست بخورد
+    # — DNS هنوز نرسیده، چالش به سرور نمی‌رسد، سقفِ درخواست پر است — ‎.env
+    # با https می‌ماند و هیچ‌چیز روی ۴۴۳ نیست. آن‌وقت لاراول هر بازدید را
+    # به https می‌فرستد و سایت از بیرون بسته می‌شود، در حالی که از داخل
+    # سالم است و هیچ لاگی هم ندارد. همان «بعد از هر به‌روزرسانی بالا
+    # نمی‌آید».
+    APP_URL="http://$DOMAIN"
 else
     #
     # بی DOMAIN، نشانیِ موجود دست نمی‌خورد.
@@ -423,6 +440,13 @@ if [ "$SSL" = "1" ] && [ -n "$DOMAIN" ]; then
 
     # shellcheck disable=SC2086
     certbot --nginx $CERT_DOMAINS --non-interactive --agree-tos --register-unsafely-without-email --redirect
+
+    # حالا که گواهی گرفته شد و ۴۴۳ شنونده دارد، نشانی هم https می‌شود
+    APP_URL="https://$DOMAIN"
+    sed -i "s|^APP_URL=.*|APP_URL=$APP_URL|" .env
+    php artisan config:cache >/dev/null
+    chown www-data:www-data "$APP_DIR/.env"
+    chown -R www-data:www-data "$APP_DIR/bootstrap/cache"
 fi
 
 # ------------------------------------------------------------- سلامت ----
@@ -441,37 +465,51 @@ systemctl reload nginx >/dev/null 2>&1 || true
 
 HEALTH_HOST="${DOMAIN:-localhost}"
 HEALTH_CODE=""
+HEALTH_REDIRECT=""
 
+# یک درخواست به همین سرور. «کد|نشانیِ بعدی» برمی‌گرداند.
 #
-# ناسازگاریِ APP_URL با آنچه واقعاً سرو می‌شود.
-#
-# اگر APP_URL با https شروع شود، لاراول همه‌ی نشانی‌ها را https می‌سازد و
-# ریشه یک ۳۰۲ به https می‌دهد. بی شنونده روی ۴۴۳، مرورگر به بن‌بست
-# می‌خورد: سایت از داخل سالم است و از بیرون باز نمی‌شود. این دقیقاً همان
-# حالتی است که یک‌بار پیش آمد و بررسیِ سلامت هم نگرفتش، چون ۳۰۲ را سالم
-# شمرد و دنبالش نرفت.
-APP_URL_NOW="$(sed -n 's/^APP_URL=//p' .env | head -1 | tr -d '\r"')"
-
-case "$APP_URL_NOW" in
-    https://*)
-        if ! ss -ltn 2>/dev/null | grep -q ':443'; then
-            die "APP_URL روی https است ولی چیزی روی ۴۴۳ گوش نمی‌دهد؛ سایت از بیرون باز نمی‌شود.
-  یا گواهی بگیرید:  DOMAIN=${HEALTH_HOST} SSL=1
-  یا APP_URL را به http برگردانید."
-        fi
-        ;;
-esac
-
-#
-# دنبالِ ریدایرکت هم می‌رویم و فقط به کدِ نهایی اعتماد می‌کنیم.
-#
-# --resolve دامنه را به همین سرور می‌بندد تا سنجش به DNS و شبکه‌ی بیرون
-# گره نخورد، و -k چون اینجا سلامتِ اپ سنجیده می‌شود و نه اعتبارِ گواهی.
-for _ in 1 2 3 4 5 6 7 8 9 10; do
-    HEALTH_CODE="$(curl -sL -o /dev/null -w '%{http_code}' --max-time 15 -k \
+# ‏--resolve دامنه را به ۱۲۷.۰.۰.۱ می‌بندد تا سنجش به DNS و شبکه‌ی بیرون
+# گره نخورد، و ‎-k چون اینجا سلامتِ اپ سنجیده می‌شود و نه اعتبارِ گواهی.
+hit() {
+    curl -s -o /dev/null -w '%{http_code}|%{redirect_url}' --max-time 15 -k \
         --resolve "$HEALTH_HOST:80:127.0.0.1" \
         --resolve "$HEALTH_HOST:443:127.0.0.1" \
-        -H "Host: $HEALTH_HOST" "http://$HEALTH_HOST/" 2>/dev/null || true)"
+        -H "Host: $HEALTH_HOST" "$1" 2>/dev/null || true
+}
+
+#
+# دنبالِ ریدایرکت می‌رویم، ولی در هر پرش https را به http برمی‌گردانیم.
+#
+# چون اینجا روی خودِ سرور ایستاده‌ایم و TLS ممکن است جای دیگری تمام شود —
+# کلودفلر، یک لودبالانسر — پس نبودنِ شنونده روی ۴۴۳ لزوماً خرابی نیست.
+# این پیمایش همان کاری را می‌کند که آن لایه می‌کند: درخواست را با http به
+# مبدأ می‌رساند. اگر اپ سالم باشد، آخرش ۲xx می‌دهد.
+#
+# نتیجه در HEALTH_CODE، و نخستین ریدایرکت در HEALTH_REDIRECT.
+walk() {
+    local url="$1" out next hop=0
+
+    HEALTH_CODE=""
+    HEALTH_REDIRECT=""
+
+    while [ "$hop" -lt 5 ]; do
+        out="$(hit "$url")"
+        HEALTH_CODE="${out%%|*}"
+        next="${out#*|}"
+
+        case "$HEALTH_CODE" in
+            3*) [ -n "$next" ] || break
+                [ "$hop" -eq 0 ] && HEALTH_REDIRECT="$next"
+                url="http://${next#http*://}"
+                hop=$((hop + 1)) ;;
+            *) break ;;
+        esac
+    done
+}
+
+for _ in 1 2 3 4 5 6 7 8 9 10; do
+    walk "http://$HEALTH_HOST/"
 
     case "$HEALTH_CODE" in
         2*) break ;;
@@ -480,14 +518,38 @@ for _ in 1 2 3 4 5 6 7 8 9 10; do
     sleep 2
 done
 
+#
+# فقط ۲xx سالم است.
+#
+# تا دیروز ۳xx هم «✓» می‌گرفت و دنبالش نمی‌رفت — و سروری که ریشه‌اش به
+# بن‌بست ریدایرکت می‌شد، «نصب کامل شد» می‌گرفت.
 case "$HEALTH_CODE" in
-    2*|3*)
+    2*)
         printf '  صفحه‌ی اصلی: HTTP %s ✓\n' "$HEALTH_CODE"
         ;;
     *)
         printf '\n  آخرین خطای لاراول:\n' >&2
         tail -n 20 "$APP_DIR/storage/logs/laravel.log" 2>/dev/null | sed 's/^/    /' >&2
         die "سایت پس از به‌روزرسانی بالا نیامد (HTTP ${HEALTH_CODE:-بی‌پاسخ})."
+        ;;
+esac
+
+#
+# اپ سالم است، ولی آیا بازدیدکننده هم به آن می‌رسد؟
+#
+# اگر ریشه به https می‌رود و اینجا چیزی روی ۴۴۳ نیست، یا جلوترش لایه‌ای
+# هست که TLS را تمام می‌کند — که درست است — یا نیست و سایت از بیرون بسته
+# است. از روی سرور نمی‌شود بینشان فرق گذاشت، پس برنمی‌گردانیم و فقط
+# می‌گوییم؛ بازگرداندن هم دردی از این دوا نمی‌کند.
+case "$HEALTH_REDIRECT" in
+    https://*)
+        if ! ss -ltn 2>/dev/null | grep -q ':443'; then
+            printf '\n\033[1;33m  ! نشانیِ سایت https است ولی روی این سرور چیزی به ۴۴۳ گوش نمی‌دهد.\033[0m\n'
+            printf '    اگر کلودفلر (ابر نارنجی) یا لودبالانسری جلوی سرور است، درست است و کاری لازم نیست.\n'
+            printf '    وگرنه سایت از بیرون باز نمی‌شود. یکی از این دو:\n'
+            printf '      گواهی بگیرید : sudo DOMAIN=%s SSL=1 bash deploy/install.sh\n' "$HEALTH_HOST"
+            printf "      یا http کنید  : sudo sed -i 's|^APP_URL=.*|APP_URL=http://%s|' %s/.env && sudo -u www-data php artisan config:cache\n" "$HEALTH_HOST" "$APP_DIR"
+        fi
         ;;
 esac
 
