@@ -552,6 +552,8 @@ return [
         'submit' => 'ارسال درخواست',
         'direct' => 'تماس مستقیم',
         'head_office' => 'دفتر مرکزی',
+        'direct_line' => 'خط مستقیم',
+        'extension' => '(داخلی :number)',
         'sales' => 'واحد فروش',
         'technical' => 'واحد فنی',
         'plant' => 'کارخانه',

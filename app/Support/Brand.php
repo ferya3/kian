@@ -54,6 +54,14 @@ class Brand
         return Jalali::digits(config('kian.contact.sales_phone'));
     }
 
+    /** داخلیِ خطِ مستقیم — خالی باشد یعنی خط داخلی ندارد. */
+    public static function salesExtension(): ?string
+    {
+        $extension = trim((string) config('kian.contact.sales_extension'));
+
+        return $extension === '' ? null : Jalali::digits($extension);
+    }
+
     public static function postalCode(): string
     {
         return Jalali::digits(config('kian.contact.postal_code'));

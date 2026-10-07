@@ -42,9 +42,19 @@ return [
         | انگلیسی 021. پیش‌تر ارقام فارسی همین‌جا نوشته شده بودند و در نسخه‌ی
         | انگلیسی هم فارسی می‌ماندند.
         */
-        'phone' => env('KIAN_PHONE', '021-91002233'),
-        'phone_raw' => env('KIAN_PHONE_RAW', '+982191002233'),
-        'sales_phone' => env('KIAN_SALES_PHONE', '0912-1234567'),
+        'phone' => env('KIAN_PHONE', '045-3182'),
+        'phone_raw' => env('KIAN_PHONE_RAW', '+98453182'),
+
+        /*
+        | خطِ مستقیم، با داخلی.
+        |
+        | داخلی در خودِ نشانیِ tel: می‌آید و نه فقط در متن: دو ویرگول یعنی
+        | مکث، و بعدش رقم‌ها به‌صورت DTMF فرستاده می‌شوند. گوشی پس از وصل‌شدن
+        | خودش داخلی را می‌گیرد و کاربر لازم نیست عدد را به خاطر بسپارد.
+        */
+        'sales_phone' => env('KIAN_SALES_PHONE', '045-33338748'),
+        'sales_extension' => env('KIAN_SALES_EXTENSION', '106'),
+        'sales_phone_raw' => env('KIAN_SALES_PHONE_RAW', '+984533338748,,106'),
         'email' => env('KIAN_EMAIL', 'info@kianbehsaz.ir'),
         'technical_email' => env('KIAN_TECH_EMAIL', 'technical@kianbehsaz.ir'),
         'address' => env('KIAN_ADDRESS', 'اصفهان، شهرک صنعتی مبارکه، خیابان صنعت ۱۲، کارخانه کیان بهساز'),

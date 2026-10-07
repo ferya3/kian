@@ -94,4 +94,41 @@ class BrandTest extends TestCase
     {
         return require database_path('migrations/2026_01_01_000008_rename_brand_in_stored_content.php');
     }
+
+    /**
+     * خطِ مستقیم و داخلی‌اش.
+     *
+     * داخلی باید داخلِ خودِ tel: باشد و نه فقط در متن: گوشی پس از وصل‌شدن
+     * خودش می‌گیردش. اگر فقط نوشته شود، کاربر باید عدد را به خاطر بسپارد و
+     * دستی بگیرد — که همان جایی است که تماس از دست می‌رود.
+     */
+    public function test_the_direct_line_carries_its_extension(): void
+    {
+        $page = $this->get(route('contact'))->assertOk();
+
+        $page->assertSee('tel:'.config('kian.contact.sales_phone_raw'), false)
+            ->assertSee(\App\Support\Brand::salesPhone(), false)
+            ->assertSee(__('site.contact.extension', ['number' => \App\Support\Brand::salesExtension()]), false);
+
+        $this->assertStringContainsString(',,', config('kian.contact.sales_phone_raw'),
+            'مکث لازم است، وگرنه رقم‌های داخلی پیش از وصل‌شدن فرستاده می‌شوند.');
+    }
+
+    /** بی داخلی، پرانتزِ خالی نباید بماند. */
+    public function test_without_an_extension_nothing_is_shown(): void
+    {
+        config(['kian.contact.sales_extension' => '']);
+
+        $this->assertNull(\App\Support\Brand::salesExtension());
+
+        $this->get(route('contact'))->assertOk()->assertDontSee('(داخلی', false);
+    }
+
+    public function test_the_central_number_is_the_one_in_the_header(): void
+    {
+        $this->get(route('home'))->assertOk()
+            ->assertSee('tel:'.config('kian.contact.phone_raw'), false)
+            ->assertSee(\App\Support\Brand::phone(), false);
+    }
+
 }

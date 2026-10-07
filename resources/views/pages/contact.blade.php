@@ -149,6 +149,25 @@
                                     <a href="tel:{{ config('kian.contact.phone_raw') }}" class="tech tap font-bold transition hover:text-clay-600">{{ \App\Support\Brand::phone() }}</a>
                                 </span>
                             </li>
+                            {{--
+                                خطِ مستقیم، اگر هست.
+                                داخلی داخلِ خودِ tel: می‌رود؛ گوشی پس از وصل
+                                شدن خودش می‌گیردش. کنارش هم نوشته می‌شود،
+                                برای کسی که از تلفن ثابت زنگ می‌زند.
+                            --}}
+                            @if(config('kian.contact.sales_phone'))
+                                <li class="flex gap-3">
+                                    <x-icon name="phone" size="18" class="mt-1 shrink-0 text-clay-500" />
+                                    <span>
+                                        <span class="block text-meta text-ink-400">{{ __('site.contact.direct_line') }}</span>
+                                        <a href="tel:{{ config('kian.contact.sales_phone_raw') }}" class="tech tap font-bold transition hover:text-clay-600">{{ \App\Support\Brand::salesPhone() }}</a>
+                                        @if($extension = \App\Support\Brand::salesExtension())
+                                            <span class="text-meta text-ink-400">{{ __('site.contact.extension', ['number' => $extension]) }}</span>
+                                        @endif
+                                    </span>
+                                </li>
+                            @endif
+
                             <li class="flex gap-3">
                                 <x-icon name="mail" size="18" class="mt-1 shrink-0 text-clay-500" />
                                 <span>

@@ -581,6 +581,8 @@ return [
         'submit' => 'Send request',
         'direct' => 'Direct contact',
         'head_office' => 'Head office',
+        'direct_line' => 'Direct line',
+        'extension' => '(ext. :number)',
         'sales' => 'Sales',
         'technical' => 'Engineering',
         'plant' => 'Plant',
