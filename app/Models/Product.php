@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Support\HasTranslations;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -111,6 +112,59 @@ class Product extends Model
     public function thicknessCm(): float
     {
         return $this->thickness_mm / 10;
+    }
+
+    /*
+    | ابعاد به سانتی‌متر — برای پنل.
+    |
+    | دیتابیس میلی‌متر نگه می‌دارد و عددِ صحیح؛ ۱۸٫۵ سانت دقیقاً ۱۸۵ میلی‌متر
+    | است و هیچ دقتی گم نمی‌شود. ولی کارخانه به سانت حرف می‌زند و سایت به
+    | سانت نشان می‌دهد، و پنل تنها جایی بود که میلی‌متر می‌خواست — آن هم
+    | با step=1، پس ۱۸٫۵ اصلاً قابل نوشتن نبود و اگر هم بود (int) نصفش می‌کرد.
+    */
+    protected function lengthCm(): Attribute
+    {
+        return $this->centimetres('length_mm');
+    }
+
+    protected function widthCm(): Attribute
+    {
+        return $this->centimetres('width_mm');
+    }
+
+    protected function heightCm(): Attribute
+    {
+        return $this->centimetres('height_mm');
+    }
+
+    protected function wallThicknessCm(): Attribute
+    {
+        return $this->centimetres('thickness_mm');
+    }
+
+    protected function centimetres(string $column): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->{$column} === null ? null : $this->{$column} / 10,
+            set: fn ($cm) => [$column => $cm === null || $cm === '' ? null : (int) round(((float) $cm) * 10)],
+        );
+    }
+
+    /**
+     * ضخامت‌هایی که واقعاً تولید می‌شوند، برای موتور انتخاب محصول.
+     *
+     * پیش‌تر فهرستی ثابت در config بود؛ محصولِ ۱۸٫۵ که اضافه می‌شد، در
+     * انتخاب‌گر نمی‌آمد و درخواستِ thickness=18.5 حتی رد می‌شد. حالا همان
+     * کاتالوگ است.
+     *
+     * @return array<int, float|int>
+     */
+    public static function thicknessOptions(): array
+    {
+        return static::query()->active()
+            ->distinct()->orderBy('thickness_mm')->pluck('thickness_mm')
+            ->map(fn (int $mm) => $mm % 10 === 0 ? intdiv($mm, 10) : $mm / 10)
+            ->values()->all();
     }
 
     /** جدول مشخصات فنی — همان چیزی که در صفحه محصول رندر می‌شود. */

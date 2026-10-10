@@ -244,6 +244,67 @@ class AdminResourceTest extends TestCase
         $this->assertEqualsWithDelta(0.28, (float) $product->thermal_conductivity, 0.0001);
     }
 
+    /**
+     * ابعاد به سانتی‌متر و با اعشار.
+     *
+     * پیش‌تر پنل میلی‌مترِ صحیح می‌خواست، با step=1 و (int) در ذخیره: ۱۸٫۵
+     * سانت نه نوشتنی بود و نه ذخیره‌شدنی. دیتابیس همچنان میلی‌متر نگه
+     * می‌دارد — ۱۸٫۵ سانت دقیقاً ۱۸۵ میلی‌متر است.
+     */
+    public function test_a_half_centimetre_size_is_stored_exactly(): void
+    {
+        $product = Product::first();
+
+        $this->actingAs($this->admin)
+            ->put(ProductResource::updateUrl($product), $this->productPayload($product, [
+                'wall_thickness_cm' => '18.5',
+                'length_cm' => '۳۹٫۵',     // با صفحه‌کلید فارسی
+            ]))
+            ->assertRedirect()
+            ->assertSessionHasNoErrors();
+
+        $product->refresh();
+
+        $this->assertSame(185, $product->thickness_mm);
+        $this->assertSame(395, $product->length_mm);
+        $this->assertSame(18.5, $product->thicknessCm());
+
+        // و فرم همان ۱۸٫۵ را نشان می‌دهد، نه ۱۸۵
+        $this->actingAs($this->admin)->get(ProductResource::editUrl($product))
+            ->assertOk()
+            ->assertSee('name="wall_thickness_cm" type="number" step="0.001" inputmode="decimal" dir="ltr"
+               value="18.5"', false);
+    }
+
+    /** بیش از یک رقم اعشار یعنی کسرِ میلی‌متر — که ذخیره نمی‌شود و نباید بی‌صدا گرد شود. */
+    public function test_a_size_finer_than_a_millimetre_is_refused(): void
+    {
+        $product = Product::first();
+        $before = $product->thickness_mm;
+
+        $this->actingAs($this->admin)
+            ->put(ProductResource::updateUrl($product), $this->productPayload($product, [
+                'wall_thickness_cm' => '18.55',
+            ]))
+            ->assertSessionHasErrors('wall_thickness_cm');
+
+        $this->assertSame($before, $product->fresh()->thickness_mm);
+    }
+
+    /** محصولِ ۱۸٫۵ در موتور انتخاب محصول هم می‌آید و قابل انتخاب است. */
+    public function test_a_new_thickness_reaches_the_product_finder(): void
+    {
+        Product::first()->update(['thickness_mm' => 185]);
+
+        $this->assertContains(18.5, Product::thicknessOptions());
+
+        $this->get(route('home'))->assertOk()->assertSee('<option value="18.5">', false);
+
+        $this->get(route('finder.results', ['thickness' => '18.5']))
+            ->assertOk()
+            ->assertSessionHasNoErrors();
+    }
+
     public function test_a_persian_number_still_fails_when_it_is_out_of_range(): void
     {
         // تبدیل ارقام نباید اعتبارسنجی را دور بزند.
@@ -401,10 +462,11 @@ class AdminResourceTest extends TestCase
             'sku' => $product->sku,
             'slug' => $product->slug,
             'product_category_id' => $product->product_category_id,
-            'length_mm' => $product->length_mm,
-            'width_mm' => $product->width_mm,
-            'height_mm' => $product->height_mm,
-            'thickness_mm' => $product->thickness_mm,
+            // پنل به سانتی‌متر می‌گیرد؛ دیتابیس میلی‌متر نگه می‌دارد
+            'length_cm' => $product->length_cm,
+            'width_cm' => $product->width_cm,
+            'height_cm' => $product->height_cm,
+            'wall_thickness_cm' => $product->wall_thickness_cm,
             'weight_kg' => $product->weight_kg,
             'compressive_strength_mpa' => $product->compressive_strength_mpa,
             'thermal_conductivity' => $product->thermal_conductivity,

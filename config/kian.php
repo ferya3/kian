@@ -99,8 +99,7 @@ return [
             'roof' => ['label' => 'سقف', 'hint' => 'بلوک سقفی تیرچه‌بلوک'],
         ],
 
-        // ضخامت بر حسب سانتی‌متر
-        'thicknesses' => [8, 13, 20, 25],
+        // ضخامت‌ها از خودِ کاتالوگ می‌آیند: App\Models\Product::thicknessOptions()
 
         'insulation_levels' => [
             'low' => ['label' => 'کم', 'hint' => 'فضای داخلی، بدون نیاز حرارتی'],

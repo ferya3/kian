@@ -47,7 +47,7 @@
                     <select id="finder-thickness" name="thickness" x-model="criteria.thickness"
                             class="w-full appearance-none rounded-xl border border-sand-300 bg-sand-100 py-3.5 pr-4 pl-10 font-semibold text-ink-800 outline-none transition focus:border-clay-400 focus:bg-sand-50">
                         <option value="">{{ __('site.finder.any') }}</option>
-                        @foreach(config('kian.finder.thicknesses') as $thickness)
+                        @foreach(\App\Models\Product::thicknessOptions() as $thickness)
                             <option value="{{ $thickness }}">{{ \App\Support\Jalali::digits($thickness) }} {{ __('site.card.cm') }}</option>
                         @endforeach
                     </select>

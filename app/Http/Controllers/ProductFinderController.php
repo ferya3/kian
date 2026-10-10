@@ -60,7 +60,7 @@ class ProductFinderController extends Controller
         $validated = $request->validate([
             'project_type' => ['nullable', Rule::in(array_keys(Options::finder('project_types')))],
             'wall_type' => ['nullable', Rule::in(array_keys(Options::finder('wall_types')))],
-            'thickness' => ['nullable', Rule::in(config('kian.finder.thicknesses'))],
+            'thickness' => ['nullable', Rule::in(\App\Models\Product::thicknessOptions())],
             'insulation' => ['nullable', Rule::in(array_keys(Options::finder('insulation_levels')))],
         ]);
 

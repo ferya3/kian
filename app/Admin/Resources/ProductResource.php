@@ -67,10 +67,11 @@ class ProductResource extends Resource
             Field::textarea('summary', 'خلاصه')->rules(['nullable', 'max:600'])->section('معرفی'),
             Field::longtext('description', 'توضیح کامل')->rules(['nullable', 'max:6000'])->section('معرفی'),
 
-            Field::number('length_mm', 'طول')->rules(['required', 'min:1', 'max:5000'])->suffix('mm')->third()->section('ابعاد'),
-            Field::number('width_mm', 'عرض')->rules(['required', 'min:1', 'max:5000'])->suffix('mm')->third()->section('ابعاد'),
-            Field::number('height_mm', 'ارتفاع')->rules(['required', 'min:1', 'max:5000'])->suffix('mm')->third()->section('ابعاد'),
-            Field::number('thickness_mm', 'ضخامت دیوار')->rules(['required', 'min:1', 'max:5000'])->suffix('mm')->third()->section('ابعاد'),
+            Field::decimal('length_cm', 'طول')->rules(['required', 'numeric', 'min:0.1', 'max:500', 'decimal:0,1'])->suffix('cm')->third()->section('ابعاد'),
+            Field::decimal('width_cm', 'عرض')->rules(['required', 'numeric', 'min:0.1', 'max:500', 'decimal:0,1'])->suffix('cm')->third()->section('ابعاد'),
+            Field::decimal('height_cm', 'ارتفاع')->rules(['required', 'numeric', 'min:0.1', 'max:500', 'decimal:0,1'])->suffix('cm')->third()->section('ابعاد'),
+            Field::decimal('wall_thickness_cm', 'ضخامت دیوار')->rules(['required', 'numeric', 'min:0.1', 'max:500', 'decimal:0,1'])->suffix('cm')
+                ->hint('به سانتی‌متر، تا یک رقم اعشار — مثل ۱۸٫۵')->third()->section('ابعاد'),
             Field::number('void_ratio', 'درصد تخلخل')->rules(['nullable', 'min:0', 'max:100'])->suffix('%')->third()->section('ابعاد'),
             Field::number('units_per_pallet', 'تعداد در پالت')->rules(['nullable', 'min:0', 'max:10000'])->third()->section('ابعاد'),
 
