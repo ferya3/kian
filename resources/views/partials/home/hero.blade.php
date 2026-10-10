@@ -17,7 +17,13 @@
     بریده‌شدن، کادر کمی رشد کند.
     از lg به بالا به ارتفاع سینمایی تمام‌صفحه برمی‌گردد.
 --}}
-<section class="relative flex min-h-[100vw] flex-col justify-center overflow-hidden bg-ink-950 pb-6 pt-[4.5rem] text-sand-50 sm:min-h-[min(100vw,36rem)] sm:pb-12 sm:pt-24 lg:min-h-[88svh] lg:pb-16 lg:pt-32">
+{{--
+    روی دسکتاپ فقط دکمه‌ها مانده‌اند و پایینِ هیرو می‌نشینند (lg:justify-end)،
+    نه وسطش. فاصله‌ی ۱۶۰ پیکسلیِ پایین عمدی است: پایینِ ۱۲۸ پیکسلِ هیرو به
+    رنگِ روشنِ بخشِ بعد محو می‌شود، و دکمه‌ی دورسفید آنجا کنتراستش را
+    می‌باخت.
+--}}
+<section class="relative flex min-h-[100vw] flex-col justify-center overflow-hidden bg-ink-950 pb-6 pt-[4.5rem] text-sand-50 sm:min-h-[min(100vw,36rem)] sm:pb-12 sm:pt-24 lg:min-h-[88svh] lg:justify-end lg:pb-40 lg:pt-32">
 
     @if($video)
         {{--
@@ -93,8 +99,13 @@
                 {{-- آیکون روی گوشی پنهان می‌شود: در ۳۶۰ پیکسل، برچسب مهم‌تر از فلش است --}}
                 <x-cta :href="route('products.index')" variant="primary" size="lg"
                        class="min-w-0 flex-1 justify-center whitespace-nowrap px-2 text-meta [&_svg]:hidden sm:flex-none sm:gap-2 sm:px-5 sm:text-[0.9375rem] sm:[&_svg]:block">{{ __('site.actions.products') }}</x-cta>
+                {{--
+                    دکمه‌ی دورخطی زمینه‌ی تیره‌ی نیمه‌شفاف دارد: بی آن، هرچه
+                    پشتش باشد دیده می‌شد — روی طرحِ وکتوری، دهانه‌ی روشنِ کوره
+                    درست پشتِ متنِ دکمه می‌افتاد و خوانایی‌اش را می‌برد.
+                --}}
                 <x-cta :href="route('factory')" variant="light" size="lg" icon="play"
-                       class="min-w-0 flex-1 justify-center whitespace-nowrap px-2 text-meta [&_svg]:hidden sm:flex-none sm:gap-2 sm:px-5 sm:text-[0.9375rem] sm:[&_svg]:block">{{ __('site.actions.factory') }}</x-cta>
+                       class="min-w-0 flex-1 justify-center whitespace-nowrap bg-ink-950/55 px-2 text-meta backdrop-blur-sm [&_svg]:hidden sm:flex-none sm:gap-2 sm:px-5 sm:text-[0.9375rem] sm:[&_svg]:block">{{ __('site.actions.factory') }}</x-cta>
             </div>
         </div>
 
