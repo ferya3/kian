@@ -19,6 +19,52 @@
     </section>
 
     {{--
+        مدیرعامل — یک نفر، بخشِ ویژه‌ی خودش.
+
+        عکس عمودی است و از بالا بریده می‌شود (object-top): در پرتره، صورت
+        بالای کادر است و بریدنِ وسط سر را می‌بُرد. بی عکس، حرفِ نخستِ نام.
+        پیام اگر باشد درشت می‌آید؛ زندگی‌نامه زیرش.
+    --}}
+    @if($ceo)
+        <section class="bg-ink-950 section-lg text-sand-100" data-ceo>
+            <div class="container-page grid grid-cols-1 items-center gap-10 lg:grid-cols-12 lg:gap-16">
+                <div class="lg:col-span-5" data-reveal>
+                    @if($photo = \App\Support\Media::url($ceo->photo))
+                        <img src="{{ $photo }}" alt="{{ $ceo->name }}" loading="lazy" decoding="async"
+                             class="aspect-[4/5] w-full max-w-md rounded-[var(--radius-panel)] object-cover object-top shadow-lift">
+                    @else
+                        <span aria-hidden="true"
+                              class="grid aspect-[4/5] w-full max-w-md place-items-center rounded-[var(--radius-panel)] bg-clay-500/15 text-[6rem] font-extrabold text-clay-400">
+                            {{ $ceo->initial() }}
+                        </span>
+                    @endif
+                </div>
+
+                <div class="lg:col-span-7" data-reveal>
+                    <p class="eyebrow text-clay-400"><bdi dir="ltr">Managing Director</bdi></p>
+
+                    @if(filled($ceo->quote))
+                        <blockquote class="mt-5 text-h3 font-bold leading-snug text-sand-50">
+                            <span aria-hidden="true" class="text-clay-400">«</span>{{ $ceo->quote }}<span aria-hidden="true" class="text-clay-400">»</span>
+                        </blockquote>
+                    @endif
+
+                    <h2 class="mt-7 text-card font-extrabold text-sand-50">{{ $ceo->name }}</h2>
+                    @if(filled($ceo->role))
+                        <p class="mt-1 text-meta font-semibold text-clay-400">{{ $ceo->role }}</p>
+                    @endif
+
+                    <div class="mt-6 space-y-4 text-lead leading-relaxed text-sand-200/75">
+                        @foreach($ceo->paragraphs() as $paragraph)
+                            <p>{{ $paragraph }}</p>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+        </section>
+    @endif
+
+    {{--
         خطِ زمان. به ترتیبِ سال چیده می‌شود و «امروز» همیشه آخر است؛ مدیر
         برای افزودنِ رویدادی در وسط لازم نیست بقیه را از نو شماره بزند.
     --}}

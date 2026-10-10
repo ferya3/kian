@@ -5,9 +5,12 @@ namespace Tests\Feature;
 use App\Models\Milestone;
 use App\Models\Person;
 use App\Models\User;
+use App\Support\Media;
 use App\Support\Navigation;
 use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 /**
@@ -66,14 +69,18 @@ class BiographyTest extends TestCase
             ->assertDontSee('یک کوره، پنج نفر', false);
     }
 
-    /** ردیفِ الگوی مدیران پنهان است: نام و زندگی‌نامه‌ی آدمِ واقعی را فقط شرکت می‌داند. */
+    /** ردیفِ الگوی مدیرعامل پنهان است: نام و عکس و زندگی‌نامه‌اش را فقط شرکت دارد. */
     public function test_the_people_template_stays_hidden(): void
     {
         $this->assertSame(1, Person::count());
-        $this->assertFalse(Person::first()->is_active);
+
+        $template = Person::first();
+        $this->assertFalse($template->is_active);
+        $this->assertTrue($template->is_featured, 'الگو باید همان مدیرعامل باشد.');
 
         $this->get(route('biography'))->assertOk()
             ->assertDontSee('data-person', false)
+            ->assertDontSee('data-ceo', false)
             ->assertDontSee('نام و نام خانوادگی', false);
     }
 
@@ -84,6 +91,7 @@ class BiographyTest extends TestCase
             'role' => 'بنیان‌گذار',
             'bio' => "پاراگراف نخست.\nپاراگراف دوم.",
             'is_active' => true,
+            'is_featured' => false,
         ]);
 
         $page = $this->get(route('biography'))->assertOk();
@@ -126,5 +134,76 @@ class BiographyTest extends TestCase
     public function test_the_page_is_in_the_sitemap(): void
     {
         $this->get(route('sitemap'))->assertOk()->assertSee(route('biography'), false);
+    }
+
+    protected function ceo(array $overrides = []): Person
+    {
+        $ceo = Person::first();
+        $ceo->update(array_merge([
+            'name' => 'کیان احمدی',
+            'role' => 'مدیرعامل',
+            'bio' => "پاراگراف نخستِ زندگی‌نامه.\nپاراگراف دوم.",
+            'quote' => 'هر بچ را پیش از بارگیری آزمون می‌کنیم.',
+            'is_active' => true,
+        ], $overrides));
+
+        return $ceo;
+    }
+
+    public function test_the_ceo_gets_a_featured_section_with_photo_message_and_bio(): void
+    {
+        Storage::fake('public');
+        $photo = UploadedFile::fake()->image('ceo.jpg', 800, 1000)->store('admin/people', 'public');
+
+        $this->ceo(['photo' => $photo]);
+
+        $section = str($this->get(route('biography'))->assertOk()->getContent())
+            ->between('data-ceo', '</section>')->toString();
+
+        $this->assertStringContainsString(e(Media::url($photo)), $section);
+        $this->assertStringContainsString('هر بچ را پیش از بارگیری آزمون می‌کنیم.', $section);
+        $this->assertStringContainsString('کیان احمدی', $section);
+        $this->assertStringContainsString('<p>پاراگراف نخستِ زندگی‌نامه.</p>', $section);
+    }
+
+    /** مدیرعامل بخشِ خودش را دارد و در کارت‌ها تکرار نمی‌شود. */
+    public function test_the_ceo_is_not_repeated_among_the_cards(): void
+    {
+        $this->ceo();
+        Person::create(['name' => 'مریم رضایی', 'role' => 'مدیر فنی', 'is_active' => true, 'position' => 2]);
+
+        $html = $this->get(route('biography'))->assertOk()->getContent();
+
+        $this->assertSame(1, substr_count($html, 'data-person'));
+        $this->assertSame(1, substr_count($html, 'کیان احمدی'));
+        $this->assertStringContainsString('مریم رضایی', $html);
+    }
+
+    /** بی عکس، حرفِ نخستِ نام جای عکس می‌نشیند. */
+    public function test_the_ceo_without_a_photo_shows_the_initial(): void
+    {
+        $this->ceo(['photo' => null]);
+
+        $section = str($this->get(route('biography'))->getContent())->between('data-ceo', '</section>')->toString();
+
+        $this->assertStringNotContainsString('<img', $section);
+        $this->assertMatchesRegularExpression('~<span aria-hidden="true"\s+class="grid aspect-\[4/5\][^"]*">\s*ک\s*</span>~u', $section);
+    }
+
+    /** دو مدیرعاملِ ویژه یعنی یکی بی‌صدا ناپدید می‌شود — پس فقط یکی. */
+    public function test_marking_someone_featured_unmarks_the_rest(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin', 'is_active' => true]);
+        $first = $this->ceo();
+
+        $this->actingAs($admin)->post(route('admin.resource.store', 'people'), [
+            'name' => 'مدیرعامل تازه',
+            'is_featured' => '1',
+            'is_active' => '1',
+        ])->assertSessionHasNoErrors();
+
+        $this->assertFalse($first->fresh()->is_featured);
+        $this->assertSame(1, Person::where('is_featured', true)->count());
+        $this->assertTrue(Person::where('name', 'مدیرعامل تازه')->value('is_featured'));
     }
 }

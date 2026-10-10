@@ -22,7 +22,9 @@ class BiographyController extends Controller
         return view('pages.biography', [
             'lead' => Setting::text('biography_lead', __('site.biography.lead')),
             'milestones' => Milestone::query()->visible()->get(),
-            'people' => Person::query()->visible()->get(),
+            // مدیرعامل بخشِ خودش را دارد و در کارت‌ها تکرار نمی‌شود
+            'ceo' => $ceo = Person::query()->visible()->where('is_featured', true)->first(),
+            'people' => Person::query()->visible()->when($ceo, fn ($q) => $q->whereKeyNot($ceo->id))->get(),
         ]);
     }
 }

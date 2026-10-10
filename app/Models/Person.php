@@ -9,6 +9,9 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * بنیان‌گذار یا مدیر — در صفحه‌ی بیوگرافی.
  *
+ * یک نفر می‌تواند «ویژه» باشد — مدیرعامل — و بخشِ بزرگِ خودش را با عکس و
+ * پیام بگیرد؛ بقیه کارت‌اند. یکی بودنش را PersonResource نگه می‌دارد.
+ *
  * نام هم ترجمه‌پذیر است: «کیان» در انگلیسی Kian نوشته می‌شود و نه با حروفِ
  * فارسی وسطِ متنِ لاتین.
  */
@@ -18,13 +21,13 @@ class Person extends Model
 
     protected $table = 'people';
 
-    public array $translatable = ['name', 'role', 'bio'];
+    public array $translatable = ['name', 'role', 'bio', 'quote'];
 
     protected $guarded = [];
 
     protected function casts(): array
     {
-        return ['is_active' => 'boolean'];
+        return ['is_active' => 'boolean', 'is_featured' => 'boolean'];
     }
 
     public function scopeVisible(Builder $query): Builder
