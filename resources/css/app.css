@@ -899,63 +899,9 @@
         | جداگانه می‌چرخاند و پیوندها را پاره می‌کند. اینجا کلمه افقی چیده
         | می‌شود — همان‌طور که قلم طراحی شده — و بعد یکپارچه ۹۰ درجه می‌چرخد.
         */
-        /*
-        | قفل: لوگو و کلمه در یک ردیف، که یکپارچه می‌چرخد.
-        |
-        | جای قرارگیری و چرخش از ‎.frame-mark‎ به اینجا آمد. اندازه‌ی قلم هم
-        | اینجاست تا em ِ جبرانِ ناقرینگیِ قلم (translateY پایین) همان em ِ
-        | خودِ کلمه بماند.
-        */
-        .frame-lockup {
+        .frame-mark {
             position: absolute;
             top: 50%;
-            /*
-            | چپ‌به‌راست، مثل خودِ کلمه. در صفحه‌ی راست‌به‌چپ، ردیفِ flex
-            | لوگو را سمتِ راستِ کلمه می‌گذاشت و پس از چرخش، لوگو به تهِ
-            | کلمه می‌رفت و نه به سرش.
-            */
-            direction: ltr;
-            display: flex;
-            align-items: center;
-            gap: 0.32em;
-            font-size: var(--frame-mark-size);
-            line-height: 1;
-            white-space: nowrap;
-        }
-
-        /*
-        | لوگو، ایستاده — هرچند کلمه چرخیده است.
-        |
-        | چرخیده با کلمه هم آزموده شد، ولی نشانه‌ی برند به پهلو دیگر خودش
-        | خوانده نمی‌شود و شکلِ دیگری می‌نماید. پس قابِ مربعیِ ۰٫۷۲em با کلمه
-        | می‌چرخد و لوگو درونش برمی‌گردد: همان لوگوی هدر، روی دو لبه.
-        |
-        | translateY ِ منفی همان جبرانِ قلم است، برعکس: کلِ قفل ۰٫۱۵۲em جابه‌جا
-        | می‌شود تا جوهرِ کلمه وسطِ حاشیه بنشیند، و لوگو — که جوهرش وسطِ
-        | جعبه‌ی خودش است — باید همان‌قدر برگردد تا هم‌محورِ کلمه بماند.
-        |
-        | کم‌رنگ است ولی نه به خاموشیِ کلمه: نشانِ برند باید بی نور هم شناخته
-        | شود، و کلمه است که خواندنش کارِ نور است.
-        */
-        .frame-lockup-logo {
-            display: block;
-            flex: none;
-            width: 0.72em;
-            height: 0.72em;
-            opacity: 0.5;
-            filter: saturate(0.85);
-        }
-
-        .frame-lockup-right .frame-lockup-logo {
-            transform: translateY(-0.152em) rotate(-90deg);
-        }
-
-        .frame-lockup-left .frame-lockup-logo {
-            transform: translateY(-0.152em) rotate(90deg);
-        }
-
-        .frame-mark {
-            position: relative;
             font-family: 'Luciano', ui-sans-serif, sans-serif;
             font-size: var(--frame-mark-size);
             font-weight: 400;
@@ -1084,13 +1030,13 @@
         | ۰٫۰۷۷em زیادی به‌سمت قاب می‌افتاد؛ این عدد از تفاضلِ همان اندازه‌گیری
         | درآمده و در ۱۰۲۴ و ۱۴۴۰ و ۱۹۲۰ راستی‌آزمایی شده.
         */
-        .frame-lockup-right {
+        .frame-mark-right {
             left: 100%;
             margin-left: var(--frame-mark-reach);
             transform: translate(-50%, -50%) rotate(90deg) translateY(0.152em);
         }
 
-        .frame-lockup-left {
+        .frame-mark-left {
             right: 100%;
             margin-right: var(--frame-mark-reach);
             transform: translate(50%, -50%) rotate(-90deg) translateY(0.152em);

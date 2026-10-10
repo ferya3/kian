@@ -86,20 +86,9 @@
     @php $wordmark = config('kian.brand.wordmark'); @endphp
     @if($wordmark)
         <div class="frame-mark-rail" aria-hidden="true">
-            {{--
-                هر لبه یک «قفل»: لوگو و کلمه، که با هم می‌چرخند.
-
-                لوگو بیرونِ ‎.frame-mark‎ است و نه درونش: لایه‌ی هاله
-                (‎.frame-mark::before‎) کلمه را از نو با inset: 0 روی همان
-                جعبه می‌نویسد، و هر چیزی درونِ جعبه کلمه را جابه‌جا می‌کرد و هاله
-                از جوهر جدا می‌افتاد. data-word همان کلمه است برای همان لایه.
-            --}}
-            @foreach(['left', 'right'] as $side)
-                <span class="frame-lockup frame-lockup-{{ $side }}">
-                    <span class="frame-lockup-logo"><x-brand-mark class="h-full w-full" /></span>
-                    <span class="frame-mark" dir="ltr" data-word="{{ $wordmark }}">{{ $wordmark }}</span>
-                </span>
-            @endforeach
+            {{-- data-word همان کلمه است برای لایه‌ی هاله (‎.frame-mark::before‎) --}}
+            <span class="frame-mark frame-mark-left" dir="ltr" data-word="{{ $wordmark }}">{{ $wordmark }}</span>
+            <span class="frame-mark frame-mark-right" dir="ltr" data-word="{{ $wordmark }}">{{ $wordmark }}</span>
         </div>
     @endif
 
