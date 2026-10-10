@@ -5,7 +5,7 @@ namespace App\Support;
 use App\Models\Setting;
 
 /**
- * اطلاعات تماس — از پنل، و اگر پنل خالی بود از پیکربندی.
+ * تلفن و ایمیل و شبکه‌های اجتماعیِ شرکت — از پنل، و اگر پنل خالی بود از پیکربندی.
  *
  * تا پیش از این تلفن و نشانی فقط در config/kian.php و .env بودند: عوض‌کردنِ
  * یک رقم یعنی ورود به سرور و ساختنِ دوباره‌ی کش. حالا مدیر از «پنل ←
@@ -24,8 +24,8 @@ class Contact
     /**
      * میدان‌های قابل ویرایش و جایشان در پیکربندی.
      *
-     * دو میدانِ متنی (نشانی و ساعت کاری) به زبان‌اند؛ بقیه عدد و نشانی‌اند و
-     * در همه‌ی زبان‌ها یکی‌اند.
+     * نشانی و ساعت کاری اینجا نیستند: هر مکان نشانی و ساعت خودش را دارد و
+     * در App\Models\Location است. اینجا فقط آنچه مالِ کلِ شرکت است.
      */
     public const FIELDS = [
         'phone' => 'kian.contact.phone',
@@ -33,55 +33,23 @@ class Contact
         'sales_extension' => 'kian.contact.sales_extension',
         'email' => 'kian.contact.email',
         'technical_email' => 'kian.contact.technical_email',
-        'address' => 'kian.contact.address',
-        'address_locality' => 'kian.contact.address_locality',
-        'address_region' => 'kian.contact.address_region',
-        'postal_code' => 'kian.contact.postal_code',
-        'working_hours' => 'kian.contact.working_hours',
-        'lat' => 'kian.contact.lat',
-        'lng' => 'kian.contact.lng',
         'instagram' => 'kian.social.instagram',
         'linkedin' => 'kian.social.linkedin',
         'aparat' => 'kian.social.aparat',
         'telegram' => 'kian.social.telegram',
     ];
 
-    /** میدان‌هایی که به زبانِ صفحه‌اند. */
-    public const LOCALIZED = ['address', 'working_hours'];
-
     public const SOCIAL = ['instagram', 'linkedin', 'aparat', 'telegram'];
 
-    /**
-     * مقدارِ خام، بی هیچ قالب‌بندی.
-     *
-     * برای میدان‌های زبان‌دار، در زبانِ غیرپیش‌فرض اول ترجمه‌ی پنل
-     * (contact.address_en)، بعد پرونده‌ی زبان، و آخر مقدارِ فارسی. نشانیِ
-     * فارسی روی صفحه‌ی انگلیسی بهتر از هیچ است — ولی بدتر از ترجمه، پس
-     * آخرین گزینه است.
-     */
+    /** مقدارِ خام، بی هیچ قالب‌بندی: پنل اگر بود، وگرنه پیکربندی. */
     public static function get(string $field): string
     {
-        $base = static::stored($field) ?? (string) config(static::FIELDS[$field] ?? '');
-
-        if (! in_array($field, static::LOCALIZED, true)) {
-            return $base;
+        // config('') کلِ پیکربندی را برمی‌گرداند و نه رشته‌ی خالی
+        if (! isset(static::FIELDS[$field])) {
+            throw new \InvalidArgumentException("میدانِ تماسِ ناشناخته: {$field}");
         }
 
-        $locale = Locales::current();
-
-        if ($locale === Locales::default()) {
-            return $base;
-        }
-
-        // ترجمه‌ی خالی یعنی «ندارم» — برخلافِ میدانِ پایه
-        if (filled($own = static::stored("{$field}_{$locale}"))) {
-            return $own;
-        }
-
-        $line = "site.contact.{$field}";
-        $translated = __($line);
-
-        return is_string($translated) && $translated !== $line ? $translated : $base;
+        return static::stored($field) ?? (string) config(static::FIELDS[$field]);
     }
 
     /**

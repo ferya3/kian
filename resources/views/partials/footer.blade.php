@@ -42,10 +42,22 @@
             </p>
 
             <ul class="mt-6 space-y-3 text-[0.9375rem] text-sand-200/70">
-                <li class="flex gap-3">
-                    <x-icon name="pin" size="18" class="mt-1 shrink-0 text-clay-400" />
-                    <span>{{ Brand::address() }}</span>
-                </li>
+                {{--
+                    همه‌ی نشانی‌ها، هر کدام با عنوانش. عنوان فقط وقتی می‌آید که
+                    بیش از یک نشانی باشد؛ با یکی، «کارخانه:» بالای تنها نشانی نوفه است.
+                --}}
+                @php($locations = \App\Models\Location::listed())
+                @foreach($locations as $location)
+                    <li class="flex gap-3">
+                        <x-icon name="pin" size="18" class="mt-1 shrink-0 text-clay-400" />
+                        <span>
+                            @if($locations->count() > 1)
+                                <span class="block text-meta font-semibold text-sand-200/90">{{ $location->title }}</span>
+                            @endif
+                            {{ $location->address }}
+                        </span>
+                    </li>
+                @endforeach
                 <li class="flex gap-3">
                     <x-icon name="mail" size="18" class="mt-0.5 shrink-0 text-clay-400" />
                     <a href="mailto:{{ \App\Support\Contact::get('email') }}" class="tech tap transition hover:text-sand-50">{{ \App\Support\Contact::get('email') }}</a>

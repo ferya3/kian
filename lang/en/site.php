@@ -587,6 +587,10 @@ return [
         'technical' => 'Engineering',
         'plant' => 'Plant',
         'hours' => 'Opening hours',
+        'address_label' => 'Address',
+        'postal_code' => 'Postcode :code',
+        'location_phone' => 'Phone here',
+        'directions' => 'Get directions',
         'faster' => 'This may be quicker',
 
         'type' => [

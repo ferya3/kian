@@ -558,6 +558,10 @@ return [
         'technical' => 'واحد فنی',
         'plant' => 'کارخانه',
         'hours' => 'ساعات کاری',
+        'address_label' => 'نشانی',
+        'postal_code' => 'کد پستی :code',
+        'location_phone' => 'تلفن همین‌جا',
+        'directions' => 'مسیریابی در نقشه',
         'faster' => 'شاید سریع‌تر باشد',
 
         'type' => [

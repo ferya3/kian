@@ -13,7 +13,7 @@ class Schema
 {
     public static function organization(): array
     {
-        return [
+        return static::compact([
             '@type' => 'Organization',
             '@id' => url('/#organization'),
             'name' => config('kian.brand.legal_name'),
@@ -22,14 +22,18 @@ class Schema
             'logo' => url('/logo.svg'),
             'foundingDate' => (string) config('kian.brand.founded'),
             'description' => config('kian.seo.default_description'),
-            'address' => [
-                '@type' => 'PostalAddress',
-                'streetAddress' => \App\Support\Contact::get('address'),
-                'addressLocality' => \App\Support\Contact::get('address_locality'),
-                'addressRegion' => \App\Support\Contact::get('address_region'),
-                'postalCode' => \App\Support\Contact::get('postal_code'),
-                'addressCountry' => 'IR',
-            ],
+            'address' => static::postalAddress(\App\Models\Location::primary()),
+
+            /*
+            | بقیه‌ی نشانی‌ها — دفتر فروش، انبار — هر کدام یک Place. نشانیِ
+            | اصلی همان address است و اینجا تکرار نمی‌شود.
+            */
+            'location' => \App\Models\Location::listed()->slice(1)->map(fn ($l) => array_filter([
+                '@type' => 'Place',
+                'name' => $l->title,
+                'address' => static::postalAddress($l),
+                'telephone' => $l->phoneTel(),
+            ]))->values()->all(),
             'contactPoint' => [
                 [
                     '@type' => 'ContactPoint',
@@ -45,31 +49,49 @@ class Schema
                 ],
             ],
             'sameAs' => array_values(\App\Support\Contact::social()),
-        ];
+        ]);
     }
 
     public static function localBusiness(): array
     {
-        return [
+        return static::compact([
             '@type' => ['LocalBusiness', 'Manufacturer'],
             '@id' => url('/#factory'),
             'name' => config('kian.brand.legal_name'),
             'image' => url('/og-image.svg'),
             'telephone' => \App\Support\Contact::phoneTel(),
             'email' => \App\Support\Contact::get('email'),
-            'address' => [
-                '@type' => 'PostalAddress',
-                'streetAddress' => \App\Support\Contact::get('address'),
-                'addressLocality' => \App\Support\Contact::get('address_locality'),
-                'addressCountry' => 'IR',
-            ],
-            'geo' => [
+            'address' => static::postalAddress($primary = \App\Models\Location::primary()),
+            'geo' => $primary?->hasPoint() ? [
                 '@type' => 'GeoCoordinates',
-                'latitude' => \App\Support\Contact::get('lat'),
-                'longitude' => \App\Support\Contact::get('lng'),
-            ],
+                'latitude' => $primary->lat,
+                'longitude' => $primary->lng,
+            ] : null,
             'openingHours' => 'Sa-We 08:00-17:00',
-        ];
+        ]);
+    }
+
+    /** میدانِ خالی نوشته نمی‌شود: «"geo": null» برای گوگل یعنی داده‌ی خراب. */
+    protected static function compact(array $data): array
+    {
+        return array_filter($data, fn ($v) => $v !== null && $v !== []);
+    }
+
+    /** نشانیِ پستیِ یک مکان؛ میدان‌های خالی اصلاً فرستاده نمی‌شوند. */
+    protected static function postalAddress(?\App\Models\Location $location): ?array
+    {
+        if (! $location) {
+            return null;
+        }
+
+        return array_filter([
+            '@type' => 'PostalAddress',
+            'streetAddress' => $location->address,
+            'addressLocality' => $location->city,
+            'addressRegion' => $location->region,
+            'postalCode' => $location->postal_code,
+            'addressCountry' => 'IR',
+        ]);
     }
 
     public static function product(Product $product): array

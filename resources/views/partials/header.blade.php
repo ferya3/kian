@@ -28,10 +28,13 @@
                     <x-icon name="phone" size="15" />
                     <span class="tech">{{ Brand::phone() }}</span>
                 </a>
-                <span class="flex items-center gap-2 text-sand-200/55">
-                    <x-icon name="clock" size="15" />
-                    {{ Brand::workingHours() }}
-                </span>
+                {{-- ساعت کاریِ نشانیِ اصلی؛ اگر نگذاشته باشند، آیکونِ تنها جا نمی‌ماند --}}
+                @if(filled($hours = Brand::workingHours()))
+                    <span class="flex items-center gap-2 text-sand-200/55">
+                        <x-icon name="clock" size="15" />
+                        {{ $hours }}
+                    </span>
+                @endif
             </div>
             <div class="flex items-center gap-5">
                 <a href="{{ route('technical.downloads') }}" class="flex items-center gap-1.5 transition hover:text-clay-300">

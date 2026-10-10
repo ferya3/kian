@@ -3,15 +3,18 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\ActivityLog;
+use App\Models\Location;
 use App\Models\Setting;
 use App\Support\Contact;
-use App\Support\Locales;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
 
 /**
- * «پنل ← اطلاعات تماس» — تلفن، نشانی، ایمیل، ساعت کاری، شبکه‌های اجتماعی.
+ * «پنل ← اطلاعات تماس» — تلفن، ایمیل و شبکه‌های اجتماعیِ شرکت.
+ *
+ * نشانی و ساعت کاری اینجا نیستند و در «پنل ← نشانی‌ها» اند، چون هر
+ * مکان — کارخانه، دفتر فروش، انبار — نشانی و ساعت خودش را دارد.
  *
  * یک فرمِ ثابت با میدان‌های برچسب‌دار، و نه فهرستِ کلید/مقدارِ
  * «تنظیمات محتوا»: آنجا مدیر باید نامِ کلید را بداند و هیچ اعتبارسنجی‌ای
@@ -20,27 +23,16 @@ use Illuminate\Support\Facades\DB;
  */
 class ContactSettingsController extends Controller
 {
-    /** زبان‌هایی که برای نشانی و ساعت کاری جعبه‌ی ترجمه می‌گیرند. */
-    protected function otherLocales(): array
-    {
-        return Locales::declared()->except(Locales::default())->all();
-    }
-
     public function show()
     {
         $values = collect(array_keys(Contact::FIELDS))
             ->mapWithKeys(fn (string $f) => [$f => Contact::stored($f) ?? (string) config(Contact::FIELDS[$f])])
             ->all();
 
-        foreach (array_keys($this->otherLocales()) as $code) {
-            foreach (Contact::LOCALIZED as $f) {
-                $values["{$f}_{$code}"] = Contact::stored("{$f}_{$code}") ?? '';
-            }
-        }
-
         return view('admin.contact', [
             'values' => $values,
-            'locales' => $this->otherLocales(),
+            // نشانی‌ها جای خودشان را دارند؛ اینجا فقط فهرستی برای دیدن و رفتن
+            'locations' => Location::query()->orderBy('position')->orderBy('id')->get(),
         ]);
     }
 
@@ -54,22 +46,10 @@ class ContactSettingsController extends Controller
             'sales_extension' => ['nullable', 'regex:/^[\d۰-۹٠-٩]{1,8}$/u'],
             'email' => ['nullable', 'email:rfc', 'max:120'],
             'technical_email' => ['nullable', 'email:rfc', 'max:120'],
-            'address' => ['required', 'string', 'max:300'],
-            'address_locality' => ['nullable', 'string', 'max:60'],
-            'address_region' => ['nullable', 'string', 'max:60'],
-            'postal_code' => ['nullable', 'regex:/^[\d۰-۹٠-٩\-\s]{5,12}$/u'],
-            'working_hours' => ['nullable', 'string', 'max:200'],
-            'lat' => ['nullable', 'numeric', 'between:-90,90'],
-            'lng' => ['nullable', 'numeric', 'between:-180,180'],
         ];
 
         foreach (Contact::SOCIAL as $network) {
             $rules[$network] = ['nullable', 'url:https,http', 'max:200'];
-        }
-
-        foreach (array_keys($this->otherLocales()) as $code) {
-            $rules["address_{$code}"] = ['nullable', 'string', 'max:300'];
-            $rules["working_hours_{$code}"] = ['nullable', 'string', 'max:200'];
         }
 
         $data = $request->validate($rules, [
@@ -80,10 +60,6 @@ class ContactSettingsController extends Controller
             'sales_extension' => 'داخلی',
             'email' => 'ایمیل فروش',
             'technical_email' => 'ایمیل واحد فنی',
-            'address' => 'نشانی',
-            'postal_code' => 'کد پستی',
-            'lat' => 'عرض جغرافیایی',
-            'lng' => 'طول جغرافیایی',
         ]);
 
         $changed = [];

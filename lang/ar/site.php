@@ -583,6 +583,10 @@ return [
         'technical' => 'القسم الفني',
         'plant' => 'المصنع',
         'hours' => 'ساعات العمل',
+        'address_label' => 'العنوان',
+        'postal_code' => 'الرمز البريدي :code',
+        'location_phone' => 'هاتف هذا الموقع',
+        'directions' => 'الاتجاهات على الخريطة',
         'faster' => 'ربّما يكون هذا أسرع',
 
         'type' => [

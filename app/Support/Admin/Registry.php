@@ -6,6 +6,7 @@ use App\Admin\Resources\ArticleResource;
 use App\Admin\Resources\CertificateResource;
 use App\Admin\Resources\ContactMessageResource;
 use App\Admin\Resources\DistributorResource;
+use App\Admin\Resources\LocationResource;
 use App\Admin\Resources\DocumentResource;
 use App\Admin\Resources\FactorySectionResource;
 use App\Admin\Resources\FaqResource;
@@ -50,6 +51,7 @@ class Registry
             StatResource::class,
             CertificateResource::class,
             SiteMediaResource::class,
+            LocationResource::class,
             DistributorResource::class,
             ContactMessageResource::class,
             SettingResource::class,

@@ -182,22 +182,53 @@
                                     <a href="mailto:{{ \App\Support\Contact::get('technical_email') }}" class="tech tap font-bold transition hover:text-clay-600">{{ \App\Support\Contact::get('technical_email') }}</a>
                                 </span>
                             </li>
-                            <li class="flex gap-3">
-                                <x-icon name="pin" size="18" class="mt-1 shrink-0 text-clay-500" />
-                                <span>
-                                    <span class="block text-meta text-ink-400">{{ __('site.contact.plant') }}</span>
-                                    <span class="font-semibold leading-relaxed">{{ \App\Support\Brand::address() }}</span>
-                                </span>
-                            </li>
-                            <li class="flex gap-3">
-                                <x-icon name="clock" size="18" class="mt-1 shrink-0 text-clay-500" />
-                                <span>
-                                    <span class="block text-meta text-ink-400">{{ __('site.contact.hours') }}</span>
-                                    <span class="font-semibold">{{ \App\Support\Brand::workingHours() }}</span>
-                                </span>
-                            </li>
                         </ul>
                     </div>
+
+                    {{--
+                        هر نشانی یک کارت: عنوان، نشانی، ساعت کاری، تلفنِ همان‌جا
+                        و مسیریابی. ساعت و تلفن فقط اگر گذاشته شده باشند.
+                    --}}
+                    @foreach(\App\Models\Location::listed() as $location)
+                        <div class="rounded-[var(--radius-panel)] border border-sand-300 bg-sand-50 p-6" data-location>
+                            <h2 class="font-bold">{{ $location->title }}</h2>
+                            <ul class="mt-4 space-y-4 text-[0.9375rem]">
+                                <li class="flex gap-3">
+                                    <x-icon name="pin" size="18" class="mt-1 shrink-0 text-clay-500" />
+                                    <span>
+                                        <span class="block text-meta text-ink-400">{{ __('site.contact.address_label') }}</span>
+                                        <span class="font-semibold leading-relaxed">{{ $location->address }}</span>
+                                        @if($postal = $location->postalCodeLabel())
+                                            <span class="block text-meta text-ink-400">{{ __('site.contact.postal_code', ['code' => $postal]) }}</span>
+                                        @endif
+                                    </span>
+                                </li>
+                                @if(filled($location->working_hours))
+                                    <li class="flex gap-3">
+                                        <x-icon name="clock" size="18" class="mt-1 shrink-0 text-clay-500" />
+                                        <span>
+                                            <span class="block text-meta text-ink-400">{{ __('site.contact.hours') }}</span>
+                                            <span class="font-semibold">{{ $location->working_hours }}</span>
+                                        </span>
+                                    </li>
+                                @endif
+                                @if($tel = $location->phoneTel())
+                                    <li class="flex gap-3">
+                                        <x-icon name="phone" size="18" class="mt-1 shrink-0 text-clay-500" />
+                                        <span>
+                                            <span class="block text-meta text-ink-400">{{ __('site.contact.location_phone') }}</span>
+                                            <a href="tel:{{ $tel }}" class="tech tap font-bold transition hover:text-clay-600">{{ $location->phoneLabel() }}</a>
+                                        </span>
+                                    </li>
+                                @endif
+                            </ul>
+                            <a href="{{ $location->mapUrl() }}" target="_blank" rel="noopener noreferrer"
+                               class="tap mt-4 gap-2 rounded-full border border-sand-300 px-4 text-meta font-semibold text-ink-700 transition hover:border-clay-400 hover:text-clay-700">
+                                <x-icon name="external" size="15" />
+                                {{ __('site.contact.directions') }}
+                            </a>
+                        </div>
+                    @endforeach
 
                     <div class="rounded-[var(--radius-panel)] border border-sand-300 bg-sand-100 p-6">
                         <h2 class="font-bold">{{ __('site.contact.faster') }}</h2>

@@ -44,7 +44,9 @@ class ContactSettingsTest extends TestCase
         $this->actingAs($this->admin())->get(route('admin.contact'))
             ->assertOk()
             ->assertSee(Contact::get('phone'), false)
-            ->assertSee(Contact::get('address'), false);
+            // نشانی‌ها اینجا فهرست می‌شوند، با پیوند به جای ویرایششان
+            ->assertSee(\App\Models\Location::primary()->title, false)
+            ->assertSee(route('admin.resource.index', 'locations'), false);
     }
 
     /** آنچه در پنل ذخیره شود، همان است که روی سایت دیده می‌شود — همه‌جا. */
@@ -63,22 +65,6 @@ class ContactSettingsTest extends TestCase
             // شماره‌ی قدیم نه در متن (ارقام فارسی) و نه در دکمه
             ->assertDontSee(\App\Support\Jalali::digits('045-3182'), false)
             ->assertDontSee('tel:'.Contact::tel('045-3182').'"', false);
-    }
-
-    public function test_a_saved_address_reaches_the_contact_page_and_schema(): void
-    {
-        $address = 'اردبیل، شهرک صنعتی، خیابان آزمایشی';
-
-        $this->actingAs($this->admin())
-            ->put(route('admin.contact.update'), $this->form(['address' => $address]));
-
-        $page = $this->get(route('contact'))->assertOk()->assertSee($address, false);
-
-        // گوگل هم همان نشانی را می‌گیرد، نه نشانیِ پیکربندی را
-        $this->assertStringContainsString(
-            json_encode($address, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
-            $page->getContent(),
-        );
     }
 
     /**
@@ -107,11 +93,11 @@ class ContactSettingsTest extends TestCase
         $this->assertSame('045-3182', Contact::stored('phone'));
     }
 
-    public function test_the_phone_and_address_cannot_be_emptied(): void
+    public function test_the_central_phone_cannot_be_emptied(): void
     {
         $this->actingAs($this->admin())
-            ->put(route('admin.contact.update'), $this->form(['phone' => '', 'address' => '']))
-            ->assertSessionHasErrors(['phone', 'address']);
+            ->put(route('admin.contact.update'), $this->form(['phone' => '']))
+            ->assertSessionHasErrors('phone');
     }
 
     /** نشانیِ بی نامِ کاربری پیوند نیست — به صفحه‌ی اصلیِ اینستاگرام می‌رسد. */
@@ -166,23 +152,6 @@ class ContactSettingsTest extends TestCase
         $this->assertSame('+4930123456', Contact::tel('0049 30 123456'));
         $this->assertSame('+982188776655', Contact::tel('+98 21 8877 6655'));
     }
-
-    /** صفحه‌ی انگلیسی ترجمه‌ی خودش را می‌گیرد، نه نشانیِ فارسی را. */
-    public function test_the_english_page_gets_its_own_address(): void
-    {
-        $this->actingAs($this->admin())
-            ->put(route('admin.contact.update'), $this->form([
-                'address' => 'اردبیل، شهرک صنعتی',
-                'address_en' => 'Ardabil Industrial Estate',
-            ]));
-
-        $this->get('/en/contact')->assertOk()
-            ->assertSee('Ardabil Industrial Estate', false)
-            ->assertDontSee('اردبیل، شهرک صنعتی', false);
-
-        $this->get('/fa/contact')->assertOk()->assertSee('اردبیل، شهرک صنعتی', false);
-    }
-
 
     /**
      * شماره‌های واقعی، حتی اگر .env هنوز شماره‌ی نمونه را دارد.

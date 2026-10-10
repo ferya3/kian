@@ -2,6 +2,8 @@
 
 namespace App\Support;
 
+use App\Models\Location;
+
 /**
  * نام و نشانیِ شرکت، به زبانِ صفحه.
  *
@@ -33,14 +35,15 @@ class Brand
         return static::value('brand.tagline');
     }
 
+    /** نشانیِ اصلی — نخستین نشانیِ فعال در «پنل ← نشانی‌ها». */
     public static function address(): string
     {
-        return Contact::get('address');
+        return (string) Location::primary()?->address;
     }
 
     public static function workingHours(): string
     {
-        return Contact::get('working_hours');
+        return (string) Location::primary()?->working_hours;
     }
 
     /** شماره‌ی نمایشی — با ارقامِ خطِ زبان جاری. */
@@ -64,7 +67,7 @@ class Brand
 
     public static function postalCode(): string
     {
-        return Jalali::digits(Contact::get('postal_code'));
+        return (string) Location::primary()?->postalCodeLabel();
     }
 
     /** سالِ تأسیس، در تقویمِ زبانِ جاری. */
