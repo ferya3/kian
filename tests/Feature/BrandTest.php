@@ -131,4 +131,38 @@ class BrandTest extends TestCase
             ->assertSee(\App\Support\Brand::phone(), false);
     }
 
+
+    /**
+     * هدر فقط لوگو دارد — بی نام و بی برچسبِ زیرش.
+     *
+     * نام برای صفحه‌خوان در aria-label ِ پیوند می‌ماند.
+     */
+    public function test_the_header_shows_only_the_logo(): void
+    {
+        $html = $this->get(route('home'))->assertOk()->getContent();
+        $header = str($html)->between('<header', '</header>')->toString();
+        $brandLink = str($header)->betweenFirst('aria-label="'.e(__('site.nav.brand_home', ['name' => \App\Support\Brand::legalName()])).'"', '</a>')->toString();
+
+        $this->assertNotSame('', $brandLink, 'پیوندِ لوگو باید aria-label ِ نامِ شرکت را داشته باشد.');
+        $this->assertStringNotContainsString(\App\Support\Brand::name(), strip_tags($brandLink));
+        $this->assertStringNotContainsString(config('kian.brand.descriptor_en'), $brandLink);
+    }
+
+    /**
+     * لوگوی آپلودشده با ارتفاع اندازه می‌گیرد، نه در کادرِ مربع.
+     *
+     * بیشترِ لوگوها افقی‌اند؛ در مربعِ ۴۰ پیکسلی با object-contain به نواری
+     * باریک کوچک می‌شدند که در هدر اصلاً دیده نمی‌شد.
+     */
+    public function test_an_uploaded_logo_is_not_squeezed_into_a_square(): void
+    {
+        \App\Models\SiteMedia::where('key', 'brand.logo')->update(['image' => 'admin/site/logo.png']);
+        \Illuminate\Support\Facades\Cache::forget('site_media.map');
+
+        $header = str($this->get(route('home'))->assertOk()->getContent())->between('<header', '</header>')->toString();
+
+        $this->assertMatchesRegularExpression('~<img src="[^"]*logo\.png"[^>]*class="[^"]*\bw-auto\b~', $header);
+        $this->assertDoesNotMatchRegularExpression('~<img src="[^"]*logo\.png"[^>]*class="[^"]*\bw-(8|10)\b~', $header);
+    }
+
 }

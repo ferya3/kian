@@ -70,18 +70,24 @@
                 <x-icon name="menu" size="24" />
             </button>
 
+            {{--
+                فقط لوگو، بی نام و بی برچسبِ زیرش — نامِ شرکت برای صفحه‌خوان در
+                aria-label می‌ماند. ارتفاع تعیین می‌کند و پهنا خودکار است تا
+                لوگوی افقیِ آپلودشده هم کامل دیده شود؛ سقفِ پهنا نمی‌گذارد
+                لوگوی خیلی پهن منو را کنار بزند.
+            --}}
             <a href="{{ route('home') }}"
-               class="flex min-h-11 flex-1 items-center justify-center gap-2.5 lg:min-w-11 lg:flex-none lg:justify-start lg:gap-3"
+               class="flex min-h-11 flex-1 items-center justify-center lg:flex-none lg:justify-start"
                aria-label="{{ __('site.nav.brand_home', ['name' => Brand::legalName()]) }}">
-                <x-brand-mark class="h-8 w-8 shrink-0 sm:h-9 sm:w-9 lg:h-10 lg:w-10" />
-                <span class="leading-tight">
-                    <span class="block text-[1.0625rem] font-extrabold tracking-tight transition-colors"
-                          :class="onDark ? 'text-sand-50' : 'text-ink-900'">{{ Brand::name() }}</span>
-                    <span class="tech hidden text-micro uppercase tracking-[0.18em] transition-colors sm:block"
-                          :class="onDark ? 'text-sand-200/55' : 'text-ink-400'">{{ config('kian.brand.descriptor_en') }}</span>
-                </span>
+                <x-brand-mark class="h-11 w-auto max-w-[10rem] shrink-0 sm:h-12 lg:h-14 lg:max-w-[7rem] xl:max-w-[7.5rem] 2xl:max-w-[14rem]" />
             </a>
 
+            {{--
+                فاصله و اندازه‌ی منو تا ۱۵۳۶ پیکسل فشرده‌تر است، و «درخواست قیمت»
+                از ۱۲۸۰ به بعد می‌آید (پیش از آن در منوی کشویی هست). با هفت
+                گزینه و سبد و جستجو و زبان، ردیف در ۱۰۲۴ تا ۱۳۶۶ از قاب بیرون
+                می‌زد و دکمه‌ی آخر بریده می‌شد — اندازه‌گیری شده، نه حدس.
+            --}}
             {{--
                 ناوبری دسکتاپ — بلافاصله کنار لوگو.
                 فاصله‌ی خالی به سمت چپ منتقل شده: نوار ابزار (جستجو و درخواست
@@ -101,7 +107,7 @@
                                aria-haspopup="true"
                            @endif
                            @if($active) aria-current="page" @endif
-                           class="relative flex items-center gap-1 whitespace-nowrap px-4 py-2.5 text-[0.9375rem] font-semibold transition-colors"
+                           class="relative flex items-center gap-1 whitespace-nowrap px-2 py-2.5 text-[0.875rem] font-semibold transition-colors xl:px-3 2xl:px-4 2xl:text-[0.9375rem]"
                            :class="onDark
                                 ? ({{ $active ? 'true' : 'false' }} ? 'text-clay-300' : 'text-sand-100/85 hover:text-white')
                                 : ({{ $active ? 'true' : 'false' }} ? 'text-clay-600' : 'text-ink-700 hover:text-clay-600')">
@@ -111,7 +117,7 @@
                                         class="transition-transform duration-300"
                                         ::class="openMenu === '{{ $item['route'] }}' && 'rotate-180'" />
                             @endif
-                            <span class="absolute inset-x-4 -bottom-px h-0.5 origin-right bg-clay-500 transition-transform duration-300 ease-[var(--ease-out-expo)] {{ $active ? 'scale-x-100' : 'scale-x-0' }}"
+                            <span class="absolute inset-x-2 -bottom-px xl:inset-x-3 2xl:inset-x-4 h-0.5 origin-right bg-clay-500 transition-transform duration-300 ease-[var(--ease-out-expo)] {{ $active ? 'scale-x-100' : 'scale-x-0' }}"
                                   :class="openMenu === '{{ $item['route'] }}' && 'scale-x-100'"></span>
                         </a>
                     </div>
@@ -161,7 +167,7 @@
                 @endif
 
                 <a href="{{ route('contact') }}"
-                   class="hidden items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition lg:flex"
+                   class="hidden items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition xl:flex"
                    :class="onDark ? 'bg-clay-500 text-white hover:bg-clay-400' : 'bg-ink-900 text-sand-50 hover:bg-clay-600'">
                     {{ __('site.actions.quote') }}
                 </a>

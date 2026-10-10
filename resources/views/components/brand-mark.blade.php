@@ -1,16 +1,30 @@
-@php $logo = \App\Models\SiteMedia::url('brand.logo'); @endphp
+@php
+    $logo = \App\Models\SiteMedia::url('brand.logo');
+
+    /*
+    | اندازه‌ی پیش‌فرض فقط وقتی که صدازننده اندازه نداده.
+    |
+    | merge کلاس‌ها را کنار هم می‌گذارد و نه جایگزین: «h-10 w-10» ِ پیش‌فرض
+    | و «h-14» ِ صدازننده هر دو می‌نشستند و برنده را ترتیبِ CSS ِ ساخته‌شده
+    | تعیین می‌کرد، نه نیتِ صدازننده.
+    */
+    $sized = $attributes->has('class');
+@endphp
 
 @if($logo)
     {{--
-        لوگوی آپلودشده جای نشانه‌ی وکتوری می‌نشیند. object-contain است نه cover:
-        لوگو نباید برای پرکردن کادرِ مربع بریده شود.
+        لوگوی آپلودشده جای نشانه‌ی وکتوری می‌نشیند.
+
+        ارتفاع از صدازننده، پهنا خودکار: بیشترِ لوگوها افقی‌اند، و در کادرِ
+        مربعِ پیشین با object-contain به نوارِ باریکی کوچک می‌شدند که در هدر
+        اصلاً دیده نمی‌شد.
     --}}
     <img src="{{ $logo }}" alt="{{ config('kian.brand.name') }}"
-         {{ $attributes->merge(['class' => 'h-10 w-10 object-contain']) }}>
+         {{ $sized ? $attributes->class('object-contain') : $attributes->merge(['class' => 'h-10 w-auto object-contain']) }}>
 @else
 
 {{-- نشانه‌ی برند: مقطع یک بلوک سفالی با حفره‌های عمودی --}}
-<svg {{ $attributes->merge(['class' => 'h-10 w-10']) }} viewBox="0 0 40 40" fill="none" role="img"
+<svg {{ $sized ? $attributes->class('aspect-square') : $attributes->merge(['class' => 'h-10 w-10']) }} viewBox="0 0 40 40" fill="none" role="img"
      aria-label="{{ config('kian.brand.name') }}">
     <rect x="1.25" y="1.25" width="37.5" height="37.5" rx="6" fill="#B4552D"/>
     <rect x="1.25" y="1.25" width="37.5" height="37.5" rx="6" fill="url(#kian-mark-grad)" fill-opacity=".55"/>
