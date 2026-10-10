@@ -9,7 +9,7 @@
                 </p>
                 <div class="mt-9 flex flex-wrap justify-center gap-3">
                     <x-cta :href="route('home')" variant="dark">{{ __('site.nav.home') }}</x-cta>
-                    <x-cta href="tel:{{ config('kian.contact.phone_raw') }}" variant="ghost" icon="phone">
+                    <x-cta href="tel:{{ \App\Support\Contact::phoneTel() }}" variant="ghost" icon="phone">
                         {{ \App\Support\Brand::phone() }}
                     </x-cta>
                 </div>

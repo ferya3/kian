@@ -18,7 +18,7 @@
      class="no-print fixed inset-x-0 bottom-0 z-40 border-t border-sand-300 bg-sand-50/95 backdrop-blur-lg lg:hidden"
      style="padding-bottom: var(--safe-bottom)">
     <div class="container-page flex items-center gap-2 py-3">
-        <a href="tel:{{ config('kian.contact.phone_raw') }}"
+        <a href="tel:{{ \App\Support\Contact::phoneTel() }}"
            class="tap-icon shrink-0 rounded-xl border border-sand-300 bg-sand-100 text-ink-700 transition active:bg-sand-200"
            aria-label="{{ __('site.actions.call_sales') }}">
             <x-icon name="phone" size="20" />

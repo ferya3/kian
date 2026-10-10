@@ -115,7 +115,7 @@
                 {{ __('site.actions.finder_mobile') }}
             </a>
             <div class="grid grid-cols-2 gap-3">
-                <a href="tel:{{ config('kian.contact.phone_raw') }}"
+                <a href="tel:{{ \App\Support\Contact::phoneTel() }}"
                    class="flex items-center justify-center gap-2 rounded-xl border border-sand-300 bg-sand-50 py-3 text-sm font-semibold">
                     <x-icon name="phone" size="16" />
                     {{ __('site.actions.call') }}

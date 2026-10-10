@@ -24,27 +24,27 @@ class Schema
             'description' => config('kian.seo.default_description'),
             'address' => [
                 '@type' => 'PostalAddress',
-                'streetAddress' => config('kian.contact.address'),
-                'addressLocality' => config('kian.contact.address_locality'),
-                'addressRegion' => config('kian.contact.address_region'),
-                'postalCode' => config('kian.contact.postal_code'),
+                'streetAddress' => \App\Support\Contact::get('address'),
+                'addressLocality' => \App\Support\Contact::get('address_locality'),
+                'addressRegion' => \App\Support\Contact::get('address_region'),
+                'postalCode' => \App\Support\Contact::get('postal_code'),
                 'addressCountry' => 'IR',
             ],
             'contactPoint' => [
                 [
                     '@type' => 'ContactPoint',
-                    'telephone' => config('kian.contact.phone_raw'),
+                    'telephone' => \App\Support\Contact::phoneTel(),
                     'contactType' => 'sales',
                     'areaServed' => 'IR',
                     'availableLanguage' => ['fa', 'en'],
                 ],
                 [
                     '@type' => 'ContactPoint',
-                    'email' => config('kian.contact.technical_email'),
+                    'email' => \App\Support\Contact::get('technical_email'),
                     'contactType' => 'technical support',
                 ],
             ],
-            'sameAs' => array_values(array_filter(config('kian.social'))),
+            'sameAs' => array_values(\App\Support\Contact::social()),
         ];
     }
 
@@ -55,18 +55,18 @@ class Schema
             '@id' => url('/#factory'),
             'name' => config('kian.brand.legal_name'),
             'image' => url('/og-image.svg'),
-            'telephone' => config('kian.contact.phone_raw'),
-            'email' => config('kian.contact.email'),
+            'telephone' => \App\Support\Contact::phoneTel(),
+            'email' => \App\Support\Contact::get('email'),
             'address' => [
                 '@type' => 'PostalAddress',
-                'streetAddress' => config('kian.contact.address'),
-                'addressLocality' => config('kian.contact.address_locality'),
+                'streetAddress' => \App\Support\Contact::get('address'),
+                'addressLocality' => \App\Support\Contact::get('address_locality'),
                 'addressCountry' => 'IR',
             ],
             'geo' => [
                 '@type' => 'GeoCoordinates',
-                'latitude' => config('kian.contact.lat'),
-                'longitude' => config('kian.contact.lng'),
+                'latitude' => \App\Support\Contact::get('lat'),
+                'longitude' => \App\Support\Contact::get('lng'),
             ],
             'openingHours' => 'Sa-We 08:00-17:00',
         ];

@@ -106,18 +106,18 @@ class BrandTest extends TestCase
     {
         $page = $this->get(route('contact'))->assertOk();
 
-        $page->assertSee('tel:'.config('kian.contact.sales_phone_raw'), false)
+        $page->assertSee('tel:'.\App\Support\Contact::salesPhoneTel(), false)
             ->assertSee(\App\Support\Brand::salesPhone(), false)
             ->assertSee(__('site.contact.extension', ['number' => \App\Support\Brand::salesExtension()]), false);
 
-        $this->assertStringContainsString(',,', config('kian.contact.sales_phone_raw'),
+        $this->assertStringContainsString(',,', \App\Support\Contact::salesPhoneTel(),
             'مکث لازم است، وگرنه رقم‌های داخلی پیش از وصل‌شدن فرستاده می‌شوند.');
     }
 
     /** بی داخلی، پرانتزِ خالی نباید بماند. */
     public function test_without_an_extension_nothing_is_shown(): void
     {
-        config(['kian.contact.sales_extension' => '']);
+        \App\Models\Setting::put(\App\Support\Contact::PREFIX.'sales_extension', '', 'contact');
 
         $this->assertNull(\App\Support\Brand::salesExtension());
 
@@ -127,7 +127,7 @@ class BrandTest extends TestCase
     public function test_the_central_number_is_the_one_in_the_header(): void
     {
         $this->get(route('home'))->assertOk()
-            ->assertSee('tel:'.config('kian.contact.phone_raw'), false)
+            ->assertSee('tel:'.\App\Support\Contact::phoneTel().'"', false)
             ->assertSee(\App\Support\Brand::phone(), false);
     }
 

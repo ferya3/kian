@@ -38,7 +38,10 @@ class AdminResourceTest extends TestCase
                 ->get('/admin/'.$resource::$slug)
                 ->assertOk();
 
-            $record = $resource::$model::first();
+            // همان رکوردی که خودِ منبع فهرست می‌کند، نه هر ردیفِ جدول —
+            // منبعی که دامنه‌اش را محدود کرده (تنظیمات بدونِ ردیف‌های تماس)
+            // ردیفِ بیرون از دامنه را عمداً ۴۰۴ می‌دهد.
+            $record = $resource::query()->first();
 
             if ($record) {
                 $this->actingAs($this->admin)

@@ -76,6 +76,22 @@
             </a>
 
             {{--
+                اطلاعات تماس بالای منو و نه لای «سیستم»: پرکاربردترین چیزی است
+                که مدیر عوض می‌کند و کسی دنبال تلفن در «تنظیمات محتوا» نمی‌گردد.
+            --}}
+            @if(auth()->user()?->isAdmin())
+            <a href="{{ route('admin.contact') }}"
+               @class([
+                   'mb-4 flex items-center gap-3 rounded-xl px-3 py-2.5 text-[0.9375rem] font-semibold transition',
+                   'bg-clay-500 text-white' => request()->routeIs('admin.contact'),
+                   'text-sand-200/75 hover:bg-white/[0.06] hover:text-sand-50' => ! request()->routeIs('admin.contact'),
+               ])>
+                <x-icon name="phone" size="18" />
+                اطلاعات تماس
+            </a>
+            @endif
+
+            {{--
                 تصاویر ثابت سایت کنار کتابخانه می‌نشیند، نه لای گروه‌های محتوا:
                 دنبالِ «عکس هیرو» کسی در «کاتالوگ» نمی‌گردد.
             --}}

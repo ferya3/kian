@@ -19,7 +19,7 @@
                     {{ __('site.actions.consult') }}
                     <x-icon name="arrow-left" size="18" />
                 </a>
-                <a href="tel:{{ config('kian.contact.phone_raw') }}"
+                <a href="tel:{{ \App\Support\Contact::phoneTel() }}"
                    class="inline-flex items-center gap-2 rounded-full border border-white/15 px-7 py-3.5 font-semibold text-sand-100 transition hover:border-white/40">
                     <x-icon name="phone" size="18" />
                     <span class="tech">{{ Brand::phone() }}</span>
@@ -48,7 +48,7 @@
                 </li>
                 <li class="flex gap-3">
                     <x-icon name="mail" size="18" class="mt-0.5 shrink-0 text-clay-400" />
-                    <a href="mailto:{{ config('kian.contact.email') }}" class="tech tap transition hover:text-sand-50">{{ config('kian.contact.email') }}</a>
+                    <a href="mailto:{{ \App\Support\Contact::get('email') }}" class="tech tap transition hover:text-sand-50">{{ \App\Support\Contact::get('email') }}</a>
                 </li>
             </ul>
         </div>
@@ -96,8 +96,10 @@
                     </ul>
 
                     <div class="mt-6 flex gap-2">
-                        @foreach(['instagram' => 'IG', 'linkedin' => 'in', 'aparat' => 'AP', 'telegram' => 'TG'] as $key => $label)
-                            <a href="{{ config("kian.social.$key") }}" rel="noopener noreferrer" target="_blank"
+                        {{-- فقط پیوندی که به صفحه‌ی واقعی می‌رسد؛ نشانیِ بی نامِ کاربری آیکون نمی‌گیرد --}}
+                        @foreach(\App\Support\Contact::social() as $key => $url)
+                            @php($label = ['instagram' => 'IG', 'linkedin' => 'in', 'aparat' => 'AP', 'telegram' => 'TG'][$key])
+                            <a href="{{ $url }}" rel="noopener noreferrer" target="_blank"
                                class="tech tap-icon rounded-full border border-white/12 text-micro font-semibold text-sand-200/70 transition hover:border-clay-400 hover:text-clay-300 lg:min-h-9 lg:min-w-9"
                                aria-label="{{ $key }}">{{ $label }}</a>
                         @endforeach

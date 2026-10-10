@@ -23,7 +23,7 @@
          :class="scrolled ? 'h-0' : 'h-10'">
         <div class="container-page flex h-10 items-center justify-between text-meta">
             <div class="flex items-center gap-6">
-                <a href="tel:{{ config('kian.contact.phone_raw') }}"
+                <a href="tel:{{ \App\Support\Contact::phoneTel() }}"
                    class="flex h-10 items-center gap-2 transition hover:text-clay-300">
                     <x-icon name="phone" size="15" />
                     <span class="tech">{{ Brand::phone() }}</span>

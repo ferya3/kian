@@ -146,7 +146,7 @@
                                 <x-icon name="phone" size="18" class="mt-1 shrink-0 text-clay-500" />
                                 <span>
                                     <span class="block text-meta text-ink-400">{{ __('site.contact.head_office') }}</span>
-                                    <a href="tel:{{ config('kian.contact.phone_raw') }}" class="tech tap font-bold transition hover:text-clay-600">{{ \App\Support\Brand::phone() }}</a>
+                                    <a href="tel:{{ \App\Support\Contact::phoneTel() }}" class="tech tap font-bold transition hover:text-clay-600">{{ \App\Support\Brand::phone() }}</a>
                                 </span>
                             </li>
                             {{--
@@ -155,12 +155,12 @@
                                 شدن خودش می‌گیردش. کنارش هم نوشته می‌شود،
                                 برای کسی که از تلفن ثابت زنگ می‌زند.
                             --}}
-                            @if(config('kian.contact.sales_phone'))
+                            @if(\App\Support\Contact::get('sales_phone'))
                                 <li class="flex gap-3">
                                     <x-icon name="phone" size="18" class="mt-1 shrink-0 text-clay-500" />
                                     <span>
                                         <span class="block text-meta text-ink-400">{{ __('site.contact.direct_line') }}</span>
-                                        <a href="tel:{{ config('kian.contact.sales_phone_raw') }}" class="tech tap font-bold transition hover:text-clay-600">{{ \App\Support\Brand::salesPhone() }}</a>
+                                        <a href="tel:{{ \App\Support\Contact::salesPhoneTel() }}" class="tech tap font-bold transition hover:text-clay-600">{{ \App\Support\Brand::salesPhone() }}</a>
                                         @if($extension = \App\Support\Brand::salesExtension())
                                             <span class="text-meta text-ink-400">{{ __('site.contact.extension', ['number' => $extension]) }}</span>
                                         @endif
@@ -172,14 +172,14 @@
                                 <x-icon name="mail" size="18" class="mt-1 shrink-0 text-clay-500" />
                                 <span>
                                     <span class="block text-meta text-ink-400">{{ __('site.contact.sales') }}</span>
-                                    <a href="mailto:{{ config('kian.contact.email') }}" class="tech tap font-bold transition hover:text-clay-600">{{ config('kian.contact.email') }}</a>
+                                    <a href="mailto:{{ \App\Support\Contact::get('email') }}" class="tech tap font-bold transition hover:text-clay-600">{{ \App\Support\Contact::get('email') }}</a>
                                 </span>
                             </li>
                             <li class="flex gap-3">
                                 <x-icon name="blueprint" size="18" class="mt-1 shrink-0 text-clay-500" />
                                 <span>
                                     <span class="block text-meta text-ink-400">{{ __('site.contact.technical') }}</span>
-                                    <a href="mailto:{{ config('kian.contact.technical_email') }}" class="tech tap font-bold transition hover:text-clay-600">{{ config('kian.contact.technical_email') }}</a>
+                                    <a href="mailto:{{ \App\Support\Contact::get('technical_email') }}" class="tech tap font-bold transition hover:text-clay-600">{{ \App\Support\Contact::get('technical_email') }}</a>
                                 </span>
                             </li>
                             <li class="flex gap-3">

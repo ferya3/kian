@@ -27,6 +27,17 @@ class SettingResource extends Resource
 
     public static string $orderDir = 'asc';
 
+    /**
+     * ردیف‌های تماس اینجا نیستند؛ صفحه‌ی خودشان را دارند.
+     *
+     * اگر در این فهرست هم بودند، از فرمی بی اعتبارسنجی ویرایش می‌شدند —
+     * شماره‌ای با حرف، ایمیلی بی @ — و از همان راه روی سایت می‌نشستند.
+     */
+    public static function query(): \Illuminate\Database\Eloquent\Builder
+    {
+        return parent::query()->where('key', 'not like', \App\Support\Contact::PREFIX.'%');
+    }
+
     public static function searchable(): array
     {
         return ['key', 'value'];

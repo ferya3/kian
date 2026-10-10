@@ -35,36 +35,36 @@ class Brand
 
     public static function address(): string
     {
-        return static::value('contact.address');
+        return Contact::get('address');
     }
 
     public static function workingHours(): string
     {
-        return static::value('contact.working_hours');
+        return Contact::get('working_hours');
     }
 
     /** شماره‌ی نمایشی — با ارقامِ خطِ زبان جاری. */
     public static function phone(): string
     {
-        return Jalali::digits(config('kian.contact.phone'));
+        return Jalali::digits(Contact::get('phone'));
     }
 
     public static function salesPhone(): string
     {
-        return Jalali::digits(config('kian.contact.sales_phone'));
+        return Jalali::digits(Contact::get('sales_phone'));
     }
 
     /** داخلیِ خطِ مستقیم — خالی باشد یعنی خط داخلی ندارد. */
     public static function salesExtension(): ?string
     {
-        $extension = trim((string) config('kian.contact.sales_extension'));
+        $extension = Contact::get('sales_extension');
 
         return $extension === '' ? null : Jalali::digits($extension);
     }
 
     public static function postalCode(): string
     {
-        return Jalali::digits(config('kian.contact.postal_code'));
+        return Jalali::digits(Contact::get('postal_code'));
     }
 
     /** سالِ تأسیس، در تقویمِ زبانِ جاری. */

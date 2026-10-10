@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\ActivityLogController;
+use App\Http\Controllers\Admin\ContactSettingsController;
 use App\Http\Controllers\Admin\AuthController as AdminAuth;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\MediaController;
@@ -64,6 +65,13 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('activity', ActivityLogController::class)
             ->middleware('admin:admin')
             ->name('activity');
+
+        Route::get('contact', [ContactSettingsController::class, 'show'])
+            ->middleware('admin:admin')
+            ->name('contact');
+        Route::put('contact', [ContactSettingsController::class, 'update'])
+            ->middleware('admin:admin')
+            ->name('contact.update');
 
         Route::get('{resource}', [ResourceController::class, 'index'])->name('resource.index');
         Route::get('{resource}/create', [ResourceController::class, 'create'])->name('resource.create');

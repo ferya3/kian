@@ -42,8 +42,12 @@ return [
         | انگلیسی 021. پیش‌تر ارقام فارسی همین‌جا نوشته شده بودند و در نسخه‌ی
         | انگلیسی هم فارسی می‌ماندند.
         */
+        /*
+        | این‌ها فقط پیش‌فرض‌اند؛ مقدارِ واقعی از «پنل ← اطلاعات تماس» می‌آید
+        | (App\Support\Contact). نشانیِ tel: هم دیگر جدا نوشته نمی‌شود و از
+        | روی همین شماره ساخته می‌شود.
+        */
         'phone' => env('KIAN_PHONE', '045-3182'),
-        'phone_raw' => env('KIAN_PHONE_RAW', '+98453182'),
 
         /*
         | خطِ مستقیم، با داخلی.
@@ -54,7 +58,6 @@ return [
         */
         'sales_phone' => env('KIAN_SALES_PHONE', '045-33338748'),
         'sales_extension' => env('KIAN_SALES_EXTENSION', '106'),
-        'sales_phone_raw' => env('KIAN_SALES_PHONE_RAW', '+984533338748,,106'),
         'email' => env('KIAN_EMAIL', 'info@kianbehsaz.ir'),
         'technical_email' => env('KIAN_TECH_EMAIL', 'technical@kianbehsaz.ir'),
         'address' => env('KIAN_ADDRESS', 'اصفهان، شهرک صنعتی مبارکه، خیابان صنعت ۱۲، کارخانه کیان بهساز'),
