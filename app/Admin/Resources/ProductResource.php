@@ -42,6 +42,33 @@ class ProductResource extends Resource
         return route('products.show', $record);
     }
 
+    public static bool $duplicable = true;
+
+    public static function uniqueColumns(): array
+    {
+        return ['slug', 'sku'];
+    }
+
+    /**
+     * کپیِ محصول، همان خانواده و جای دیگری در جدول ابعاد.
+     *
+     * می‌آید: نقطه‌های مقطع، و پیوند به راهکارها و پروژه‌ها — همان بلوک در
+     * اندازه‌ی دیگر، در همان راهکارها به کار می‌رود.
+     *
+     * نمی‌آید: دیتاشیت‌ها، چون مالِ همان اندازه‌اند و کپی‌شان یعنی فایلِ غلط
+     * برای اندازه‌ی تازه؛ و عرضه‌های فروشگاه، چون قیمت تصمیمِ فروشنده است و
+     * نه نتیجه‌ی کلیکِ مدیر.
+     */
+    public static function afterDuplicate(Model $copy, Model $original): void
+    {
+        foreach ($original->cavities()->get() as $cavity) {
+            $copy->cavities()->create($cavity->replicate(['product_id'])->getAttributes());
+        }
+
+        $copy->solutions()->sync($original->solutions()->pluck('solutions.id'));
+        $copy->projects()->sync($original->projects()->pluck('projects.id'));
+    }
+
     public static function fields(): array
     {
         // بخش‌ها به ترتیب اعلام ساخته می‌شوند؛ فرم ۳۵ فیلدی محصول این‌طور به

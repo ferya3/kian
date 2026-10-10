@@ -78,6 +78,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('{resource}', [ResourceController::class, 'store'])->name('resource.store');
         Route::get('{resource}/{id}/edit', [ResourceController::class, 'edit'])->name('resource.edit');
         Route::put('{resource}/{id}', [ResourceController::class, 'update'])->name('resource.update');
+        Route::post('{resource}/{id}/duplicate', [ResourceController::class, 'duplicate'])->name('resource.duplicate');
         Route::delete('{resource}/{id}', [ResourceController::class, 'destroy'])->name('resource.destroy');
     });
 });

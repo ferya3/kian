@@ -13,8 +13,10 @@ use App\Support\Locales;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
 /**
@@ -158,6 +160,133 @@ class ResourceController extends Controller
                 $values,
             ));
         }
+    }
+
+    /**
+     * تکثیر: همه‌ی میدان‌ها و ترجمه‌ها، با ستون‌های یکتای تازه و فایل‌های جدا.
+     *
+     * فایل‌ها کپیِ واقعی می‌شوند و نه ارجاع به همان فایل: جایگزین‌کردن یا
+     * برداشتنِ تصویر، فایلِ قبلی را از دیسک پاک می‌کند. اگر کپی و اصل یک
+     * فایل داشتند، عوض‌کردنِ عکسِ کپی عکسِ اصل را هم می‌برد.
+     */
+    public function duplicate(string $resource, string $id)
+    {
+        $class = $this->resolve($resource);
+        abort_unless($class::$duplicable && $class::$creatable, 404);
+
+        $original = $class::findOrFail($id);
+
+        // بیرون از تراکنش، تا اگر هر گامی شکست خورد بدانیم کدام فایل‌ها را پاک کنیم
+        $copied = [];
+
+        try {
+            $copy = DB::transaction(function () use ($class, $original, &$copied) {
+                // replicate رابطه‌های بارشده را هم می‌آورد — ترجمه‌های اصل نباید در حافظه‌ی کپی بمانند
+                $copy = $original->replicate()->setRelations([]);
+
+                foreach ($class::uniqueColumns() as $column) {
+                    if (filled($value = $original->getAttributes()[$column] ?? null)) {
+                        $copy->setAttribute($column, $this->nextFree($original, $column, (string) $value));
+                    }
+                }
+
+                foreach ($class::fields() as $field) {
+                    if (! in_array($field->type, ['image', 'file', 'gallery'], true)) {
+                        continue;
+                    }
+
+                    $value = $original->getAttributes()[$field->key] ?? null;
+
+                    if ($field->type === 'gallery') {
+                        $paths = is_array($value) ? $value : (json_decode((string) $value, true) ?: []);
+                        $copy->setAttribute($field->key, array_values(array_filter(
+                            array_map(fn ($p) => $this->copyFile($field, $p, $copied), $paths)
+                        )));
+                    } elseif (filled($value)) {
+                        $copy->setAttribute($field->key, $this->copyFile($field, $value, $copied));
+                    }
+                }
+
+                $class::prepareDuplicate($copy, $original);
+
+                $copy->save();
+
+                if (in_array(HasTranslations::class, class_uses_recursive($original), true)) {
+                    foreach ($original->translations()->get() as $translation) {
+                        $copy->translations()->create($translation->only(['locale', 'field', 'value']));
+                    }
+                }
+
+                $class::afterDuplicate($copy, $original);
+
+                return $copy;
+            });
+        } catch (\Throwable $e) {
+            // تراکنش ردیف‌ها را برگرداند؛ فایل‌های کپی‌شده را هم کسی نباید بی‌صاحب بگذارد
+            foreach ($copied as [$disk, $path]) {
+                Storage::disk($disk)->delete($path);
+            }
+
+            throw $e;
+        }
+
+        ActivityLog::record('created', $copy, [], $class::titleFor($copy));
+
+        $notice = "کپیِ «{$class::titleFor($original)}» ساخته شد. میدان‌هایی که فرق دارند را عوض کنید";
+        $notice .= array_key_exists('is_active', $copy->getAttributes())
+            ? ' و «فعال» را بزنید — تا آن موقع روی سایت دیده نمی‌شود.'
+            : '.';
+
+        return redirect()->to($class::editUrl($copy))->with('success', $notice);
+    }
+
+    /**
+     * نخستین مقدارِ آزاد: slug-2، slug-3، …
+     *
+     * پسوندِ عددی فقط وقتی برداشته می‌شود که خودِ رکورد کپیِ رکوردِ دیگری
+     * باشد — یعنی بی‌پسوندش هم وجود داشته باشد. وگرنه «partition-block-8»
+     * که عددش اندازه‌ی بلوک است، «partition-block» می‌شد و کپی‌اش
+     * «partition-block-2».
+     */
+    protected function nextFree(Model $record, string $column, string $value): string
+    {
+        $query = fn () => $record->newQuery()->withoutGlobalScopes();
+        $base = $value;
+
+        if (preg_match('/^(.+)-\d+$/', $value, $m) && $query()->where($column, $m[1])->exists()) {
+            $base = $m[1];
+        }
+
+        $n = 2;
+
+        while ($query()->where($column, "{$base}-{$n}")->exists()) {
+            $n++;
+        }
+
+        return "{$base}-{$n}";
+    }
+
+    /**
+     * یک فایل را کنارِ خودش کپی می‌کند و نشانیِ تازه را برمی‌گرداند.
+     * فایلی که روی دیسک نیست، کپی نمی‌شود — نشانیِ شکسته به کپی منتقل نمی‌شود.
+     *
+     * @param  array<int, array{0: string, 1: string}>  $copied
+     */
+    protected function copyFile(Field $field, ?string $path, array &$copied): ?string
+    {
+        $disk = Storage::disk($field->disk);
+
+        if (blank($path) || ! $disk->exists($path)) {
+            return null;
+        }
+
+        $extension = pathinfo($path, PATHINFO_EXTENSION);
+        $target = trim(dirname($path), './').'/'.Str::random(40).($extension ? ".{$extension}" : '');
+
+        $disk->copy($path, $target);
+        $copied[] = [$field->disk, $target];
+
+        return $target;
     }
 
     public function destroy(string $resource, string $id)

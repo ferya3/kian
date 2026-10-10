@@ -33,6 +33,15 @@ abstract class Resource
 
     public static bool $deletable = true;
 
+    /**
+     * دکمه‌ی «تکثیر».
+     *
+     * برای رکوردهایی که چند تا از یک خانواده‌اند و فقط در چند میدان فرق
+     * دارند — بلوک تیغه‌ای ۸ در دو اندازه. بی این، مدیر باید ده‌ها میدان را
+     * از نو پر می‌کرد.
+     */
+    public static bool $duplicable = false;
+
     /** فقط مدیر کل — نه ویرایشگر محتوا. */
     public static bool $adminOnly = false;
 
@@ -188,6 +197,51 @@ abstract class Resource
     public static function destroyUrl(Model $record): string
     {
         return route('admin.resource.destroy', [static::$slug, $record->getKey()]);
+    }
+
+    public static function duplicateUrl(Model $record): string
+    {
+        return route('admin.resource.duplicate', [static::$slug, $record->getKey()]);
+    }
+
+    /**
+     * ستون‌های یکتا — در نسخه‌ی کپی پسوند «-۲» و «-۳» و… می‌گیرند.
+     *
+     * @return array<int, string>
+     */
+    public static function uniqueColumns(): array
+    {
+        return ['slug'];
+    }
+
+    /**
+     * نسخه‌ی کپی، پیش از نخستین ذخیره.
+     *
+     * پیش‌فرض: عنوان «(کپی)» می‌گیرد تا در فهرست با اصل اشتباه نشود، و
+     * اگر ستونِ is_active دارد پنهان متولد می‌شود — دو رکوردِ یکسان نباید
+     * حتی یک لحظه روی سایت کنار هم بنشینند.
+     */
+    public static function prepareDuplicate(Model $copy, Model $original): void
+    {
+        // مقدارِ خامِ ستون، نه accessorِ ترجمه — وگرنه در پنلِ انگلیسی، ترجمه به ستونِ فارسی می‌نشست
+        $attributes = $original->getAttributes();
+
+        foreach (['name', 'title'] as $column) {
+            if (filled($attributes[$column] ?? null)) {
+                $copy->setAttribute($column, $attributes[$column].' (کپی)');
+                break;
+            }
+        }
+
+        if (array_key_exists('is_active', $copy->getAttributes())) {
+            $copy->setAttribute('is_active', false);
+        }
+    }
+
+    /** پس از ذخیره‌ی کپی — برای رابطه‌ها، مثل حفره‌های مقطع یا راهکارها. */
+    public static function afterDuplicate(Model $copy, Model $original): void
+    {
+        //
     }
 
     /** پیوند «مشاهده در سایت» برای رکوردهایی که صفحه‌ی عمومی دارند. */

@@ -50,6 +50,18 @@
             <x-icon name="chevron-left" size="16" class="rotate-180" />
             <span class="hidden sm:inline">بازگشت</span>
         </a>
+        @if(! $creating && $resource::$duplicable && $resource::$creatable)
+            {{--
+                فرمِ تکثیر بیرون از فرمِ ویرایش است (form= همان را نشانه می‌گیرد):
+                فرمِ تودرتو در HTML معتبر نیست و دکمه، فرمِ بیرونی را ارسال می‌کرد.
+            --}}
+            <button type="submit" form="duplicate-record"
+                    class="tap gap-2 rounded-xl border border-sand-300 px-4 text-meta font-semibold text-ink-600 transition hover:bg-sand-200"
+                    title="یک کپی از همین بسازید و فقط میدان‌های متفاوت را عوض کنید">
+                <x-icon name="copy" size="15" />
+                <span class="hidden sm:inline">تکثیر</span>
+            </button>
+        @endif
         @if(! $creating && ($url = $resource::publicUrl($record)))
             <a href="{{ $url }}" target="_blank" rel="noopener"
                class="tap gap-2 rounded-xl border border-sand-300 px-4 text-meta font-semibold text-ink-600 transition hover:bg-sand-200">
@@ -58,6 +70,12 @@
             </a>
         @endif
     </x-slot:actions>
+
+    @if(! $creating && $resource::$duplicable && $resource::$creatable)
+        <form id="duplicate-record" method="POST" action="{{ $resource::duplicateUrl($record) }}" class="hidden">
+            @csrf
+        </form>
+    @endif
 
     <form method="POST" action="{{ $action }}" enctype="multipart/form-data" class="max-w-4xl">
         @csrf
