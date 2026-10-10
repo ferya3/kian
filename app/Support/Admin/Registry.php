@@ -7,6 +7,8 @@ use App\Admin\Resources\CertificateResource;
 use App\Admin\Resources\ContactMessageResource;
 use App\Admin\Resources\DistributorResource;
 use App\Admin\Resources\LocationResource;
+use App\Admin\Resources\MilestoneResource;
+use App\Admin\Resources\PersonResource;
 use App\Admin\Resources\DocumentResource;
 use App\Admin\Resources\FactorySectionResource;
 use App\Admin\Resources\FaqResource;
@@ -49,6 +51,8 @@ class Registry
             ProcessStepResource::class,
             FactorySectionResource::class,
             StatResource::class,
+            MilestoneResource::class,
+            PersonResource::class,
             CertificateResource::class,
             SiteMediaResource::class,
             LocationResource::class,

@@ -50,6 +50,7 @@ class SitemapController extends Controller
             ['technical.faq', 0.6, 'monthly'],
             ['articles.index', 0.7, 'weekly'],
             ['about', 0.6, 'yearly'],
+            ['biography', 0.5, 'yearly'],
             ['distributors', 0.6, 'monthly'],
             ['contact', 0.6, 'yearly'],
         ] as [$name, $priority, $freq]) {

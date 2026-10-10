@@ -55,6 +55,7 @@ class SettingResource extends Resource
         'hero_eyebrow' => 'برچسب بالای هیرو',
         'hero_video' => 'مسیر ویدئوی هیرو',
         'about_lead' => 'متن ابتدای صفحه درباره ما',
+        'biography_lead' => 'متن ابتدای صفحه بیوگرافی',
     ];
 
     public static function fields(): array

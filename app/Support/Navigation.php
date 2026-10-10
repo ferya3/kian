@@ -44,7 +44,7 @@ class Navigation
             ],
             [
                 'route' => 'about',
-                'children' => ['about', 'distributors', 'contact'],
+                'children' => ['about', 'biography', 'distributors', 'contact'],
             ],
         ];
 

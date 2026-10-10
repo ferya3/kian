@@ -13,6 +13,7 @@
 */
 
 use App\Http\Controllers\AboutController;
+use App\Http\Controllers\BiographyController;
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\DistributorController;
@@ -69,6 +70,7 @@ Route::get('/articles/{article}', [ArticleController::class, 'show'])->name('art
 
 /* شرکت */
 Route::get('/about', AboutController::class)->name('about');
+Route::get('/about/biography', BiographyController::class)->name('biography');
 Route::get('/distributors', DistributorController::class)->name('distributors');
 Route::get('/contact', [ContactController::class, 'show'])->name('contact');
 Route::post('/contact', [ContactController::class, 'store'])

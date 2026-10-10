@@ -57,6 +57,7 @@ return [
             'technical_faq' => 'FAQ',
             'articles_index' => 'Articles',
             'about' => 'About us',
+            'biography' => 'Biography',
             'distributors' => 'Distributors',
             'contact' => 'Contact',
         ],
@@ -644,6 +645,22 @@ return [
         ],
     ],
 
+    'biography' => [
+        'lead' => 'The story of a plant that began with one kiln and still tests every batch before it is loaded.',
+        'intro_title' => 'Who we are',
+        'intro_1' => 'Kian Behsaz makes ceramic blocks — partition, wall and roof blocks, in 8, 13, 20, 25 and 40 cm. We started with a single traditional kiln, at a time when most of the market did not yet see ceramic block as a replacement for brick.',
+        'intro_2' => 'What brought us from that day to this is not the size of the line but a habit: we do not quote a number we have not tested, and we do not load a block that has not been tested.',
+        'timeline_title' => 'The journey',
+        'timeline_lead' => 'The milestones that brought the plant to where it is today.',
+        'today' => 'Today',
+        'people_title' => 'Founders and management',
+        'people_lead' => 'The people behind every production batch.',
+        'cta_title' => 'See the plant up close',
+        'cta_text' => 'The production line, kiln and laboratory can be visited by appointment.',
+        'cta_visit' => 'Request a visit',
+        'cta_about' => 'About the company',
+    ],
+
     'factory' => [
         'lead' => 'Mobarakeh Industrial Estate: two parallel extrusion lines, a hundred-and-ten-metre tunnel kiln, and a laboratory that signs off every batch before it is loaded.',
         'certificates' => 'Certificates and approvals',
@@ -874,6 +891,7 @@ return [
         'crumb_downloads' => 'Downloads',
 
         'about' => ['title' => 'About us', 'description' => 'Over two decades of engineered ceramic block: from a single traditional kiln to a fully automated line producing a hundred and twenty thousand tonnes a year.'],
+        'biography' => ['title' => 'Kian Behsaz biography — the story of a ceramic block plant', 'description' => 'From a single traditional kiln in 2001 to two parallel production lines: the Kian Behsaz story, its milestones and the people who built it.'],
         'articles' => ['title' => 'Technical knowledge — articles on ceramic and building', 'description' => 'Technical articles on thermal insulation, building codes, material comparisons, laying ceramic walls and saving energy.'],
         'contact' => ['title' => 'Contact us and request a quote', 'description' => 'Request a proforma invoice, technical advice, a distribution partnership or a factory visit.'],
         'distributors' => ['title' => 'Distributors nationwide', 'description' => 'Official ceramic block distributors by province, with phone numbers and addresses.'],
