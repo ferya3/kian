@@ -267,23 +267,54 @@ class ResourceController extends Controller
     }
 
     /**
-     * یک فایل را کنارِ خودش کپی می‌کند و نشانیِ تازه را برمی‌گرداند.
-     * فایلی که روی دیسک نیست، کپی نمی‌شود — نشانیِ شکسته به کپی منتقل نمی‌شود.
+     * تصویرِ کپی همان تصویرِ اصل است — همیشه.
+     *
+     * فایلِ دیسکِ پنل کپیِ واقعی می‌شود، چون جایگزین‌کردنِ تصویر فایلِ قبلی را
+     * پاک می‌کند و با فایلِ مشترک، عوض‌کردنِ عکسِ کپی عکسِ اصل را هم می‌برد.
+     *
+     * هر چیزِ دیگری همان نشانی را نگه می‌دارد و نه هیچ:
+     * - نشانیِ بیرونی یا مسیرِ مطلق (/images/…) — Media::url هر دو را
+     *   همان‌طور نشان می‌دهد و فایلِ دیسکِ ما نیستند، پس پنل هرگز پاکشان
+     *   نمی‌کند و ارجاعِ مشترک بی‌خطر است.
+     * - مسیری که روی دیسک پیدا نشد — اصل هم همین را نشان می‌دهد، و پاک‌کردنِ
+     *   فایلی که نیست کاری نمی‌کند.
+     *
+     * نسخه‌ی اول هر دو را خالی می‌کرد و کپی بی‌عکس، یا با بلوکِ وکتوری،
+     * درمی‌آمد.
      *
      * @param  array<int, array{0: string, 1: string}>  $copied
      */
     protected function copyFile(Field $field, ?string $path, array &$copied): ?string
     {
-        $disk = Storage::disk($field->disk);
-
-        if (blank($path) || ! $disk->exists($path)) {
+        if (blank($path)) {
             return null;
         }
 
-        $extension = pathinfo($path, PATHINFO_EXTENSION);
-        $target = trim(dirname($path), './').'/'.Str::random(40).($extension ? ".{$extension}" : '');
+        if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://') || str_starts_with($path, '/')) {
+            return $path;
+        }
 
-        $disk->copy($path, $target);
+        $disk = Storage::disk($field->disk);
+
+        if (! $disk->exists($path)) {
+            return $path;
+        }
+
+        $extension = pathinfo($path, PATHINFO_EXTENSION);
+        $folder = dirname($path);
+        $target = ($folder === '.' ? '' : $folder.'/').Str::random(40).($extension ? ".{$extension}" : '');
+
+        /*
+        | copy روی دیسکِ محلی با throw=false فقط false برمی‌گرداند — مثلاً وقتی
+        | پوشه نوشتنی نیست. بی این بررسی، کپی به فایلی اشاره می‌کرد که ساخته
+        | نشده و عکسش بی‌صدا می‌شکست.
+        */
+        if (! $disk->copy($path, $target) || ! $disk->exists($target)) {
+            throw new \RuntimeException(
+                "تصویرِ «{$field->label}» کپی نشد. دسترسیِ نوشتن روی storage/app/{$field->disk} را بررسی کنید."
+            );
+        }
+
         $copied[] = [$field->disk, $target];
 
         return $target;

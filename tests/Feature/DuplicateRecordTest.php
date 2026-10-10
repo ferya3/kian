@@ -9,6 +9,7 @@ use App\Models\Offer;
 use App\Models\Product;
 use App\Models\User;
 use App\Models\Vendor;
+use App\Support\Media;
 use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -214,15 +215,88 @@ class DuplicateRecordTest extends TestCase
         Storage::disk('public')->assertExists($path);
     }
 
-    /** نشانیِ تصویری که فایلش روی دیسک نیست، به کپی منتقل نمی‌شود. */
-    public function test_a_missing_image_file_is_not_carried_over(): void
+    /**
+     * کپی همیشه همان عکسِ اصل را نشان می‌دهد.
+     *
+     * نسخه‌ی اول هر تصویری را که فایلش روی دیسکِ پنل پیدا نمی‌شد خالی می‌کرد:
+     * نشانیِ بیرونی، مسیرِ مطلق، یا فایلی که جای دیگری بود. کپی بی‌عکس — یا با
+     * بلوکِ وکتوری — درمی‌آمد و اصل عکس داشت.
+     */
+    public function test_a_picture_that_is_not_a_panel_file_keeps_the_same_address(): void
+    {
+        foreach ([
+            'https://cdn.example.com/blocks/b8.jpg',
+            '/images/products/b8.jpg',
+            'products/elsewhere.jpg',      // روی این دیسک نیست
+        ] as $path) {
+            $original = $this->original();
+            $original->update(['hero_image' => $path, 'section_image' => $path, 'gallery' => [$path]]);
+
+            $this->duplicate($original);
+
+            $copy = $this->latestCopy();
+
+            $this->assertSame($path, $copy->hero_image, "عکسِ اصلیِ کپی برای «{$path}»");
+            $this->assertSame($path, $copy->section_image);
+            $this->assertSame([$path], $copy->gallery);
+
+            // و روی سایت همان عکس دیده می‌شود
+            $copy->update(['is_active' => true]);
+            $this->get(route('products.show', $copy))->assertOk()
+                ->assertSee(e(Media::url($path)), false);
+        }
+    }
+
+    /** روی سایت، کارت و صفحه‌ی کپی دقیقاً همان عکسِ اصل را دارند. */
+    public function test_the_copy_looks_the_same_on_the_site(): void
     {
         $original = $this->original();
-        $original->update(['hero_image' => 'products/gone.jpg']);
+        $path = UploadedFile::fake()->image('block.jpg', 800, 500)->store('admin/products', 'public');
+        $original->update(['hero_image' => $path]);
 
         $this->duplicate($original);
 
-        $this->assertNull($this->latestCopy()->hero_image);
+        $copy = $this->latestCopy();
+        $copy->update(['is_active' => true]);
+
+        $this->assertSame(
+            Storage::disk('public')->get($path),
+            Storage::disk('public')->get($copy->hero_image),
+            'محتوای فایلِ کپی باید همان عکس باشد.'
+        );
+
+        $this->get(route('products.show', $copy))->assertOk()
+            ->assertSee(e(Media::url($copy->hero_image)), false);
+    }
+
+    /**
+     * اگر کپیِ فایل شکست بخورد، کپیِ محصول ساخته نمی‌شود.
+     *
+     * پیش‌تر copy() ِ ناموفق فقط false برمی‌گرداند و کپی به فایلی اشاره
+     * می‌کرد که وجود نداشت — عکسِ شکسته، بی هیچ خطایی.
+     */
+    public function test_a_failed_file_copy_stops_the_whole_duplicate(): void
+    {
+        $original = $this->original();
+        $path = UploadedFile::fake()->image('block.jpg')->store('admin/products', 'public');
+        $original->update(['hero_image' => $path]);
+
+        $before = Product::count();
+
+        $disk = \Mockery::mock(Storage::disk('public'))->makePartial();
+        $disk->shouldReceive('copy')->andReturn(false);
+        Storage::set('public', $disk);
+
+        $this->withoutExceptionHandling();
+
+        try {
+            $this->duplicate($original);
+            $this->fail('باید خطا می‌داد.');
+        } catch (\RuntimeException $e) {
+            $this->assertStringContainsString('کپی نشد', $e->getMessage());
+        }
+
+        $this->assertSame($before, Product::count());
     }
 
     public function test_the_button_is_on_the_list_and_the_edit_page(): void
