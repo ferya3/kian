@@ -51,9 +51,15 @@ if [ "$SKIP_SYSTEM" != "1" ]; then
 
     # PHP 8.4 از مخزن ondrej
     if ! command -v "php$PHP_VERSION" >/dev/null; then
-        add-apt-repository -y ppa:ondrej/php >/dev/null 2>&1
-        apt-get update -qq
+        add-apt-repository -y ppa:ondrej/php >/dev/null 2>&1 || true
+        apt-get update -qq || true
     fi
+    # اوبونتو ۲۴ خودش PHP 8.3 دارد ولی کتابخانه‌های سایت 8.4 می‌خواهند. اگر
+    # مخزن در دسترس نبود، همین‌جا با پیامِ روشن بایستیم — نه ده خط پایین‌تر
+    # با «Unable to locate package».
+    apt-cache show "php$PHP_VERSION-fpm" >/dev/null 2>&1 || die "PHP $PHP_VERSION پیدا نشد: مخزنِ ppa:ondrej/php از این سرور در دسترس نیست.
+  آزمایش:  curl -sI https://ppa.launchpadcontent.net | head -1
+  اگر جواب نداد، DNS یا دسترسیِ بیرونیِ سرور را درست کنید و دوباره اجرا کنید."
 
     apt-get install -y -qq \
         "php$PHP_VERSION-fpm" "php$PHP_VERSION-cli" "php$PHP_VERSION-mbstring" \

@@ -202,24 +202,34 @@ Get-FileHash kian-backup-*.tar.gz                # ویندوز (PowerShell)
 ### بازگردانی روی سرور تازه
 
 ```bash
-# ۱) نصبِ خالی
+# ۱) از دستگاهِ خودتان، پشتیبان را به سرور بفرستید (در PowerShell ِ ویندوز هم کار می‌کند)
+scp kian-backup-*.tar.gz root@SERVER_IP:/root/
+
+# ۲) روی سرور: نصبِ خالی
 curl -fsSL https://raw.githubusercontent.com/ferya3/kian/claude/loving-babbage-3kd7tm/deploy/install.sh | sudo bash
 
-# ۲) جای‌گذاریِ داده
-tar -xzf kian-backup-*.tar.gz
-cd kian-backup-*/
-sudo install -o www-data -g www-data -m 664 database.sqlite /var/www/kian/database/database.sqlite
-sudo install -o www-data -g www-data -m 644 .env            /var/www/kian/.env
-sudo tar -xzf uploads.tar.gz -C /var/www/kian/storage/app
-sudo chown -R www-data:www-data /var/www/kian/storage
-
-# ۳) APP_URL را با نشانیِ سرورِ تازه یکی کنید، بعد کش را نو کنید
-sudo -u www-data php /var/www/kian/artisan optimize:clear
-sudo -u www-data php /var/www/kian/artisan optimize
+# ۳) روی سرور: بازگردانی
+curl -fsSL https://raw.githubusercontent.com/ferya3/kian/claude/loving-babbage-3kd7tm/deploy/restore.sh \
+  | sudo APP_URL=http://SERVER_IP bash -s -- /root/kian-backup-*.tar.gz
 ```
 
-`APP_KEY` باید همان کلیدِ پشتیبان بماند. با کلیدِ تازه سایت بالا می‌آید ولی
+`restore.sh` پیش از دست‌زدن به سایت، سالم‌بودنِ دیتابیسِ پشتیبان را می‌سنجد؛
+دیتابیس، ‎`.env` و عکس‌ها را جای‌گذاری می‌کند؛ `APP_URL` را به نشانیِ سرورِ تازه
+برمی‌گرداند؛ و `migrate` می‌زند تا جدول‌هایی که پس از ساختِ پشتیبان به کد اضافه
+شده‌اند (نشانی‌ها، بیوگرافی، …) ساخته شوند — بی آن، صفحه‌ها ۵۰۰ می‌دهند. اگر
+سایت پس از بازگردانی بالا نیاید، همه‌چیز به حالتِ پیش برمی‌گردد. در پایان
+می‌گوید چند عکس از دیتابیس روی دیسک پیدا شد و کدام‌ها گم‌اند.
+
+`APP_KEY` همان کلیدِ پشتیبان می‌ماند. با کلیدِ تازه سایت بالا می‌آید ولی
 هر مقدارِ رمزنگاری‌شده‌ای که در دیتابیس هست، دیگر باز نمی‌شود.
+
+وقتی سایت با IP درست بود، دامنه را به سرورِ تازه ببرید (رکورد A، ابرِ خاکستری
+در Cloudflare) و گواهی بگیرید:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/ferya3/kian/claude/loving-babbage-3kd7tm/deploy/install.sh \
+  | sudo SKIP_SYSTEM=1 DOMAIN=example.com SSL=1 bash
+```
 
 ---
 
