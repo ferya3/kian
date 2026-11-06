@@ -129,6 +129,34 @@ class RedirectTest extends TestCase
         $this->assertSame('/fa', Redirect::guess('/something-else'));
     }
 
+    /**
+     * نشانی‌های واقعیِ سایتِ قبلی، از آرشیوِ وب.
+     *
+     * نوشته‌ی وبلاگ با «بلوک» در عنوانش پیش‌تر به محصولات می‌رفت؛ و «تیغه
+     * دیواری ۴۰» به بلوکِ سقفیِ ۴۰ — جوابِ غلطِ مطمئن، بدتر از هیچ جواب.
+     */
+    public function test_guess_follows_the_old_wordpress_structure(): void
+    {
+        $cases = [
+            '/تفاوت-بلوک-سقفی-با-بتن' => '/fa/articles',
+            '/رویداد-نمایشگاه-استان-گیلان' => '/fa/articles',
+            '/category/مقالات' => '/fa/articles',
+            '/چارت-سازمانی' => '/fa/about/biography',
+            '/kian-behsaz-agencies' => '/fa/distributors',
+            '/survey' => '/fa/contact',
+            '/en/about-us' => '/en/about',
+            '/en' => '/en',
+            '/product-category/ceiling-clay-bricks' => '/fa/products?category=roof-systems',
+            '/product/بلوک-دیواری-سفالی' => '/fa/products?category=wall-blocks',
+            '/product/بلوک-تیغه-دیواری-20-سانتی' => '/fa/products/ceramic-block-20',
+            '/product/بلوک-تیغه-دیواری-40-سانتی' => '/fa/products',
+        ];
+
+        foreach ($cases as $old => $expected) {
+            $this->assertSame($expected, Redirect::guess($old), $old);
+        }
+    }
+
     public function test_the_panel_normalises_and_rejects_duplicates_and_loops(): void
     {
         $admin = $this->admin();

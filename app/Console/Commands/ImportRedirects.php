@@ -31,7 +31,7 @@ class ImportRedirects extends Command
     protected $description = 'آوردنِ نشانی‌های سایتِ قدیم به ریدایرکت‌ها';
 
     /** نشانی‌هایی که صفحه نیستند: فایل، ساختارِ وردپرس، جستجو. */
-    protected const SKIP = '~^/(wp-admin|wp-includes|wp-content|wp-json|feed|comments|xmlrpc\.php|wp-login\.php)(/|$)|/(feed|trackback|amp|embed)$|\.(css|js|jpe?g|png|gif|webp|svg|ico|woff2?|ttf|eot|pdf|zip|xml|txt|php)$|^/\?(s|replytocom|share|amp)=~i';
+    protected const SKIP = '~^/(wp-admin|wp-includes|wp-content|wp-json|feed|comments|xmlrpc\.php|wp-login\.php)(/|$)|/(feed|trackback|amp|embed)$|\.(css|js|jpe?g|png|gif|webp|svg|ico|woff2?|ttf|eot|pdf|zip|xml|txt|php|cgi)$|^/cgi-(sys|bin)/|^/\?(s|replytocom|share|amp)=~i';
 
     public function handle(): int
     {
