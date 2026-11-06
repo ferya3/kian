@@ -157,4 +157,29 @@ class PublicPagesTest extends TestCase
         $this->assertStringContainsString(route('factory'), $hero);
     }
 
+    /**
+     * هیچ تگی دو ویژگیِ هم‌نام ندارد.
+     *
+     * مرورگر از ویژگی‌های تکراری فقط اولی را نگه می‌دارد و بقیه را بی‌صدا دور
+     * می‌ریزد. کشوی منوی موبایل دو style داشت؛ display:none ِ دومی گم می‌شد و
+     * روی گوشی، تا رسیدنِ جاوااسکریپت، منو باز روی صفحه می‌ماند.
+     */
+    public function test_no_tag_repeats_an_attribute(): void
+    {
+        foreach (['home', 'products.index', 'about', 'contact'] as $name) {
+            $html = $this->get(route($name))->assertOk()->getContent();
+
+            preg_match_all('~<[a-z][a-z0-9-]*\s[^<>]*>~is', $html, $tags);
+            foreach ($tags[0] as $tag) {
+                preg_match_all('~\s([a-z][a-z0-9:_.@-]*)=["\']~i', preg_replace('~(["\'])(?:(?!\1).)*\1~s', '$1$1', $tag), $attrs);
+                $dupes = array_keys(array_filter(array_count_values(array_map('strtolower', $attrs[1])), fn ($n) => $n > 1));
+
+                $this->assertSame([], $dupes, "ویژگیِ تکراری در صفحه‌ی {$name}: ".\Illuminate\Support\Str::limit($tag, 160));
+            }
+        }
+
+        $panel = str($this->get(route('home'))->getContent())->betweenFirst('x-ref="panel"', '>')->toString();
+        $this->assertStringContainsString('display: none', $panel);
+        $this->assertStringContainsString('x-cloak', $panel);
+    }
 }

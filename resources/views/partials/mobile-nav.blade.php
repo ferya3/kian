@@ -9,9 +9,17 @@
     <div x-show="open" x-transition.opacity.duration.250ms
          @click="hide()"
          class="fixed inset-0 z-[60] bg-ink-950/60 backdrop-blur-sm"
-         style="display: none" aria-hidden="true"></div>
+         style="display: none" x-cloak aria-hidden="true"></div>
 
-    <div x-show="open" x-ref="panel"
+    {{--
+        پنهان تا پیش از آماده‌شدنِ Alpine — هم با display:none و هم x-cloak.
+
+        پیش‌تر دو ویژگیِ style جدا داشت. مرورگر از دو ویژگیِ هم‌نام فقط اولی
+        را نگه می‌دارد، پس display:none دور ریخته می‌شد و تا رسیدنِ جاوااسکریپت
+        کشو باز روی صفحه بود؛ بعد Alpine می‌بستش — روی گوشی همان «منو باز و
+        بسته می‌شود، بعد سایت می‌آید».
+    --}}
+    <div x-show="open" x-ref="panel" x-cloak
          x-transition:enter="transition ease-[var(--ease-out-expo)] duration-400"
          x-transition:enter-start="translate-x-full"
          x-transition:enter-end="translate-x-0"
@@ -19,8 +27,7 @@
          x-transition:leave-start="translate-x-0"
          x-transition:leave-end="translate-x-full"
          class="fixed inset-y-0 right-0 z-[70] flex h-dvh w-[min(24rem,90vw)] flex-col bg-sand-50 shadow-float"
-         style="padding-top: var(--safe-top); padding-bottom: var(--safe-bottom)"
-         style="display: none"
+         style="display: none; padding-top: var(--safe-top); padding-bottom: var(--safe-bottom)"
          role="dialog" aria-modal="true" aria-label="{{ __('site.nav.panel') }}">
 
         <div class="flex h-16 shrink-0 items-center justify-between border-b border-sand-200 px-5">
