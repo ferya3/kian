@@ -5,7 +5,7 @@
 #   curl -fsSL https://raw.githubusercontent.com/ferya3/kian/claude/loving-babbage-3kd7tm/deploy/install.sh | sudo bash
 #
 # متغیرهای قابل تنظیم (همه اختیاری):
-#   DOMAIN=kianbehsaz.ir     دامنه‌ی سایت؛ پیش‌فرض: هر هاستی
+#   DOMAIN=kiyanbehsaz.com   دامنه‌ی سایت؛ پیش‌فرض: هر هاستی
 #   APP_DIR=/var/www/kian    مسیر نصب
 #   BRANCH=main              برنچ گیت
 #   DB=sqlite|mysql          موتور دیتابیس؛ پیش‌فرض sqlite

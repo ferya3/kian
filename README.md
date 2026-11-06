@@ -22,7 +22,7 @@ curl -fsSL https://raw.githubusercontent.com/ferya3/kian/claude/loving-babbage-3
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/ferya3/kian/claude/loving-babbage-3kd7tm/deploy/install.sh \
-  | sudo DOMAIN=kianbehsaz.ir SSL=1 DB=mysql bash
+  | sudo DOMAIN=kiyanbehsaz.com SSL=1 DB=mysql bash
 ```
 
 اسکریپت PHP 8.4 (به‌همراه intl و gd)، Node 22، Composer و nginx را نصب می‌کند،
@@ -60,7 +60,7 @@ curl -fsSL https://raw.githubusercontent.com/ferya3/kian/claude/loving-babbage-3
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/ferya3/kian/claude/loving-babbage-3kd7tm/deploy/install.sh \
-  | sudo SKIP_SYSTEM=1 DOMAIN=example.com SSL=1 bash
+  | sudo SKIP_SYSTEM=1 DOMAIN=kiyanbehsaz.com SSL=1 bash
 ```
 
 نصب‌کننده `server_name` را روی apex و `www` می‌گذارد و گواهی را هم برای هر
@@ -228,7 +228,7 @@ curl -fsSL https://raw.githubusercontent.com/ferya3/kian/claude/loving-babbage-3
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/ferya3/kian/claude/loving-babbage-3kd7tm/deploy/install.sh \
-  | sudo SKIP_SYSTEM=1 DOMAIN=example.com SSL=1 bash
+  | sudo SKIP_SYSTEM=1 DOMAIN=kiyanbehsaz.com SSL=1 bash
 ```
 
 ---

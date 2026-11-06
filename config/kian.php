@@ -58,8 +58,8 @@ return [
         */
         'sales_phone' => env('KIAN_SALES_PHONE', '045-33338748'),
         'sales_extension' => env('KIAN_SALES_EXTENSION', '106'),
-        'email' => env('KIAN_EMAIL', 'info@kianbehsaz.ir'),
-        'technical_email' => env('KIAN_TECH_EMAIL', 'technical@kianbehsaz.ir'),
+        'email' => env('KIAN_EMAIL', 'info@kiyanbehsaz.com'),
+        'technical_email' => env('KIAN_TECH_EMAIL', 'technical@kiyanbehsaz.com'),
         'address' => env('KIAN_ADDRESS', 'اصفهان، شهرک صنعتی مبارکه، خیابان صنعت ۱۲، کارخانه کیان بهساز'),
         'address_locality' => 'اصفهان',
         'address_region' => 'اصفهان',
