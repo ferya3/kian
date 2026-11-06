@@ -366,7 +366,8 @@ esac
 
 # پیوند storage برای تصویرهای آپلودشده حیاتی است: بدون آن هر عکس ۴۰۳ می‌گیرد
 # و سایت بی‌صدا بدون تصویر می‌ماند. پس شکستش را رد نمی‌کنیم.
-php artisan storage:link || true
+# پیوندِ موجود را دوباره نمی‌سازیم: storage:link رویش «ERROR» چاپ می‌کرد و نصبِ سالم خراب به نظر می‌رسید
+[ -e public/storage ] || php artisan storage:link || true
 
 if [ ! -e public/storage ]; then
     printf '\n\033[1;31m✗ پیوند public/storage ساخته نشد — تصویرهای آپلودشده نمایش داده نمی‌شوند.\033[0m\n'
