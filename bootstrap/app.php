@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\EnsureAdminAccess;
+use App\Http\Middleware\HandleLegacyUrls;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -12,6 +13,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // پیش از مسیریابی: نشانی‌های سایتِ قدیم مسیری ندارند که به آن برسند
+        $middleware->prepend(HandleLegacyUrls::class);
+
         $middleware->alias([
             'admin' => EnsureAdminAccess::class,
         ]);

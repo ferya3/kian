@@ -19,6 +19,7 @@ use App\Admin\Resources\ReceiptResource;
 use App\Admin\Resources\ProcessStepResource;
 use App\Admin\Resources\ProductCategoryResource;
 use App\Admin\Resources\ProductResource;
+use App\Admin\Resources\RedirectResource;
 use App\Admin\Resources\ProjectCategoryResource;
 use App\Admin\Resources\ProjectResource;
 use App\Admin\Resources\SettingResource;
@@ -60,6 +61,7 @@ class Registry
             ContactMessageResource::class,
             SettingResource::class,
             LocaleResource::class,
+            RedirectResource::class,
             UserResource::class,
         ];
 
