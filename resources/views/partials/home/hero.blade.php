@@ -112,8 +112,8 @@
     </div>
 
     {{--
-        اشاره‌گر اسکرول — یک خط عمودی که قطره‌های نور روی آن پایین می‌روند.
-        حرکت رو به پایین، جهت را می‌گوید بی‌آنکه فلشی لازم باشد.
+        اشاره‌گر اسکرول — فلشی درون یک بیضیِ عمودی که آرام پایین می‌رود و
+        محو می‌شود. شکلِ آشنای «به پایین بکشید» است و بی‌توضیح خوانده می‌شود.
 
         پیوند واقعی است نه تزئین: کلیک و فوکوس صفحه‌کلید هر دو به بخش انتخاب
         محصول می‌برند، پس برای کسی که با Tab حرکت می‌کند هم میان‌بر است.
@@ -126,10 +126,9 @@
     <a href="#find-your-block"
        class="group absolute inset-x-0 bottom-7 z-10 mx-auto hidden w-12 flex-col items-center [@media(min-width:1024px)_and_(min-height:760px)]:flex"
        aria-label="{{ __('site.home.hero.scroll') }}">
-        <span class="relative block h-10 w-0.5 overflow-hidden rounded-full bg-white/20 transition-colors duration-300 group-hover:bg-white/35"
+        <span class="flex h-12 w-7 items-start justify-center rounded-full border-2 border-white/55 bg-ink-950/45 pt-2 text-white shadow-[0_4px_18px_-6px_rgb(0_0_0/0.5)] backdrop-blur-sm transition-colors duration-300 group-hover:border-white group-hover:bg-ink-950/65 group-focus-visible:border-white"
               aria-hidden="true">
-            <span class="hero-rain-drop"></span>
-            <span class="hero-rain-drop" style="animation-delay: 1.2s"></span>
+            <x-icon name="arrow-down" size="16" class="hero-cue-arrow" />
         </span>
     </a>
 
