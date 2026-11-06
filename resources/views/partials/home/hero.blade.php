@@ -18,12 +18,12 @@
     از lg به بالا به ارتفاع سینمایی تمام‌صفحه برمی‌گردد.
 --}}
 {{--
-    روی دسکتاپ فقط دکمه‌ها مانده‌اند و پایینِ هیرو می‌نشینند (lg:justify-end)،
-    نه وسطش. فاصله‌ی ۱۶۰ پیکسلیِ پایین عمدی است: پایینِ ۱۲۸ پیکسلِ هیرو به
+    فقط دکمه‌ها مانده‌اند و پایینِ هیرو می‌نشینند (justify-end)، نه وسطش.
+    فاصله‌ی ۱۶۰ پیکسلیِ پایین روی دسکتاپ عمدی است: پایینِ ۱۲۸ پیکسلِ هیرو به
     رنگِ روشنِ بخشِ بعد محو می‌شود، و دکمه‌ی دورسفید آنجا کنتراستش را
     می‌باخت.
 --}}
-<section class="relative flex min-h-[100vw] flex-col justify-center overflow-hidden bg-ink-950 pb-6 pt-[4.5rem] text-sand-50 sm:min-h-[min(100vw,36rem)] sm:pb-12 sm:pt-24 lg:min-h-[88svh] lg:justify-end lg:pb-40 lg:pt-32">
+<section class="relative flex min-h-[100vw] flex-col justify-end overflow-hidden bg-ink-950 pb-[5.5rem] pt-[4.5rem] text-sand-50 sm:min-h-[min(100vw,36rem)] sm:pb-28 sm:pt-24 lg:min-h-[88svh] lg:pb-40 lg:pt-32">
 
     @if($video)
         {{--
@@ -70,32 +70,16 @@
         --}}
         <div class="max-w-4xl {{ $image && ! $video ? '[text-shadow:0_2px_20px_rgb(10_8_6/0.85),0_1px_4px_rgb(10_8_6/0.7)]' : '' }}">
             {{--
-                روی دسکتاپ فقط دکمه‌ها می‌مانند و تصویر حرف می‌زند؛ روی گوشی
-                همه‌چیز هست.
+                روی هیچ اندازه‌ای جز دکمه‌ها چیزی نمی‌ماند؛ تصویر حرف می‌زند.
 
-                تیتر پنهانِ دیداری است و نه حذف (lg:sr-only): همان h1 ِ صفحه
+                تیتر پنهانِ دیداری است و نه حذف (sr-only): همان h1 ِ صفحه
                 است — گوگل و صفحه‌خوان از آن می‌فهمند صفحه درباره‌ی چیست، و
                 صفحه‌ی اصلیِ بی h1 در جستجو عقب می‌افتد.
             --}}
-            <p class="eyebrow inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/[0.06] px-3 py-1.5 text-clay-300 backdrop-blur-sm sm:gap-2.5 sm:px-4 sm:py-2 lg:hidden"
-               data-reveal>
-                <span class="relative flex h-1.5 w-1.5">
-                    <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-ember-500 opacity-75"></span>
-                    <span class="relative inline-flex h-1.5 w-1.5 rounded-full bg-ember-500"></span>
-                </span>
-                {{ Setting::text('hero_eyebrow', __('site.home.hero.eyebrow', ['name' => \App\Support\Brand::name()])) }}
-            </p>
-
-            <h1 class="mt-3 text-display sm:mt-7 font-extrabold text-balance text-sand-50 lg:sr-only" data-reveal style="--reveal-delay: 90ms">
-                {{ Setting::text('hero_title', \App\Support\Brand::tagline()) }}
-            </h1>
-
-            <p class="mt-2.5 line-clamp-2 max-w-2xl text-lead text-sand-200/75 sm:mt-6 sm:line-clamp-none lg:hidden" data-reveal style="--reveal-delay: 180ms">
-                {{ Setting::text('hero_subtitle', config('kian.seo.default_description')) }}
-            </p>
+            <h1 class="sr-only">{{ Setting::text('hero_title', \App\Support\Brand::tagline()) }}</h1>
 
             {{-- دو دکمه کنار هم روی گوشی: متن تک‌خطی، padding کم، ارتفاع ۴۴ --}}
-            <div class="mt-4 flex items-center gap-2.5 sm:mt-10 sm:gap-3 lg:mt-0" data-reveal style="--reveal-delay: 270ms">
+            <div class="flex items-center gap-2.5 sm:gap-3" data-reveal>
                 {{-- آیکون روی گوشی پنهان می‌شود: در ۳۶۰ پیکسل، برچسب مهم‌تر از فلش است --}}
                 <x-cta :href="route('products.index')" variant="primary" size="lg"
                        class="min-w-0 flex-1 justify-center whitespace-nowrap px-2 text-meta [&_svg]:hidden sm:flex-none sm:gap-2 sm:px-5 sm:text-[0.9375rem] sm:[&_svg]:block">{{ __('site.actions.products') }}</x-cta>

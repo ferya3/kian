@@ -135,28 +135,26 @@ class PublicPagesTest extends TestCase
     }
 
     /**
-     * هیروی صفحه‌ی اصلی روی دسکتاپ فقط دکمه دارد؛ روی گوشی همه‌چیز.
+     * هیروی صفحه‌ی اصلی، روی گوشی و دسکتاپ، فقط دکمه دارد.
      *
      * تیتر حذف نمی‌شود و فقط پنهانِ دیداری است: همان h1 ِ صفحه است، و
      * صفحه‌ی اصلیِ بی h1 در جستجو عقب می‌افتد.
      */
-    public function test_the_home_hero_shows_only_its_buttons_on_desktop(): void
+    public function test_the_home_hero_shows_only_its_buttons(): void
     {
-        $hero = str($this->get(route('home'))->assertOk()->getContent())
-            ->betweenFirst('<h1', '</h1>')->toString();
+        $html = $this->get(route('home'))->assertOk()->getContent();
+        $hero = str($html)->betweenFirst('<section', '</section>')->toString();
 
-        $this->assertStringContainsString('lg:sr-only', $hero, 'تیتر باید برای گوگل و صفحه‌خوان بماند.');
-        $this->assertStringContainsString(e(\App\Models\Setting::text('hero_title', \App\Support\Brand::tagline())), $hero);
+        $this->assertMatchesRegularExpression('~<h1 class="sr-only">\s*'.preg_quote(e(\App\Models\Setting::text('hero_title', \App\Support\Brand::tagline())), '~').'~u', $hero,
+            'تیتر باید برای گوگل و صفحه‌خوان بماند.');
 
-        $html = $this->get(route('home'))->getContent();
-
-        // برچسب و زیرتیتر روی دسکتاپ پنهان، ولی در صفحه — برای گوشی
-        $this->assertMatchesRegularExpression('~<p class="eyebrow[^"]*\blg:hidden\b~', $html);
-        $this->assertMatchesRegularExpression('~<p class="[^"]*\blg:hidden\b"[^>]*>\s*'.preg_quote(e(\App\Models\Setting::text('hero_subtitle', config('kian.seo.default_description'))), '~').'~u', $html);
+        // برچسب و زیرتیتر در هیچ اندازه‌ای نیستند — نه فقط پنهان روی دسکتاپ
+        $this->assertStringNotContainsString(e(\App\Models\Setting::text('hero_subtitle', config('kian.seo.default_description'))), $hero);
+        $this->assertStringNotContainsString('class="eyebrow', $hero);
 
         // دکمه‌ها همچنان هستند
-        $this->assertStringContainsString(route('products.index'), $html);
-        $this->assertStringContainsString(route('factory'), $html);
+        $this->assertStringContainsString(route('products.index'), $hero);
+        $this->assertStringContainsString(route('factory'), $hero);
     }
 
 }
