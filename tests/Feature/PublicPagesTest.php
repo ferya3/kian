@@ -99,7 +99,7 @@ class PublicPagesTest extends TestCase
      */
     public function test_category_filter_narrows_the_catalogue(): void
     {
-        $wall = Product::where('slug', 'ceramic-block-25')->firstOrFail();
+        $wall = Product::where('slug', 'ceramic-block-20')->firstOrFail();
         $partition = Product::where('slug', 'partition-block-8')->firstOrFail();
 
         $this->get(route('products.index', ['category' => 'wall-blocks']))

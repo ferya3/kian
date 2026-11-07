@@ -97,12 +97,12 @@ class DuplicateRecordTest extends TestCase
     /** عددِ آخرِ اسلاگ اندازه‌ی بلوک است، نه پسوندِ کپی — نباید بریده شود. */
     public function test_a_slug_that_ends_in_the_block_size_keeps_it(): void
     {
-        $this->duplicate(Product::where('slug', 'ceramic-block-25')->firstOrFail());
+        $this->duplicate(Product::where('slug', 'ceramic-block-20')->firstOrFail());
 
         $copy = $this->latestCopy();
 
-        $this->assertSame('ceramic-block-25-2', $copy->slug);
-        $this->assertSame('KW-25-2', $copy->sku);
+        $this->assertSame('ceramic-block-20-2', $copy->slug);
+        $this->assertSame('KW-20-2', $copy->sku);
     }
 
     public function test_a_second_copy_takes_the_next_free_slug(): void

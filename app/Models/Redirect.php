@@ -208,11 +208,20 @@ class Redirect extends Model
         preg_match_all('~(?<!\d)(\d{1,2})(?!\d)~', $digits, $m);
 
         if ($m[1]) {
-            $products = Product::query()->where('is_active', true)->with('category:id,slug')->get(['id', 'slug', 'product_category_id']);
+            /*
+            | سایزِ هر محصول از ابعادش، نه از ته‌ِ اسلاگ: «partition-block-8-20»
+            | به ۲۰ ختم می‌شود ولی بلوکِ ۸ است. بلوکِ سقفی با طولش نام می‌گیرد
+            | (سقفی ۴۰، سقفی ۵۰)، بقیه با ضخامت. چند محصولِ هم‌سایز ⇐ اولی به ترتیب.
+            */
+            $products = Product::query()->where('is_active', true)->with('category:id,slug')
+                ->orderBy('position')->get(['id', 'slug', 'product_category_id', 'thickness_mm', 'length_mm']);
 
             foreach ($products as $product) {
-                $fits = ! $families || in_array($product->category?->slug, $families, true);
-                if ($fits && preg_match('~-(\d+)$~', $product->slug, $n) && in_array($n[1], $m[1], true)) {
+                $family = $product->category?->slug;
+                $size = (string) (int) round(($family === 'roof-systems' ? $product->length_mm : $product->thickness_mm) / 10);
+                $fits = ! $families || in_array($family, $families, true);
+
+                if ($fits && in_array($size, $m[1], true)) {
                     return $route('products.show', ['product' => $product->slug]);
                 }
             }

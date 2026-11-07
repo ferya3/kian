@@ -151,8 +151,8 @@ return [
         'title' => 'The ceramic block system',
         'lead' => 'From the 7 cm partition to the 30 cm insulating block — one modular family with dimensions that line up.',
         'featured' => 'Featured',
-        'featured_title' => 'Ceramic block 25',
-        'featured_lead' => 'A single-leaf external wall with no added insulation. λ of 0.21.',
+        'featured_title' => 'Ceramic block 20',
+        'featured_lead' => 'The most widely used block for external and infill walls, 20×20×40.',
         'downloads' => 'Datasheets and technical files',
     ],
 

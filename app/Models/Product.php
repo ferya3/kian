@@ -98,9 +98,19 @@ class Product extends Model
         return $query->where('is_featured', true);
     }
 
-    /** ابعاد به شکل ۲۰×۲۰×۴۰ سانتی‌متر */
+    /**
+     * ابعاد به شکل ۲۰ × ۲۰ × ۴۰ سانتی‌متر.
+     *
+     * اگر کارخانه ابعاد را به شکلِ خودش نوشته (size_label)، همان نشان داده
+     * می‌شود — با همان ترتیب و همان عددها؛ فقط جداکننده یکدست می‌شود. بی آن،
+     * از طول × عرض × ارتفاع ساخته می‌شود.
+     */
     public function dimensionLabel(string $unit = 'cm'): string
     {
+        if ($unit === 'cm' && filled($this->size_label)) {
+            return implode(' × ', preg_split('~\s*[×xX*]\s*~u', trim($this->size_label)));
+        }
+
         $factor = $unit === 'cm' ? 10 : 1;
 
         return implode(' × ', array_map(
@@ -112,6 +122,14 @@ class Product extends Model
     public function thicknessCm(): float
     {
         return $this->thickness_mm / 10;
+    }
+
+    /** رقمِ فارسی و ممیزِ «٫» ِ پنل به لاتین، تا در هر زبانی درست نمایش داده شود. */
+    protected function sizeLabel(): Attribute
+    {
+        return Attribute::set(fn (?string $value) => filled($value)
+            ? trim(strtr($value, ['۰' => '0', '۱' => '1', '۲' => '2', '۳' => '3', '۴' => '4', '۵' => '5', '۶' => '6', '۷' => '7', '۸' => '8', '۹' => '9', '٫' => '.']))
+            : null);
     }
 
     /*

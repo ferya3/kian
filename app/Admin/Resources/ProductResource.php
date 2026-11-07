@@ -94,6 +94,10 @@ class ProductResource extends Resource
             Field::textarea('summary', 'خلاصه')->rules(['nullable', 'max:600'])->section('معرفی'),
             Field::longtext('description', 'توضیح کامل')->rules(['nullable', 'max:6000'])->section('معرفی'),
 
+            Field::text('size_label', 'ابعاد نمایشی')->rules(['nullable', 'max:60', 'regex:/^\\s*[\\d۰-۹]+([.٫][\\d۰-۹]+)?(\\s*[×xX*]\\s*[\\d۰-۹]+([.٫][\\d۰-۹]+)?){2}\\s*$/u'])
+                ->placeholder('40×18.5×8')
+                ->hint('ابعاد همان‌طور که در سایت دیده شود — با همان ترتیبی که کارخانه می‌نویسد. خالی بماند، از طول × عرض × ارتفاعِ پایین ساخته می‌شود.')
+                ->section('ابعاد'),
             Field::decimal('length_cm', 'طول')->rules(['required', 'numeric', 'min:0.1', 'max:500', 'decimal:0,1'])->suffix('cm')->third()->section('ابعاد'),
             Field::decimal('width_cm', 'عرض')->rules(['required', 'numeric', 'min:0.1', 'max:500', 'decimal:0,1'])->suffix('cm')->third()->section('ابعاد'),
             Field::decimal('height_cm', 'ارتفاع')->rules(['required', 'numeric', 'min:0.1', 'max:500', 'decimal:0,1'])->suffix('cm')->third()->section('ابعاد'),

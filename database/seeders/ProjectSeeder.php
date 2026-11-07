@@ -31,7 +31,7 @@ class ProjectSeeder extends Seeder
                 'area_sqm' => 18500, 'blocks_used' => 142000,
                 'summary' => 'برج مسکونی هجده طبقه با دیوار خارجی تک‌لایه‌ی بلوک سفالی ۲۵؛ حذف کامل لایه‌ی عایق افزوده در پوسته.',
                 'description' => 'الزام کارفرما، دریافت گواهی انرژی کلاس B بود. با انتخاب بلوک سفالی ۲۵ برای پوسته و بلوک تیغه‌ای ۱۳ برای دیوار مشترک بین واحدها، هم الزام حرارتی مبحث ۱۹ و هم الزام صوتی مبحث ۱۸ بدون افزودن لایه‌ی جداگانه تأمین شد. حذف مرحله‌ی عایق‌کاری، حدود شش هفته از برنامه‌ی زمان‌بندی نما کاست.',
-                'products' => ['ceramic-block-25', 'partition-block-13'],
+                'products' => ['ceramic-block-20', 'partition-block-13'],
                 'is_featured' => true, 'position' => 1,
             ],
             [
@@ -101,7 +101,7 @@ class ProjectSeeder extends Seeder
                 'area_sqm' => 720, 'blocks_used' => 5400,
                 'summary' => 'ویلای دو طبقه در اقلیم سرد کوهستانی با بلوک سفالی ۲۵ و هدف کمینه‌سازی مصرف انرژی گرمایش.',
                 'description' => 'در ارتفاع ۱۸۰۰ متری، دوره‌ی گرمایش طولانی است. با دیوار تک‌لایه‌ی بلوک ۳۰ و مقاومت حرارتی ۱٫۷۶، محاسبات مبحث ۱۹ بدون هیچ عایق افزوده‌ای تأمین شد و بار گرمایشی محاسباتی نسبت به گزینه‌ی مرجع حدود چهل درصد کاهش یافت.',
-                'products' => ['ceramic-block-25', 'partition-block-13'],
+                'products' => ['ceramic-block-20', 'partition-block-13'],
                 'is_featured' => true, 'position' => 6,
             ],
             [
@@ -129,7 +129,7 @@ class ProjectSeeder extends Seeder
                 'area_sqm' => 42000, 'blocks_used' => 305000,
                 'summary' => 'چهارصد و بیست واحد در اقلیم سرد؛ بلوک سفالی ۲۵ برای پوسته‌ی حرارتی.',
                 'description' => 'محدودیت سطح زیربنای مصوب اجازه‌ی ضخیم‌تر کردن دیوار خارجی را نمی‌داد. بلوک سفالی ۲۵ با λ برابر ۰٫۲۱، الزام اقلیم سرد را بدون لایه‌ی عایق افزوده تأمین کرد.',
-                'products' => ['ceramic-block-25', 'partition-block-13', 'roof-block-40'],
+                'products' => ['ceramic-block-20', 'partition-block-13', 'roof-block-40'],
                 'is_featured' => false, 'position' => 8,
             ],
             [

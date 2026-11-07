@@ -13,7 +13,11 @@ class CatalogSeeder extends Seeder
     public function run(): void
     {
         /*
-        | کارخانه پنج سایز تولید می‌کند: ۸، ۱۳، ۲۰، ۲۵ و ۴۰.
+        | کارخانه هفت سایز تولید می‌کند — ابعاد دقیقاً همان‌طور که کارخانه
+        | می‌نویسد، در size_label:
+        |   تیغه‌ای:  ۴۰×۱۸٫۵×۸   ۲۰×۱۸٫۵×۸   ۴۰×۱۸٫۵×۱۳   ۲۰×۱۸٫۵×۱۳
+        |   دیواری:   ۲۰×۲۰×۴۰
+        |   سقفی:     ۲۰×۲۵×۴۰   ۲۰×۲۵×۵۰
         |
         | پیش‌تر اینجا ده محصول در هفت دسته بود — عایق، سبک، حرارتی،
         | متعلقات — که هیچ‌کدام تولید نمی‌شوند. دسته‌ای که محصول ندارد در
@@ -32,8 +36,8 @@ class CatalogSeeder extends Seeder
         $c = fn (array $data) => ProductCategory::updateOrCreate(['slug' => $data['slug']], $data);
 
         $partition = $c(['parent_id' => $blocks->id, 'slug' => 'partition-blocks', 'name' => 'بلوک تیغه‌ای', 'name_en' => 'Partition Blocks', 'tagline' => 'جداکننده سبک داخلی — ۸ و ۱۳', 'position' => 1]);
-        $wall = $c(['parent_id' => $blocks->id, 'slug' => 'wall-blocks', 'name' => 'بلوک دیواری', 'name_en' => 'Wall Blocks', 'tagline' => 'دیوار باربر و میان‌قاب — ۲۰ و ۲۵', 'position' => 2]);
-        $roof = $c(['parent_id' => $blocks->id, 'slug' => 'roof-systems', 'name' => 'سیستم‌های سقفی', 'name_en' => 'Roof Systems', 'tagline' => 'تیرچه‌بلوک سفالی — ۴۰', 'position' => 3]);
+        $wall = $c(['parent_id' => $blocks->id, 'slug' => 'wall-blocks', 'name' => 'بلوک دیواری', 'name_en' => 'Wall Blocks', 'tagline' => 'دیوار باربر و میان‌قاب — ۲۰', 'position' => 2]);
+        $roof = $c(['parent_id' => $blocks->id, 'slug' => 'roof-systems', 'name' => 'سیستم‌های سقفی', 'name_en' => 'Roof Systems', 'tagline' => 'تیرچه‌بلوک سفالی — ۴۰ و ۵۰', 'position' => 3]);
 
         /*
         | ⚠ عددهای فنی تخمینی‌اند و نه اندازه‌گیری‌شده.
@@ -43,9 +47,42 @@ class CatalogSeeder extends Seeder
         | اینکه سایت به مشتری یا ناظر نشان داده شود، باید در «پنل ←
         | محصولات» با عددهای واقعی جایگزین شوند.
         */
-        $products = [
+        $products = static::definitions();
+
+        $categories = ['partition-blocks' => $partition->id, 'wall-blocks' => $wall->id, 'roof-systems' => $roof->id];
+
+        foreach ($products as $data) {
+            $data['product_category_id'] = $categories[$data['category']];
+            unset($data['category']);
+
+            $product = Product::updateOrCreate(['slug' => $data['slug']], $data);
+
+            // حفره‌ها از نو ساخته می‌شوند، وگرنه هر اجرا چهارتا به قبلی‌ها اضافه می‌کند
+            $product->cavities()->delete();
+            $this->seedCavities($product);
+        }
+
+        $this->seedSolutions();
+    }
+
+    /**
+     * هفت محصولِ کارخانه.
+     *
+     * پایه‌ی هر خانواده یک تعریفِ کامل است؛ هم‌خانواده‌ها (همان ضخامت با
+     * طولِ دیگر) از آن ساخته می‌شوند و فقط ابعاد و آنچه از ابعاد می‌آید —
+     * وزن، تعداد در پالت و در متر مربع — فرق دارد. migrate ِ سرور هم از
+     * همین‌جا می‌خواند، پس کاتالوگ یک منبع دارد.
+     *
+     * size_label ابعاد را دقیقاً همان‌طور که کارخانه می‌نویسد نگه می‌دارد —
+     * ترتیبشان با طول × عرض × ارتفاع یکی نیست و نباید بازچینی شود.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public static function definitions(): array
+    {
+        $base = [
             [
-                'product_category_id' => $partition->id,
+                'category' => 'partition-blocks',
                 'slug' => 'partition-block-8', 'sku' => 'KP-08', 'name' => 'بلوک تیغه‌ای ۸', 'name_en' => 'Partition Block 8',
                 'subtitle' => 'سبک‌ترین جداکننده داخلی',
                 'summary' => 'بلوک تیغه‌ای هشت سانتی‌متری برای پارتیشن‌بندی داخلی، سرویس‌ها و فضاهایی که کمترین اشغال ضخامت و کمترین بار مرده اهمیت دارد.',
@@ -63,7 +100,7 @@ class CatalogSeeder extends Seeder
                 'position' => 1, 'is_featured' => false,
             ],
             [
-                'product_category_id' => $partition->id,
+                'category' => 'partition-blocks',
                 'slug' => 'partition-block-13', 'sku' => 'KP-13', 'name' => 'بلوک تیغه‌ای ۱۳', 'name_en' => 'Partition Block 13',
                 'subtitle' => 'پرکاربردترین بلوک داخلی',
                 'summary' => 'سیزده سانتی‌متر ضخامت، تعادل میان وزن، صداگیری و سرعت اجرا؛ انتخاب متداول برای دیوارهای داخلی و جداکننده‌ی واحدها.',
@@ -82,7 +119,7 @@ class CatalogSeeder extends Seeder
                 'position' => 2, 'is_featured' => true,
             ],
             [
-                'product_category_id' => $wall->id,
+                'category' => 'wall-blocks',
                 'slug' => 'ceramic-block-20', 'sku' => 'KW-20', 'name' => 'بلوک سفالی ۲۰', 'name_en' => 'Ceramic Block 20',
                 'subtitle' => 'استاندارد صنعت ساختمان ایران',
                 'summary' => 'بلوک بیست سانتی‌متری با ابعاد ۲۰×۲۰×۴۰، متداول‌ترین انتخاب برای دیوار میان‌قاب و دیوار خارجی ساختمان‌های اسکلت‌دار.',
@@ -102,25 +139,7 @@ class CatalogSeeder extends Seeder
                 'position' => 3, 'is_featured' => true,
             ],
             [
-                'product_category_id' => $wall->id,
-                'slug' => 'ceramic-block-25', 'sku' => 'KW-25', 'name' => 'بلوک سفالی ۲۵', 'name_en' => 'Ceramic Block 25',
-                'subtitle' => 'پوسته حرارتی بدون عایق افزوده',
-                'summary' => 'بیست‌وپنج سانتی‌متر با آرایش حفره‌های چندردیفه؛ در بسیاری از اقلیم‌ها بدون نیاز به لایه عایق مجزا الزام مبحث ۱۹ را تأمین می‌کند.',
-                'length_mm' => 400, 'width_mm' => 250, 'height_mm' => 250, 'thickness_mm' => 250, 'void_ratio' => 62,
-                'weight_kg' => 14.80, 'compressive_strength_mpa' => 7.50, 'thermal_conductivity' => 0.210,
-                'thermal_resistance' => 1.190, 'water_absorption' => 13.00, 'fire_resistance_min' => 240,
-                'sound_reduction_db' => 52, 'units_per_pallet' => 60, 'units_per_sqm' => 10, 'mortar_per_sqm' => 24.0,
-                'thermal_score' => 86, 'acoustic_score' => 88, 'strength_score' => 80, 'sustainability_score' => 92,
-                'project_types' => ['residential', 'commercial', 'mass'],
-                'wall_types' => ['exterior', 'infill'],
-                'insulation_level' => 'high', 'is_loadbearing' => true,
-                'features' => ['ضریب λ برابر ۰٫۲۱ وات بر متر کلوین', 'حذف پل حرارتی با درز نر و ماده', 'مقاومت آتش چهار ساعته'],
-                'applications' => ['دیوار خارجی اقلیم سرد', 'ساختمان‌های با گواهی انرژی', 'پروژه‌های مسکن ملی'],
-                'standards' => ['استاندارد ملی ایران ۷', 'مبحث ۱۹ مقررات ملی ساختمان'],
-                'position' => 4, 'is_featured' => true,
-            ],
-            [
-                'product_category_id' => $roof->id,
+                'category' => 'roof-systems',
                 'slug' => 'roof-block-40', 'sku' => 'KR-40', 'name' => 'بلوک سقفی ۴۰', 'name_en' => 'Roof Block 40',
                 'subtitle' => 'سیستم تیرچه‌بلوک سفالی',
                 'summary' => 'بلوک سقفی سفالی به طول چهل سانتی‌متر برای سیستم تیرچه‌بلوک؛ سبک‌تر از بلوک بتنی، با عملکرد حرارتی و صوتی بهتر و بتن‌ریزی تمیزتر.',
@@ -139,19 +158,62 @@ class CatalogSeeder extends Seeder
             ],
         ];
 
-        foreach ($products as $data) {
-            $product = Product::updateOrCreate(['slug' => $data['slug']], $data);
+        $bySlug = collect($base)->keyBy('slug');
 
-            // حفره‌ها از نو ساخته می‌شوند، وگرنه هر اجرا چهارتا به قبلی‌ها اضافه می‌کند
-            $product->cavities()->delete();
-            $this->seedCavities($product);
-        }
+        $variant = fn (string $of, array $changes) => array_merge($bySlug[$of], $changes);
 
-        $this->seedSolutions();
+        return [
+            $variant('partition-block-8', [
+                'name' => 'بلوک تیغه‌ای ۸ — طول ۴۰', 'name_en' => 'Partition Block 8 — 40 cm',
+                'size_label' => '40×18.5×8',
+                'length_mm' => 400, 'width_mm' => 80, 'height_mm' => 185, 'thickness_mm' => 80,
+                'weight_kg' => 6.70, 'units_per_pallet' => 125, 'units_per_sqm' => 12.5,
+                'position' => 1,
+            ]),
+            $variant('partition-block-8', [
+                'slug' => 'partition-block-8-20', 'sku' => 'KP-08-20',
+                'name' => 'بلوک تیغه‌ای ۸ — طول ۲۰', 'name_en' => 'Partition Block 8 — 20 cm',
+                'size_label' => '20×18.5×8',
+                'length_mm' => 200, 'width_mm' => 80, 'height_mm' => 185, 'thickness_mm' => 80,
+                'weight_kg' => 3.30, 'units_per_pallet' => 250, 'units_per_sqm' => 24.5,
+                'position' => 2, 'is_featured' => false,
+            ]),
+            $variant('partition-block-13', [
+                'name' => 'بلوک تیغه‌ای ۱۳ — طول ۴۰', 'name_en' => 'Partition Block 13 — 40 cm',
+                'size_label' => '40×18.5×13',
+                'position' => 3,
+            ]),
+            $variant('partition-block-13', [
+                'slug' => 'partition-block-13-20', 'sku' => 'KP-13-20',
+                'name' => 'بلوک تیغه‌ای ۱۳ — طول ۲۰', 'name_en' => 'Partition Block 13 — 20 cm',
+                'size_label' => '20×18.5×13',
+                'length_mm' => 200, 'width_mm' => 130, 'height_mm' => 185, 'thickness_mm' => 130,
+                'weight_kg' => 4.50, 'units_per_pallet' => 200, 'units_per_sqm' => 24.5,
+                'position' => 4, 'is_featured' => false,
+            ]),
+            $variant('ceramic-block-20', [
+                'size_label' => '20×20×40',
+                'position' => 5,
+            ]),
+            $variant('roof-block-40', [
+                'size_label' => '20×25×40',
+                'length_mm' => 400, 'width_mm' => 200, 'height_mm' => 250, 'thickness_mm' => 250,
+                'position' => 6,
+            ]),
+            $variant('roof-block-40', [
+                'slug' => 'roof-block-50', 'sku' => 'KR-50',
+                'name' => 'بلوک سقفی ۵۰', 'name_en' => 'Roof Block 50',
+                'summary' => 'بلوک سقفی سفالی به طول پنجاه سانتی‌متر برای سیستم تیرچه‌بلوک با فاصله‌ی بیشترِ تیرچه‌ها؛ تعداد کمتر در هر متر مربع و اجرای سریع‌تر.',
+                'size_label' => '20×25×50',
+                'length_mm' => 500, 'width_mm' => 200, 'height_mm' => 250, 'thickness_mm' => 250,
+                'weight_kg' => 12.80, 'units_per_pallet' => 64, 'units_per_sqm' => 6.8,
+                'position' => 7, 'is_featured' => false,
+            ]),
+        ];
     }
 
     /** نقاط تعاملی روی مقطع بلوک — کاربر روی هر حفره کلیک می‌کند. */
-    protected function seedCavities(Product $product): void
+    public function seedCavities(Product $product): void
     {
         $rows = [
             [
@@ -201,7 +263,7 @@ class CatalogSeeder extends Seeder
                 'subtitle' => 'دیوار خارجی تک‌لایه بدون عایق افزوده',
                 'summary' => 'به‌جای ترکیب دیوار نازک و لایه‌ی عایق، از یک بلوک با λ پایین استفاده کنید: اجرای ساده‌تر، پل حرارتی کمتر و عمر مفید برابر با عمر ساختمان.',
                 'benefits' => ['حذف لایه عایق مجزا', 'کاهش پل حرارتی در اتصالات', 'تأمین الزام مبحث ۱۹ در اقلیم سرد', 'کاهش زمان اجرا تا ۳۰ درصد'],
-                'products' => ['ceramic-block-25', 'ceramic-block-20'],
+                'products' => ['ceramic-block-20', 'roof-block-40'],
                 'position' => 1,
             ],
             [
@@ -211,7 +273,7 @@ class CatalogSeeder extends Seeder
                 'subtitle' => 'دیوار مشترک با کاهش صوت بالای ۵۰ دسی‌بل',
                 'summary' => 'جرم حجمی سفال به‌همراه حفره‌های هوا، ترکیبی است که هم صدای هوابرد را کاهش می‌دهد و هم بدون افزودن وزن زیاد به سازه اجرا می‌شود.',
                 'benefits' => ['کاهش صوت تا ۵۵ دسی‌بل', 'تأمین الزام مبحث ۱۸', 'بدون نیاز به لایه صوتی افزوده'],
-                'products' => ['ceramic-block-25', 'ceramic-block-20', 'partition-block-13'],
+                'products' => ['ceramic-block-20', 'partition-block-13', 'partition-block-13-20'],
                 'position' => 2,
             ],
             [
@@ -221,7 +283,7 @@ class CatalogSeeder extends Seeder
                 'subtitle' => 'تحویل زمان‌بندی‌شده در مقیاس صدها هزار متر مربع',
                 'summary' => 'برای پروژه‌های بزرگ، مسئله فقط قیمت بلوک نیست؛ مسئله تضمین تأمین، یکنواختی کیفیت میان بچ‌های تولید و برنامه‌ی تحویل هماهنگ با پیشرفت کار است.',
                 'benefits' => ['قرارداد تأمین با برنامه تحویل مرحله‌ای', 'یکنواختی ابعاد میان بچ‌های تولید', 'پشتیبانی فنی در کارگاه', 'بارگیری پالت‌شده و شرینک‌پیچ'],
-                'products' => ['ceramic-block-20', 'partition-block-13', 'roof-block-40'],
+                'products' => ['ceramic-block-20', 'partition-block-13', 'roof-block-40', 'roof-block-50'],
                 'position' => 3,
             ],
             [
@@ -231,7 +293,7 @@ class CatalogSeeder extends Seeder
                 'subtitle' => 'کاهش بار مرده، کاهش نیروی زلزله',
                 'summary' => 'نیروی زلزله متناسب با جرم سازه است. با جایگزینی دیوارهای سنگین، بار مرده و به‌تبع آن برش پایه کاهش می‌یابد — اغلب ارزان‌تر از تقویت اسکلت.',
                 'benefits' => ['کاهش بار مرده تا ۲۸ درصد', 'کاهش برش پایه ناشی از زلزله', 'اجرای خشک‌تر و سریع‌تر در ساختمان در حال بهره‌برداری'],
-                'products' => ['partition-block-8', 'partition-block-13', 'ceramic-block-20'],
+                'products' => ['partition-block-8', 'partition-block-8-20', 'partition-block-13', 'ceramic-block-20'],
                 'position' => 4,
             ],
         ];

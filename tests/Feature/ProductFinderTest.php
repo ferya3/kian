@@ -18,17 +18,17 @@ class ProductFinderTest extends TestCase
         $this->seed(DatabaseSeeder::class);
     }
 
-    public function test_an_exterior_wall_needing_heavy_insulation_gets_the_thickest_block(): void
+    /** دیوارِ خارجی به تنها بلوکِ دیواریِ کارخانه می‌رسد، نه به تیغه‌ای یا سقفی. */
+    public function test_an_exterior_wall_gets_the_wall_block(): void
     {
         $matches = app(ProductFinder::class)->search([
             'project_type' => 'residential',
             'wall_type' => 'exterior',
-            'thickness' => 25,
-            'insulation' => 'high',
+            'thickness' => 20,
+            'insulation' => 'medium',
         ]);
 
-        $this->assertSame('ceramic-block-25', $matches->first()['product']->slug);
-        $this->assertSame(100, $matches->first()['score']);
+        $this->assertSame('ceramic-block-20', $matches->first()['product']->slug);
         $this->assertNotEmpty($matches->first()['reasons']);
     }
 
