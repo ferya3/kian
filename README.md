@@ -56,6 +56,31 @@ curl -fsSL https://raw.githubusercontent.com/ferya3/kian/claude/loving-babbage-3
 
 ---
 
+## سروری که به گیت‌هاب دسترسی ندارد
+
+روی سرورهای ایران github.com و raw.githubusercontent.com ممکن است فیلتر
+باشند؛ آن‌وقت نه `git fetch` کار می‌کند، نه دانلودِ اسکریپتِ نصب، نه
+`composer`. راهش بسته‌ی آماده است: کد + `vendor` + assetهای ساخته‌شده در یک
+فایل، که سرور برای نصبش هیچ‌کدام از این سه را لازم ندارد.
+
+```bash
+# ۱) روی دستگاهی که گیت‌هاب را می‌بیند (و composer و npm دارد)
+bash deploy/package.sh                  # ⇐ dist/kian-release-<commit>.tar.gz
+
+# ۲) فرستادن به سرور (در PowerShell ِ ویندوز هم کار می‌کند)
+scp dist/kian-release-X.tar.gz root@SERVER_IP:/root/
+
+# ۳) روی سرور — خودِ نصب‌کننده هم از داخلِ بسته خوانده می‌شود
+tar -xzOf /root/kian-release-X.tar.gz ./deploy/install.sh \
+  | sudo BUNDLE=/root/kian-release-X.tar.gz SKIP_SYSTEM=1 bash
+```
+
+همه‌ی کارهای نصب‌کننده سرِ جایش است: نقطه‌ی بازگشت، مهاجرت، کش، بررسیِ
+سلامت، و برگشتِ خودکار اگر سایت بالا نیاید. دیتابیس، ‎`.env`، عکس‌های آپلودشده
+و گواهی دست نمی‌خورند. نسخه‌ی نصب‌شده در `/var/www/kian/RELEASE` نوشته می‌شود.
+
+---
+
 ## دامنه و SSL — و حالتِ کلودفلر
 
 ```bash

@@ -12,6 +12,15 @@
 #   DB_PASSWORD=...          رمز کاربر mysql (اگر DB=mysql و خالی باشد، ساخته می‌شود)
 #   SSL=1                    گرفتن گواهی Let's Encrypt (نیازمند DOMAIN و DNS آماده)
 #   SKIP_SYSTEM=1            پرش از نصب بسته‌های سیستمی (برای اجرای مجدد/به‌روزرسانی)
+#   BUNDLE=/root/kian-release-….tar.gz
+#                            نصب از بسته‌ی آماده به‌جای گیت — برای سروری که به
+#                            گیت‌هاب دسترسی ندارد (فیلتر). بسته را deploy/package.sh
+#                            می‌سازد: کد + vendor + assetهای ساخته‌شده، پس روی
+#                            سرور نه گیت لازم است، نه composer و نه npm.
+#
+#   به‌روزرسانی از بسته (اسکریپت هم از خودِ بسته خوانده می‌شود):
+#     tar -xzOf /root/kian-release-X.tar.gz ./deploy/install.sh \
+#       | sudo BUNDLE=/root/kian-release-X.tar.gz SKIP_SYSTEM=1 bash
 #
 # برای به‌روزرسانی، همین دستور را با SKIP_SYSTEM=1 دوباره اجرا کنید. اجرای آن از
 # روی curl (نه از نسخه‌ی داخل سرور) امن‌تر است: اسکریپت داخل سرور ممکن است قدیمی
@@ -34,12 +43,32 @@ SSL="${SSL:-0}"
 SKIP_SYSTEM="${SKIP_SYSTEM:-0}"
 PHP_VERSION="${PHP_VERSION:-8.4}"
 NODE_MAJOR="${NODE_MAJOR:-22}"
+BUNDLE="${BUNDLE:-}"
 
 step() { printf '\n\033[1;33m==>\033[0m \033[1m%s\033[0m\n' "$1"; }
 die()  { printf '\n\033[1;31mخطا:\033[0m %s\n' "$1" >&2; exit 1; }
 
 [ "$(id -u)" -eq 0 ] || die "این اسکریپت را با sudo اجرا کنید."
 command -v apt-get >/dev/null || die "این اسکریپت فقط برای اوبونتو/دبیان است."
+
+# ---------------------------------------------------------------- بسته ----
+#
+# بسته پیش از هر تغییری باز و وارسی می‌شود: بسته‌ی ناقص یا خراب نباید به
+# جایی برسد که کدِ سالمِ سرور را پاک کند.
+BUNDLE_DIR=""
+if [ -n "$BUNDLE" ]; then
+    [ -f "$BUNDLE" ] || die "بسته پیدا نشد: $BUNDLE"
+    step "بازکردنِ بسته: $(basename "$BUNDLE")"
+    BUNDLE_DIR="$(mktemp -d)"
+    tar -xzf "$BUNDLE" -C "$BUNDLE_DIR" || die "بسته باز نشد — شاید ناقص آپلود شده. دوباره بفرستید."
+
+    for f in artisan vendor/autoload.php public/build/manifest.json RELEASE; do
+        [ -e "$BUNDLE_DIR/$f" ] || die "بسته ناقص است ($f نیست). بسته را با deploy/package.sh بسازید."
+    done
+    sed 's/^/  /' "$BUNDLE_DIR/RELEASE"
+
+    command -v rsync >/dev/null || apt-get install -y -qq rsync >/dev/null || die "rsync نصب نشد."
+fi
 
 # ---------------------------------------------------------------- بسته‌ها ----
 if [ "$SKIP_SYSTEM" != "1" ]; then
@@ -69,14 +98,14 @@ if [ "$SKIP_SYSTEM" != "1" ]; then
         nginx >/dev/null
     # php-intl برای تاریخ شمسی و php-gd برای پردازش تصویر لازم است.
 
-    # Node
-    if ! command -v node >/dev/null || [ "$(node -v | cut -c2- | cut -d. -f1)" -lt "$NODE_MAJOR" ]; then
+    # Node و Composer فقط برای ساختن روی خودِ سرور؛ بسته ساخته‌شده می‌رسد
+    if [ -n "$BUNDLE" ]; then :; elif ! command -v node >/dev/null || [ "$(node -v | cut -c2- | cut -d. -f1)" -lt "$NODE_MAJOR" ]; then
         curl -fsSL "https://deb.nodesource.com/setup_${NODE_MAJOR}.x" | bash - >/dev/null 2>&1
         apt-get install -y -qq nodejs >/dev/null
     fi
 
     # Composer
-    if ! command -v composer >/dev/null; then
+    if [ -z "$BUNDLE" ] && ! command -v composer >/dev/null; then
         curl -fsSL https://getcomposer.org/installer -o /tmp/composer-setup.php
         php /tmp/composer-setup.php --quiet --install-dir=/usr/local/bin --filename=composer
         rm -f /tmp/composer-setup.php
@@ -88,8 +117,18 @@ if [ "$SKIP_SYSTEM" != "1" ]; then
     fi
 fi
 
-command -v composer >/dev/null || die "composer نصب نشد."
-command -v npm >/dev/null || die "npm نصب نشد."
+if [ -z "$BUNDLE" ]; then
+    command -v composer >/dev/null || die "composer نصب نشد."
+    command -v npm >/dev/null || die "npm نصب نشد."
+fi
+
+# آنچه کدِ سایت نیست و همگام‌سازیِ بسته نباید به آن دست بزند: داده، تنظیمات،
+# آپلودها، کش. --delete بی این فهرست، دیتابیس و عکس‌ها را پاک می‌کرد.
+RSYNC_KEEP=(
+    --exclude=/.env --exclude=/.git/ --exclude=/storage/ --exclude=/node_modules/
+    --exclude=/database/database.sqlite --exclude=/database/database.sqlite-*
+    --exclude=/public/storage --exclude=/public/build-next/ --exclude=/bootstrap/cache/
+)
 
 # -------------------------------------------------------------- بازگشت ----
 #
@@ -108,10 +147,18 @@ ROLLBACK_DIR=""
 ROLLBACK_REF=""
 
 snapshot() {
-    [ -d "$APP_DIR/.git" ] || return 0
-
-    ROLLBACK_REF="$(git -C "$APP_DIR" rev-parse HEAD 2>/dev/null || true)"
-    ROLLBACK_DIR="$(mktemp -d)"
+    if [ -n "$BUNDLE" ]; then
+        # بی گیت، نقطه‌ی بازگشتِ کد خودِ کد است: یک کپیِ محلی، بی داده‌ها
+        [ -f "$APP_DIR/artisan" ] || return 0
+        ROLLBACK_DIR="$(mktemp -d)"
+        ROLLBACK_REF="$(sed -n 's/^commit: //p' "$APP_DIR/RELEASE" 2>/dev/null || true)"
+        ROLLBACK_REF="${ROLLBACK_REF:-$(git -C "$APP_DIR" rev-parse HEAD 2>/dev/null || echo current)}"
+        rsync -a "${RSYNC_KEEP[@]}" "$APP_DIR/" "$ROLLBACK_DIR/code/"
+    else
+        [ -d "$APP_DIR/.git" ] || return 0
+        ROLLBACK_REF="$(git -C "$APP_DIR" rev-parse HEAD 2>/dev/null || true)"
+        ROLLBACK_DIR="$(mktemp -d)"
+    fi
 
     # assetهای ساخته‌شده و کشِ پیکربندی: هر دو پس از شکست، نیمه‌کاره می‌مانند
     [ -d "$APP_DIR/public/build" ] && cp -a "$APP_DIR/public/build" "$ROLLBACK_DIR/build"
@@ -135,7 +182,11 @@ rollback() {
 
     printf '\n\033[1;31m✗ به‌روزرسانی شکست خورد — برگرداندن سایت به حالت قبل…\033[0m\n' >&2
 
-    git -C "$APP_DIR" reset --hard "$ROLLBACK_REF" >/dev/null 2>&1 || true
+    if [ -d "$ROLLBACK_DIR/code" ]; then
+        rsync -a --delete "${RSYNC_KEEP[@]}" "$ROLLBACK_DIR/code/" "$APP_DIR/" >/dev/null 2>&1 || true
+    else
+        git -C "$APP_DIR" reset --hard "$ROLLBACK_REF" >/dev/null 2>&1 || true
+    fi
 
     if [ -d "$ROLLBACK_DIR/build" ]; then
         rm -rf "$APP_DIR/public/build"
@@ -191,7 +242,15 @@ fi
 
 BRANCH="${BRANCH:-$DEFAULT_BRANCH}"
 
-if [ -d "$APP_DIR/.git" ]; then
+if [ -n "$BUNDLE" ]; then
+    #
+    # کد از بسته، با --delete: پرونده‌ای که در نسخه‌ی تازه حذف شده، اینجا هم
+    # می‌رود. بی آن، مهاجرت یا مسیرِ حذف‌شده‌ای جا می‌ماند و دوباره اجرا می‌شد.
+    #
+    mkdir -p "$APP_DIR"
+    rsync -a --delete "${RSYNC_KEEP[@]}" "$BUNDLE_DIR/" "$APP_DIR/"
+    mkdir -p "$APP_DIR"/storage/{app/public,framework/{cache/data,sessions,views},logs} "$APP_DIR/bootstrap/cache"
+elif [ -d "$APP_DIR/.git" ]; then
     # refspec صریح لازم است: کلون با --branch تک‌برنچی است و فقط برنچِ همان
     # کلون را در refs/remotes نگه می‌دارد. با fetch ساده، origin/$BRANCH برای
     # هر برنچ دیگری اصلاً ساخته نمی‌شود و reset با «unknown revision» می‌ایستد.
@@ -201,6 +260,9 @@ if [ -d "$APP_DIR/.git" ]; then
     # نام برنچ محلی هم با برنچ مقصد یکی می‌شود؛ وگرنه پس از تعویض BRANCH،
     # git status نام برنچ قبلی را نشان می‌دهد و گمراه‌کننده است.
     git -C "$APP_DIR" checkout -B "$BRANCH"
+
+    # شناسنامه‌ی بسته‌ی قبلی، اگر بوده، دیگر درست نیست
+    rm -f "$APP_DIR/RELEASE"
 else
     mkdir -p "$(dirname "$APP_DIR")"
     git clone --depth 1 --branch "$BRANCH" "$REPO" "$APP_DIR"
@@ -210,6 +272,12 @@ cd "$APP_DIR"
 
 # ---------------------------------------------------------------- وابستگی ---
 step "نصب وابستگی‌ها و ساخت assets"
+
+if [ -n "$BUNDLE" ]; then
+    # vendor و assetها در بسته‌اند. فقط فهرستِ بسته‌های لاراول، که در ساختِ
+    # بسته (بی ‎.env) ساخته نمی‌شود.
+    php artisan package:discover --ansi
+else
 
 export COMPOSER_ALLOW_SUPERUSER=1
 composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
@@ -257,6 +325,8 @@ npm run build -- --outDir "$BUILD_TMP" --emptyOutDir
 
 rm -rf "$APP_DIR/public/build"
 mv "$BUILD_TMP" "$APP_DIR/public/build"
+
+fi # BUNDLE
 
 # -------------------------------------------------------------------- env ---
 step "پیکربندی محیط"
@@ -645,6 +715,8 @@ case "$HEALTH_REDIRECT" in
 esac
 
 # ------------------------------------------------------------------ پایان ---
+[ -n "$BUNDLE_DIR" ] && rm -rf "$BUNDLE_DIR"
+
 printf '\n\033[1;32m✓ نصب کامل شد.\033[0m\n'
 printf '  آدرس : %s\n' "$APP_URL"
 printf '  مسیر : %s\n' "$APP_DIR"
@@ -652,5 +724,12 @@ printf '  دیتابیس: %s\n\n' "$DB"
 printf 'پنل مدیریت: %s/admin\n' "$APP_URL"
 printf '  ساخت کاربر مدیر (گذرواژه تعاملی پرسیده می‌شود، در history نمی‌ماند):\n'
 printf '    cd %s && sudo -u www-data php artisan admin:create\n\n' "$APP_DIR"
-printf 'به‌روزرسانی بعدی (همیشه آخرین نسخه‌ی اسکریپت را می‌گیرد):\n'
-printf '  curl -fsSL %s | sudo SKIP_SYSTEM=1 bash\n\n' "$SELF_URL"
+if [ -n "$BUNDLE" ]; then
+    printf 'نسخه‌ی نصب‌شده:\n'
+    sed 's/^/  /' "$APP_DIR/RELEASE"
+    printf '\nبه‌روزرسانی بعدی با بسته‌ی تازه:\n'
+    printf '  tar -xzOf /root/kian-release-X.tar.gz ./deploy/install.sh | sudo BUNDLE=/root/kian-release-X.tar.gz SKIP_SYSTEM=1 bash\n\n'
+else
+    printf 'به‌روزرسانی بعدی (همیشه آخرین نسخه‌ی اسکریپت را می‌گیرد):\n'
+    printf '  curl -fsSL %s | sudo SKIP_SYSTEM=1 bash\n\n' "$SELF_URL"
+fi
