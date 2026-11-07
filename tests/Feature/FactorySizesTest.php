@@ -12,7 +12,7 @@ use Tests\TestCase;
  * کاتالوگ همان هفت سایزی است که کارخانه تولید می‌کند — نه بیشتر.
  *
  * ابعاد دقیقاً به شکلی که کارخانه نوشته نشان داده می‌شوند؛ ترتیبشان با
- * طول × عرض × ارتفاع یکی نیست («۲۰×۲۰×۴۰» ولی «۴۰×۱۸٫۵×۸»).
+ * کارخانه می‌نویسد نگه داشته می‌شود («۸×۱۸٫۵×۴۰»، «۵۰×۲۵×۲۰»).
  */
 class FactorySizesTest extends TestCase
 {
@@ -27,8 +27,8 @@ class FactorySizesTest extends TestCase
     public function test_the_catalogue_is_exactly_the_seven_factory_sizes(): void
     {
         $this->assertSame([
-            '40 × 18.5 × 8', '20 × 18.5 × 8', '40 × 18.5 × 13', '20 × 18.5 × 13',
-            '20 × 20 × 40', '20 × 25 × 40', '20 × 25 × 50',
+            '8 × 18.5 × 40', '8 × 18.5 × 20', '13 × 18.5 × 40', '13 × 18.5 × 20',
+            '40 × 20 × 20', '40 × 25 × 20', '50 × 25 × 20',
         ], Product::query()->active()->orderBy('position')->get()->map->dimensionLabel()->all());
     }
 
@@ -36,11 +36,11 @@ class FactorySizesTest extends TestCase
     {
         $this->get(route('products.show', 'partition-block-8-20'))
             ->assertOk()
-            ->assertSee('۲۰ × ۱۸٫۵ × ۸');
+            ->assertSee('۸ × ۱۸٫۵ × ۲۰');
 
         $this->get(route('products.show', 'roof-block-50'))
             ->assertOk()
-            ->assertSee('۲۰ × ۲۵ × ۵۰');
+            ->assertSee('۵۰ × ۲۵ × ۲۰');
     }
 
     /** پنل رقمِ فارسی و ممیزِ «٫» را می‌پذیرد و به یک شکل ذخیره می‌کند. */

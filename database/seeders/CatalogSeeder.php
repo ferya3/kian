@@ -15,9 +15,9 @@ class CatalogSeeder extends Seeder
         /*
         | کارخانه هفت سایز تولید می‌کند — ابعاد دقیقاً همان‌طور که کارخانه
         | می‌نویسد، در size_label:
-        |   تیغه‌ای:  ۴۰×۱۸٫۵×۸   ۲۰×۱۸٫۵×۸   ۴۰×۱۸٫۵×۱۳   ۲۰×۱۸٫۵×۱۳
-        |   دیواری:   ۲۰×۲۰×۴۰
-        |   سقفی:     ۲۰×۲۵×۴۰   ۲۰×۲۵×۵۰
+        |   تیغه‌ای:  ۸×۱۸٫۵×۴۰   ۸×۱۸٫۵×۲۰   ۱۳×۱۸٫۵×۴۰   ۱۳×۱۸٫۵×۲۰
+        |   دیواری:   ۴۰×۲۰×۲۰
+        |   سقفی:     ۴۰×۲۵×۲۰   ۵۰×۲۵×۲۰
         |
         | پیش‌تر اینجا ده محصول در هفت دسته بود — عایق، سبک، حرارتی،
         | متعلقات — که هیچ‌کدام تولید نمی‌شوند. دسته‌ای که محصول ندارد در
@@ -165,7 +165,7 @@ class CatalogSeeder extends Seeder
         return [
             $variant('partition-block-8', [
                 'name' => 'بلوک تیغه‌ای ۸ — طول ۴۰', 'name_en' => 'Partition Block 8 — 40 cm',
-                'size_label' => '40×18.5×8',
+                'size_label' => '8×18.5×40',
                 'length_mm' => 400, 'width_mm' => 80, 'height_mm' => 185, 'thickness_mm' => 80,
                 'weight_kg' => 6.70, 'units_per_pallet' => 125, 'units_per_sqm' => 12.5,
                 'position' => 1,
@@ -173,30 +173,30 @@ class CatalogSeeder extends Seeder
             $variant('partition-block-8', [
                 'slug' => 'partition-block-8-20', 'sku' => 'KP-08-20',
                 'name' => 'بلوک تیغه‌ای ۸ — طول ۲۰', 'name_en' => 'Partition Block 8 — 20 cm',
-                'size_label' => '20×18.5×8',
+                'size_label' => '8×18.5×20',
                 'length_mm' => 200, 'width_mm' => 80, 'height_mm' => 185, 'thickness_mm' => 80,
                 'weight_kg' => 3.30, 'units_per_pallet' => 250, 'units_per_sqm' => 24.5,
                 'position' => 2, 'is_featured' => false,
             ]),
             $variant('partition-block-13', [
                 'name' => 'بلوک تیغه‌ای ۱۳ — طول ۴۰', 'name_en' => 'Partition Block 13 — 40 cm',
-                'size_label' => '40×18.5×13',
+                'size_label' => '13×18.5×40',
                 'position' => 3,
             ]),
             $variant('partition-block-13', [
                 'slug' => 'partition-block-13-20', 'sku' => 'KP-13-20',
                 'name' => 'بلوک تیغه‌ای ۱۳ — طول ۲۰', 'name_en' => 'Partition Block 13 — 20 cm',
-                'size_label' => '20×18.5×13',
+                'size_label' => '13×18.5×20',
                 'length_mm' => 200, 'width_mm' => 130, 'height_mm' => 185, 'thickness_mm' => 130,
                 'weight_kg' => 4.50, 'units_per_pallet' => 200, 'units_per_sqm' => 24.5,
                 'position' => 4, 'is_featured' => false,
             ]),
             $variant('ceramic-block-20', [
-                'size_label' => '20×20×40',
+                'size_label' => '40×20×20',
                 'position' => 5,
             ]),
             $variant('roof-block-40', [
-                'size_label' => '20×25×40',
+                'size_label' => '40×25×20',
                 'length_mm' => 400, 'width_mm' => 200, 'height_mm' => 250, 'thickness_mm' => 250,
                 'position' => 6,
             ]),
@@ -204,7 +204,7 @@ class CatalogSeeder extends Seeder
                 'slug' => 'roof-block-50', 'sku' => 'KR-50',
                 'name' => 'بلوک سقفی ۵۰', 'name_en' => 'Roof Block 50',
                 'summary' => 'بلوک سقفی سفالی به طول پنجاه سانتی‌متر برای سیستم تیرچه‌بلوک با فاصله‌ی بیشترِ تیرچه‌ها؛ تعداد کمتر در هر متر مربع و اجرای سریع‌تر.',
-                'size_label' => '20×25×50',
+                'size_label' => '50×25×20',
                 'length_mm' => 500, 'width_mm' => 200, 'height_mm' => 250, 'thickness_mm' => 250,
                 'weight_kg' => 12.80, 'units_per_pallet' => 64, 'units_per_sqm' => 6.8,
                 'position' => 7, 'is_featured' => false,
