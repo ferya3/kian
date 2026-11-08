@@ -96,7 +96,7 @@
                             <h3 class="font-bold leading-snug">{{ $certificate->title }}</h3>
                             <p class="mt-1 text-meta text-ink-400">{{ $certificate->issuer }}</p>
                             @if($certificate->year)
-                                <p class="tech mt-1.5 text-micro text-ink-300">{{ \App\Support\Jalali::digits($certificate->year) }}</p>
+                                <p class="tech mt-1.5 text-micro text-ink-400">{{ \App\Support\Jalali::digits($certificate->year) }}</p>
                             @endif
                         </div>
                     </li>

@@ -3,6 +3,7 @@
     'alt' => '',
     'eager' => false,
     'imgClass' => 'h-full w-full object-cover',
+    'sizes' => '(min-width: 1024px) 50vw, 100vw',
 ])
 
 {{--
@@ -13,6 +14,7 @@
 
 @if($url)
     <img src="{{ $url }}" alt="{{ $alt }}"
+         @if($srcset = \App\Support\Media::srcset($url)) srcset="{{ $srcset }}" sizes="{{ $sizes }}" @endif
          loading="{{ $eager ? 'eager' : 'lazy' }}"
          decoding="async"
          @if($eager) fetchpriority="high" @endif

@@ -5,21 +5,29 @@
    دلیل: سایت باید داخل ایران هم بدون وابستگی به دامنه‌های خارجی سریع باز شود.
    ========================================================================== */
 
+/*
+| زیرمجموعه‌ی قلم‌ها، نه فایلِ کامل — resources/fonts/build-subsets.sh.
+|
+| فقط نویسه‌هایی که سایت دارد و وزنِ ۴۰۰ تا ۸۰۰: ۱۵۹ کیلوبایت به ۸۷ رسید.
+| هر دو قلم پیش از نخستین نقاشی دانلود می‌شوند و روی اینترنتِ همراه، همین
+| حجم بیشترِ FCP بود. وزنِ خارج از این بازه (font-thin، font-black) به
+| نزدیک‌ترین وزنِ موجود گرد می‌شود.
+*/
 @font-face {
     font-family: 'Vazirmatn';
-    src: url('../../node_modules/vazirmatn/fonts/webfonts/Vazirmatn[wght].woff2') format('woff2-variations');
-    font-weight: 100 900;
+    src: url('../fonts/vazirmatn-subset.woff2') format('woff2-variations');
+    font-weight: 400 800;
     font-style: normal;
     font-display: swap;
 }
 
 @font-face {
     font-family: 'InterVar';
-    src: url('../../node_modules/@fontsource-variable/inter/files/inter-latin-wght-normal.woff2') format('woff2-variations');
-    font-weight: 100 900;
+    src: url('../fonts/inter-subset.woff2') format('woff2-variations');
+    font-weight: 400 800;
     font-style: normal;
     font-display: swap;
-    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+2000-206F, U+2070-209F, U+20A0-20AB, U+2113, U+2C60-2C7F;
+    unicode-range: U+0020-007E, U+00A0-00FF, U+2010-2027, U+2030, U+2032-2033, U+2039-203A, U+20AC, U+2122, U+2190-2193, U+2212, U+2215;
 }
 
 /*
@@ -1215,6 +1223,22 @@
 }
 
 @layer utilities {
+    /*
+    | رندرِ تنبل برای بخش‌های زیرِ صفحه.
+    |
+    | تا وقتی بخش از دید دور است، مرورگر چیدمان و نقاشی‌اش را رد می‌کند.
+    | contain-intrinsic-size جای خالیِ تقریبی نگه می‌دارد تا نوارِ اسکرول
+    | نپرد؛ «auto» یعنی پس از نخستین رندر، اندازه‌ی واقعی را به خاطر بسپار.
+    */
+    .defer-render {
+        content-visibility: auto;
+        contain-intrinsic-size: auto 900px;
+    }
+
+    @media print {
+        .defer-render { content-visibility: visible; }
+    }
+
     /* ظاهر شدن تدریجی هنگام ورود به viewport — با JS مقدار data-reveal ست می‌شود */
     /*
     | جهتِ ورود قابل تعویض است.

@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use App\Support\ImageVariants;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
@@ -225,6 +226,7 @@ class ResourceController extends Controller
             // تراکنش ردیف‌ها را برگرداند؛ فایل‌های کپی‌شده را هم کسی نباید بی‌صاحب بگذارد
             foreach ($copied as [$disk, $path]) {
                 Storage::disk($disk)->delete($path);
+                ImageVariants::purge($path, $disk);
             }
 
             throw $e;
@@ -316,6 +318,7 @@ class ResourceController extends Controller
         }
 
         $copied[] = [$field->disk, $target];
+        ImageVariants::generate($target, $field->disk);
 
         return $target;
     }
@@ -525,6 +528,7 @@ class ResourceController extends Controller
             // حذف صریح فایل موجود
             if ($request->boolean('_remove_'.$field->key) && $record?->{$field->key}) {
                 Storage::disk($field->disk)->delete($record->{$field->key});
+                ImageVariants::purge($record->{$field->key}, $field->disk);
 
                 return [$field->key => null];
             }
@@ -533,9 +537,11 @@ class ResourceController extends Controller
         }
 
         $path = $request->file($field->key)->store('admin/'.$field->folder, $field->disk);
+        ImageVariants::generate($path, $field->disk);
 
         if ($record?->{$field->key}) {
             Storage::disk($field->disk)->delete($record->{$field->key});
+            ImageVariants::purge($record->{$field->key}, $field->disk);
         }
 
         $data = [$field->key => $path];
@@ -563,7 +569,10 @@ class ResourceController extends Controller
         $removed = collect((array) $request->input('_remove_'.$field->key, []))
             ->filter(fn ($path) => $existing->contains($path));
 
-        $removed->each(fn ($path) => Storage::disk($field->disk)->delete($path));
+        $removed->each(function ($path) use ($field) {
+            Storage::disk($field->disk)->delete($path);
+            ImageVariants::purge($path, $field->disk);
+        });
 
         $kept = $existing->reject(fn ($path) => $removed->contains($path))->values();
 
@@ -572,7 +581,9 @@ class ResourceController extends Controller
                 continue;
             }
 
-            $kept->push($upload->store('admin/'.$field->folder, $field->disk));
+            $stored = $upload->store('admin/'.$field->folder, $field->disk);
+            ImageVariants::generate($stored, $field->disk);
+            $kept->push($stored);
         }
 
         // ترتیب فقط بازچینش همین مسیرهاست، نه فهرست دلخواه کاربر

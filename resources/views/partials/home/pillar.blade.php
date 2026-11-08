@@ -18,7 +18,7 @@
         <div class="flex flex-wrap items-baseline gap-x-2">
             <h3 class="text-card font-bold text-sand-50">{{ $pillar['title'] }}</h3>
             @if($pillar['en'] !== '')
-                <span class="tech text-micro uppercase tracking-[0.14em] text-sand-200/35">{{ $pillar['en'] }}</span>
+                <span class="tech text-micro uppercase tracking-[0.14em] text-sand-200/70">{{ $pillar['en'] }}</span>
             @endif
         </div>
 
@@ -26,7 +26,7 @@
 
         <p class="mt-2.5 flex flex-wrap items-baseline gap-x-2">
             <span class="tech text-[1.0625rem] font-extrabold leading-tight text-clay-300">{{ $pillar['metric'] }}</span>
-            <span class="text-meta text-sand-200/45">{{ $pillar['metricLabel'] }}</span>
+            <span class="text-meta text-sand-200/70">{{ $pillar['metricLabel'] }}</span>
         </p>
     </div>
 </li>

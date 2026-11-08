@@ -17,7 +17,8 @@ export default (overHero = false) => ({
     },
 
     init() {
-        this.onScroll();
+        // خواندنِ scrollY پیش از نخستین فریم مرورگر را به چیدمانِ همزمان وادار می‌کرد
+        requestAnimationFrame(() => this.onScroll());
         window.addEventListener('scroll', () => this.onScroll(), { passive: true });
     },
 

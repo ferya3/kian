@@ -5,6 +5,7 @@
 
 @if($cover)
     <img src="{{ $cover }}" alt="{{ $project->title }}"
+         @if($srcset = \App\Support\Media::srcset($cover)) srcset="{{ $srcset }}" sizes="(min-width: 1024px) 40vw, (min-width: 640px) 50vw, 90vw" @endif
          loading="{{ $eager ? 'eager' : 'lazy' }}" decoding="async"
          class="h-full w-full object-cover">
 @else

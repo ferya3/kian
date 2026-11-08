@@ -32,18 +32,18 @@ export function observeOnce(elements, callback, options = {}) {
      * حاشیه‌ی منفیِ بالا حس «ظاهر شدن هنگام اسکرول» را می‌سازد، اما عنصری که
      * همان ابتدا کمی زیر خط تا است هرگز فعال نمی‌شد — مثل نوار شاخص‌ها روی
      * نمایشگر ۹۰۰ پیکسلی. هرچه در viewport واقعی دیده می‌شود، بی‌درنگ اجرا شود.
+     *
+     * تشخیصِ «همین حالا دیده می‌شود» با یک ناظرِ دوم است و نه
+     * getBoundingClientRect: آن یکی مرورگر را وادار به چیدمانِ همزمانِ کلِ
+     * صفحه می‌کرد، درست وسطِ راه‌اندازی — Lighthouse: forced reflow.
      */
-    const visibleNow = [];
+    const first = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+            first.unobserve(entry.target);
+            if (entry.isIntersecting) callback(entry.target);
+            else observer.observe(entry.target);
+        });
+    }, { threshold: 0 });
 
-    items.forEach((item) => {
-        const box = item.getBoundingClientRect();
-        const inView = box.top < window.innerHeight && box.bottom > 0;
-
-        if (inView) visibleNow.push(item);
-        else observer.observe(item);
-    });
-
-    if (visibleNow.length) {
-        requestAnimationFrame(() => visibleNow.forEach(callback));
-    }
+    items.forEach((item) => first.observe(item));
 }

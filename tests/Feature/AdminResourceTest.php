@@ -346,10 +346,11 @@ class AdminResourceTest extends TestCase
         Storage::disk('public')->assertExists($stored);
         $this->assertStringNotContainsString('عکس', $stored);
 
-        // سایت عمومی باید همان فایل را نشان دهد، نه آرت وکتوری
+        // سایت عمومی باید همان عکس را نشان دهد، نه آرت وکتوری — نسخه‌ی سبکِ WebP ِ آن
+        $this->assertStringContainsString('/variants/', \App\Support\Media::url($stored));
         $this->get(route('products.show', $product->fresh()))
             ->assertOk()
-            ->assertSee(Storage::disk('public')->url($stored), false);
+            ->assertSee(\App\Support\Media::url($stored), false);
     }
 
     public function test_the_public_page_falls_back_to_vector_art_without_an_image(): void
@@ -451,7 +452,7 @@ class AdminResourceTest extends TestCase
             ->get(route('admin.media'))
             ->assertOk()
             ->assertSee('کتابخانه‌ی تصاویر')
-            ->assertSee($product->fresh()->hero_image);
+            ->assertSee(\App\Support\Media::url($product->fresh()->hero_image), false);
     }
 
     /** بدنه‌ی کامل فرم محصول — چون اعتبارسنجی فیلدهای الزامی را می‌خواهد. */

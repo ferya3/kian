@@ -5,8 +5,8 @@
         'pdf'  => 'bg-clay-100 text-clay-700',
         'dwg'  => 'bg-ink-200/60 text-ink-700',
         'dxf'  => 'bg-ink-200/60 text-ink-700',
-        'rvt'  => 'bg-ember-500/15 text-ember-600',
-        'ifc'  => 'bg-ember-500/15 text-ember-600',
+        'rvt'  => 'bg-ember-500/15 text-clay-700',
+        'ifc'  => 'bg-ember-500/15 text-clay-700',
         'xlsx' => 'bg-sand-300 text-ink-600',
     ];
 @endphp

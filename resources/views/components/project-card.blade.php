@@ -1,4 +1,5 @@
-@props(['project', 'featured' => false])
+{{-- level: سطحِ تیتر — ۲ در فهرستِ پروژه‌ها که کارت‌ها مستقیم زیرِ h1 اند --}}
+@props(['project', 'featured' => false, 'level' => 3])
 
 <article {{ $attributes->merge(['class' => 'group relative flex flex-col overflow-hidden rounded-[var(--radius-panel)] bg-sand-50 transition-transform duration-500 ease-[var(--ease-out-expo)] hover:-translate-y-1']) }}>
     {{--
@@ -19,11 +20,11 @@
         </span>
 
         <div class="absolute inset-x-0 bottom-0 p-5 lg:p-6">
-            <h3 class="text-card font-extrabold text-sand-50">
+            <h{{ $level }} class="text-card font-extrabold text-sand-50">
                 <a href="{{ route('projects.show', $project) }}" class="after:absolute after:inset-0 focus:outline-none">
                     {{ $project->title }}
                 </a>
-            </h3>
+            </h{{ $level }}>
             <p class="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-meta text-sand-200/75">
                 <span>{{ $project->city }}</span>
                 <span class="h-1 w-1 rounded-full bg-sand-200/40"></span>

@@ -26,6 +26,7 @@
                            class="group block focus:outline-none focus-visible:ring-2 focus-visible:ring-clay-500"
                            style="aspect-ratio: {{ $aspect }}">
                             <img src="{{ $url }}" alt="" loading="lazy" decoding="async"
+                                 @if($srcset = \App\Support\Media::srcset($url)) srcset="{{ $srcset }}" sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw" @endif
                                  class="h-full w-full object-cover transition-transform duration-700 ease-[var(--ease-out-expo)] group-hover:scale-105">
                         </a>
                     </li>

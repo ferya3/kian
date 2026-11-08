@@ -30,7 +30,8 @@
 <section {{ $attributes->merge(['class' => 'relative overflow-hidden '.($dark ? 'bg-ink-950 text-sand-50' : 'bg-sand-50')]) }}>
     @if($imageUrl)
         <img src="{{ $imageUrl }}" alt="{{ $alt }}"
-             fetchpriority="high" decoding="async"
+             @if($srcset = \App\Support\Media::srcset($imageUrl)) srcset="{{ $srcset }}" sizes="100vw" @endif
+             fetchpriority="high"
              class="absolute inset-0 h-full w-full object-cover opacity-55">
         {{-- پرده‌ی تیره از پایین: تیتر و نان روی هر عکسی کنتراست کافی می‌گیرند --}}
         <div class="absolute inset-0 bg-gradient-to-t from-ink-950 via-ink-950/75 to-ink-950/45" aria-hidden="true"></div>

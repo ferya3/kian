@@ -49,7 +49,8 @@
             اگر عکس نهایی تیره باشد، هر دو محافظ را می‌شود برداشت.
         --}}
         <img src="{{ $image }}" alt="{{ SiteMedia::alt('hero.home') }}"
-             fetchpriority="high" decoding="async"
+             @if($srcset = \App\Support\Media::srcset($image)) srcset="{{ $srcset }}" sizes="100vw" @endif
+             fetchpriority="high"
              class="absolute inset-0 h-full w-full object-cover">
 
         <div class="absolute inset-x-0 top-0 h-36 bg-gradient-to-b from-ink-950/80 to-transparent" aria-hidden="true"></div>

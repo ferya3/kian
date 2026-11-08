@@ -33,7 +33,7 @@
                 <div class="col-span-3">
                     <p class="mb-4 border-b border-sand-300 pb-3 text-sm font-bold text-ink-900">
                         {{ $group->name }}
-                        <span class="tech mr-2 text-micro font-normal uppercase tracking-widest text-ink-300">{{ $group->name_en }}</span>
+                        <span class="tech mr-2 text-micro font-normal uppercase tracking-widest text-ink-400">{{ $group->name_en }}</span>
                     </p>
                     <ul class="space-y-0.5">
                         @foreach($group->children as $child)
@@ -44,7 +44,7 @@
                                         <span class="block text-[0.9375rem] font-semibold text-ink-800 group-hover:text-clay-600">{{ $child->name }}</span>
                                         <span class="block text-xs text-ink-400">{{ $child->tagline }}</span>
                                     </span>
-                                    <span class="tech shrink-0 text-xs text-ink-300">{{ \App\Support\Jalali::digits($child->products_count) }}</span>
+                                    <span class="tech shrink-0 text-xs text-ink-400">{{ \App\Support\Jalali::digits($child->products_count) }}</span>
                                 </a>
                             </li>
                         @endforeach

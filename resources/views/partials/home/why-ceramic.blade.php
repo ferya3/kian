@@ -130,7 +130,7 @@
                         <div class="relative mt-6 min-h-[16rem]">
                             <div x-show="mode === 'solid'" x-transition.opacity.duration.300ms class="py-6">
                                 <x-block-3d :product="$interactiveProduct" :size="230" />
-                                <p class="mt-6 text-center text-xs text-sand-200/45">
+                                <p class="mt-6 text-center text-xs text-sand-200/70">
                                     {{ __('site.home.why.drag') }}
                                 </p>
                             </div>
@@ -192,6 +192,7 @@
 
                                 @if($card['image'])
                                     <img src="{{ $card['image'] }}" alt="{{ $card['alt'] }}"
+                                         @if($srcset = \App\Support\Media::srcset($card['image'])) srcset="{{ $srcset }}" sizes="(min-width: 1024px) 45vw, 90vw" @endif
                                          loading="lazy" decoding="async" draggable="false"
                                          class="h-full w-full object-cover transition-[filter] duration-700"
                                          :class="active({{ $i }}) ? '' : 'grayscale brightness-75 blur-[2px]'">
@@ -219,12 +220,12 @@
                                  style="{{ $i === 0 ? '' : 'opacity: 0;' }}">
                                 <h3 class="text-card font-extrabold leading-tight text-sand-50">{{ $card['title'] }}</h3>
                                 @if($card['en'] !== '')
-                                    <p class="tech mt-1 text-micro uppercase tracking-[0.14em] text-sand-200/40">{{ $card['en'] }}</p>
+                                    <p class="tech mt-1 text-micro uppercase tracking-[0.14em] text-sand-200/70">{{ $card['en'] }}</p>
                                 @endif
                                 <p class="mt-3 text-meta leading-relaxed text-sand-200/65">{{ $card['text'] }}</p>
                                 <p class="mt-3 flex flex-wrap items-baseline justify-center gap-x-2">
                                     <span class="tech text-[1.0625rem] font-extrabold leading-tight text-clay-300">{{ $card['metric'] }}</span>
-                                    <span class="text-meta text-sand-200/45">{{ $card['metricLabel'] }}</span>
+                                    <span class="text-meta text-sand-200/70">{{ $card['metricLabel'] }}</span>
                                 </p>
                             </div>
                         @endforeach

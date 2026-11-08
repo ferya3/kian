@@ -15,7 +15,7 @@
                                 <x-media :path="$solution->image" :alt="$solution->title" />
                             </div>
                         @endif
-                        <p class="tech text-micro uppercase tracking-[0.14em] text-ink-300">{{ $solution->title_en }}</p>
+                        <p class="tech text-micro uppercase tracking-[0.14em] text-ink-400">{{ $solution->title_en }}</p>
                         <h2 class="mt-2 text-card font-extrabold">
                             <a href="{{ route('solutions.show', $solution) }}" class="transition hover:text-clay-600">{{ $solution->title }}</a>
                         </h2>

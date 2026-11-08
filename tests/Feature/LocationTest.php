@@ -122,7 +122,7 @@ class LocationTest extends TestCase
 
         $graph = json_decode(
             str($this->get(route('home'))->getContent())
-                ->between('<script type="application/ld+json">', '</script>')
+                ->betweenFirst('<script type="application/ld+json">', '</script>')
                 ->toString(),
             true,
         );

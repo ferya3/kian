@@ -182,4 +182,24 @@ class PublicPagesTest extends TestCase
         $this->assertStringContainsString('display: none', $panel);
         $this->assertStringContainsString('x-cloak', $panel);
     }
+    /**
+     * آنچه PageSpeed ِ موبایل را از ۶۹ به ۹۹ رساند؛ هیچ‌کدام نباید بی‌صدا برود.
+     */
+    public function test_the_home_page_keeps_its_speed_measures(): void
+    {
+        $html = $this->get(route('home'))->assertOk()->getContent();
+
+        // قلم‌ها همراهِ CSS، نه بعدش
+        $this->assertMatchesRegularExpression('~<link rel="preload" href="[^"]*vazirmatn-subset[^"]*\.woff2" as="font"~', $html);
+        $this->assertMatchesRegularExpression('~<link rel="preload" href="[^"]*inter-subset[^"]*\.woff2" as="font"~', $html);
+
+        // بخش‌های زیرِ صفحه: رندر و Alpine ِ تنبل
+        $this->assertGreaterThanOrEqual(6, substr_count($html, 'class="defer-render" data-alpine-lazy'));
+
+        // منوی موبایل تا نخستین لمس راه نمی‌افتد
+        $this->assertStringContainsString('x-data="mobileNav" data-alpine-on="toggle-mobile-nav"', $html);
+
+        // متنِ صفحه‌ی اول منتظرِ جاوااسکریپت نمی‌ماند
+        $this->assertStringContainsString("document.querySelectorAll('main [data-reveal]')", $html);
+    }
 }

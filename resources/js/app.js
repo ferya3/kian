@@ -25,7 +25,68 @@ Alpine.data('accordion', accordion);
 Alpine.data('tabs', tabs);
 
 window.Alpine = Alpine;
+
+/*
+| بخش‌های زیرِ صفحه تا نزدیک‌شدنِ اسکرول راه‌اندازی نمی‌شوند.
+|
+| Alpine در شروع کلِ صفحه را می‌پیماید؛ روی صفحه‌ی اصلی ۲۵۰۰ عنصر، و روی
+| گوشی یک کارِ پیوسته‌ی نیم‌ثانیه‌ای که صفحه را از پاسخ‌دادن به لمس باز
+| می‌داشت (Lighthouse: TBT). x-ignore آن بخش‌ها را از پیمایشِ نخست بیرون
+| می‌گذارد و ۶۰۰ پیکسل پیش از رسیدنِ اسکرول، initTree راه‌شان می‌اندازد.
+*/
+const lazy = Array.from(document.querySelectorAll('[data-alpine-lazy]'));
+if ('IntersectionObserver' in window) {
+    /*
+    | x-data روی پوسته لازم است و نه فقط x-ignore: Alpine هر x-data را ریشه‌ای
+    | مستقل می‌شمارد و از راهِ querySelector پیدایش می‌کند، پس x-ignore روی
+    | والدی که خودش کامپوننت نیست، جلوی کامپوننت‌های درونش را نمی‌گرفت. با
+    | x-data، پوسته ریشه است و درونی‌ها زیرِ آن — و x-ignore همه را کنار می‌گذارد.
+    */
+    lazy.forEach((el) => {
+        el.setAttribute('x-data', '');
+        el.setAttribute('x-ignore', '');
+    });
+}
+
+/*
+| کامپوننتی که فقط با یک رویداد به کار می‌آید — منوی موبایل — تا آن رویداد
+| راه‌اندازی نمی‌شود. نخستین رویداد اینجا گرفته می‌شود، کامپوننت راه می‌افتد
+| و همان رویداد دوباره فرستاده می‌شود تا شنونده‌ی تازه‌اش آن را بگیرد.
+*/
+document.querySelectorAll('[data-alpine-on]').forEach((el) => {
+    const event = el.dataset.alpineOn;
+    el.setAttribute('x-ignore', '');
+
+    window.addEventListener(event, (e) => {
+        /*
+        | رویدادِ اصلی همین‌جا می‌ایستد و پس از راه‌اندازی دوباره فرستاده
+        | می‌شود. اگر ادامه می‌داد، شنونده‌ی تازه‌ی Alpine هم آن را می‌گرفت —
+        | هم رویدادِ اصلی و هم تکرارش: منو باز و فوراً بسته می‌شد.
+        */
+        e.stopImmediatePropagation();
+        el.removeAttribute('x-ignore');
+        delete el._x_ignore;
+        Alpine.initTree(el);
+        queueMicrotask(() => window.dispatchEvent(new CustomEvent(event, { detail: e.detail })));
+    }, { once: true, capture: true });
+});
+
 Alpine.start();
+
+if (lazy.length && 'IntersectionObserver' in window) {
+    const wake = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+            const el = entry.target;
+            wake.unobserve(el);
+            el.removeAttribute('x-ignore');
+            el._x_ignore = false;
+            Array.from(el.children).forEach((child) => Alpine.initTree(child));
+        });
+    }, { rootMargin: '600px 0px' });
+
+    lazy.forEach((el) => wake.observe(el));
+}
 
 const boot = () => {
     initSmoothScroll();

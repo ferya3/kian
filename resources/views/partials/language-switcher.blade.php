@@ -26,7 +26,8 @@
                 @click.outside="langOpen = false"
                 :aria-expanded="langOpen ? 'true' : 'false'"
                 aria-haspopup="menu"
-                aria-label="{{ __('site.language.switch') }}"
+                {{-- نامِ دسترس‌پذیر باید متنِ دیدنیِ دکمه («FA») را هم داشته باشد --}}
+                aria-label="{{ Locales::meta()['short'] ?? strtoupper(Locales::current()) }} — {{ __('site.language.switch') }}"
                 class="tech flex min-h-11 items-center gap-1 rounded-full px-3 text-micro font-bold uppercase tracking-[0.1em] transition lg:min-h-9"
                 :class="{{ $tone }}">
             {{ Locales::meta()['short'] ?? strtoupper(Locales::current()) }}

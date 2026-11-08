@@ -26,7 +26,41 @@ class Media
             return $path;
         }
 
+        /*
+        | عکس با نسخه‌ی سبک: به‌جای اصلِ چندمگابایتی، بزرگ‌ترین WebP ِ ساخته‌شده.
+        | srcset (پایین) بقیه‌ی پهناها را به مرورگر می‌دهد.
+        */
+        if ($variants = ImageVariants::existing($path, static::$disk)) {
+            $path = end($variants);
+        }
+
         return static::relative(Storage::disk(static::$disk)->url($path));
+    }
+
+    /**
+     * srcset برای نشانی‌ای که url() ساخته — همه‌ی پهناهای همان عکس.
+     *
+     * از روی نشانی کار می‌کند و نه مسیر، چون ویوها نشانی دارند. null اگر عکس
+     * نسخه ندارد (مثلاً هنوز بهینه نشده) — آن‌وقت src تنها کافی است.
+     */
+    public static function srcset(?string $url): ?string
+    {
+        if (! $url || ! preg_match('~^(.*/)variants/(.+)-\d+\.webp$~', $url, $m)) {
+            return null;
+        }
+
+        $prefix = parse_url(Storage::disk(static::$disk)->url(''), PHP_URL_PATH) ?: '/storage/';
+        $dir = substr($m[1], strlen(rtrim($prefix, '/').'/'));
+
+        $entries = [];
+        foreach (ImageVariants::WIDTHS as $width) {
+            $variant = $dir.'variants/'.$m[2].'-'.$width.'.webp';
+            if (Storage::disk(static::$disk)->exists($variant)) {
+                $entries[] = $m[1].'variants/'.$m[2].'-'.$width.'.webp '.$width.'w';
+            }
+        }
+
+        return count($entries) > 1 ? implode(', ', $entries) : null;
     }
 
     /**

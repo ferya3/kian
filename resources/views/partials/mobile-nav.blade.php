@@ -1,7 +1,12 @@
 {{-- منوی موبایل — طراحی مستقل، نه نسخه‌ی کوچک‌شده‌ی دسکتاپ --}}
 @php use App\Support\Brand; @endphp
 
-<div x-data="mobileNav"
+{{--
+    data-alpine-on: تا نخستین لمسِ دکمه‌ی منو راه‌اندازی نمی‌شود — app.js.
+    بیشترِ بازدیدکننده‌ها منو را باز نمی‌کنند و چهل‌وچند دستورِ Alpine ِ آن
+    راه‌اندازیِ صفحه را روی گوشی کند می‌کرد.
+--}}
+<div x-data="mobileNav" data-alpine-on="toggle-mobile-nav"
      @toggle-mobile-nav.window="toggle()"
      @keydown.escape.window="open && hide()"
      class="no-print lg:hidden">
@@ -64,7 +69,7 @@
                                         <a href="{{ route('products.index', ['category' => $child->slug]) }}"
                                            class="flex items-center justify-between rounded-lg px-3 py-2.5 text-[0.9375rem] text-ink-600 transition active:bg-sand-200">
                                             {{ $child->name }}
-                                            <span class="tech text-xs text-ink-300">{{ \App\Support\Jalali::digits($child->products_count) }}</span>
+                                            <span class="tech text-xs text-ink-400">{{ \App\Support\Jalali::digits($child->products_count) }}</span>
                                         </a>
                                     </li>
                                 @endforeach

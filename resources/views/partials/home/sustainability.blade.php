@@ -22,7 +22,7 @@
                             $text = __("site.home.sustainability.cycle.{$step}.text");
                         @endphp
                         <li data-reveal class="relative rounded-2xl border border-sand-300 bg-sand-50 p-5">
-                            <span class="tech text-micro uppercase tracking-[0.14em] text-ink-300">{{ $en }}</span>
+                            <span class="tech text-micro uppercase tracking-[0.14em] text-ink-400">{{ $en }}</span>
                             <p class="mt-2 flex items-center gap-2 text-lg font-extrabold">
                                 <x-icon :name="$icon" size="19" class="text-clay-500" />
                                 {{ $title }}
@@ -39,13 +39,13 @@
 
                 <dl class="mt-6 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-sand-300 bg-sand-300 lg:grid-cols-4">
                     @foreach(\App\Models\Stat::query()->group('sustainability')->get() as $stat)
-                        <div class="bg-sand-50 p-5">
-                            <dd class="text-2xl font-extrabold text-clay-600">
+                        <div class="flex flex-col bg-sand-50 p-5">
+                            <dt class="order-2 mt-1 text-meta leading-snug text-ink-500">{{ $stat->label }}</dt>
+                            <dd class="order-1 text-2xl font-extrabold text-clay-600">
                                 <bdi dir="ltr" class="tech inline-block whitespace-nowrap">
                                     <span data-countup="{{ $stat->value }}" data-decimals="{{ $stat->decimals }}">۰</span>{{ $stat->suffix }}
                                 </bdi>
                             </dd>
-                            <dt class="mt-1 text-meta leading-snug text-ink-500">{{ $stat->label }}</dt>
                         </div>
                     @endforeach
                 </dl>

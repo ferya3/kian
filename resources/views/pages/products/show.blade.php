@@ -95,7 +95,7 @@
                         @foreach($benefits as $benefit)
                             <li class="flex flex-col items-center justify-start rounded-2xl border border-sand-300 bg-sand-100 p-3 text-center sm:p-4">
                                 <x-icon :name="$benefit['icon']" size="22" class="mx-auto text-clay-500" />
-                                <p class="tech mt-2 text-micro uppercase tracking-[0.12em] text-ink-300">{{ $benefit['en'] }}</p>
+                                <p class="tech mt-2 text-micro uppercase tracking-[0.12em] text-ink-400">{{ $benefit['en'] }}</p>
                                 <p class="mt-1 font-extrabold"><x-num :value="$benefit['value']" class="whitespace-nowrap" /></p>
                                 <p class="mt-1 text-micro leading-snug text-ink-400">{{ $benefit['label'] }}</p>
                             </li>

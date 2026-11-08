@@ -49,7 +49,7 @@
             @else
                 <div class="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" data-reveal-stagger="80">
                     @foreach($products as $product)
-                        <x-product-card :product="$product" data-reveal />
+                        <x-product-card :product="$product" :level="2" data-reveal />
                     @endforeach
                 </div>
             @endif
@@ -81,7 +81,7 @@
                                 <tr class="transition hover:bg-clay-50">
                                     <th scope="row" class="px-4 py-3 text-right">
                                         <a href="{{ route('products.show', $product) }}" class="tap font-bold transition hover:text-clay-600">{{ $product->name }}</a>
-                                        <span class="tech mr-2 text-micro text-ink-300">{{ $product->sku }}</span>
+                                        <span class="tech mr-2 text-micro text-ink-400">{{ $product->sku }}</span>
                                     </th>
                                     @foreach([
                                         $product->dimensionLabel(),

@@ -8,10 +8,18 @@
     {{-- آسمانِ کوره --}}
     <div class="absolute inset-0" style="background: radial-gradient(120% 90% at 62% 12%, #3d1b0e 0%, #1c1109 42%, #0e0e0e 78%)"></div>
 
-    {{-- تابش کوره — نفس می‌کشد --}}
-    <div class="absolute left-[18%] top-[26%] h-[46vmax] w-[46vmax] -translate-x-1/2 rounded-full blur-[90px]"
+    {{--
+        تابش کوره — نفس می‌کشد.
+
+        نرمیِ لبه از خودِ شیبِ شعاعی می‌آید، نه از blur: فیلترِ ۹۰ پیکسلی روی
+        کادری به اندازه‌ی نصفِ صفحه، با هر فریمِ انیمیشن از نو حساب می‌شد و
+        به‌تنهایی ۸۵٪ پردازنده را می‌گرفت (Lighthouse: TBT ۱٫۲ ثانیه). حالا فقط
+        opacity و transform تغییر می‌کنند — کارِ کارت گرافیک، بی بازنقاشی.
+    --}}
+    <div class="absolute left-[18%] top-[26%] h-[46vmax] w-[46vmax] -translate-x-1/2 rounded-full"
          data-parallax="0.06"
-         style="background: radial-gradient(circle, rgba(226,115,47,.34), rgba(180,85,45,.12) 45%, transparent 70%);
+         style="background: radial-gradient(circle closest-side, rgba(226,115,47,.30), rgba(200,95,45,.17) 38%, rgba(180,85,45,.07) 66%, transparent);
+                will-change: opacity, transform;
                 animation: kiln-breathe 9s ease-in-out infinite"></div>
 
     {{-- لایه‌های خاک — مقاطع زمین‌شناسی معدن رس --}}
@@ -79,15 +87,26 @@
         </g>
     </svg>
 
-    {{-- ذرات غبار خاک --}}
-    <div class="absolute inset-0 opacity-[0.28]"
-         style="background-image:
-            radial-gradient(1.5px 1.5px at 18% 32%, #f5d0b4 50%, transparent),
-            radial-gradient(1px 1px at 44% 58%, #f5d0b4 50%, transparent),
-            radial-gradient(1.5px 1.5px at 68% 24%, #f5d0b4 50%, transparent),
-            radial-gradient(1px 1px at 82% 66%, #f5d0b4 50%, transparent),
-            radial-gradient(1px 1px at 30% 76%, #f5d0b4 50%, transparent);
-            animation: dust-drift 24s linear infinite"></div>
+    {{--
+        ذرات غبار خاک.
+
+        پیش‌تر background-position متحرک بود — یعنی کلِ کادر در هر فریم از نو
+        نقاشی می‌شد (۸۴٪ پردازنده). حالا یک کاشیِ تکرارشونده‌ی بلندتر از کادر
+        با transform بالا می‌رود و درست به اندازه‌ی یک کاشی؛ حلقه بی‌درز است و
+        جابه‌جایی روی کارت گرافیک.
+    --}}
+    <div class="absolute inset-0 overflow-hidden opacity-[0.28]">
+        <div class="absolute inset-x-0 top-0 h-[calc(100%+20rem)]"
+             style="background-image:
+                radial-gradient(1.5px 1.5px at 18% 12%, #f5d0b4 50%, transparent),
+                radial-gradient(1px 1px at 44% 58%, #f5d0b4 50%, transparent),
+                radial-gradient(1.5px 1.5px at 68% 34%, #f5d0b4 50%, transparent),
+                radial-gradient(1px 1px at 82% 86%, #f5d0b4 50%, transparent),
+                radial-gradient(1px 1px at 30% 76%, #f5d0b4 50%, transparent);
+                background-size: 26rem 20rem;
+                will-change: transform;
+                animation: dust-drift 24s linear infinite"></div>
+    </div>
 
     {{-- پرده‌ی ملایم پشت متن — روی هیروی کوتاه گوشی، خوانایی را تضمین می‌کند --}}
     <div class="absolute inset-0 bg-gradient-to-t from-ink-950/60 via-ink-950/25 to-transparent sm:hidden"></div>
@@ -103,9 +122,10 @@
                 0%, 100% { opacity: .78; transform: translateX(-50%) scale(1); }
                 50%      { opacity: 1;   transform: translateX(-50%) scale(1.07); }
             }
+            /* دقیقاً یک کاشی (۲۰rem) بالا می‌رود: پایانِ دور همان آغازِ دورِ بعد است */
             @keyframes dust-drift {
-                from { background-position: 0 0, 0 0, 0 0, 0 0, 0 0; }
-                to   { background-position: 60px -90px, -50px -70px, 40px -110px, -70px -80px, 30px -100px; }
+                from { transform: translate3d(0, 0, 0); }
+                to   { transform: translate3d(0, -20rem, 0); }
             }
             @media (prefers-reduced-motion: reduce) {
                 [style*="kiln-breathe"], [style*="dust-drift"] { animation: none !important; }

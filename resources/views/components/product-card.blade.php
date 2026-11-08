@@ -1,4 +1,5 @@
-@props(['product', 'showBars' => true, 'eager' => false])
+{{-- level: سطحِ تیتر — ۲ وقتی کارت مستقیم زیرِ h1 ِ صفحه است (فهرستِ محصولات) --}}
+@props(['product', 'showBars' => true, 'eager' => false, 'level' => 3])
 
 <article {{ $attributes->merge(['class' => 'group relative flex flex-col overflow-hidden rounded-[var(--radius-panel)] border border-sand-300 bg-sand-50 transition-[border-color,box-shadow,transform] duration-500 ease-[var(--ease-out-expo)] hover:-translate-y-1 hover:border-clay-300 hover:shadow-lift focus-within:border-clay-400']) }}>
 
@@ -37,11 +38,11 @@
     <div class="flex flex-1 flex-col p-5">
         <p class="eyebrow text-clay-600">{{ $product->category?->name }}</p>
 
-        <h3 class="mt-2 text-card font-extrabold">
+        <h{{ $level }} class="mt-2 text-card font-extrabold">
             <a href="{{ route('products.show', $product) }}" class="after:absolute after:inset-0 focus:outline-none">
                 {{ $product->name }}
             </a>
-        </h3>
+        </h{{ $level }}>
 
         <p class="tech mt-1 text-sm text-ink-400">
             {{ \App\Support\Jalali::digits($product->dimensionLabel()) }} {{ __('site.card.cm') }}
@@ -62,7 +63,7 @@
                     <dt class="text-micro text-ink-400">{{ $label }}</dt>
                     <dd class="mt-0.5 text-sm font-bold text-ink-900">
                         <x-num :value="$value" />
-                        <span class="text-micro font-normal text-ink-300">{{ $unit }}</span>
+                        <span class="text-micro font-normal text-ink-400">{{ $unit }}</span>
                     </dd>
                 </div>
             @endforeach

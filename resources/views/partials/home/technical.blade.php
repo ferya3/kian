@@ -50,7 +50,7 @@
                             </span>
                             <span class="min-w-0 flex-1">
                                 <span class="block font-semibold">{{ __('site.home.technical.tile.'.$tile['key']) }}</span>
-                                <span class="tech block text-micro uppercase tracking-wider text-sand-200/45">{{ $tile['meta'] }}</span>
+                                <span class="tech block text-micro uppercase tracking-wider text-sand-200/70">{{ $tile['meta'] }}</span>
                             </span>
                             <x-icon name="download" size="18" class="shrink-0 text-sand-200/30 transition group-hover:text-clay-300" />
                         </a>

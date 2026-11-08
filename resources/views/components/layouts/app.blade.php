@@ -55,6 +55,17 @@
     @endif
     <link rel="sitemap" type="application/xml" href="{{ route('sitemap') }}">
 
+    {{--
+        قلم‌ها همراهِ CSS دانلود شوند، نه بعد از آن.
+
+        بی preload، مرورگر قلم را فقط پس از دانلود و خواندنِ CSS پیدا می‌کرد —
+        یک رفت‌وبرگشتِ کامل دیرتر؛ و چون نخستین نقاشی منتظرِ قلم است، روی
+        اینترنتِ همراه همین فاصله در FCP دیده می‌شد. هر دو قلم در هر زبانی: صفحه‌ی
+        انگلیسی هم نامِ فارسیِ زبان‌ها و برند را دارد و وزیرمتن را می‌خواهد.
+    --}}
+    <link rel="preload" href="{{ Vite::asset('resources/fonts/vazirmatn-subset.woff2') }}" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="{{ Vite::asset('resources/fonts/inter-subset.woff2') }}" as="font" type="font/woff2" crossorigin>
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <script type="application/ld+json">@json(['@context' => 'https://schema.org', '@graph' => $seo->jsonLd()], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)</script>
@@ -108,6 +119,27 @@
 
         @include('partials.footer')
     </div>
+
+    {{--
+        آنچه همان ابتدا در دید است، منتظرِ جاوااسکریپت نمی‌ماند.
+
+        [data-reveal] تا رسیدنِ اسکریپتِ اصلی پنهان است. برای پایینِ صفحه درست
+        است؛ ولی تیتر و متنِ همان صفحه‌ی اول هم تا راه‌افتادنِ Alpine پنهان
+        می‌ماندند — روی گوشی، LCP یک ثانیه منتظرِ جاوااسکریپت بود. این چند خط
+        همین‌جا، پیش از نخستین نقاشی، آن‌ها را نمایان می‌کنند؛ پیمایش با
+        نخستین عنصرِ زیرِ خطِ تا می‌ایستد.
+    --}}
+    <script>
+        (function () {
+            if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+            var h = innerHeight, els = document.querySelectorAll('main [data-reveal]');
+            for (var i = 0; i < els.length; i++) {
+                var r = els[i].getBoundingClientRect();
+                if (r.top > h) break;
+                if (r.bottom > 0) els[i].classList.add('is-visible');
+            }
+        })();
+    </script>
 
     @stack('scripts')
 </body>

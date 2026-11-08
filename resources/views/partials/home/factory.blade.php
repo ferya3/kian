@@ -110,7 +110,7 @@
                     @endforeach
                 </div>
 
-                <p class="pointer-events-none absolute bottom-4 right-5 text-micro text-sand-200/40">
+                <p class="pointer-events-none absolute bottom-4 right-5 text-micro text-sand-200/70">
                     <span x-show="autoplay">{{ __('site.home.factory.autoplay') }}</span>
                     {{-- راهنمای کلیدهای جهت فقط آنجا که صفحه‌کلید هست --}}
                     <span x-show="!autoplay" x-cloak class="hidden lg:inline">{{ __('site.home.factory.keys') }}</span>

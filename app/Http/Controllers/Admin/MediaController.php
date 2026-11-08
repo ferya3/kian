@@ -97,6 +97,8 @@ class MediaController extends Controller
 
         return collect($disk->allFiles('admin'))
             ->reject(fn (string $path) => in_array($path, $used, true))
+            // نسخه‌های سبکِ یک عکس جزوِ خودِ آن عکس‌اند، نه فایلِ بی‌صاحب
+            ->reject(fn (string $path) => str_contains($path, '/variants/'))
             ->map(fn (string $path) => [
                 'path' => $path,
                 'url' => Media::url($path),

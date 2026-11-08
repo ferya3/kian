@@ -19,7 +19,7 @@
                             <div class="min-w-0 flex-1">
                                 <h3 class="font-bold leading-snug">{{ $certificate->title }}</h3>
                                 <p class="mt-1 text-[0.875rem] text-ink-400">{{ $certificate->issuer }}</p>
-                                <p class="tech mt-1.5 flex flex-wrap gap-x-3 text-micro text-ink-300">
+                                <p class="tech mt-1.5 flex flex-wrap gap-x-3 text-micro text-ink-400">
                                     @if($certificate->number)<span>{{ __('site.certificates.number', ['number' => $certificate->number]) }}</span>@endif
                                     @if($certificate->year)<span>{{ \App\Support\Jalali::digits($certificate->year) }}</span>@endif
                                 </p>

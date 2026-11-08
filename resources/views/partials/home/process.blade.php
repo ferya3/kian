@@ -225,6 +225,7 @@
 
                                 @if($slide['image'])
                                     <img src="{{ $slide['image'] }}" alt="{{ $slide['alt'] }}"
+                                         @if($srcset = \App\Support\Media::srcset($slide['image'])) srcset="{{ $srcset }}" sizes="(min-width: 1024px) 45vw, 90vw" @endif
                                          loading="lazy" decoding="async" draggable="false"
                                          class="h-full w-full object-cover transition-[filter] duration-700"
                                          :class="active({{ $i }}) ? '' : 'grayscale brightness-75 blur-[2px]'">

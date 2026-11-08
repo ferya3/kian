@@ -444,6 +444,14 @@ if [ ! -e public/storage ]; then
     printf '  دستی اجرا کنید: cd %s && sudo -u www-data php artisan storage:link\n\n' "$APP_DIR"
 fi
 
+# ------------------------------------------------------------ عکس‌ها ----
+#
+# نسخه‌های سبکِ WebP برای عکس‌های آپلودشده. هر اجرا فقط کم‌وکسری را می‌سازد،
+# پس اجرای اول چند ثانیه و بعدی‌ها تقریباً هیچ. شکستش سایت را نمی‌شکند:
+# بی نسخه، همان عکسِ اصل فرستاده می‌شود.
+step "بهینه‌سازی عکس‌ها"
+php artisan media:optimize || printf '  \033[1;33mبهینه‌سازی عکس‌ها کامل نشد؛ عکس‌های اصل نمایش داده می‌شوند.\033[0m\n'
+
 # ------------------------------------------------------------- دسترسی‌ها ----
 step "تنظیم دسترسی‌ها و کش"
 
@@ -498,6 +506,14 @@ server {
 
     # فونت‌ها و assets ساخته‌شده‌ی Vite هش دارند، پس تا یک سال کش می‌شوند
     location ~* ^/build/.*\.(css|js|woff2?)\$ {
+        expires 1y;
+        access_log off;
+        add_header Cache-Control "public, immutable";
+    }
+
+    # عکس‌های آپلودشده نامِ تصادفی دارند و هرگز بازنویسی نمی‌شوند — عکسِ تازه
+    # نامِ تازه می‌گیرد. پس مثل assetهای Vite می‌توانند یک سال کش شوند.
+    location ~* ^/storage/.*\.(png|jpe?g|webp|avif|gif)\$ {
         expires 1y;
         access_log off;
         add_header Cache-Control "public, immutable";

@@ -34,7 +34,7 @@
                 <x-brand-mark class="h-11 w-11" />
                 <span>
                     <span class="block text-lg font-extrabold text-sand-50">{{ Brand::legalName() }}</span>
-                    <span class="tech block text-micro uppercase tracking-[0.18em] text-sand-200/45">{{ config('kian.brand.descriptor_en') }}</span>
+                    <span class="tech block text-micro uppercase tracking-[0.18em] text-sand-200/70">{{ config('kian.brand.descriptor_en') }}</span>
                 </span>
             </a>
             <p class="mt-5 max-w-sm text-[0.9375rem] leading-relaxed text-sand-200/55">
@@ -122,7 +122,7 @@
     </div>
 
     <div class="border-t border-white/[0.07]">
-        <div class="container-page flex flex-col gap-3 pt-6 text-meta text-sand-200/40 sm:flex-row sm:items-center sm:justify-between"
+        <div class="container-page flex flex-col gap-3 pt-6 text-meta text-sand-200/65 sm:flex-row sm:items-center sm:justify-between"
              style="padding-bottom: max(1.5rem, var(--safe-bottom))">
             <p>© {{ \App\Support\Jalali::year() }} {{ Brand::legalName() }} — {{ __('site.footer.rights') }}</p>
             {{--
