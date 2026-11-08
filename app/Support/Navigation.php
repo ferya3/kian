@@ -66,6 +66,15 @@ class Navigation
             array_splice($items, 2, 0, [['route' => 'shop.index']]);
         }
 
+        /*
+        | سامانه‌ی نوبت‌دهی — سایتی جدا (nobat.kiyanbehsaz.com) که منو فقط به
+        | آن لینک می‌دهد. نشانی از «پنل ← اطلاعات تماس» می‌آید؛ خالی یعنی نیست.
+        | «route» اینجا فقط شناسه است برای کلیدِ ترجمه و حالتِ منو، نه مسیرِ لاراول.
+        */
+        if (filled($booking = Contact::get('booking_url'))) {
+            $items[] = ['route' => 'booking', 'url' => $booking, 'external' => true];
+        }
+
         return array_map(static::label(...), $items);
     }
 
@@ -136,9 +145,19 @@ class Navigation
         return request()->routeIs('home');
     }
 
+    /** نشانیِ یک آیتم: لینکِ بیرونی اگر دارد، وگرنه مسیرِ لاراول. */
+    public static function href(array $item): string
+    {
+        return $item['url'] ?? route($item['route']);
+    }
+
     /** آیا مسیر فعلی زیرمجموعه‌ی این آیتم است؟ برای aria-current و استایل فعال. */
     public static function isActive(array $item): bool
     {
+        if (! empty($item['external'])) {
+            return false;
+        }
+
         $routes = array_merge(
             [$item['route']],
             array_column($item['children'] ?? [], 'route')

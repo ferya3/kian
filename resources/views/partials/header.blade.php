@@ -99,8 +99,15 @@
                         $active = Navigation::isActive($item);
                         $hasPanel = ($item['mega'] ?? false) || !empty($item['children']);
                     @endphp
-                    <div class="relative" @if($hasPanel) @mouseenter="open('{{ $item['route'] }}')" @endif>
-                        <a href="{{ route($item['route']) }}"
+                    {{--
+                        «صفحه اصلی» از ۱۴۰۰ پیکسل به بالا. زیرِ آن، با فروشگاه و
+                        نوبت‌دهی، نوار جا نداشت: در ۱۰۲۴ سبد خرید و تا ۱۳۶۰ دکمه‌ی
+                        «درخواست قیمت» از لبه بیرون می‌زد. لوگو همان‌جا خودش به
+                        صفحه‌ی اصلی می‌برد.
+                    --}}
+                    <div class="relative {{ $item['route'] === 'home' ? 'hidden min-[1400px]:block' : '' }}" @if($hasPanel) @mouseenter="open('{{ $item['route'] }}')" @endif>
+                        <a href="{{ Navigation::href($item) }}"
+                           @if(!empty($item['external'])) target="_blank" rel="noopener" @endif
                            @if($hasPanel)
                                @focus="open('{{ $item['route'] }}')"
                                :aria-expanded="openMenu === '{{ $item['route'] }}' ? 'true' : 'false'"
@@ -112,6 +119,10 @@
                                 ? ({{ $active ? 'true' : 'false' }} ? 'text-clay-300' : 'text-sand-100/85 hover:text-white')
                                 : ({{ $active ? 'true' : 'false' }} ? 'text-clay-600' : 'text-ink-700 hover:text-clay-600')">
                             {{ $item['label'] }}
+                            @if(!empty($item['external']))
+                                {{-- سایتی جدا، در زبانه‌ی تازه --}}
+                                <x-icon name="external" size="12" class="opacity-60" />
+                            @endif
                             @if($hasPanel)
                                 <x-icon name="chevron-down" size="14"
                                         class="transition-transform duration-300"

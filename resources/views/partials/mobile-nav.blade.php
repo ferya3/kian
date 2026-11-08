@@ -58,6 +58,12 @@
             <nav aria-label="{{ __('site.nav.mobile') }}">
                 <ul class="divide-y divide-sand-200">
                     <li>
+                        <a href="{{ route('home') }}" class="flex items-center justify-between py-4 text-lg font-bold">
+                            {{ __('site.nav.items.home') }}
+                            <x-icon name="chevron-left" size="18" class="text-ink-300" />
+                        </a>
+                    </li>
+                    <li>
                         <a href="{{ route('products.index') }}" class="flex items-center justify-between py-4 text-lg font-bold">
                             {{ __('site.nav.items.products_index') }}
                             <x-icon name="chevron-left" size="18" class="text-ink-300" />
@@ -78,7 +84,8 @@
                     </li>
 
                     @foreach($navigation as $item)
-                        @continue($item['route'] === 'products.index')
+                        {{-- صفحه‌ی اصلی و محصولات بالاتر، جدا آمده‌اند --}}
+                        @continue(in_array($item['route'], ['home', 'products.index'], true))
                         <li>
                             @if(!empty($item['children']))
                                 <button type="button" @click="section('{{ $item['route'] }}')"
@@ -103,9 +110,10 @@
                                     @endforeach
                                 </ul>
                             @else
-                                <a href="{{ route($item['route']) }}" class="flex items-center justify-between py-4 text-lg font-bold">
+                                <a href="{{ \App\Support\Navigation::href($item) }}" class="flex items-center justify-between py-4 text-lg font-bold"
+                                   @if(!empty($item['external'])) target="_blank" rel="noopener" @endif>
                                     {{ $item['label'] }}
-                                    <x-icon name="chevron-left" size="18" class="text-ink-300" />
+                                    <x-icon :name="empty($item['external']) ? 'chevron-left' : 'external'" size="18" class="text-ink-300" />
                                 </a>
                             @endif
                         </li>

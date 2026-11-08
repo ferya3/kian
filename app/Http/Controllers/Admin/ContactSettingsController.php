@@ -52,6 +52,8 @@ class ContactSettingsController extends Controller
             $rules[$network] = ['nullable', 'url:https,http', 'max:200'];
         }
 
+        $rules['booking_url'] = ['nullable', 'url:https,http', 'max:200'];
+
         $data = $request->validate($rules, [
             '*.regex' => 'قالبِ :attribute درست نیست.',
         ], [
@@ -60,6 +62,7 @@ class ContactSettingsController extends Controller
             'sales_extension' => 'داخلی',
             'email' => 'ایمیل فروش',
             'technical_email' => 'ایمیل واحد فنی',
+            'booking_url' => 'لینک سامانه نوبت‌دهی',
         ]);
 
         $changed = [];

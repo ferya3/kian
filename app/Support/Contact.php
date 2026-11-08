@@ -37,6 +37,7 @@ class Contact
         'linkedin' => 'kian.social.linkedin',
         'aparat' => 'kian.social.aparat',
         'telegram' => 'kian.social.telegram',
+        'booking_url' => 'kian.booking_url',
     ];
 
     public const SOCIAL = ['instagram', 'linkedin', 'aparat', 'telegram'];

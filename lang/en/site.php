@@ -43,6 +43,7 @@ return [
         'brand_home' => ':name — home',
 
         'items' => [
+            'booking' => 'Booking',
             'home' => 'Home',
             'products_index' => 'Products',
             'shop_index' => 'Shop',

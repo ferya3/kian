@@ -69,6 +69,9 @@ return [
         'working_hours' => 'شنبه تا چهارشنبه ۸:۰۰ تا ۱۷:۰۰ — پنجشنبه ۸:۰۰ تا ۱۳:۰۰',
     ],
 
+    // سامانه‌ی نوبت‌دهیِ بارگیری — سایتی جدا؛ منو فقط به آن لینک می‌دهد
+    'booking_url' => env('KIAN_BOOKING_URL', 'https://nobat.kiyanbehsaz.com'),
+
     'social' => [
         'instagram' => env('KIAN_INSTAGRAM', 'https://instagram.com/'),
         'linkedin' => env('KIAN_LINKEDIN', 'https://linkedin.com/'),

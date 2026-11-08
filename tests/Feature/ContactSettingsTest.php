@@ -185,4 +185,41 @@ class ContactSettingsTest extends TestCase
         $this->assertNull(Contact::stored('sales_extension'));
     }
 
+    /** سامانه‌ی نوبت‌دهی سایتی جداست؛ منو به نشانیِ پنل لینک می‌دهد، در زبانه‌ی تازه. */
+    public function test_the_booking_link_comes_from_the_panel(): void
+    {
+        $html = $this->get(route('home'))->assertOk()->assertSee('نوبت‌دهی')->getContent();
+        $this->assertMatchesRegularExpression('~href="https://nobat\.kiyanbehsaz\.com"\s+target="_blank" rel="noopener"~', $html);
+
+        $this->actingAs($this->admin())
+            ->put(route('admin.contact.update'), $this->form(['booking_url' => 'https://booking.example.com/kian']))
+            ->assertSessionHasNoErrors();
+
+        $this->get(route('home'))->assertSee('href="https://booking.example.com/kian"', false);
+    }
+
+    public function test_an_empty_booking_link_removes_it_from_the_menu(): void
+    {
+        $this->actingAs($this->admin())
+            ->put(route('admin.contact.update'), $this->form(['booking_url' => '']))
+            ->assertSessionHasNoErrors();
+
+        $this->get(route('home'))->assertOk()->assertDontSee('نوبت‌دهی');
+    }
+
+    public function test_the_booking_link_must_be_a_web_address(): void
+    {
+        $this->actingAs($this->admin())
+            ->put(route('admin.contact.update'), $this->form(['booking_url' => 'nobat']))
+            ->assertSessionHasErrors('booking_url');
+    }
+
+    /** «صفحه اصلی» در منوی دسکتاپ و موبایل. */
+    public function test_the_menu_starts_with_the_home_page(): void
+    {
+        $items = \App\Support\Navigation::items();
+        $this->assertSame('home', $items[0]['route']);
+        $this->assertSame('صفحه اصلی', $items[0]['label']);
+        $this->assertFalse(\App\Support\Navigation::isActive(collect($items)->firstWhere('route', 'booking')));
+    }
 }

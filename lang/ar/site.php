@@ -41,6 +41,7 @@ return [
         'brand_home' => ':name — الصفحة الرئيسية',
 
         'items' => [
+            'booking' => 'حجز موعد',
             'home' => 'الرئيسية',
             'products_index' => 'المنتجات',
             'shop_index' => 'المتجر',
