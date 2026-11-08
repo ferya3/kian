@@ -44,7 +44,7 @@
     <meta name="twitter:description" content="{{ $seo->metaDescription() }}">
     <meta name="twitter:image" content="{{ $seo->ogImage() }}">
 
-    @php $favicon = \App\Models\SiteMedia::url('brand.favicon'); @endphp
+    @php $favicon = \App\Models\SiteMedia::originalUrl('brand.favicon'); @endphp
     @if($favicon)
         {{-- نوع اعلام نمی‌شود: فایل آپلودی می‌تواند png یا svg باشد و مرورگر خودش تشخیص می‌دهد --}}
         <link rel="icon" href="{{ $favicon }}">
@@ -63,6 +63,8 @@
         اینترنتِ همراه همین فاصله در FCP دیده می‌شد. هر دو قلم در هر زبانی: صفحه‌ی
         انگلیسی هم نامِ فارسیِ زبان‌ها و برند را دارد و وزیرمتن را می‌خواهد.
     --}}
+    {{-- عکسِ LCP (هیرو) پیش از قلم‌ها: روی گوشی بزرگ‌ترین چیزِ صفحه‌ی اول است --}}
+    @stack('preload')
     <link rel="preload" href="{{ Vite::asset('resources/fonts/vazirmatn-subset.woff2') }}" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="{{ Vite::asset('resources/fonts/inter-subset.woff2') }}" as="font" type="font/woff2" crossorigin>
 

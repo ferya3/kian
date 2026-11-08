@@ -12,6 +12,7 @@ import { initCountUp } from './modules/count-up';
 import { initParallax } from './modules/parallax';
 import { initReveal } from './modules/reveal';
 import { initSmoothScroll } from './modules/smooth-scroll';
+import { prefersReducedMotion } from './modules/motion';
 
 Alpine.data('siteHeader', siteHeader);
 Alpine.data('mobileNav', mobileNav);
@@ -98,3 +99,23 @@ const boot = () => {
 document.readyState === 'loading'
     ? document.addEventListener('DOMContentLoaded', boot)
     : boot();
+
+/*
+| ویدئوی هیرو: فقط دسکتاپ، فقط پس از load، و نه برای کسی که «کاهش حرکت» یا
+| «صرفه‌جویی در داده» را خواسته. روی گوشی پوستر می‌ماند — hero.blade.php.
+*/
+const startHeroVideo = () => {
+    const video = document.querySelector('video[data-hero-video]');
+    if (!video) return;
+
+    const wide = window.matchMedia('(min-width: 1024px)').matches;
+    const saveData = navigator.connection?.saveData;
+    if (!wide || saveData || prefersReducedMotion()) return;
+
+    video.src = video.dataset.heroVideo;
+    video.play().catch(() => {});
+};
+
+document.readyState === 'complete'
+    ? startHeroVideo()
+    : window.addEventListener('load', startHeroVideo, { once: true });

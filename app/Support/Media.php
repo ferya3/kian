@@ -15,6 +15,26 @@ class Media
 {
     public static string $disk = 'public';
 
+    /**
+     * نشانیِ خودِ فایلِ آپلودشده، بی نسخه‌ی WebP.
+     *
+     * برای جاهایی که بیرون از سایت خوانده می‌شوند و قالبِ اصل را می‌خواهند:
+     * favicon، apple-touch-icon و og:image (پیش‌نمایشِ لینک در پیام‌رسان‌ها
+     * WebP را همه‌جا نمی‌شناسند).
+     */
+    public static function original(?string $path): ?string
+    {
+        if (blank($path)) {
+            return null;
+        }
+
+        if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://') || str_starts_with($path, '/')) {
+            return $path;
+        }
+
+        return static::relative(Storage::disk(static::$disk)->url($path));
+    }
+
     public static function url(?string $path): ?string
     {
         if (blank($path)) {
@@ -45,7 +65,7 @@ class Media
      */
     public static function srcset(?string $url): ?string
     {
-        if (! $url || ! preg_match('~^(.*/)variants/(.+)-\d+\.webp$~', $url, $m)) {
+        if (! $url || ! preg_match('~^(.*/)variants/(.+)-\d+w\.webp$~', $url, $m)) {
             return null;
         }
 
@@ -54,9 +74,9 @@ class Media
 
         $entries = [];
         foreach (ImageVariants::WIDTHS as $width) {
-            $variant = $dir.'variants/'.$m[2].'-'.$width.'.webp';
+            $variant = $dir.'variants/'.$m[2].'-'.$width.'w.webp';
             if (Storage::disk(static::$disk)->exists($variant)) {
-                $entries[] = $m[1].'variants/'.$m[2].'-'.$width.'.webp '.$width.'w';
+                $entries[] = $m[1].'variants/'.$m[2].'-'.$width.'w.webp '.$width.'w';
             }
         }
 

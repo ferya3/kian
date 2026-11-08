@@ -22,9 +22,21 @@ use Throwable;
  */
 class ImageVariants
 {
-    public const WIDTHS = [480, 768, 1280, 1920];
+    /*
+    | پهناها به اندازه‌ی دستگاه‌های واقعی، نه فاصله‌ی یکنواخت.
+    |
+    | مرورگر کوچک‌ترین نسخه‌ای را برمی‌دارد که از «پهنا × چگالیِ صفحه» کمتر
+    | نباشد. گوشیِ مرجعِ PageSpeed ۴۱۲ × ۱٫۷۵ = ۷۲۱ ⇐ ۷۶۸؛ لپ‌تاپ ۱۳۵۰ تا ۱۳۶۶
+    | ⇐ ۱۳۶۶. با ۹۶۰ به‌جای ۷۶۸، گوشی یک‌سوم حجمِ بیشتری می‌گرفت و LCP بدتر
+    | شد؛ با ۱۲۸۰ ⇐ ۱۹۲۰، لپ‌تاپ دو برابرِ لازم.
+    */
+    public const WIDTHS = [480, 768, 1080, 1366, 1600, 1920];
 
-    protected const QUALITY = 78;
+    /*
+    | ۷۲ برای عکس در WebP از چشم پنهان است، به‌خصوص زیرِ پرده‌های تیره‌ی هیرو،
+    | و حجم را حدود یک‌چهارم کمتر از ۷۸ می‌کند.
+    */
+    protected const QUALITY = 72;
 
     protected const RASTER = '~\.(jpe?g|png|webp)$~i';
 
@@ -40,7 +52,29 @@ class ImageVariants
     {
         $dir = trim(dirname($path), './');
 
-        return ($dir !== '' ? $dir.'/' : '').'variants/'.pathinfo($path, PATHINFO_FILENAME).'-'.$width.'.webp';
+        // پسوندِ «w» نسلِ نام است: نسخه‌های نسلِ پیشین (بی w، کیفیت ۷۸) با
+        // این نام‌ها برخورد نمی‌کنند و media:optimize پاکشان می‌کند.
+        return ($dir !== '' ? $dir.'/' : '').'variants/'.pathinfo($path, PATHINFO_FILENAME).'-'.$width.'w.webp';
+    }
+
+    /** نسخه‌هایی که دیگر مالِ هیچ عکس یا پهنای فعلی نیستند. */
+    public static function stale(string $disk = 'public'): array
+    {
+        $storage = Storage::disk($disk);
+        $current = [];
+
+        foreach ($storage->allFiles('admin') as $file) {
+            if (static::isRaster($file)) {
+                foreach (self::WIDTHS as $w) {
+                    $current[static::pathFor($file, $w)] = true;
+                }
+            }
+        }
+
+        return array_values(array_filter(
+            $storage->allFiles('admin'),
+            fn (string $f) => str_contains($f, '/variants/') && ! isset($current[$f])
+        ));
     }
 
     /**

@@ -9,7 +9,24 @@
     $video = Setting::text('hero_video');
     $image = SiteMedia::url('hero.home');
     $poster = SiteMedia::url('hero.home_poster') ?? $image;
+
+    // عکسی که صفحه‌ی اول با آن نقاشی می‌شود: پوسترِ ویدئو، یا خودِ عکسِ هیرو
+    $lcp = $video ? $poster : $image;
 @endphp
+
+@if($lcp)
+    {{--
+        پیش‌بارگذاریِ عکسِ هیرو، با همان srcset ِ خودِ تگ.
+
+        بی این، مرورگر عکس را فقط وقتی پیدا می‌کرد که به تگش برسد — پس از
+        هدر و منوی موبایل، ده‌ها کیلوبایت پایین‌ترِ HTML — و تا آن موقع پهنای
+        باند را قلم‌ها و اسکریپت‌ها گرفته بودند. روی گوشی LCP همین عکس است.
+    --}}
+    @push('preload')
+        <link rel="preload" as="image" href="{{ $lcp }}" fetchpriority="high"
+              @if($s = \App\Support\Media::srcset($lcp)) imagesrcset="{{ $s }}" imagesizes="100vw" @endif>
+    @endpush
+@endif
 
 {{--
     روی گوشی هیرو مربع است: ارتفاعش برابر عرض صفحه، نه یک بلوک کشیده‌ی
@@ -30,10 +47,17 @@
             ویدئوی سینمایی کارخانه: نمای نزدیک خاک → کوره → خروج محصول → ساختمان.
             پوستر از پنل می‌آید؛ بدون آن تا لحظه‌ی آماده‌شدن ویدئو کادر سیاه است.
         --}}
+        {{--
+            ویدئو فقط روی دسکتاپ و فقط پس از بارگذاریِ کاملِ صفحه (app.js).
+
+            ویدئوی چندمگابایتی روی اینترنتِ همراه با عکس و قلم و اسکریپت سرِ
+            پهنای باند دعوا می‌کرد، و چون هر فریمش صفحه را عوض می‌کرد، Speed
+            Index ِ PageSpeed هیچ‌وقت «تمام‌شده» نمی‌دید. روی گوشی پوستر کافی
+            است — و حجمِ اینترنتِ بازدیدکننده هم حفظ می‌شود.
+        --}}
         <video class="absolute inset-0 h-full w-full object-cover opacity-60"
-               autoplay muted loop playsinline preload="metadata"
+               muted loop playsinline preload="none" data-hero-video="{{ $video }}"
                @if($poster) poster="{{ $poster }}" @endif aria-hidden="true">
-            <source src="{{ $video }}" type="video/mp4">
         </video>
         <div class="absolute inset-0 bg-gradient-to-t from-ink-950 via-ink-950/70 to-ink-950/40"></div>
     @elseif($image)

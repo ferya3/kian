@@ -113,7 +113,12 @@ class Seo
      */
     public function ogImage(): string
     {
-        return url($this->image ?: SiteMedia::url('brand.og') ?: config('kian.seo.og_image'));
+        /*
+        | تصویرِ صفحه مسیرِ دیسک است (admin/products/…)، نه نشانی. پیش‌تر
+        | مستقیم به url() می‌رفت و ‎/admin/products/… می‌ساخت — نشانی‌ای که
+        | وجود ندارد؛ پیش‌نمایشِ لینکِ هر محصول و پروژه و مقاله بی‌عکس بود.
+        */
+        return url(Media::original($this->image) ?: SiteMedia::originalUrl('brand.og') ?: config('kian.seo.og_image'));
     }
 
     public function canonicalUrl(): string

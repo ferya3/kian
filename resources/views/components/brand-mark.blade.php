@@ -19,7 +19,12 @@
         مربعِ پیشین با object-contain به نوارِ باریکی کوچک می‌شدند که در هدر
         اصلاً دیده نمی‌شد.
     --}}
+    {{--
+        srcset: لوگو در هدر حداکثر ۲۲۴ پیکسل پهنا دارد؛ بی آن نسخه‌ی ۱۹۲۰
+        پیکسلی برای یک نشانِ ۴۴ پیکسلی دانلود می‌شد.
+    --}}
     <img src="{{ $logo }}" alt="{{ config('kian.brand.name') }}"
+         @if($srcset = \App\Support\Media::srcset($logo)) srcset="{{ $srcset }}" sizes="224px" @endif
          {{ $sized ? $attributes->class('object-contain') : $attributes->merge(['class' => 'h-10 w-auto object-contain']) }}>
 @else
 

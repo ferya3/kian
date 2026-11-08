@@ -44,9 +44,13 @@ class OptimizeMedia extends Command
             }
         }
 
+        // نسخه‌های نسلِ پیشین یا عکس‌های حذف‌شده
+        $stale = ImageVariants::stale(Media::$disk);
+        $disk->delete($stale);
+
         $this->info(sprintf(
-            '%d عکس، %d نسخه‌ی تازه. حجمِ ارسالی: %s ⇐ %s',
-            $images->count(), $made, $this->mb($before), $this->mb($after)
+            '%d عکس، %d نسخه‌ی تازه، %d نسخه‌ی کهنه پاک شد. حجمِ ارسالی: %s ⇐ %s',
+            $images->count(), $made, count($stale), $this->mb($before), $this->mb($after)
         ));
 
         return self::SUCCESS;

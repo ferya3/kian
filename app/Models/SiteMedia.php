@@ -118,6 +118,12 @@ class SiteMedia extends Model
         return Media::url(static::map()[$key]['image'] ?? null);
     }
 
+    /** فایلِ اصل، بی نسخه‌ی WebP — Media::original. */
+    public static function originalUrl(?string $key): ?string
+    {
+        return Media::original(static::map()[$key]['image'] ?? null);
+    }
+
     public static function alt(?string $key, string $default = ''): string
     {
         $alt = static::map()[$key]['alt'] ?? null;
