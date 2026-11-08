@@ -51,6 +51,14 @@ die()  { printf '\n\033[1;31mخطا:\033[0m %s\n' "$1" >&2; exit 1; }
 [ "$(id -u)" -eq 0 ] || die "این اسکریپت را با sudo اجرا کنید."
 command -v apt-get >/dev/null || die "این اسکریپت فقط برای اوبونتو/دبیان است."
 
+#
+# apt منتظرِ قفل می‌ماند، نه اینکه فوراً شکست بخورد.
+#
+# به‌روزرسانیِ خودکارِ اوبونتو (unattended-upgrades) گاه‌به‌گاه همان لحظه
+# apt را در دست دارد؛ بی این، نصب با «Could not get lock» می‌ایستاد و کلِ
+# به‌روزرسانیِ سایت برمی‌گشت — برای گرفتنِ بسته‌ای که از قبل نصب بود.
+apt-get() { command apt-get -o DPkg::Lock::Timeout=600 "$@"; }
+
 # ---------------------------------------------------------------- بسته ----
 #
 # بسته پیش از هر تغییری باز و وارسی می‌شود: بسته‌ی ناقص یا خراب نباید به
@@ -568,7 +576,14 @@ if [ "$SSL" = "1" ] && [ -n "$DOMAIN" ]; then
     [ "$SSL_AUTO" = "1" ] \
         && step "گواهیِ موجودِ $DOMAIN دوباره نصب می‌شود" \
         || step "گرفتن گواهی SSL برای $DOMAIN"
-    apt-get install -y -qq certbot python3-certbot-nginx >/dev/null
+    # certbot یک بار نصب می‌شود؛ هر به‌روزرسانی دوباره سراغِ apt نمی‌رود
+    if ! command -v certbot >/dev/null || ! dpkg -s python3-certbot-nginx >/dev/null 2>&1; then
+        if ! apt-get install -y -qq certbot python3-certbot-nginx >/dev/null; then
+            # روی مسیرِ خودکار، نبودنِ certbot نباید کدِ سالم را برگرداند
+            [ "$SSL_AUTO" = "1" ] || die "certbot نصب نشد."
+            printf '\n\033[1;33m  ! certbot نصب نشد؛ گواهیِ موجود دوباره نصب نمی‌شود.\033[0m\n'
+        fi
+    fi
 
     #
     # www هم در گواهی می‌آید، اگر رکوردش به همین سرور اشاره کند.
