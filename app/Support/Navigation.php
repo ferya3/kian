@@ -18,6 +18,9 @@ class Navigation
     {
         $items = [
             [
+                'route' => 'home',
+            ],
+            [
                 'route' => 'products.index',
                 'mega' => true,
             ],
@@ -60,7 +63,7 @@ class Navigation
         | ندارد و *هر صفحه‌ی سایت* با خطا می‌افتد، نه فقط فروشگاه.
         */
         if (Shop::enabled() && Route::has('shop.index')) {
-            array_splice($items, 1, 0, [['route' => 'shop.index']]);
+            array_splice($items, 2, 0, [['route' => 'shop.index']]);
         }
 
         return array_map(static::label(...), $items);

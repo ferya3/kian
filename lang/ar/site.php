@@ -41,6 +41,7 @@ return [
         'brand_home' => ':name — الصفحة الرئيسية',
 
         'items' => [
+            'home' => 'الرئيسية',
             'products_index' => 'المنتجات',
             'shop_index' => 'المتجر',
             'solutions_index' => 'الحلول',
