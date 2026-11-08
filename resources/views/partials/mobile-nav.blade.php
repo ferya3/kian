@@ -1,3 +1,7 @@
+@php
+    use App\Support\Navigation;
+@endphp
+
 {{-- منوی موبایل — طراحی مستقل، نه نسخه‌ی کوچک‌شده‌ی دسکتاپ --}}
 <div x-data="mobileNav"
      @toggle-mobile-nav.window="toggle()"
@@ -43,6 +47,17 @@
 
             <nav aria-label="ناوبری موبایل">
                 <ul class="divide-y divide-sand-200">
+                    {{--
+                        «محصولات» پایین‌تر دستی نوشته شده تا دسته‌هایش باز
+                        بیاید، پس صفحه‌ی اصلی هم باید دستی بالای آن بنشیند؛
+                        وگرنه حلقه آن را بعد از محصولات می‌انداخت.
+                    --}}
+                    <li>
+                        <a href="{{ route('home') }}" class="flex items-center justify-between py-4 text-lg font-bold">
+                            {{ __('site.nav.home') }}
+                            <x-icon name="chevron-left" size="18" class="text-ink-300" />
+                        </a>
+                    </li>
                     <li>
                         <a href="{{ route('products.index') }}" class="flex items-center justify-between py-4 text-lg font-bold">
                             محصولات
@@ -64,17 +79,18 @@
                     </li>
 
                     @foreach($navigation as $item)
-                        @continue($item['route'] === 'products.index')
+                        @continue(in_array($item['route'] ?? null, ['home', 'products.index'], true))
+                        @php $key = Navigation::key($item); @endphp
                         <li>
                             @if(!empty($item['children']))
-                                <button type="button" @click="section('{{ $item['route'] }}')"
-                                        :aria-expanded="expanded === '{{ $item['route'] }}' ? 'true' : 'false'"
+                                <button type="button" @click="section('{{ $key }}')"
+                                        :aria-expanded="expanded === '{{ $key }}' ? 'true' : 'false'"
                                         class="flex w-full items-center justify-between py-4 text-lg font-bold">
                                     {{ $item['label'] }}
                                     <x-icon name="chevron-down" size="18" class="text-ink-300 transition-transform duration-300"
-                                            ::class="expanded === '{{ $item['route'] }}' && 'rotate-180'" />
+                                            ::class="expanded === '{{ $key }}' && 'rotate-180'" />
                                 </button>
-                                <ul x-show="expanded === '{{ $item['route'] }}'"
+                                <ul x-show="expanded === '{{ $key }}'"
                                     x-transition:enter="transition ease-[var(--ease-out-expo)] duration-300"
                                     x-transition:enter-start="opacity-0 -translate-y-2"
                                     x-transition:enter-end="opacity-100 translate-y-0"
@@ -89,9 +105,12 @@
                                     @endforeach
                                 </ul>
                             @else
-                                <a href="{{ route($item['route']) }}" class="flex items-center justify-between py-4 text-lg font-bold">
+                                <a href="{{ Navigation::href($item) }}"
+                                   @if(Navigation::isExternal($item)) target="_blank" rel="noopener" @endif
+                                   class="flex items-center justify-between py-4 text-lg font-bold">
                                     {{ $item['label'] }}
-                                    <x-icon name="chevron-left" size="18" class="text-ink-300" />
+                                    <x-icon name="{{ Navigation::isExternal($item) ? 'external' : 'chevron-left' }}"
+                                            size="18" class="text-ink-300" />
                                 </a>
                             @endif
                         </li>

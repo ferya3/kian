@@ -88,14 +88,17 @@
                     @php
                         $active = Navigation::isActive($item);
                         $hasPanel = ($item['mega'] ?? false) || !empty($item['children']);
+                        $external = Navigation::isExternal($item);
+                        $key = Navigation::key($item);
                     @endphp
-                    <div class="relative" @if($hasPanel) @mouseenter="open('{{ $item['route'] }}')" @endif>
-                        <a href="{{ route($item['route']) }}"
+                    <div class="relative" @if($hasPanel) @mouseenter="open('{{ $key }}')" @endif>
+                        <a href="{{ Navigation::href($item) }}"
                            @if($hasPanel)
-                               @focus="open('{{ $item['route'] }}')"
-                               :aria-expanded="openMenu === '{{ $item['route'] }}' ? 'true' : 'false'"
+                               @focus="open('{{ $key }}')"
+                               :aria-expanded="openMenu === '{{ $key }}' ? 'true' : 'false'"
                                aria-haspopup="true"
                            @endif
+                           @if($external) target="_blank" rel="noopener" @endif
                            @if($active) aria-current="page" @endif
                            class="relative flex items-center gap-1 px-4 py-2.5 text-[0.9375rem] font-semibold transition-colors"
                            :class="onDark
@@ -105,10 +108,14 @@
                             @if($hasPanel)
                                 <x-icon name="chevron-down" size="14"
                                         class="transition-transform duration-300"
-                                        ::class="openMenu === '{{ $item['route'] }}' && 'rotate-180'" />
+                                        ::class="openMenu === '{{ $key }}' && 'rotate-180'" />
+                            @endif
+                            @if($external)
+                                {{-- نشانه‌ی «اینجا از سایت بیرون می‌روی» --}}
+                                <x-icon name="external" size="13" style="opacity:.7" />
                             @endif
                             <span class="absolute inset-x-4 -bottom-px h-0.5 origin-right bg-clay-500 transition-transform duration-300 ease-[var(--ease-out-expo)] {{ $active ? 'scale-x-100' : 'scale-x-0' }}"
-                                  :class="openMenu === '{{ $item['route'] }}' && 'scale-x-100'"></span>
+                                  :class="openMenu === '{{ $key }}' && 'scale-x-100'"></span>
                         </a>
                     </div>
                 @endforeach

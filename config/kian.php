@@ -35,6 +35,14 @@ return [
         'working_hours' => 'شنبه تا چهارشنبه ۸:۰۰ تا ۱۷:۰۰ — پنجشنبه ۸:۰۰ تا ۱۳:۰۰',
     ],
 
+    /*
+    | سامانه‌های جداگانه‌ی شرکت که روی زیردامنه‌ی خودشان می‌نشینند و بخشی
+    | از این اپلیکیشن نیستند — پس route ندارند و نشانی کاملشان اینجاست.
+    */
+    'links' => [
+        'booking' => env('KIAN_BOOKING_URL', 'https://nobat.kiyanbehsaz.com'),
+    ],
+
     'social' => [
         'instagram' => env('KIAN_INSTAGRAM', 'https://instagram.com/'),
         'linkedin' => env('KIAN_LINKEDIN', 'https://linkedin.com/'),

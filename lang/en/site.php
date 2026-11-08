@@ -22,6 +22,7 @@ return [
         'close' => 'Close menu',
         'search' => 'Search',
         'home' => 'Home',
+        'booking' => 'Truck booking',
     ],
 
     'actions' => [
