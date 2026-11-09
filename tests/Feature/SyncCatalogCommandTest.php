@@ -30,7 +30,7 @@ class SyncCatalogCommandTest extends TestCase
     /** محصولی که دیگر تولید نمی‌شود، شبیه‌سازیِ کاتالوگِ کهنه‌ی سرور. */
     protected function discontinued(string $slug = 'insulating-block-30'): Product
     {
-        return Product::create([
+        return Product::query()->forceCreate([
             'product_category_id' => ProductCategory::where('slug', 'wall-blocks')->firstOrFail()->id,
             'slug' => $slug,
             'sku' => 'OLD-30',
@@ -71,8 +71,8 @@ class SyncCatalogCommandTest extends TestCase
     {
         $old = $this->discontinued();
 
-        $vendor = Vendor::create(['name' => 'ف', 'slug' => 'v', 'is_active' => true]);
-        Offer::create(['vendor_id' => $vendor->id, 'product_id' => $old->id, 'price' => 1000, 'min_order' => 1]);
+        $vendor = Vendor::query()->forceCreate(['name' => 'ف', 'slug' => 'v', 'is_active' => true]);
+        Offer::query()->forceCreate(['vendor_id' => $vendor->id, 'product_id' => $old->id, 'price' => 1000, 'min_order' => 1]);
 
         $this->artisan('catalog:sync', ['--force' => true])
             ->expectsOutputToContain('عرضه دارند')
@@ -84,7 +84,7 @@ class SyncCatalogCommandTest extends TestCase
     /** دسته‌ای که نه محصول دارد نه زیرمجموعه، در منو به صفحه‌ی خالی می‌رسد. */
     public function test_it_prunes_a_category_left_empty(): void
     {
-        $orphan = ProductCategory::create([
+        $orphan = ProductCategory::query()->forceCreate([
             'parent_id' => ProductCategory::where('slug', 'ceramic-blocks')->firstOrFail()->id,
             'slug' => 'insulating-blocks',
             'name' => 'بلوک عایق',

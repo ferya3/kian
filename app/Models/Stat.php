@@ -13,8 +13,6 @@ class Stat extends Model
     /** عدد و پیشوند و پسوند کدند؛ برچسب و شرحش متن‌اند. */
     public array $translatable = ['label', 'description'];
 
-    protected $guarded = [];
-
     protected function casts(): array
     {
         return ['value' => 'float'];

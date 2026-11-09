@@ -10,10 +10,10 @@ use App\Support\Brand;
 use App\Support\Jalali;
 use App\Support\Locales;
 use App\Support\Navigation;
-use Illuminate\Support\Facades\Config;
 use App\Support\Options;
 use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use Tests\TestCase;
@@ -390,7 +390,7 @@ class LocalizationTest extends TestCase
     {
         $default = Locale::query()->where('code', Locales::default())->firstOrFail();
 
-        $default->update(['is_active' => false]);
+        $default->forceFill(['is_active' => false])->save();
 
         $this->assertTrue($default->fresh()->is_active);
         $this->assertContains(Locales::default(), Locales::codes());
@@ -466,7 +466,7 @@ class LocalizationTest extends TestCase
     /** زبانی که از تنظیمات حذف شده، ردیفِ جامانده‌اش سایت را نمی‌شکند. */
     public function test_a_row_without_a_config_entry_is_not_a_language(): void
     {
-        Locale::query()->create(['code' => 'zz', 'is_active' => true, 'order' => 99]);
+        Locale::query()->forceCreate(['code' => 'zz', 'is_active' => true, 'order' => 99]);
 
         $this->assertNotContains('zz', Locales::codes());
     }

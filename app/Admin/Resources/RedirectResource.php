@@ -62,14 +62,10 @@ class RedirectResource extends Resource
         }
 
         if (! empty($data['to_url'])) {
-            $to = trim($data['to_url']);
-            // مقصدِ همین دامنه نسبی ذخیره می‌شود تا با عوض‌شدنِ دامنه کهنه نشود
-            $host = parse_url(config('app.url'), PHP_URL_HOST);
-            if ($host && preg_match('~^https?://(www\.)?'.preg_quote(preg_replace('~^www\.~', '', $host), '~').'(?=/|$)~i', $to)) {
-                $to = preg_replace('~^https?://[^/]+~i', '', $to) ?: '/';
-            }
-            if (! preg_match('~^(/|https?://)~i', $to)) {
-                $to = '/'.ltrim($to, '/');
+            // فقط همین سایت و زیردامنه‌هایش — Redirect::safeTarget
+            $to = Redirect::safeTarget($data['to_url']);
+            if ($to === null) {
+                throw ValidationException::withMessages(['to_url' => 'مقصد باید مسیری در همین سایت (مثل ‎/fa/products) یا نشانی‌ای روی همین دامنه باشد.']);
             }
 
             $from = $data['from_path'] ?? $record?->from_path;

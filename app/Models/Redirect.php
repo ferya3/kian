@@ -16,8 +16,6 @@ use Throwable;
  */
 class Redirect extends Model
 {
-    protected $guarded = [];
-
     public const CACHE_KEY = 'redirects.map';
 
     /** بیشترین تعدادِ ۴۰۴ ِ بی‌مقصدی که ثبت می‌شود — جلوی پرشدنِ جدول با اسکنِ ربات‌ها. */
@@ -72,6 +70,57 @@ class Redirect extends Model
         }
 
         return Str::limit($path, 690, '');
+    }
+
+    /**
+     * مقصدِ مجاز، به شکلِ ذخیره‌شدنی — یا null.
+     *
+     * ریدایرکت به دامنه‌ی بیگانه پذیرفته نمی‌شود (open redirect): نشانیِ
+     * kiyanbehsaz.com/old-page که به سایتِ فیشینگ برود، با اعتبارِ همین
+     * دامنه کاربر را فریب می‌دهد — کافی است حسابی در پنل دزدیده شود.
+     *
+     * مجاز: مسیرِ همین سایت (‎/fa/products)، و نشانیِ کامل روی همین دامنه یا
+     * زیردامنه‌اش (nobat.kiyanbehsaz.com). نشانیِ همین میزبان نسبی می‌شود تا با
+     * عوض‌شدنِ دامنه کهنه نشود. ترفندهای شناخته‌شده رد می‌شوند: «//evil.com» و
+     * «/\evil.com» (مرورگر هر دو را دامنه‌ی دیگر می‌خواند)، javascript: و
+     * طرح‌های دیگر، و نویسه‌های کنترلی.
+     */
+    public static function safeTarget(?string $to): ?string
+    {
+        $to = trim((string) $to);
+
+        if ($to === '' || preg_match('~[\x00-\x1F\x7F\s\\\\]~', $to)) {
+            return null;
+        }
+
+        // مسیرِ نسبیِ بی اسلشِ آغازین
+        if (! preg_match('~^[a-z][a-z0-9+.-]*:~i', $to) && ! str_starts_with($to, '/')) {
+            $to = '/'.$to;
+        }
+
+        if (str_starts_with($to, '/')) {
+            return str_starts_with($to, '//') ? null : $to;
+        }
+
+        $parts = parse_url($to);
+        $scheme = strtolower($parts['scheme'] ?? '');
+        $host = strtolower($parts['host'] ?? '');
+
+        if (! in_array($scheme, ['http', 'https'], true) || $host === '' || isset($parts['user']) || isset($parts['pass'])) {
+            return null;
+        }
+
+        $site = preg_replace('~^www\.~', '', strtolower((string) parse_url((string) config('app.url'), PHP_URL_HOST)));
+        if ($site === '' || ($host !== $site && ! str_ends_with($host, '.'.$site))) {
+            return null;
+        }
+
+        // همین میزبان (با یا بی www) ⇐ مسیرِ نسبی
+        if ($host === $site || $host === 'www.'.$site) {
+            return ($parts['path'] ?? '/').(isset($parts['query']) ? '?'.$parts['query'] : '').(isset($parts['fragment']) ? '#'.$parts['fragment'] : '');
+        }
+
+        return $to;
     }
 
     /**

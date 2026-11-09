@@ -7,8 +7,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ActivityLog extends Model
 {
-    protected $guarded = [];
-
     protected function casts(): array
     {
         return ['changes' => 'array'];
@@ -29,7 +27,7 @@ class ActivityLog extends Model
     {
         $user = auth()->user();
 
-        static::create([
+        static::query()->forceCreate([
             'user_id' => $user?->id,
             'user_name' => $user?->name ?? 'مهمان',
             'event' => $event,

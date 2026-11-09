@@ -7,7 +7,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ContactMessage extends Model
 {
-    protected $guarded = [];
+    /** فقط فیلدهای فرمِ تماس (اعتبارسنجی‌شده در ContactRequest) و IP. وضعیت و یادداشت از پنل. */
+    protected $fillable = ['type', 'name', 'company', 'email', 'phone', 'city', 'subject', 'product_id', 'message', 'ip'];
 
     public function product(): BelongsTo
     {

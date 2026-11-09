@@ -22,8 +22,6 @@ class Product extends Model
         'description',
     ];
 
-    protected $guarded = [];
-
     protected function casts(): array
     {
         return [

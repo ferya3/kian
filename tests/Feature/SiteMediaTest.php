@@ -60,7 +60,7 @@ class SiteMediaTest extends TestCase
     public function test_sync_adds_missing_slots_and_leaves_unknown_rows_alone(): void
     {
         SiteMedia::query()->where('key', 'hero.about')->delete();
-        SiteMedia::create(['key' => 'legacy.slot', 'image' => 'admin/site/old.png']);
+        SiteMedia::query()->forceCreate(['key' => 'legacy.slot', 'image' => 'admin/site/old.png']);
 
         SiteMedia::sync();
 
@@ -126,10 +126,10 @@ class SiteMediaTest extends TestCase
         $this->get(route('home'))->assertOk()->assertDontSee('admin/site/outcome.jpg', false);
 
         // از طریق مدل، نه query builder — تا مثل پنل، کش نقشه‌ی رسانه پاک شود.
-        SiteMedia::query()->where('key', 'process.outcome')->first()->update([
+        SiteMedia::query()->where('key', 'process.outcome')->first()->forceFill([
             'image' => 'admin/site/outcome.jpg',
             'alt' => 'برج مسکونی نیایش، اجراشده با بلوک سفالی',
-        ]);
+        ])->save();
 
         $this->get(route('home'))
             ->assertOk()
@@ -186,7 +186,7 @@ class SiteMediaTest extends TestCase
     public function test_a_filtered_category_lends_its_image_to_the_products_hero(): void
     {
         $category = ProductCategory::query()->whereNotNull('slug')->first();
-        $category->update(['image' => 'admin/categories/wall.jpg']);
+        $category->forceFill(['image' => 'admin/categories/wall.jpg'])->save();
 
         $this->get(route('products.index', ['category' => $category->slug]))
             ->assertOk()

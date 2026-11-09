@@ -4,6 +4,7 @@ use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Models\Redirect;
 use Database\Seeders\CatalogSeeder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
@@ -46,7 +47,8 @@ return new class extends Migration
         $definitions = CatalogSeeder::definitions();
         $keep = array_column($definitions, 'slug');
 
-        DB::transaction(function () use ($definitions, $keep, $categories) {
+        // مدل‌ها کاملاً محافظت‌شده‌اند؛ این داده از کد می‌آید، نه از ورودی
+        Model::unguarded(fn () => DB::transaction(function () use ($definitions, $keep, $categories) {
             foreach ($definitions as $data) {
                 $data['product_category_id'] = $categories[$data['category']];
                 unset($data['category']);
@@ -63,7 +65,7 @@ return new class extends Migration
                 }
 
                 $product = Product::create($data + ['is_active' => true]);
-(new CatalogSeeder)->seedCavities($product);
+                (new CatalogSeeder)->seedCavities($product);
             }
 
             /*
@@ -99,7 +101,7 @@ return new class extends Migration
 
             ProductCategory::query()->where('slug', 'wall-blocks')->update(['tagline' => 'دیوار باربر و میان‌قاب — ۲۰']);
             ProductCategory::query()->where('slug', 'roof-systems')->update(['tagline' => 'تیرچه‌بلوک سفالی — ۴۰ و ۵۰']);
-        });
+        }));
     }
 
     public function down(): void

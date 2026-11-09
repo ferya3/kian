@@ -5,9 +5,12 @@ namespace Tests\Feature;
 use App\Models\Article;
 use App\Models\Product;
 use App\Models\Project;
+use App\Models\Setting;
 use App\Models\Solution;
+use App\Support\Brand;
 use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class PublicPagesTest extends TestCase
@@ -56,7 +59,7 @@ class PublicPagesTest extends TestCase
     public function test_inactive_product_is_not_reachable(): void
     {
         $product = Product::first();
-        $product->update(['is_active' => false]);
+        $product->forceFill(['is_active' => false])->save();
 
         $this->get(route('products.show', $product))->assertNotFound();
     }
@@ -64,7 +67,7 @@ class PublicPagesTest extends TestCase
     public function test_unpublished_article_is_not_reachable(): void
     {
         $article = Article::first();
-        $article->update(['published_at' => now()->addWeek()]);
+        $article->forceFill(['published_at' => now()->addWeek()])->save();
 
         $this->get(route('articles.show', $article))->assertNotFound();
     }
@@ -149,11 +152,11 @@ class PublicPagesTest extends TestCase
         $html = $this->get(route('home'))->assertOk()->getContent();
         $hero = str($html)->betweenFirst('<section', '</section>')->toString();
 
-        $this->assertMatchesRegularExpression('~<h1 class="sr-only">\s*'.preg_quote(e(\App\Models\Setting::text('hero_title', \App\Support\Brand::tagline())), '~').'~u', $hero,
+        $this->assertMatchesRegularExpression('~<h1 class="sr-only">\s*'.preg_quote(e(Setting::text('hero_title', Brand::tagline())), '~').'~u', $hero,
             'تیتر باید برای گوگل و صفحه‌خوان بماند.');
 
         // برچسب و زیرتیتر در هیچ اندازه‌ای نیستند — نه فقط پنهان روی دسکتاپ
-        $this->assertStringNotContainsString(e(\App\Models\Setting::text('hero_subtitle', config('kian.seo.default_description'))), $hero);
+        $this->assertStringNotContainsString(e(Setting::text('hero_subtitle', config('kian.seo.default_description'))), $hero);
         $this->assertStringNotContainsString('class="eyebrow', $hero);
 
         // دکمه‌ها همچنان هستند
@@ -178,7 +181,7 @@ class PublicPagesTest extends TestCase
                 preg_match_all('~\s([a-z][a-z0-9:_.@-]*)=["\']~i', preg_replace('~(["\'])(?:(?!\1).)*\1~s', '$1$1', $tag), $attrs);
                 $dupes = array_keys(array_filter(array_count_values(array_map('strtolower', $attrs[1])), fn ($n) => $n > 1));
 
-                $this->assertSame([], $dupes, "ویژگیِ تکراری در صفحه‌ی {$name}: ".\Illuminate\Support\Str::limit($tag, 160));
+                $this->assertSame([], $dupes, "ویژگیِ تکراری در صفحه‌ی {$name}: ".Str::limit($tag, 160));
             }
         }
 
@@ -186,6 +189,7 @@ class PublicPagesTest extends TestCase
         $this->assertStringContainsString('display: none', $panel);
         $this->assertStringContainsString('x-cloak', $panel);
     }
+
     /**
      * آنچه PageSpeed ِ موبایل را از ۶۹ به ۹۹ رساند؛ هیچ‌کدام نباید بی‌صدا برود.
      */

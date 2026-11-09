@@ -7,8 +7,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ProductCavity extends Model
 {
-    protected $guarded = [];
-
     protected function casts(): array
     {
         return ['x' => 'float', 'y' => 'float'];

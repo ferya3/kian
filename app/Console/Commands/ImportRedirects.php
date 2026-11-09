@@ -83,8 +83,12 @@ class ImportRedirects extends Command
                     continue; // سرستونِ CSV و خطِ بی‌نشانی
                 }
 
-                $new = $parts[1] ?? null;
-                $rows[Redirect::normalize($old)] = $new && preg_match('~^(https?://|/)~i', $new) ? $new : ($rows[Redirect::normalize($old)] ?? null);
+                // مقصدِ بیگانه کنار می‌رود و حدس جایش را می‌گیرد — Redirect::safeTarget
+                // ستونِ دوم فقط وقتی مقصد است که شکلِ نشانی دارد — در CSV ِ سرچ کنسول
+                // عددِ کلیک است، و safeTarget «12» را مسیرِ ‎/12 می‌خواند
+                $candidate = $parts[1] ?? '';
+                $new = preg_match('~^(https?://|/)~i', $candidate) ? Redirect::safeTarget($candidate) : null;
+                $rows[Redirect::normalize($old)] = $new ?? ($rows[Redirect::normalize($old)] ?? null);
             }
         }
 
@@ -115,12 +119,12 @@ class ImportRedirects extends Command
 
                     continue;
                 }
-                $this->option('dry-run') || Redirect::query()->where('from_path', $key)->first()?->update([
+                $this->option('dry-run') || Redirect::query()->where('from_path', $key)->first()?->forceFill([
                     'to_url' => $to, 'note' => $guessed ? 'حدسِ خودکار — بررسی کنید' : null,
-                ]);
+                ])?->save();
                 $filled++;
             } else {
-                $this->option('dry-run') || Redirect::create([
+                $this->option('dry-run') || Redirect::query()->forceCreate([
                     'from_path' => $key, 'to_url' => $to, 'status_code' => 301,
                     'source' => $this->option('archive') ? 'archive' : 'import',
                     'note' => $guessed ? 'حدسِ خودکار — بررسی کنید' : null,

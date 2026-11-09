@@ -5,6 +5,8 @@ namespace App\Admin\Resources;
 use App\Models\Setting;
 use App\Support\Admin\Field;
 use App\Support\Admin\Resource;
+use App\Support\Contact;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 class SettingResource extends Resource
@@ -33,9 +35,9 @@ class SettingResource extends Resource
      * اگر در این فهرست هم بودند، از فرمی بی اعتبارسنجی ویرایش می‌شدند —
      * شماره‌ای با حرف، ایمیلی بی @ — و از همان راه روی سایت می‌نشستند.
      */
-    public static function query(): \Illuminate\Database\Eloquent\Builder
+    public static function query(): Builder
     {
-        return parent::query()->where('key', 'not like', \App\Support\Contact::PREFIX.'%');
+        return parent::query()->where('key', 'not like', Contact::PREFIX.'%');
     }
 
     public static function searchable(): array

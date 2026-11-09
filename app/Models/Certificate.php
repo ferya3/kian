@@ -13,6 +13,4 @@ class Certificate extends Model
     public array $translatable = [
         'title',
     ];
-
-    protected $guarded = [];
 }

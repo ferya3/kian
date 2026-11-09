@@ -23,8 +23,6 @@ class Person extends Model
 
     public array $translatable = ['name', 'role', 'bio', 'quote'];
 
-    protected $guarded = [];
-
     protected function casts(): array
     {
         return ['is_active' => 'boolean', 'is_featured' => 'boolean'];

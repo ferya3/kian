@@ -32,7 +32,7 @@ class LocationTest extends TestCase
 
     protected function office(array $overrides = []): Location
     {
-        return Location::create(array_merge([
+        return Location::query()->forceCreate(array_merge([
             'title' => 'دفتر فروش تهران',
             'address' => 'تهران، خیابان آزمایشی، پلاک ۷',
             'working_hours' => 'شنبه تا پنجشنبه ۹ تا ۱۸',

@@ -6,6 +6,8 @@ use App\Models\Product;
 use App\Models\ProductCategory;
 use Database\Seeders\CatalogSeeder;
 use Illuminate\Console\Command;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -67,7 +69,8 @@ class SyncCatalog extends Command
                 $product->delete();
             }
 
-            (new CatalogSeeder)->run();
+            // بذرکار از کد می‌نویسد، نه از ورودی — مثل db:seed، بی‌محافظ
+            Model::unguarded(fn () => (new CatalogSeeder)->run());
 
             $this->pruneEmptyCategories();
         });
@@ -111,7 +114,7 @@ class SyncCatalog extends Command
             ->delete();
     }
 
-    /** @param  \Illuminate\Support\Collection<int, Product>  $removable */
+    /** @param  Collection<int, Product>  $removable */
     protected function report($removable, array $keep): void
     {
         $this->newLine();

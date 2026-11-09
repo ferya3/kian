@@ -15,8 +15,6 @@ class ProjectCategory extends Model
         'name',
     ];
 
-    protected $guarded = [];
-
     public function getRouteKeyName(): string
     {
         return 'slug';

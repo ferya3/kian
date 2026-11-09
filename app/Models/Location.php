@@ -24,8 +24,6 @@ class Location extends Model
     /** نام و نشانی و ساعت متن‌اند؛ تلفن و کد پستی و مختصات نه. */
     public array $translatable = ['title', 'address', 'working_hours'];
 
-    protected $guarded = [];
-
     protected function casts(): array
     {
         return [

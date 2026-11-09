@@ -15,8 +15,6 @@ class Vendor extends Model
     /** فیلدهایی که در پنل برای هر زبان جداگانه پر می‌شوند. */
     public array $translatable = ['name', 'about'];
 
-    protected $guarded = [];
-
     protected function casts(): array
     {
         return ['is_active' => 'boolean'];

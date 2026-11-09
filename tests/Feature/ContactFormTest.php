@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\ContactMessage;
 use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Crypt;
 use Tests\TestCase;
 
 class ContactFormTest extends TestCase
@@ -27,7 +28,7 @@ class ContactFormTest extends TestCase
             'city' => 'تهران',
             'message' => 'برای پروژه چهار هزار متری در تهران به بلوک ۲۰ نیاز داریم.',
             // فرم ده ثانیه پیش باز شده — آهنگِ انسان
-            '_ts' => \Illuminate\Support\Facades\Crypt::encryptString((string) (time() - 10)),
+            '_ts' => Crypt::encryptString((string) (time() - 10)),
         ], $overrides);
     }
 
@@ -73,7 +74,7 @@ class ContactFormTest extends TestCase
     public function test_a_form_sent_too_fast_or_without_a_valid_stamp_is_rejected(): void
     {
         foreach ([
-            'too fast' => \Illuminate\Support\Facades\Crypt::encryptString((string) time()),
+            'too fast' => Crypt::encryptString((string) time()),
             'forged' => (string) (time() - 60),
             'missing' => null,
         ] as $case => $stamp) {
@@ -81,7 +82,7 @@ class ContactFormTest extends TestCase
                 ->assertSessionHasErrors('_ts');
         }
 
-        $this->assertSame(0, \App\Models\ContactMessage::count());
+        $this->assertSame(0, ContactMessage::count());
     }
 
     public function test_the_form_carries_a_time_stamp(): void

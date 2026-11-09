@@ -23,8 +23,6 @@ class Project extends Model
         'province',
     ];
 
-    protected $guarded = [];
-
     protected function casts(): array
     {
         return ['gallery' => 'array', 'is_featured' => 'boolean'];

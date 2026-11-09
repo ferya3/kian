@@ -19,8 +19,6 @@ class ProcessStep extends Model
         'duration',
     ];
 
-    protected $guarded = [];
-
     public function getRouteKeyName(): string
     {
         return 'slug';

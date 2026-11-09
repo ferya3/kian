@@ -117,7 +117,7 @@
 
 @once
     @push('head')
-        <style>
+        <style nonce="{{ Vite::cspNonce() }}">
             @keyframes kiln-breathe {
                 0%, 100% { opacity: .78; transform: translateX(-50%) scale(1); }
                 50%      { opacity: 1;   transform: translateX(-50%) scale(1.07); }

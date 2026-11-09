@@ -15,8 +15,6 @@ class FactorySection extends Model
         'description',
     ];
 
-    protected $guarded = [];
-
     protected function casts(): array
     {
         return ['stats' => 'array', 'hotspot_x' => 'float', 'hotspot_y' => 'float'];

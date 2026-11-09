@@ -7,6 +7,7 @@ use App\Models\Offer;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\Receipt;
+use App\Models\User;
 use App\Models\Vendor;
 use App\Support\Jalali;
 use App\Support\Locales;
@@ -54,13 +55,13 @@ class ReceiptTest extends TestCase
     {
         $product = Product::query()->active()->firstOrFail();
 
-        $vendor = Vendor::create([
+        $vendor = Vendor::query()->forceCreate([
             'name' => 'فروشنده آزمایشی',
             'slug' => 'test-vendor',
             'is_active' => true,
         ] + ($withBank ? ['bank_holder' => 'کیان', 'bank_card' => '6104337712345678'] : []));
 
-        $offer = Offer::create([
+        $offer = Offer::query()->forceCreate([
             'vendor_id' => $vendor->id,
             'product_id' => $product->id,
             'price' => 500,
@@ -130,7 +131,7 @@ class ReceiptTest extends TestCase
     {
         [$order] = $this->order();
 
-        $outsider = Vendor::create(['name' => 'بیگانه', 'slug' => 'outsider', 'is_active' => true]);
+        $outsider = Vendor::query()->forceCreate(['name' => 'بیگانه', 'slug' => 'outsider', 'is_active' => true]);
 
         $this->post(route('orders.receipt', $order), [
             'vendor_id' => $outsider->id,
@@ -230,20 +231,20 @@ class ReceiptTest extends TestCase
         $this->get($url)->assertRedirect(route('admin.login'));
 
         // مدیر
-        $admin = \App\Models\User::factory()->create(['role' => 'admin', 'is_active' => true]);
+        $admin = User::factory()->create(['role' => 'admin', 'is_active' => true]);
         $this->actingAs($admin)->get($url)->assertOk()
             ->assertHeader('X-Content-Type-Options', 'nosniff')
             ->assertHeader('Cache-Control', 'no-store, private');
 
         // کارمندِ دفتر (ویرایشگر) — همان کسی که رسیدها را در پنل داوری می‌کند
-        $editor = \App\Models\User::factory()->create(['role' => 'editor', 'is_active' => true]);
+        $editor = User::factory()->create(['role' => 'editor', 'is_active' => true]);
         $this->actingAs($editor)->get($url)->assertOk();
 
         /*
         | فروشنده بخشِ رسیدها را در پنل ندارد (داوری با دفتر است) — پس عکسش را
         | هم نمی‌بیند، حتی رسیدِ مالِ خودش را و حتی با شناسه‌ی درست.
         */
-        $owner = \App\Models\User::factory()->create(['role' => 'vendor', 'vendor_id' => $vendor->id, 'is_active' => true]);
+        $owner = User::factory()->create(['role' => 'vendor', 'vendor_id' => $vendor->id, 'is_active' => true]);
         $this->actingAs($owner)->get($url)->assertNotFound();
     }
 

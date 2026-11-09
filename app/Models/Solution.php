@@ -18,8 +18,6 @@ class Solution extends Model
         'description',
     ];
 
-    protected $guarded = [];
-
     protected function casts(): array
     {
         return ['benefits' => 'array'];

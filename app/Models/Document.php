@@ -17,8 +17,6 @@ class Document extends Model
         'description',
     ];
 
-    protected $guarded = [];
-
     /**
      * کلیدهای دسته و مخاطب.
      *

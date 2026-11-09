@@ -2,9 +2,13 @@
 
 namespace Tests\Feature;
 
+use App\Models\Location;
 use App\Models\Setting;
 use App\Models\User;
+use App\Support\Brand;
 use App\Support\Contact;
+use App\Support\Jalali;
+use App\Support\Navigation;
 use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -45,7 +49,7 @@ class ContactSettingsTest extends TestCase
             ->assertOk()
             ->assertSee(Contact::get('phone'), false)
             // نشانی‌ها اینجا فهرست می‌شوند، با پیوند به جای ویرایششان
-            ->assertSee(\App\Models\Location::primary()->title, false)
+            ->assertSee(Location::primary()->title, false)
             ->assertSee(route('admin.resource.index', 'locations'), false);
     }
 
@@ -63,7 +67,7 @@ class ContactSettingsTest extends TestCase
         $home->assertSee('۰۴۵-۳۳۳۳۰۰۰۰', false)
             ->assertSee('tel:+984533330000', false)
             // شماره‌ی قدیم نه در متن (ارقام فارسی) و نه در دکمه
-            ->assertDontSee(\App\Support\Jalali::digits('045-3182'), false)
+            ->assertDontSee(Jalali::digits('045-3182'), false)
             ->assertDontSee('tel:'.Contact::tel('045-3182').'"', false);
     }
 
@@ -78,7 +82,7 @@ class ContactSettingsTest extends TestCase
         $this->actingAs($this->admin())
             ->put(route('admin.contact.update'), $this->form(['sales_extension' => '']));
 
-        $this->assertNull(\App\Support\Brand::salesExtension());
+        $this->assertNull(Brand::salesExtension());
         $this->assertStringNotContainsString(',,', Contact::salesPhoneTel());
 
         $this->get(route('contact'))->assertOk()->assertDontSee('(داخلی', false);
@@ -217,9 +221,9 @@ class ContactSettingsTest extends TestCase
     /** «صفحه اصلی» در منوی دسکتاپ و موبایل. */
     public function test_the_menu_starts_with_the_home_page(): void
     {
-        $items = \App\Support\Navigation::items();
+        $items = Navigation::items();
         $this->assertSame('home', $items[0]['route']);
         $this->assertSame('صفحه اصلی', $items[0]['label']);
-        $this->assertFalse(\App\Support\Navigation::isActive(collect($items)->firstWhere('route', 'booking')));
+        $this->assertFalse(Navigation::isActive(collect($items)->firstWhere('route', 'booking')));
     }
 }

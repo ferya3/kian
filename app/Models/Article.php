@@ -17,8 +17,6 @@ class Article extends Model
         'body',
     ];
 
-    protected $guarded = [];
-
     protected function casts(): array
     {
         return ['published_at' => 'datetime'];

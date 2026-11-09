@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\Models\Product;
+use App\Models\Setting;
 use App\Models\SiteMedia;
 use App\Models\User;
 use App\Support\ImageVariants;
@@ -9,6 +11,7 @@ use App\Support\Media;
 use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
@@ -33,7 +36,9 @@ class ImageVariantsTest extends TestCase
     {
         $im = imagecreatetruecolor($w, $h);
         imagefill($im, 0, 0, imagecolorallocate($im, 180, 85, 45));
-        ob_start(); imagejpeg($im, null, 90); $bytes = ob_get_clean();
+        ob_start();
+        imagejpeg($im, null, 90);
+        $bytes = ob_get_clean();
         Storage::disk('public')->put($path, $bytes);
 
         return $path;
@@ -71,7 +76,7 @@ class ImageVariantsTest extends TestCase
         $path = $this->photo('admin/site-media/hero.jpg');
         ImageVariants::generate($path);
         SiteMedia::query()->where('key', 'hero.home')->update(['image' => $path]);
-        \Illuminate\Support\Facades\Cache::forget('site_media.map');
+        Cache::forget('site_media.map');
 
         $url = Media::url($path);
         $this->assertStringEndsWith('variants/hero-1920w.webp', $url);
@@ -101,7 +106,7 @@ class ImageVariantsTest extends TestCase
 
         $old = $this->photo('admin/site-media/old.jpg');
         ImageVariants::generate($old);
-        $media->update(['image' => $old]);
+        $media->forceFill(['image' => $old])->save();
 
         $this->actingAs($admin)->put(route('admin.resource.update', ['resource' => 'site-media', 'id' => $media->id]), [
             'image' => UploadedFile::fake()->image('new.jpg', 2000, 1200),
@@ -152,8 +157,8 @@ class ImageVariantsTest extends TestCase
     /** ویدئوی هیرو منبع ندارد تا app.js پس از load و فقط روی دسکتاپ بدهد. */
     public function test_the_hero_video_does_not_load_with_the_page(): void
     {
-        \App\Models\Setting::query()->updateOrCreate(['key' => 'hero_video'], ['value' => '/storage/admin/hero.mp4']);
-        \Illuminate\Support\Facades\Cache::flush();
+        Setting::put('hero_video', '/storage/admin/hero.mp4');
+        Cache::flush();
 
         $html = $this->get(route('home'))->assertOk()->getContent();
 
@@ -173,13 +178,13 @@ class ImageVariantsTest extends TestCase
     {
         $photo = $this->photo('admin/products/hero.jpg');
         ImageVariants::generate($photo);
-        $product = \App\Models\Product::query()->where('slug', 'ceramic-block-20')->firstOrFail();
-        $product->update(['hero_image' => $photo]);
+        $product = Product::query()->where('slug', 'ceramic-block-20')->firstOrFail();
+        $product->forceFill(['hero_image' => $photo])->save();
 
         $icon = $this->photo('admin/site-media/icon.png', 512, 512);
         ImageVariants::generate($icon);
         SiteMedia::query()->where('key', 'brand.favicon')->update(['image' => $icon]);
-        \Illuminate\Support\Facades\Cache::forget('site_media.map');
+        Cache::forget('site_media.map');
 
         $html = $this->get(route('products.show', $product))->assertOk()->getContent();
 

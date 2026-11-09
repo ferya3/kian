@@ -62,7 +62,7 @@ class ProductResource extends Resource
     public static function afterDuplicate(Model $copy, Model $original): void
     {
         foreach ($original->cavities()->get() as $cavity) {
-            $copy->cavities()->create($cavity->replicate(['product_id'])->getAttributes());
+            $copy->cavities()->forceCreate($cavity->replicate(['product_id'])->getAttributes());
         }
 
         $copy->solutions()->sync($original->solutions()->pluck('solutions.id'));

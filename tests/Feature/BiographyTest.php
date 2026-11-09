@@ -55,7 +55,7 @@ class BiographyTest extends TestCase
     /** خط به ترتیبِ سال است؛ رویدادِ تازه در جای درستش می‌نشیند، بی شماره‌زدن. */
     public function test_a_new_milestone_lands_in_its_year(): void
     {
-        Milestone::create(['year' => 1386, 'title' => 'نخستین قرارداد انبوه‌سازی', 'is_active' => true]);
+        Milestone::query()->forceCreate(['year' => 1386, 'title' => 'نخستین قرارداد انبوه‌سازی', 'is_active' => true]);
 
         $this->get(route('biography'))->assertOk()
             ->assertSeeInOrder(['۱۳۸۰', 'نخستین قرارداد انبوه‌سازی', '۱۳۹۲', 'امروز'], false);
@@ -86,13 +86,13 @@ class BiographyTest extends TestCase
 
     public function test_an_active_person_shows_with_their_bio(): void
     {
-        Person::first()->update([
+        Person::first()->forceFill([
             'name' => 'کیان احمدی',
             'role' => 'بنیان‌گذار',
             'bio' => "پاراگراف نخست.\nپاراگراف دوم.",
             'is_active' => true,
             'is_featured' => false,
-        ]);
+        ])->save();
 
         $page = $this->get(route('biography'))->assertOk();
 
@@ -139,13 +139,13 @@ class BiographyTest extends TestCase
     protected function ceo(array $overrides = []): Person
     {
         $ceo = Person::first();
-        $ceo->update(array_merge([
+        $ceo->forceFill(array_merge([
             'name' => 'کیان احمدی',
             'role' => 'مدیرعامل',
             'bio' => "پاراگراف نخستِ زندگی‌نامه.\nپاراگراف دوم.",
             'quote' => 'هر بچ را پیش از بارگیری آزمون می‌کنیم.',
             'is_active' => true,
-        ], $overrides));
+        ], $overrides))->save();
 
         return $ceo;
     }
@@ -170,7 +170,7 @@ class BiographyTest extends TestCase
     public function test_the_ceo_is_not_repeated_among_the_cards(): void
     {
         $this->ceo();
-        Person::create(['name' => 'مریم رضایی', 'role' => 'مدیر فنی', 'is_active' => true, 'position' => 2]);
+        Person::query()->forceCreate(['name' => 'مریم رضایی', 'role' => 'مدیر فنی', 'is_active' => true, 'position' => 2]);
 
         $html = $this->get(route('biography'))->assertOk()->getContent();
 

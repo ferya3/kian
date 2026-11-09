@@ -7,8 +7,6 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Distributor extends Model
 {
-    protected $guarded = [];
-
     /**
      * فروشگاهِ همین نمایندگی — اگر داشته باشد.
      *

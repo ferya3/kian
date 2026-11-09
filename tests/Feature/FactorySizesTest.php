@@ -47,7 +47,7 @@ class FactorySizesTest extends TestCase
     public function test_the_panel_accepts_persian_digits_in_the_size(): void
     {
         $product = Product::where('slug', 'ceramic-block-20')->firstOrFail();
-        $product->update(['size_label' => '۲۰ * ۲۰٫۵ * ۴۰']);
+        $product->forceFill(['size_label' => '۲۰ * ۲۰٫۵ * ۴۰'])->save();
 
         $this->assertSame('20 * 20.5 * 40', $product->fresh()->size_label);
         $this->assertSame('20 × 20.5 × 40', $product->fresh()->dimensionLabel());
@@ -57,7 +57,7 @@ class FactorySizesTest extends TestCase
     public function test_without_a_label_the_size_comes_from_the_dimensions(): void
     {
         $product = Product::where('slug', 'ceramic-block-20')->firstOrFail();
-        $product->update(['size_label' => null]);
+        $product->forceFill(['size_label' => null])->save();
 
         $this->assertSame('40 × 20 × 20', $product->fresh()->dimensionLabel());
     }

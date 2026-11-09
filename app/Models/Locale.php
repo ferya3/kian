@@ -22,8 +22,6 @@ class Locale extends Model
 {
     public const CACHE_KEY = 'locales.state';
 
-    protected $guarded = [];
-
     protected $casts = [
         'is_active' => 'boolean',
         'order' => 'integer',

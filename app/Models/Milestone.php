@@ -21,8 +21,6 @@ class Milestone extends Model
 
     public array $translatable = ['title', 'text'];
 
-    protected $guarded = [];
-
     protected function casts(): array
     {
         return ['is_active' => 'boolean', 'year' => 'integer'];

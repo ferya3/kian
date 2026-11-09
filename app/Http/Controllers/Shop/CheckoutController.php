@@ -79,7 +79,7 @@ class CheckoutController extends Controller
             foreach ($lines as $line) {
                 $offer = $line['offer'];
 
-                $order->items()->create([
+                $order->items()->forceCreate([
                     'vendor_id' => $offer->vendor_id,
                     'product_id' => $offer->product_id,
                     // اسنپ‌شات: فاکتور باید همان چیزی بماند که روز خرید بود

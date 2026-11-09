@@ -2,10 +2,13 @@
 
 namespace Tests\Feature;
 
+use App\Models\ContactMessage;
 use App\Models\Order;
 use App\Models\Receipt;
+use App\Models\Translation;
 use App\Models\User;
 use App\Support\Admin\Field;
+use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Validator;
@@ -42,6 +45,42 @@ class SecurityTest extends TestCase
         $this->assertSame(['reference' => '۱۲'], $receipt->getAttributes());
     }
 
+    /**
+     * هیچ مدلی باز نیست.
+     *
+     * پیش‌فرضِ لاراول ($guarded = ['*']) یعنی create/fill هیچ ستونی را بی‌اجازه
+     * نمی‌پذیرد؛ پنل فیلدهای اعلام‌شده را با forceFill می‌نویسد. فقط مدل‌هایی
+     * که فرمِ عمومی دارند فهرستِ صریح دارند — و آن فهرست همین‌جا قفل است.
+     */
+    public function test_every_model_is_guarded_and_fillable_lists_are_explicit(): void
+    {
+        $allowed = [
+            User::class => ['name', 'email', 'password'],
+            Order::class => null, // فیلدهای مشتری — بی ستون‌های وضعیت و مبلغ
+            Receipt::class => ['reference'],
+            ContactMessage::class => ['type', 'name', 'company', 'email', 'phone', 'city', 'subject', 'product_id', 'message', 'ip'],
+            Translation::class => ['locale', 'field', 'value'],
+        ];
+
+        foreach (glob(app_path('Models/*.php')) as $file) {
+            $class = 'App\\Models\\'.basename($file, '.php');
+            $model = new $class;
+
+            $this->assertSame(['*'], $model->getGuarded(), "{$class} نباید \$guarded باز داشته باشد");
+
+            if (! array_key_exists($class, $allowed)) {
+                $this->assertSame([], $model->getFillable(), "{$class} نباید ستونِ پرشدنی داشته باشد");
+            } elseif ($allowed[$class] !== null) {
+                $this->assertSame($allowed[$class], $model->getFillable(), $class);
+            }
+        }
+
+        foreach (['status', 'total', 'token', 'paid_at', 'vendor_id'] as $column) {
+            $this->assertNotContains($column, (new Order)->getFillable());
+        }
+        $this->assertNotContains('status', (new ContactMessage)->getFillable());
+    }
+
     /** SVG سند است و می‌تواند اسکریپت داشته باشد — نه در عکس پذیرفته می‌شود، نه در فایل. */
     public function test_svg_uploads_are_rejected_everywhere(): void
     {
@@ -61,7 +100,7 @@ class SecurityTest extends TestCase
     /** سرآیندها و CSP روی صفحه‌ی عمومی؛ nonce ِ CSP همان nonce ِ اسکریپتِ inline است. */
     public function test_pages_carry_security_headers_and_a_nonce_csp(): void
     {
-        $this->seed(\Database\Seeders\DatabaseSeeder::class);
+        $this->seed(DatabaseSeeder::class);
 
         $response = $this->get(route('home'))->assertOk()
             ->assertHeader('X-Content-Type-Options', 'nosniff')
@@ -84,7 +123,7 @@ class SecurityTest extends TestCase
 
     public function test_https_adds_hsts_without_subdomains(): void
     {
-        $this->seed(\Database\Seeders\DatabaseSeeder::class);
+        $this->seed(DatabaseSeeder::class);
 
         $hsts = $this->get('https://localhost/fa')->headers->get('Strict-Transport-Security');
 
@@ -109,7 +148,8 @@ class SecurityTest extends TestCase
     {
         $saved = [$_ENV, $_SERVER];
         unset($_ENV['SESSION_ENCRYPT'], $_SERVER['SESSION_ENCRYPT'], $_ENV['SESSION_SECURE_COOKIE'], $_SERVER['SESSION_SECURE_COOKIE']);
-        putenv('SESSION_ENCRYPT'); putenv('SESSION_SECURE_COOKIE');
+        putenv('SESSION_ENCRYPT');
+        putenv('SESSION_SECURE_COOKIE');
 
         try {
             foreach (['https://kiyanbehsaz.com' => true, 'http://94.184.45.129' => false] as $url => $secure) {

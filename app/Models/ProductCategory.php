@@ -19,8 +19,6 @@ class ProductCategory extends Model
         'description',
     ];
 
-    protected $guarded = [];
-
     protected function casts(): array
     {
         return ['is_featured' => 'boolean'];

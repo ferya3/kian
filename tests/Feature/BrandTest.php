@@ -3,8 +3,12 @@
 namespace Tests\Feature;
 
 use App\Models\Setting;
+use App\Models\SiteMedia;
+use App\Support\Brand;
+use App\Support\Contact;
 use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
@@ -106,20 +110,20 @@ class BrandTest extends TestCase
     {
         $page = $this->get(route('contact'))->assertOk();
 
-        $page->assertSee('tel:'.\App\Support\Contact::salesPhoneTel(), false)
-            ->assertSee(\App\Support\Brand::salesPhone(), false)
-            ->assertSee(__('site.contact.extension', ['number' => \App\Support\Brand::salesExtension()]), false);
+        $page->assertSee('tel:'.Contact::salesPhoneTel(), false)
+            ->assertSee(Brand::salesPhone(), false)
+            ->assertSee(__('site.contact.extension', ['number' => Brand::salesExtension()]), false);
 
-        $this->assertStringContainsString(',,', \App\Support\Contact::salesPhoneTel(),
+        $this->assertStringContainsString(',,', Contact::salesPhoneTel(),
             'مکث لازم است، وگرنه رقم‌های داخلی پیش از وصل‌شدن فرستاده می‌شوند.');
     }
 
     /** بی داخلی، پرانتزِ خالی نباید بماند. */
     public function test_without_an_extension_nothing_is_shown(): void
     {
-        \App\Models\Setting::put(\App\Support\Contact::PREFIX.'sales_extension', '', 'contact');
+        Setting::put(Contact::PREFIX.'sales_extension', '', 'contact');
 
-        $this->assertNull(\App\Support\Brand::salesExtension());
+        $this->assertNull(Brand::salesExtension());
 
         $this->get(route('contact'))->assertOk()->assertDontSee('(داخلی', false);
     }
@@ -127,10 +131,9 @@ class BrandTest extends TestCase
     public function test_the_central_number_is_the_one_in_the_header(): void
     {
         $this->get(route('home'))->assertOk()
-            ->assertSee('tel:'.\App\Support\Contact::phoneTel().'"', false)
-            ->assertSee(\App\Support\Brand::phone(), false);
+            ->assertSee('tel:'.Contact::phoneTel().'"', false)
+            ->assertSee(Brand::phone(), false);
     }
-
 
     /**
      * هدر فقط لوگو دارد — بی نام و بی برچسبِ زیرش.
@@ -141,10 +144,10 @@ class BrandTest extends TestCase
     {
         $html = $this->get(route('home'))->assertOk()->getContent();
         $header = str($html)->between('<header', '</header>')->toString();
-        $brandLink = str($header)->betweenFirst('aria-label="'.e(__('site.nav.brand_home', ['name' => \App\Support\Brand::legalName()])).'"', '</a>')->toString();
+        $brandLink = str($header)->betweenFirst('aria-label="'.e(__('site.nav.brand_home', ['name' => Brand::legalName()])).'"', '</a>')->toString();
 
         $this->assertNotSame('', $brandLink, 'پیوندِ لوگو باید aria-label ِ نامِ شرکت را داشته باشد.');
-        $this->assertStringNotContainsString(\App\Support\Brand::name(), strip_tags($brandLink));
+        $this->assertStringNotContainsString(Brand::name(), strip_tags($brandLink));
         $this->assertStringNotContainsString(config('kian.brand.descriptor_en'), $brandLink);
     }
 
@@ -156,13 +159,12 @@ class BrandTest extends TestCase
      */
     public function test_an_uploaded_logo_is_not_squeezed_into_a_square(): void
     {
-        \App\Models\SiteMedia::where('key', 'brand.logo')->update(['image' => 'admin/site/logo.png']);
-        \Illuminate\Support\Facades\Cache::forget('site_media.map');
+        SiteMedia::where('key', 'brand.logo')->update(['image' => 'admin/site/logo.png']);
+        Cache::forget('site_media.map');
 
         $header = str($this->get(route('home'))->assertOk()->getContent())->between('<header', '</header>')->toString();
 
         $this->assertMatchesRegularExpression('~<img src="[^"]*logo\.png"[^>]*class="[^"]*\bw-auto\b~', $header);
         $this->assertDoesNotMatchRegularExpression('~<img src="[^"]*logo\.png"[^>]*class="[^"]*\bw-(8|10)\b~', $header);
     }
-
 }

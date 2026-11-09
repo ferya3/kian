@@ -18,8 +18,10 @@ use Symfony\Component\HttpFoundation\Response;
  *
  * CSP: اسکریپت فقط از همین دامنه و inline ها فقط با nonce. «unsafe-eval» لازم
  * است چون Alpine عبارت‌های x-* را با new Function می‌سازد؛ برداشتنش یعنی
- * بازنویسیِ همه‌ی ویوها با نسخه‌ی CSP ِ Alpine. style-src «unsafe-inline» دارد
- * چون ویوها ویژگیِ style دارند. بیرون از دامنه چیزی بار نمی‌شود — جز عکس و
+ * بازنویسیِ همه‌ی ویوها با نسخه‌ی CSP ِ Alpine. برای استایل، تگِ <style> فقط
+ * با nonce (style-src) و «unsafe-inline» فقط برای ویژگیِ style ِ عنصرها
+ * (style-src-attr) — که ویوها دارند؛ تزریقِ تگِ <style> برای دزدیدنِ داده با
+ * CSS بسته است. بیرون از دامنه چیزی بار نمی‌شود — جز عکس و
  * ویدئو با https، که ممکن است نشانیِ بیرونی از پنل باشند.
  */
 class SecurityHeaders
@@ -77,7 +79,9 @@ class SecurityHeaders
         $rules = [
             "default-src 'self'",
             "script-src 'self' 'nonce-{$nonce}' 'unsafe-eval'",
-            "style-src 'self' 'unsafe-inline'",
+            // تگِ <style> فقط با nonce؛ «unsafe-inline» فقط برای ویژگیِ style ِ عنصرها
+            "style-src 'self' 'nonce-{$nonce}'",
+            "style-src-attr 'unsafe-inline'",
             "img-src 'self' data: blob: https:",
             "font-src 'self' data:",
             "connect-src 'self'",

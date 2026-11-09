@@ -6,6 +6,7 @@ use App\Models\Redirect;
 use App\Models\User;
 use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
@@ -44,7 +45,7 @@ class RedirectTest extends TestCase
 
     public function test_an_old_persian_address_is_redirected_permanently(): void
     {
-        Redirect::create(['from_path' => '/تماس-با-ما', 'to_url' => '/fa/contact']);
+        Redirect::query()->forceCreate(['from_path' => '/تماس-با-ما', 'to_url' => '/fa/contact']);
 
         $this->get('/'.rawurlencode('تماس-با-ما').'/')
             ->assertStatus(301)
@@ -56,7 +57,7 @@ class RedirectTest extends TestCase
     /** ‎/?p=12 در وردپرس یک نوشته بود — پارامتر روی ریشه خودِ نشانی است. */
     public function test_a_wordpress_query_address_on_the_root_is_redirected(): void
     {
-        Redirect::create(['from_path' => '/?p=12', 'to_url' => '/fa/articles']);
+        Redirect::query()->forceCreate(['from_path' => '/?p=12', 'to_url' => '/fa/articles']);
 
         $this->get('/?p=12')->assertRedirect('/fa/articles');
         $this->get('/')->assertRedirect(); // ریشه همچنان به زبانِ بازدیدکننده می‌رود
@@ -84,7 +85,7 @@ class RedirectTest extends TestCase
         $this->assertNull($row->to_url);
 
         // مدیر مقصد می‌دهد و از همان لحظه ریدایرکت می‌شود
-        $row->update(['to_url' => '/fa/about']);
+        $row->forceFill(['to_url' => '/fa/about'])->save();
         $this->get('/old-page')->assertRedirect('/fa/about');
     }
 
@@ -106,14 +107,14 @@ class RedirectTest extends TestCase
 
     public function test_a_410_rule_from_the_panel_is_honoured(): void
     {
-        Redirect::create(['from_path' => '/old-promo', 'status_code' => 410]);
+        Redirect::query()->forceCreate(['from_path' => '/old-promo', 'status_code' => 410]);
 
         $this->get('/old-promo')->assertStatus(410);
     }
 
     public function test_an_inactive_rule_does_nothing(): void
     {
-        Redirect::create(['from_path' => '/x', 'to_url' => '/fa', 'is_active' => false]);
+        Redirect::query()->forceCreate(['from_path' => '/x', 'to_url' => '/fa', 'is_active' => false]);
 
         $this->get('/x')->assertNotFound();
     }
@@ -159,6 +160,7 @@ class RedirectTest extends TestCase
 
     public function test_the_panel_normalises_and_rejects_duplicates_and_loops(): void
     {
+        config(['app.url' => 'https://kiyanbehsaz.com']);
         $admin = $this->admin();
 
         $this->actingAs($admin)->post('/admin/redirects', [
@@ -193,7 +195,7 @@ class RedirectTest extends TestCase
         ])]);
 
         // ردیفی که مدیر دستی گذاشته، دست نمی‌خورد
-        Redirect::create(['from_path' => '/product/ceramic-block-25', 'to_url' => '/fa/products']);
+        Redirect::query()->forceCreate(['from_path' => '/product/ceramic-block-25', 'to_url' => '/fa/products']);
 
         $this->artisan('redirects:import', ['--archive' => 'kiyanbehsaz.com'])->assertSuccessful();
 
@@ -218,5 +220,53 @@ class RedirectTest extends TestCase
         $this->get('/old-b')->assertRedirect('/fa/factory');
 
         unlink($file);
+    }
+
+    /** فقط همین سایت و زیردامنه‌هایش — ترفندهای شناخته‌شده‌ی open redirect رد می‌شوند. */
+    public function test_redirect_targets_stay_on_this_site(): void
+    {
+        config(['app.url' => 'https://kiyanbehsaz.com']);
+
+        $allowed = [
+            '/fa/products' => '/fa/products',
+            'fa/contact' => '/fa/contact',
+            '/?p=12' => '/?p=12',
+            'https://kiyanbehsaz.com/fa/about' => '/fa/about',
+            'https://www.kiyanbehsaz.com/fa' => '/fa',
+            'https://nobat.kiyanbehsaz.com/' => 'https://nobat.kiyanbehsaz.com/',
+        ];
+        foreach ($allowed as $in => $out) {
+            $this->assertSame($out, Redirect::safeTarget($in), $in);
+        }
+
+        foreach ([
+            'https://evil.com/login',
+            'https://kiyanbehsaz.com.evil.com/',
+            'https://evilkiyanbehsaz.com/',
+            '//evil.com/x',
+            '/\\evil.com',
+            'javascript:alert(1)',
+            'data:text/html,<script>',
+            'https://user:pass@kiyanbehsaz.com/',
+            "/fa\r\nLocation: https://evil.com",
+            'ftp://kiyanbehsaz.com/',
+        ] as $bad) {
+            $this->assertNull(Redirect::safeTarget($bad), $bad);
+        }
+    }
+
+    public function test_the_panel_refuses_an_external_target_and_the_site_never_follows_one(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin', 'is_active' => true]);
+
+        $this->actingAs($admin)->post('/admin/redirects', [
+            'from_path' => '/phish', 'to_url' => 'https://evil.com/login', 'status_code' => 301, 'is_active' => 1,
+        ])->assertSessionHasErrors('to_url');
+
+        // ردیفی که از راهِ دیگری نوشته شده باشد هم دنبال نمی‌شود
+        Redirect::query()->forceCreate(['from_path' => '/phish-old', 'to_url' => 'https://evil.com/', 'status_code' => 301, 'is_active' => true]);
+        Cache::forget(Redirect::CACHE_KEY);
+
+        $this->get('/phish-old')->assertNotFound();
     }
 }

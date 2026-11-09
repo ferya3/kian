@@ -12,7 +12,8 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  */
 class Translation extends Model
 {
-    protected $guarded = [];
+    /** translatable_type/id را رابطه می‌گذارد، نه ورودی. */
+    protected $fillable = ['locale', 'field', 'value'];
 
     public function translatable(): MorphTo
     {

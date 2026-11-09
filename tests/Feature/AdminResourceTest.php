@@ -12,6 +12,7 @@ use App\Models\Faq;
 use App\Models\Product;
 use App\Models\User;
 use App\Support\Admin\Registry;
+use App\Support\Media;
 use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -294,7 +295,7 @@ class AdminResourceTest extends TestCase
     /** محصولِ ۱۸٫۵ در موتور انتخاب محصول هم می‌آید و قابل انتخاب است. */
     public function test_a_new_thickness_reaches_the_product_finder(): void
     {
-        Product::first()->update(['thickness_mm' => 185]);
+        Product::first()->forceFill(['thickness_mm' => 185])->save();
 
         $this->assertContains(18.5, Product::thicknessOptions());
 
@@ -347,10 +348,10 @@ class AdminResourceTest extends TestCase
         $this->assertStringNotContainsString('عکس', $stored);
 
         // سایت عمومی باید همان عکس را نشان دهد، نه آرت وکتوری — نسخه‌ی سبکِ WebP ِ آن
-        $this->assertStringContainsString('/variants/', \App\Support\Media::url($stored));
+        $this->assertStringContainsString('/variants/', Media::url($stored));
         $this->get(route('products.show', $product->fresh()))
             ->assertOk()
-            ->assertSee(\App\Support\Media::url($stored), false);
+            ->assertSee(Media::url($stored), false);
     }
 
     public function test_the_public_page_falls_back_to_vector_art_without_an_image(): void
@@ -452,7 +453,7 @@ class AdminResourceTest extends TestCase
             ->get(route('admin.media'))
             ->assertOk()
             ->assertSee('کتابخانه‌ی تصاویر')
-            ->assertSee(\App\Support\Media::url($product->fresh()->hero_image), false);
+            ->assertSee(Media::url($product->fresh()->hero_image), false);
     }
 
     /** بدنه‌ی کامل فرم محصول — چون اعتبارسنجی فیلدهای الزامی را می‌خواهد. */

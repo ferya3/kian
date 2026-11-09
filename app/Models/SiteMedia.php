@@ -22,8 +22,6 @@ class SiteMedia extends Model
 {
     protected $table = 'site_media';
 
-    protected $guarded = [];
-
     /**
      * جایگاه => [برچسب، بخش، کجا دیده می‌شود].
      *

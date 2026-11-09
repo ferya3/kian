@@ -14,9 +14,11 @@ use App\Support\Jalali;
 use App\Support\Locales;
 use App\Support\Navigation;
 use Database\Seeders\DatabaseSeeder;
+use Database\Seeders\ShopSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 /**
@@ -185,7 +187,7 @@ class ShopTest extends TestCase
         Offer::query()->where('vendor_id', $removed->id)->delete();
         $removed->delete();
 
-        $this->seed(\Database\Seeders\ShopSeeder::class);
+        $this->seed(ShopSeeder::class);
 
         $this->assertSame($before - 1, Vendor::query()->count());
         $this->assertNull(Vendor::query()->find($removed->id));
@@ -203,13 +205,13 @@ class ShopTest extends TestCase
         $this->enableShop();
 
         $product = Product::query()->active()->firstOrFail();
-        $vendor = Vendor::create([
+        $vendor = Vendor::query()->forceCreate([
             'name' => 'فروشنده آزمایشی',
             'slug' => 'v',
             'is_active' => true,
             'bank_card' => '6104337712345678',
         ]);
-        $offer = Offer::create([
+        $offer = Offer::query()->forceCreate([
             'vendor_id' => $vendor->id,
             'product_id' => $product->id,
             'price' => 1000,
@@ -231,8 +233,8 @@ class ShopTest extends TestCase
         $this->enableShop();
 
         $products = Product::query()->active()->take(2)->get();
-        $offers = $products->map(fn (Product $p, int $i) => Offer::create([
-            'vendor_id' => Vendor::create([
+        $offers = $products->map(fn (Product $p, int $i) => Offer::query()->forceCreate([
+            'vendor_id' => Vendor::query()->forceCreate([
                 'name' => 'فروشنده '.$i,
                 'slug' => 'v'.$i,
                 'is_active' => true,
@@ -257,8 +259,8 @@ class ShopTest extends TestCase
         $this->enableShop();
 
         $product = Product::query()->active()->firstOrFail();
-        $vendor = Vendor::create(['name' => 'آزمایشی', 'slug' => 'v', 'is_active' => true]);
-        $offer = Offer::create([
+        $vendor = Vendor::query()->forceCreate(['name' => 'آزمایشی', 'slug' => 'v', 'is_active' => true]);
+        $offer = Offer::query()->forceCreate([
             'vendor_id' => $vendor->id,
             'product_id' => $product->id,
             'price' => 1000,
@@ -283,7 +285,7 @@ class ShopTest extends TestCase
         [$sold, $unsold] = Product::query()->active()->take(2)->get()->all();
         $vendor = $this->vendor();
 
-        Offer::create(['vendor_id' => $vendor->id, 'product_id' => $sold->id, 'price' => 120000, 'min_order' => 2]);
+        Offer::query()->forceCreate(['vendor_id' => $vendor->id, 'product_id' => $sold->id, 'price' => 120000, 'min_order' => 2]);
 
         /*
         | سنجش روی نشانی است و نه نامِ نمایشی.
@@ -304,11 +306,11 @@ class ShopTest extends TestCase
 
         $product = Product::query()->active()->firstOrFail();
         $vendor = $this->vendor();
-        Offer::create(['vendor_id' => $vendor->id, 'product_id' => $product->id, 'price' => 90000]);
+        Offer::query()->forceCreate(['vendor_id' => $vendor->id, 'product_id' => $product->id, 'price' => 90000]);
 
         $this->get(route('shop.show', $product))->assertOk()->assertSee($vendor->name, false);
 
-        $vendor->update(['is_active' => false]);
+        $vendor->forceFill(['is_active' => false])->save();
 
         // بدون فروشنده‌ی فعال، صفحه‌ی خرید اصلاً وجود ندارد
         $this->get(route('shop.show', $product))->assertNotFound();
@@ -322,8 +324,8 @@ class ShopTest extends TestCase
         $one = $this->vendor('فروشنده یک', 'v-one');
         $two = $this->vendor('فروشنده دو', 'v-two');
 
-        $offerOne = Offer::create(['vendor_id' => $one->id, 'product_id' => $product->id, 'price' => 100, 'min_order' => 1]);
-        $offerTwo = Offer::create(['vendor_id' => $two->id, 'product_id' => $product->id, 'price' => 250, 'min_order' => 1]);
+        $offerOne = Offer::query()->forceCreate(['vendor_id' => $one->id, 'product_id' => $product->id, 'price' => 100, 'min_order' => 1]);
+        $offerTwo = Offer::query()->forceCreate(['vendor_id' => $two->id, 'product_id' => $product->id, 'price' => 250, 'min_order' => 1]);
 
         $this->post(route('cart.store'), ['offer' => $offerOne->id, 'quantity' => 3])->assertRedirect();
         $this->post(route('cart.store'), ['offer' => $offerTwo->id, 'quantity' => 2])->assertRedirect();
@@ -357,7 +359,7 @@ class ShopTest extends TestCase
         $this->enableShop();
 
         $product = Product::query()->active()->firstOrFail();
-        $offer = Offer::create(['vendor_id' => $this->vendor()->id, 'product_id' => $product->id, 'price' => 500]);
+        $offer = Offer::query()->forceCreate(['vendor_id' => $this->vendor()->id, 'product_id' => $product->id, 'price' => 500]);
 
         $this->post(route('cart.store'), ['offer' => $offer->id, 'quantity' => 2]);
 
@@ -376,7 +378,7 @@ class ShopTest extends TestCase
         $this->enableShop();
 
         $product = Product::query()->active()->firstOrFail();
-        $offer = Offer::create([
+        $offer = Offer::query()->forceCreate([
             'vendor_id' => $this->vendor()->id, 'product_id' => $product->id,
             'price' => 100, 'min_order' => 10,
         ]);
@@ -396,8 +398,8 @@ class ShopTest extends TestCase
         $mine = $this->vendor('مال من', 'mine');
         $theirs = $this->vendor('مال دیگری', 'theirs');
 
-        $myOffer = Offer::create(['vendor_id' => $mine->id, 'product_id' => $myProduct->id, 'price' => 100]);
-        $theirOffer = Offer::create(['vendor_id' => $theirs->id, 'product_id' => $theirProduct->id, 'price' => 200]);
+        $myOffer = Offer::query()->forceCreate(['vendor_id' => $mine->id, 'product_id' => $myProduct->id, 'price' => 100]);
+        $theirOffer = Offer::query()->forceCreate(['vendor_id' => $theirs->id, 'product_id' => $theirProduct->id, 'price' => 200]);
 
         $seller = User::factory()->create([
             'role' => 'vendor', 'is_active' => true, 'vendor_id' => $mine->id,
@@ -480,12 +482,12 @@ class ShopTest extends TestCase
         ]);
         $order->save();
 
-        $order->items()->create([
+        $order->items()->forceCreate([
             'vendor_id' => $mine->id, 'product_id' => $mineProduct->id,
             'product_name' => $mineProduct->name, 'vendor_name' => $mine->name,
             'unit_price' => 100, 'quantity' => 1, 'total' => 100, 'status' => 'new',
         ]);
-        $order->items()->create([
+        $order->items()->forceCreate([
             'vendor_id' => $theirs->id, 'product_id' => $theirProduct->id,
             'product_name' => $theirProduct->name, 'vendor_name' => $theirs->name,
             'unit_price' => 200, 'quantity' => 1, 'total' => 200, 'status' => 'new',
@@ -522,7 +524,7 @@ class ShopTest extends TestCase
 
     protected function vendor(string $name = 'فروشنده آزمایشی', string $slug = 'test-vendor'): Vendor
     {
-        return Vendor::create([
+        return Vendor::query()->forceCreate([
             'name' => $name,
             'slug' => $slug,
             'city' => 'اصفهان',
@@ -552,9 +554,11 @@ class ShopTest extends TestCase
 
     protected function offerFor(Product $product, int $price, string $vendor = 'فروشنده', ?int $stock = null): Offer
     {
-        $v = Vendor::firstOrCreate(['slug' => \Illuminate\Support\Str::slug($vendor) ?: 'v'.$price], ['name' => $vendor, 'is_active' => true]);
+        $slug = Str::slug($vendor) ?: 'v'.$price;
+        $v = Vendor::query()->where('slug', $slug)->first()
+            ?? Vendor::query()->forceCreate(['slug' => $slug, 'name' => $vendor, 'is_active' => true]);
 
-        return Offer::create(['vendor_id' => $v->id, 'product_id' => $product->id, 'price' => $price, 'min_order' => 1, 'stock' => $stock]);
+        return Offer::query()->forceCreate(['vendor_id' => $v->id, 'product_id' => $product->id, 'price' => $price, 'min_order' => 1, 'stock' => $stock]);
     }
 
     /**

@@ -3,7 +3,10 @@
 namespace App\Support;
 
 use App\Models\Article;
+use App\Models\Location;
+use App\Models\Offer;
 use App\Models\Product;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Route;
 
 /**
@@ -23,13 +26,13 @@ class Schema
             'logo' => url('/logo.svg'),
             'foundingDate' => (string) config('kian.brand.founded'),
             'description' => config('kian.seo.default_description'),
-            'address' => static::postalAddress(\App\Models\Location::primary()),
+            'address' => static::postalAddress(Location::primary()),
 
             /*
             | بقیه‌ی نشانی‌ها — دفتر فروش، انبار — هر کدام یک Place. نشانیِ
             | اصلی همان address است و اینجا تکرار نمی‌شود.
             */
-            'location' => \App\Models\Location::listed()->slice(1)->map(fn ($l) => array_filter([
+            'location' => Location::listed()->slice(1)->map(fn ($l) => array_filter([
                 '@type' => 'Place',
                 'name' => $l->title,
                 'address' => static::postalAddress($l),
@@ -38,18 +41,18 @@ class Schema
             'contactPoint' => [
                 [
                     '@type' => 'ContactPoint',
-                    'telephone' => \App\Support\Contact::phoneTel(),
+                    'telephone' => Contact::phoneTel(),
                     'contactType' => 'sales',
                     'areaServed' => 'IR',
                     'availableLanguage' => ['fa', 'en'],
                 ],
                 [
                     '@type' => 'ContactPoint',
-                    'email' => \App\Support\Contact::get('technical_email'),
+                    'email' => Contact::get('technical_email'),
                     'contactType' => 'technical support',
                 ],
             ],
-            'sameAs' => array_values(\App\Support\Contact::social()),
+            'sameAs' => array_values(Contact::social()),
         ]);
     }
 
@@ -60,9 +63,9 @@ class Schema
             '@id' => url('/#factory'),
             'name' => config('kian.brand.legal_name'),
             'image' => url('/og-image.svg'),
-            'telephone' => \App\Support\Contact::phoneTel(),
-            'email' => \App\Support\Contact::get('email'),
-            'address' => static::postalAddress($primary = \App\Models\Location::primary()),
+            'telephone' => Contact::phoneTel(),
+            'email' => Contact::get('email'),
+            'address' => static::postalAddress($primary = Location::primary()),
             'geo' => $primary?->hasPoint() ? [
                 '@type' => 'GeoCoordinates',
                 'latitude' => $primary->lat,
@@ -79,7 +82,7 @@ class Schema
     }
 
     /** نشانیِ پستیِ یک مکان؛ میدان‌های خالی اصلاً فرستاده نمی‌شوند. */
-    protected static function postalAddress(?\App\Models\Location $location): ?array
+    protected static function postalAddress(?Location $location): ?array
     {
         if (! $location) {
             return null;
@@ -147,9 +150,9 @@ class Schema
      * واحدِ پولِ schema.org باید کدِ ISO باشد و «تومان» کد ندارد؛ پس قیمت به
      * ریال (IRR) گزارش می‌شود — تومان × ۱۰.
      *
-     * @param  \Illuminate\Support\Collection<int, \App\Models\Offer>  $offers
+     * @param  Collection<int, Offer>  $offers
      */
-    protected static function offers(Product $product, \Illuminate\Support\Collection $offers): array
+    protected static function offers(Product $product, Collection $offers): array
     {
         $rial = fn (int $price) => $price * (config('shop.currency', 'تومان') === 'ریال' ? 1 : 10);
         $url = Route::has('shop.show') ? route('shop.show', $product) : route('products.show', $product);

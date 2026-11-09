@@ -14,6 +14,4 @@ class Faq extends Model
         'question',
         'answer',
     ];
-
-    protected $guarded = [];
 }

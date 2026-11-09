@@ -63,17 +63,17 @@ class ReceiptController extends Controller
         Receipt::query()->firstOrNew(
             ['order_id' => $order->id, 'vendor_id' => $vendor->id],
         )->forceFill([
-                // کلیدها هم صریح: firstOrNew آن‌ها را از fill می‌گذراند و در fillable نیستند
-                'order_id' => $order->id,
-                'vendor_id' => $vendor->id,
-                // مبلغ از ردیف‌های همین سفارش می‌آید و نه از فرم
-                'amount' => (int) $items->sum('total'),
-                'reference' => $data['reference'] ?? null,
-                'image' => $path,
-                'status' => 'pending',
-                'note' => null,
-                'reviewed_at' => null,
-            ])->save();
+            // کلیدها هم صریح: firstOrNew آن‌ها را از fill می‌گذراند و در fillable نیستند
+            'order_id' => $order->id,
+            'vendor_id' => $vendor->id,
+            // مبلغ از ردیف‌های همین سفارش می‌آید و نه از فرم
+            'amount' => (int) $items->sum('total'),
+            'reference' => $data['reference'] ?? null,
+            'image' => $path,
+            'status' => 'pending',
+            'note' => null,
+            'reviewed_at' => null,
+        ])->save();
 
         if ($previous && $previous !== $path) {
             Storage::disk('local')->delete($previous);

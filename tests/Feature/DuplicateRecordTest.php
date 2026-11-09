@@ -166,10 +166,10 @@ class DuplicateRecordTest extends TestCase
     {
         $original = $this->original();
 
-        $vendor = Vendor::create(['name' => 'ف', 'slug' => 'v', 'is_active' => true]);
-        Offer::create(['vendor_id' => $vendor->id, 'product_id' => $original->id, 'price' => 1000, 'min_order' => 1]);
+        $vendor = Vendor::query()->forceCreate(['name' => 'ف', 'slug' => 'v', 'is_active' => true]);
+        Offer::query()->forceCreate(['vendor_id' => $vendor->id, 'product_id' => $original->id, 'price' => 1000, 'min_order' => 1]);
 
-        Document::query()->first()?->update(['product_id' => $original->id]);
+        Document::query()->first()?->forceFill(['product_id' => $original->id])->save();
 
         $offers = $original->offers()->count();
         $documents = $original->documents()->count();
@@ -198,7 +198,7 @@ class DuplicateRecordTest extends TestCase
         $original = $this->original();
         $path = UploadedFile::fake()->image('block.jpg')->store('products', 'public');
         $gallery = [UploadedFile::fake()->image('g.jpg')->store('products', 'public')];
-        $original->update(['hero_image' => $path, 'gallery' => $gallery]);
+        $original->forceFill(['hero_image' => $path, 'gallery' => $gallery])->save();
 
         $this->duplicate($original);
 
@@ -230,7 +230,7 @@ class DuplicateRecordTest extends TestCase
             'products/elsewhere.jpg',      // روی این دیسک نیست
         ] as $path) {
             $original = $this->original();
-            $original->update(['hero_image' => $path, 'section_image' => $path, 'gallery' => [$path]]);
+            $original->forceFill(['hero_image' => $path, 'section_image' => $path, 'gallery' => [$path]])->save();
 
             $this->duplicate($original);
 
@@ -241,7 +241,7 @@ class DuplicateRecordTest extends TestCase
             $this->assertSame([$path], $copy->gallery);
 
             // و روی سایت همان عکس دیده می‌شود
-            $copy->update(['is_active' => true]);
+            $copy->forceFill(['is_active' => true])->save();
             $this->get(route('products.show', $copy))->assertOk()
                 ->assertSee(e(Media::url($path)), false);
         }
@@ -252,12 +252,12 @@ class DuplicateRecordTest extends TestCase
     {
         $original = $this->original();
         $path = UploadedFile::fake()->image('block.jpg', 800, 500)->store('admin/products', 'public');
-        $original->update(['hero_image' => $path]);
+        $original->forceFill(['hero_image' => $path])->save();
 
         $this->duplicate($original);
 
         $copy = $this->latestCopy();
-        $copy->update(['is_active' => true]);
+        $copy->forceFill(['is_active' => true])->save();
 
         $this->assertSame(
             Storage::disk('public')->get($path),
@@ -279,7 +279,7 @@ class DuplicateRecordTest extends TestCase
     {
         $original = $this->original();
         $path = UploadedFile::fake()->image('block.jpg')->store('admin/products', 'public');
-        $original->update(['hero_image' => $path]);
+        $original->forceFill(['hero_image' => $path])->save();
 
         $before = Product::count();
 

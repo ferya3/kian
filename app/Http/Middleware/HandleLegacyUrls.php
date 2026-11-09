@@ -35,6 +35,12 @@ class HandleLegacyUrls
 
         if ($hit = $map[$key] ?? null) {
             [$id, $to, $status] = $hit;
+
+            // دوباره همین‌جا: ردیفی که پیش از این قاعده یا از راهِ دیگری
+            // نوشته شده، کاربر را به دامنه‌ی بیگانه نمی‌فرستد
+            if ($to && ($to = Redirect::safeTarget($to)) === null) {
+                return $next($request);
+            }
             Redirect::query()->whereKey($id)->update(['hits' => \DB::raw('hits + 1'), 'last_hit_at' => now()]);
 
             if ($status === 410 || ! $to) {

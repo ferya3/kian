@@ -14,8 +14,6 @@ class Setting extends Model
     /** متنِ تنظیم دیده می‌شود، پس ترجمه می‌شود. کلید و گروه نه — آن‌ها کدند. */
     public array $translatable = ['value'];
 
-    protected $guarded = [];
-
     /**
      * تمام تنظیمات به شکل key => value، با کش دائمی — یکی برای هر زبان.
      *
@@ -48,7 +46,9 @@ class Setting extends Model
 
     public static function put(string $key, mixed $value, string $group = 'general'): void
     {
-        static::updateOrCreate(['key' => $key], ['value' => $value, 'group' => $group]);
+        // مدل کاملاً محافظت‌شده است؛ کلید و گروه از کد می‌آیند، نه از ورودی
+        (static::query()->where('key', $key)->first() ?? (new static)->forceFill(['key' => $key]))
+            ->forceFill(['value' => $value, 'group' => $group])->save();
     }
 
     protected static function cacheKey(?string $locale = null): string

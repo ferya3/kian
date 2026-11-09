@@ -15,7 +15,7 @@ class ProductTest extends TestCase
 {
     protected function block(array $overrides = []): Product
     {
-        return new Product(array_merge([
+        return (new Product)->forceFill(array_merge([
             'length_mm' => 400,
             'width_mm' => 200,
             'height_mm' => 200,
