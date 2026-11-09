@@ -3,7 +3,10 @@
 namespace App\Http\Requests;
 
 use App\Support\Digits;
+use Closure;
+use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Validation\Rule;
 
 class ContactRequest extends FormRequest
@@ -27,7 +30,41 @@ class ContactRequest extends FormRequest
             'message' => ['required', 'string', 'min:10', 'max:4000'],
             // تله‌ی ربات — باید همیشه خالی بماند
             'website' => ['nullable', 'size:0'],
+            // تله‌ی زمان — ربات فرم را در کسری از ثانیه می‌فرستد
+            '_ts' => ['required', 'string', $this->humanPace(...)],
         ];
+    }
+
+    /** کمترین زمانی که انسان برای پرکردنِ فرم لازم دارد. */
+    public const MIN_SECONDS = 3;
+
+    /** مهرِ زمانِ رمزنگاری‌شده برای فیلدِ پنهانِ فرم. */
+    public static function stamp(): string
+    {
+        return Crypt::encryptString((string) time());
+    }
+
+    /**
+     * تله‌ی زمان، به‌جای CAPTCHA.
+     *
+     * CAPTCHA ِ بیرونی (Turnstile، hCaptcha) از ایران همیشه بار نمی‌شود و
+     * مشتریِ واقعی را پشتِ در نگه می‌داشت. ربات‌ها اما فرم را بی‌درنگ
+     * می‌فرستند: کمتر از سه ثانیه پس از بازشدنِ صفحه، یا بی مهرِ معتبر —
+     * مهر رمزنگاری‌شده است و ساختگی‌اش پذیرفته نمی‌شود.
+     */
+    protected function humanPace(string $attribute, mixed $value, Closure $fail): void
+    {
+        try {
+            $openedAt = (int) Crypt::decryptString((string) $value);
+        } catch (DecryptException) {
+            $fail(__('site.contact.invalid'));
+
+            return;
+        }
+
+        if (time() - $openedAt < self::MIN_SECONDS) {
+            $fail(__('site.contact.invalid'));
+        }
     }
 
     /**

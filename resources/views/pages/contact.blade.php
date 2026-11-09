@@ -55,6 +55,8 @@
                         <label for="website">{{ __('site.contact.website') }}</label>
                         <input id="website" name="website" type="text" tabindex="-1" autocomplete="off">
                     </div>
+                    {{-- زمانِ باز شدنِ فرم، رمزنگاری‌شده — ContactRequest کمتر از ۳ ثانیه را ربات می‌داند --}}
+                    <input type="hidden" name="_ts" value="{{ \App\Http\Requests\ContactRequest::stamp() }}">
 
                     <fieldset>
                         <legend class="text-meta font-semibold text-ink-600">{{ __('site.contact.subject') }}</legend>

@@ -68,12 +68,13 @@ class CheckoutController extends Controller
          * کسی پیگیری‌اش می‌کند و چیزی در آن نیست.
          */
         $order = DB::transaction(function () use ($data, $lines) {
-            $order = Order::create($data + [
+            $order = (new Order)->fill($data)->forceFill([
                 'number' => Order::nextNumber(),
                 'token' => Str::random(48),
                 'total' => $lines->sum('total'),
                 'status' => 'new',
             ]);
+            $order->save();
 
             foreach ($lines as $line) {
                 $offer = $line['offer'];

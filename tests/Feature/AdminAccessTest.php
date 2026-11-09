@@ -66,7 +66,7 @@ class AdminAccessTest extends TestCase
 
     public function test_a_deactivated_account_is_signed_out_on_the_next_request(): void
     {
-        $this->admin->update(['is_active' => false]);
+        $this->admin->forceFill(['is_active' => false])->save();
 
         $this->actingAs($this->admin)
             ->get('/admin')

@@ -373,6 +373,14 @@ fi
 
 sed -i "s|^APP_ENV=.*|APP_ENV=production|" .env
 sed -i "s|^APP_DEBUG=.*|APP_DEBUG=false|" .env
+
+# نشست‌ها رمزنگاری‌شده. ‎.env ِ سرورهای قدیم «false» ِ صریح داشت که بر پیش‌فرضِ
+# پیکربندی می‌چربید. یک‌بار همه از پنل بیرون می‌روند و دوباره وارد می‌شوند.
+if grep -q '^SESSION_ENCRYPT=' .env; then
+    sed -i "s|^SESSION_ENCRYPT=.*|SESSION_ENCRYPT=true|" .env
+else
+    echo "SESSION_ENCRYPT=true" >> .env
+fi
 sed -i "s|^APP_URL=.*|APP_URL=$APP_URL|" .env
 
 #
@@ -460,6 +468,34 @@ fi
 step "بهینه‌سازی عکس‌ها"
 php artisan media:optimize || printf '  \033[1;33mبهینه‌سازی عکس‌ها کامل نشد؛ عکس‌های اصل نمایش داده می‌شوند.\033[0m\n'
 
+# ------------------------------------------------------- پشتیبانِ روزانه ----
+#
+# هر شب دیتابیس و رسیدهای واریز — آنچه از دست رفتنش جبران‌ناپذیر است — در
+# ‎/root/kian-backups، با نگهداریِ چهارده روز. عکس‌های سایت (حجیم و قابلِ
+# بازسازی از پنل) با دستورِ پشتیبانِ کاملِ README گرفته می‌شوند.
+#
+# VACUUM INTO و نه cp: کپیِ خامِ دیتابیسی که همان لحظه نوشته می‌شود، نیمه‌کاره
+# درمی‌آید و بی‌صدا خراب است.
+if [ "$DB" = "sqlite" ]; then
+    step "پشتیبانِ خودکارِ روزانه"
+    mkdir -p /etc/cron.daily
+    cat > /etc/cron.daily/kian-backup << CRON
+#!/bin/sh
+set -e
+APP="$APP_DIR"
+DIR=/root/kian-backups
+STAMP=\$(date +%Y%m%d)
+mkdir -p "\$DIR" && chmod 700 "\$DIR"
+rm -f "\$DIR/db-\$STAMP.sqlite" "\$DIR/db-\$STAMP.sqlite.gz"
+php -r '(new PDO("sqlite:".\$argv[1]))->exec("VACUUM INTO ".(new PDO("sqlite::memory:"))->quote(\$argv[2]));' "\$APP/database/database.sqlite" "\$DIR/db-\$STAMP.sqlite"
+gzip -f "\$DIR/db-\$STAMP.sqlite"
+[ -d "\$APP/storage/app/private" ] && tar -czf "\$DIR/private-\$STAMP.tar.gz" -C "\$APP/storage/app" private
+find "\$DIR" -type f -name '*.gz' -mtime +14 -delete
+CRON
+    chmod 755 /etc/cron.daily/kian-backup
+    printf '  هر شب در ‎/root/kian-backups — دیتابیس و رسیدها، ۱۴ روز\n'
+fi
+
 # ------------------------------------------------------------- دسترسی‌ها ----
 step "تنظیم دسترسی‌ها و کش"
 
@@ -484,6 +520,22 @@ else
     SERVER_NAME="_"
 fi
 
+#
+# سرآیندهای امنیتیِ فایل‌های ایستا.
+#
+# صفحه‌های پویا سرآیندشان را از لاراول می‌گیرند (App\Http\Middleware\SecurityHeaders).
+# اینجا فقط آنچه nginx مستقیم می‌دهد. یک snippet ِ جدا لازم است چون add_header
+# ِ nginx ارث نمی‌رسد: هر location ای که خودش add_header دارد (کشِ assetها)
+# سرآیندهای سطحِ server را گم می‌کرد. و در سطحِ server هم نمی‌ماند، چون روی
+# پاسخ‌های لاراول تکراری می‌شد — X-Frame-Options ِ دوگانه (SAMEORIGIN و DENY ِ
+# پنل) را مرورگر ناسازگار می‌خواند و نادیده می‌گیرد.
+mkdir -p /etc/nginx/snippets
+cat > /etc/nginx/snippets/kian-static-headers.conf << 'SNIP'
+add_header X-Content-Type-Options "nosniff" always;
+add_header X-Frame-Options "SAMEORIGIN" always;
+add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+SNIP
+
 cat > /etc/nginx/sites-available/kian << NGINX
 server {
     listen 80;
@@ -494,12 +546,10 @@ server {
     index index.php;
     charset utf-8;
     client_max_body_size 32M;
-
-    add_header X-Content-Type-Options "nosniff" always;
-    add_header X-Frame-Options "SAMEORIGIN" always;
-    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+    server_tokens off;
 
     location / {
+        include snippets/kian-static-headers.conf;
         try_files \$uri \$uri/ /index.php?\$query_string;
     }
 
@@ -512,10 +562,25 @@ server {
         internal;
     }
 
+    #
+    # محتوای فعال در آپلودها هرگز اجرا نمی‌شود.
+    #
+    # پنل دیگر SVG و HTML نمی‌پذیرد؛ این برای فایلی است که پیش‌تر آمده یا از
+    # راهِ دیگری برسد. CSP ِ sandbox اسکریپت را حتی اگر مرورگر سند را باز کند
+    # می‌بندد، و attachment آن را دانلود می‌کند نه نمایش. PHP هم که هرگز به
+    # fpm نمی‌رسد (فقط index.php می‌رسد) — اینجا متنش هم سرو نمی‌شود.
+    location ~* ^/storage/.*\.(php\d?|phtml|phar)\$ { deny all; }
+    location ~* ^/storage/.*\.(svgz?|html?|xhtml|xml|js|mjs)\$ {
+        include snippets/kian-static-headers.conf;
+        add_header Content-Security-Policy "default-src 'none'; style-src 'unsafe-inline'; sandbox" always;
+        add_header Content-Disposition "attachment" always;
+    }
+
     # فونت‌ها و assets ساخته‌شده‌ی Vite هش دارند، پس تا یک سال کش می‌شوند
     location ~* ^/build/.*\.(css|js|woff2?)\$ {
         expires 1y;
         access_log off;
+        include snippets/kian-static-headers.conf;
         add_header Cache-Control "public, immutable";
     }
 
@@ -524,18 +589,21 @@ server {
     location ~* ^/storage/.*\.(png|jpe?g|webp|avif|gif)\$ {
         expires 1y;
         access_log off;
+        include snippets/kian-static-headers.conf;
         add_header Cache-Control "public, immutable";
     }
 
     location ~* \.(svg|png|jpg|jpeg|webp|avif|ico|mp4)\$ {
         expires 30d;
         access_log off;
+        include snippets/kian-static-headers.conf;
     }
 
     location ~ /\.(?!well-known).* { deny all; }
 
     gzip on;
-    gzip_types text/css application/javascript application/json image/svg+xml application/xml;
+    gzip_vary on;
+    gzip_types text/css text/plain application/javascript application/json image/svg+xml application/xml;
     gzip_min_length 512;
 
     error_page 404 /index.php;

@@ -82,7 +82,14 @@ class ResourceController extends Controller
 
         $data = $class::beforeSave($this->validated($request, $class, null), null);
 
-        $record = $class::$model::create($data);
+        /*
+        | forceFill و نه create: فهرستِ مجازِ این کنترلر خودِ فیلدهای اعلام‌شده‌ی
+        | منبع است (validated → savableFields). مدل‌های حساس — User، Order،
+        | Receipt — $fillable ِ تنگ دارند تا هیچ مسیرِ دیگری نتواند نقش یا
+        | وضعیت را از ورودی بنویسد؛ پنل که خودش فیلتر کرده، از آن عبور می‌کند.
+        */
+        $record = (new $class::$model)->forceFill($data);
+        $record->save();
 
         $this->saveTranslations($request, $record);
 
@@ -113,7 +120,7 @@ class ResourceController extends Controller
 
         $data = $class::beforeSave($this->validated($request, $class, $record), $record);
 
-        $record->fill($data);
+        $record->forceFill($data);   // همان دلیلِ store
         $changed = array_keys($record->getDirty());
         $record->save();
 

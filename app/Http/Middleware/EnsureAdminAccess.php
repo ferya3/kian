@@ -48,12 +48,17 @@ class EnsureAdminAccess
             abort(403, 'این بخش برای فروشندگان در دسترس نیست.');
         }
 
-        return $next($request)
-            // پنل هرگز نباید داخل iframe سایت دیگری بارگذاری شود
-            ->withHeaders([
-                'X-Frame-Options' => 'DENY',
-                'X-Robots-Tag' => 'noindex, nofollow',
-                'Referrer-Policy' => 'same-origin',
-            ]);
+        $response = $next($request);
+
+        /*
+        | headers->set و نه withHeaders: پاسخِ پنل همیشه Response ِ لاراول نیست —
+        | دانلودِ فایل (عکسِ رسید، اسناد) StreamedResponse است و withHeaders
+        | ندارد؛ هر دانلودی از پنل با خطای ۵۰۰ می‌افتاد.
+        */
+        $response->headers->set('X-Frame-Options', 'DENY');   // پنل هرگز داخلِ iframe
+        $response->headers->set('X-Robots-Tag', 'noindex, nofollow');
+        $response->headers->set('Referrer-Policy', 'same-origin');
+
+        return $response;
     }
 }

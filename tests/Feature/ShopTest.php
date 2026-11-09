@@ -474,10 +474,11 @@ class ShopTest extends TestCase
         $mine = $this->vendor('مال من', 'mine');
         $theirs = $this->vendor('مال دیگری', 'theirs');
 
-        $order = Order::create([
+        $order = (new Order)->forceFill([
             'number' => 'X-1', 'token' => 'tok-1', 'customer_name' => 'خریدار',
             'customer_phone' => '۰۹۱۲۰۰۰۰۰۰۰', 'total' => 300, 'status' => 'new',
         ]);
+        $order->save();
 
         $order->items()->create([
             'vendor_id' => $mine->id, 'product_id' => $mineProduct->id,

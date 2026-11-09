@@ -48,13 +48,13 @@ class CreateAdminUser extends Command
             return self::FAILURE;
         }
 
-        User::create([
+        (new User)->forceFill([
             'name' => $name,
             'email' => $email,
             'role' => $role,
             'is_active' => true,
             'password' => $secret,
-        ]);
+        ])->save();
 
         $this->newLine();
         $this->info("کاربر «{$name}» با نقش ".User::ROLES[$role].' ساخته شد.');

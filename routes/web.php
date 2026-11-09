@@ -57,6 +57,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('logout', [AdminAuth::class, 'logout'])->name('logout');
         Route::get('/', DashboardController::class)->name('dashboard');
 
+        Route::get('receipts/{id}/image', \App\Http\Controllers\Admin\ReceiptImageController::class)
+            ->whereNumber('id')->name('receipts.image');
+
         // پیش از مسیر عمومی {resource} تعریف می‌شود، وگرنه media یک منبع تلقی می‌شود
         Route::get('media', MediaController::class)
             ->middleware('admin:staff')

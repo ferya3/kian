@@ -154,6 +154,9 @@
         <div class="rounded-xl border border-sand-200 bg-sand-200/50 px-4 py-3 leading-relaxed text-ink-600">
             @if($value instanceof \DateTimeInterface)
                 <span class="tech">{{ \App\Support\Jalali::format($value, 'd MMMM y — HH:mm') }}</span>
+            @elseif(is_string($value) && preg_match('~^(https?://|/)~', $value))
+                {{-- نشانی (مثلاً عکسِ رسید) پیوند است، نه متن برای کپی --}}
+                <a href="{{ $value }}" target="_blank" rel="noopener" class="font-semibold text-clay-600 underline underline-offset-4">مشاهده ↗</a>
             @else
                 {{ filled($value) ? $value : '—' }}
             @endif

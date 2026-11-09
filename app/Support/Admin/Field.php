@@ -290,10 +290,15 @@ class Field
             // آرایه تبدیل می‌شود، پس قاعده هم باید روی رشته بنشیند نه آرایه.
             'lines' => ['string', 'max:4000'],
             // آپلود: نوع و حجم همیشه محدود می‌شود، حتی اگر منبع چیزی نگوید
-            'image' => ['image', 'mimes:jpg,jpeg,png,webp,svg', 'max:4096'],
+            //
+            // SVG هیچ‌جا پذیرفته نمی‌شود: SVG سند است و نه تصویر — می‌تواند
+            // <script> داشته باشد، و از زیرِ ‎/storage ِ همین دامنه سرو می‌شد؛
+            // یعنی XSS ِ ذخیره‌شده با یک آپلود. قاعده‌ی image ِ لاراول ۱۲ خودش
+            // SVG را رد می‌کند؛ فهرستِ mimes هم دیگر به آن اشاره نمی‌کند.
+            'image' => ['image', 'mimes:jpg,jpeg,png,webp', 'max:4096'],
             // هر فایلِ گالری جداگانه بررسی می‌شود؛ قاعده روی خودِ آرایه نمی‌نشیند.
             'gallery' => ['array', 'max:24'],
-            'file' => ['file', 'mimes:pdf,dwg,dxf,rvt,ifc,skp,zip,xlsx,jpg,png,svg', 'max:20480'],
+            'file' => ['file', 'mimes:pdf,dwg,dxf,rvt,ifc,skp,zip,xlsx,jpg,jpeg,png', 'max:20480'],
             default => ['string', 'max:2000'],
         };
 

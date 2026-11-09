@@ -46,6 +46,7 @@ class ReceiptTest extends TestCase
         Route::getRoutes()->refreshNameLookups();
 
         Storage::fake('public');
+        Storage::fake('local');
     }
 
     /** یک سفارش با یک فروشنده، و برمی‌گرداندِ هر دو. */
@@ -115,7 +116,8 @@ class ReceiptTest extends TestCase
         $this->assertSame(2000, $receipt->amount, 'مبلغ باید جمعِ ردیف‌های همان فروشنده باشد.');
         $this->assertSame('pending', $receipt->status);
         $this->assertNull($receipt->reviewed_at);
-        Storage::disk('public')->assertExists($receipt->image);
+        Storage::disk('local')->assertExists($receipt->image);
+        Storage::disk('public')->assertMissing($receipt->image);   // نشانیِ عمومی ندارد
     }
 
     /**
@@ -150,7 +152,7 @@ class ReceiptTest extends TestCase
         $this->assertSame(1, Receipt::count(), 'رسیدِ دوم باید همان ردیف را به‌روز کند.');
 
         // عکسِ قبلی نباید روی دیسک جا بماند
-        Storage::disk('public')->assertMissing($first->image);
+        Storage::disk('local')->assertMissing($first->image);
     }
 
     public function test_a_confirmed_receipt_cannot_be_replaced(): void
@@ -160,7 +162,7 @@ class ReceiptTest extends TestCase
         $this->post(route('orders.receipt', $order), ['vendor_id' => $vendor->id, 'image' => $this->image()]);
 
         $receipt = Receipt::firstOrFail();
-        $receipt->update(['status' => 'confirmed']);
+        $receipt->forceFill(['status' => 'confirmed'])->save();
 
         $this->assertNotNull($receipt->fresh()->reviewed_at, 'تأیید باید مهرِ زمان بزند.');
 
@@ -181,7 +183,7 @@ class ReceiptTest extends TestCase
 
         $this->post(route('orders.receipt', $order), ['vendor_id' => $vendor->id, 'image' => $this->image()]);
 
-        Receipt::firstOrFail()->update(['status' => 'rejected', 'note' => 'مبلغ نمی‌خواند.']);
+        Receipt::firstOrFail()->forceFill(['status' => 'rejected', 'note' => 'مبلغ نمی‌خواند.'])->save();
 
         $this->get(route('orders.show', $order))
             ->assertOk()
@@ -208,5 +210,56 @@ class ReceiptTest extends TestCase
         ])->assertSessionHasErrors('image');
 
         $this->assertSame(0, Receipt::count());
+    }
+
+    /**
+     * عکسِ رسید نام و کارت و مبلغ دارد: نه نشانیِ عمومی دارد و نه بی ورود
+     * باز می‌شود؛ دقیقاً همان کسانی می‌بینندش که بخشِ رسیدها را در پنل دارند.
+     */
+    public function test_the_receipt_image_is_only_shown_to_who_may_see_it(): void
+    {
+        [$order, $vendor] = $this->order();
+        $this->post(route('orders.receipt', $order), ['vendor_id' => $vendor->id, 'image' => $this->image()]);
+        $receipt = Receipt::firstOrFail();
+        $url = route('admin.receipts.image', $receipt->id);
+
+        $this->assertSame($url, $receipt->image_link);
+        $this->assertStringNotContainsString('/storage/', $receipt->image_link);
+
+        // مهمان
+        $this->get($url)->assertRedirect(route('admin.login'));
+
+        // مدیر
+        $admin = \App\Models\User::factory()->create(['role' => 'admin', 'is_active' => true]);
+        $this->actingAs($admin)->get($url)->assertOk()
+            ->assertHeader('X-Content-Type-Options', 'nosniff')
+            ->assertHeader('Cache-Control', 'no-store, private');
+
+        // کارمندِ دفتر (ویرایشگر) — همان کسی که رسیدها را در پنل داوری می‌کند
+        $editor = \App\Models\User::factory()->create(['role' => 'editor', 'is_active' => true]);
+        $this->actingAs($editor)->get($url)->assertOk();
+
+        /*
+        | فروشنده بخشِ رسیدها را در پنل ندارد (داوری با دفتر است) — پس عکسش را
+        | هم نمی‌بیند، حتی رسیدِ مالِ خودش را و حتی با شناسه‌ی درست.
+        */
+        $owner = \App\Models\User::factory()->create(['role' => 'vendor', 'vendor_id' => $vendor->id, 'is_active' => true]);
+        $this->actingAs($owner)->get($url)->assertNotFound();
+    }
+
+    /** رسیدهای پیش از این تغییر از دیسکِ عمومی به خصوصی می‌روند. */
+    public function test_existing_receipts_move_to_the_private_disk(): void
+    {
+        [$order, $vendor] = $this->order();
+        Storage::disk('public')->put('receipts/old.jpg', 'jpeg-bytes');
+        $receipt = Receipt::query()->firstOrNew(['order_id' => $order->id, 'vendor_id' => $vendor->id])
+            ->forceFill(['order_id' => $order->id, 'vendor_id' => $vendor->id, 'amount' => 1, 'image' => 'receipts/old.jpg', 'status' => 'pending']);
+        $receipt->save();
+
+        (require database_path('migrations/2026_01_01_000020_move_receipts_to_private_disk.php'))->up();
+
+        Storage::disk('local')->assertExists('receipts/old.jpg');
+        $this->assertSame('jpeg-bytes', Storage::disk('local')->get('receipts/old.jpg'));
+        Storage::disk('public')->assertMissing('receipts/old.jpg');
     }
 }

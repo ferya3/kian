@@ -21,13 +21,15 @@ class User extends Authenticatable
         'vendor' => 'فروشنده',
     ];
 
+    /*
+    | فقط آنچه بی‌خطر از ورودی می‌آید. نقش، فعال‌بودن و فروشگاه هرگز با
+    | create($request->…) نوشته نمی‌شوند — حتی اگر روزی کسی چنین کدی بنویسد،
+    | «role=admin» در فرم بی‌اثر می‌ماند. پنل و دستورها با forceFill می‌نویسند.
+    */
     protected $fillable = [
         'name',
         'email',
         'password',
-        'role',
-        'is_active',
-        'vendor_id',
     ];
 
     protected $hidden = [

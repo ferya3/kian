@@ -182,7 +182,14 @@
     @if(! $creating && $resource::$deletable)
         <form id="delete-form" method="POST" class="hidden"
               action="{{ $resource::destroyUrl($record) }}"
-              onsubmit="return confirm('«{{ addslashes($resource::titleFor($record)) }}» برای همیشه حذف می‌شود. مطمئنید؟')">
+              {{--
+                  تأیید با Alpine و نه onsubmit: CSP دستگیره‌ی inline را مسدود
+                  می‌کند و آن‌وقت فرم *بی پرسیدن* حذف می‌کرد. متن در data-
+                  است تا عنوانِ رکورد هرگز داخلِ کدِ جاوااسکریپت ننشیند.
+              --}}
+              x-data
+              data-confirm="«{{ $resource::titleFor($record) }}» برای همیشه حذف می‌شود. مطمئنید؟"
+              @submit="if (! confirm($el.dataset.confirm)) $event.preventDefault()">
             @csrf
             @method('DELETE')
         </form>

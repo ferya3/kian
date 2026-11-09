@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Support\Media;
 use App\Support\Shop;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -16,7 +15,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class Receipt extends Model
 {
-    protected $guarded = [];
+    /*
+    | مشتری فقط شماره‌ی پیگیری می‌دهد. مبلغ، وضعیت، عکس و یادداشتِ داور از
+    | سرور یا پنل می‌آیند و از ورودی نوشتنی نیستند.
+    */
+    protected $fillable = ['reference'];
 
     protected function casts(): array
     {
@@ -84,9 +87,10 @@ class Receipt extends Model
         return Shop::price($this->amount);
     }
 
+    /** نشانیِ عکس، از راهِ کنترلری که دسترسی را می‌سنجد — نه ‎/storage. */
     public function getImageLinkAttribute(): ?string
     {
-        return $this->image ? Media::url($this->image) : null;
+        return $this->image ? route('admin.receipts.image', $this->id) : null;
     }
 
     protected static function booted(): void

@@ -53,14 +53,19 @@ class ReceiptController extends Controller
             return back()->withErrors(['image' => __('site.shop.receipt_locked')]);
         }
 
-        $path = $request->file('image')->store('receipts', 'public');
+        // دیسکِ خصوصی: رسید نام و کارت و مبلغ دارد و نشانیِ عمومی ندارد —
+        // فقط از راهِ Admin\ReceiptImageController، با همان دسترسیِ پنل
+        $path = $request->file('image')->store('receipts', 'local');
 
         // عکسِ قبلی پس از نشستنِ عکسِ تازه پاک می‌شود، نه پیش از آن
         $previous = $existing?->image;
 
-        Receipt::updateOrCreate(
+        Receipt::query()->firstOrNew(
             ['order_id' => $order->id, 'vendor_id' => $vendor->id],
-            [
+        )->forceFill([
+                // کلیدها هم صریح: firstOrNew آن‌ها را از fill می‌گذراند و در fillable نیستند
+                'order_id' => $order->id,
+                'vendor_id' => $vendor->id,
                 // مبلغ از ردیف‌های همین سفارش می‌آید و نه از فرم
                 'amount' => (int) $items->sum('total'),
                 'reference' => $data['reference'] ?? null,
@@ -68,11 +73,11 @@ class ReceiptController extends Controller
                 'status' => 'pending',
                 'note' => null,
                 'reviewed_at' => null,
-            ],
-        );
+            ])->save();
 
         if ($previous && $previous !== $path) {
-            Storage::disk('public')->delete($previous);
+            Storage::disk('local')->delete($previous);
+            Storage::disk('public')->delete($previous);   // رسیدهای پیش از انتقال
         }
 
         return back()->with('receipt_saved', $vendor->id);

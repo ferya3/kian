@@ -9,7 +9,14 @@ use Illuminate\Support\Str;
 
 class Order extends Model
 {
-    protected $guarded = [];
+    /*
+    | فقط آنچه مشتری در فرمِ تسویه می‌نویسد. شماره، توکن، مبلغ و وضعیت را
+    | سرور می‌سازد (CheckoutController) و از ورودی نوشتنی نیستند.
+    */
+    protected $fillable = [
+        'customer_name', 'customer_phone', 'customer_email',
+        'province', 'city', 'address', 'note',
+    ];
 
     protected function casts(): array
     {

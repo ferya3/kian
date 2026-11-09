@@ -26,6 +26,8 @@ class ContactFormTest extends TestCase
             'phone' => '۰۹۱۲۱۲۳۴۵۶۷',
             'city' => 'تهران',
             'message' => 'برای پروژه چهار هزار متری در تهران به بلوک ۲۰ نیاز داریم.',
+            // فرم ده ثانیه پیش باز شده — آهنگِ انسان
+            '_ts' => \Illuminate\Support\Facades\Crypt::encryptString((string) (time() - 10)),
         ], $overrides);
     }
 
@@ -65,5 +67,27 @@ class ContactFormTest extends TestCase
             ->assertSessionHasErrors('website');
 
         $this->assertDatabaseCount('contact_messages', 0);
+    }
+
+    /** ربات فرم را بی‌درنگ می‌فرستد؛ یا مهرِ زمان ندارد، یا مهرِ ساختگی. */
+    public function test_a_form_sent_too_fast_or_without_a_valid_stamp_is_rejected(): void
+    {
+        foreach ([
+            'too fast' => \Illuminate\Support\Facades\Crypt::encryptString((string) time()),
+            'forged' => (string) (time() - 60),
+            'missing' => null,
+        ] as $case => $stamp) {
+            $this->post(route('contact.store'), $this->payload(['_ts' => $stamp]))
+                ->assertSessionHasErrors('_ts');
+        }
+
+        $this->assertSame(0, \App\Models\ContactMessage::count());
+    }
+
+    public function test_the_form_carries_a_time_stamp(): void
+    {
+        $html = $this->get(route('contact'))->assertOk()->getContent();
+
+        $this->assertMatchesRegularExpression('~<input type="hidden" name="_ts" value="[^"]{40,}">~', $html);
     }
 }

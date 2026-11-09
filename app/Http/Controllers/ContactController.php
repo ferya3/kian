@@ -30,7 +30,7 @@ class ContactController extends Controller
     public function store(ContactRequest $request)
     {
         $message = ContactMessage::create([
-            ...$request->safe()->except('website'),
+            ...$request->safe()->except(['website', '_ts']),
             'ip' => $request->ip(),
         ]);
 

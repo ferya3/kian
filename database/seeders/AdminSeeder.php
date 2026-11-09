@@ -25,13 +25,13 @@ class AdminSeeder extends Seeder
 
         $secret = env('ADMIN_PASSWORD') ?: Str::password(16, symbols: false);
 
-        User::create([
+        (new User)->forceFill([
             'name' => env('ADMIN_NAME', 'مدیر سیستم'),
             'email' => $email,
             'role' => 'admin',
             'is_active' => true,
             'password' => $secret,
-        ]);
+        ])->save();
 
         $this->command?->newLine();
         $this->command?->info('  حساب مدیر ساخته شد:');

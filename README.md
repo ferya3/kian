@@ -161,7 +161,8 @@ printf "\n\033[1;33m==>\033[0m ساختن پشتیبان\n"
 php -r "(new PDO(\"sqlite:\$argv[1]\"))->exec(\"VACUUM INTO \x27\$argv[2]\x27\");" \
     "$APP/database/database.sqlite" "$WORK/database.sqlite"
 cp "$APP/.env" "$WORK/.env"
-tar -czf "$WORK/uploads.tar.gz" -C "$APP/storage/app" public
+# public: عکس‌ها و اسناد؛ private: رسیدهای واریز (دیسکِ خصوصی، بی نشانیِ عمومی)
+tar -czf "$WORK/uploads.tar.gz" -C "$APP/storage/app" public $( [ -d "$APP/storage/app/private" ] && echo private )
 cp /etc/nginx/sites-available/kian "$WORK/nginx-kian.conf" 2>/dev/null || true
 
 # شناسنامه: بدونش، شش ماه بعد معلوم نیست این پشتیبان از کِی و از کدام کد است

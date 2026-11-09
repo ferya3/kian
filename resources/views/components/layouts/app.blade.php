@@ -131,7 +131,7 @@
         همین‌جا، پیش از نخستین نقاشی، آن‌ها را نمایان می‌کنند؛ پیمایش با
         نخستین عنصرِ زیرِ خطِ تا می‌ایستد.
     --}}
-    <script>
+    <script nonce="{{ Vite::cspNonce() }}">
         (function () {
             if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
             var h = innerHeight, els = document.querySelectorAll('main [data-reveal]');
