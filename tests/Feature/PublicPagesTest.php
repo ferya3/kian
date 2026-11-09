@@ -69,14 +69,18 @@ class PublicPagesTest extends TestCase
         $this->get(route('articles.show', $article))->assertNotFound();
     }
 
-    public function test_product_page_exposes_product_structured_data(): void
+    /**
+     * بی فروشگاه (و بی قیمت) Product اعلام نمی‌شود — گوگل آن را بی offers
+     * نامعتبر می‌داند. حالتِ با قیمت در ShopTest آزموده می‌شود.
+     */
+    public function test_product_page_exposes_breadcrumbs_and_no_priceless_product(): void
     {
         $product = Product::where('slug', 'ceramic-block-20')->firstOrFail();
 
         $this->get(route('products.show', $product))
             ->assertOk()
-            ->assertSee('"@type":"Product"', escape: false)
             ->assertSee('"@type":"BreadcrumbList"', escape: false)
+            ->assertDontSee('"@type":"Product"', escape: false)
             ->assertSee($product->sku);
     }
 

@@ -72,8 +72,12 @@ class ProductController extends Controller
                 [__('site.nav.items.products_index'), route('products.index')],
                 $product->category ? [$product->category->name, route('products.index', ['category' => $product->category->slug])] : null,
                 [$product->name, null],
-            ])))
-            ->schema(Schema::product($product));
+            ])));
+
+        // بی قیمت، Product اعلام نمی‌شود — Schema::product
+        if ($schema = Schema::product($product)) {
+            $this->seo()->schema($schema);
+        }
 
         return view('pages.products.show', [
             'product' => $product,

@@ -4,6 +4,7 @@ namespace App\Support;
 
 use App\Models\Article;
 use App\Models\Product;
+use Illuminate\Support\Facades\Route;
 
 /**
  * تولید داده‌های ساخت‌یافته‌ی Schema.org.
@@ -94,8 +95,26 @@ class Schema
         ]);
     }
 
-    public static function product(Product $product): array
+    /**
+     * محصول برای گوگل — فقط وقتی قیمت دارد.
+     *
+     * گوگل برای Product یکی از offers، review یا aggregateRating را الزامی
+     * می‌داند و بی آن کلِ آیتم را «نامعتبر» گزارش می‌کند (Search Console:
+     * «Either offers, review, or aggregateRating should be specified»). قیمت
+     * از عرضه‌های فروشگاه می‌آید؛ محصولی که هنوز فروشنده‌ای رویش قیمت نگذاشته،
+     * به‌جای آیتمِ نامعتبر، اصلاً به‌عنوان Product اعلام نمی‌شود — تا اولین
+     * عرضه‌اش. نان‌ریزه‌ی صفحه سرِ جایش می‌ماند.
+     */
+    public static function product(Product $product): ?array
     {
+        $offers = Shop::enabled()
+            ? $product->offers()->sellable()->with('vendor')->orderBy('price')->get()
+            : collect();
+
+        if ($offers->isEmpty()) {
+            return null;
+        }
+
         return [
             '@type' => 'Product',
             '@id' => route('products.show', $product).'#product',
@@ -103,7 +122,8 @@ class Schema
             'sku' => $product->sku,
             'category' => $product->category?->name,
             'description' => $product->summary,
-            'image' => url($product->hero_image ?: '/og-image.svg'),
+            // مسیرِ دیسک نه نشانی: url('admin/…') به ‎/admin/… می‌رسید، که وجود ندارد
+            'image' => url(Media::original($product->hero_image) ?: '/og-image.svg'),
             'brand' => ['@type' => 'Brand', 'name' => config('kian.brand.name')],
             'manufacturer' => ['@id' => url('/#organization')],
             'material' => 'Fired clay / Terracotta',
@@ -117,6 +137,52 @@ class Schema
                 'value' => $spec['value'],
                 'unitText' => $spec['unit'],
             ], $product->specSheet()),
+            'offers' => self::offers($product, $offers),
+        ];
+    }
+
+    /**
+     * قیمت‌ها: یک عرضه ⇐ Offer، چند عرضه ⇐ AggregateOffer با کمترین و بیشترین.
+     *
+     * واحدِ پولِ schema.org باید کدِ ISO باشد و «تومان» کد ندارد؛ پس قیمت به
+     * ریال (IRR) گزارش می‌شود — تومان × ۱۰.
+     *
+     * @param  \Illuminate\Support\Collection<int, \App\Models\Offer>  $offers
+     */
+    protected static function offers(Product $product, \Illuminate\Support\Collection $offers): array
+    {
+        $rial = fn (int $price) => $price * (config('shop.currency', 'تومان') === 'ریال' ? 1 : 10);
+        $url = Route::has('shop.show') ? route('shop.show', $product) : route('products.show', $product);
+
+        $single = fn ($offer) => array_filter([
+            '@type' => 'Offer',
+            'price' => $rial($offer->price),
+            'priceCurrency' => 'IRR',
+            'availability' => $offer->inStock() ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+            'itemCondition' => 'https://schema.org/NewCondition',
+            'url' => $url,
+            'seller' => $offer->vendor ? ['@type' => 'Organization', 'name' => $offer->vendor->name] : null,
+            'eligibleQuantity' => $offer->min_order > 1
+                ? ['@type' => 'QuantitativeValue', 'minValue' => $offer->min_order, 'unitText' => $offer->unit]
+                : null,
+        ], fn ($v) => $v !== null);
+
+        if ($offers->count() === 1) {
+            return $single($offers->first());
+        }
+
+        $prices = $offers->pluck('price');
+
+        return [
+            '@type' => 'AggregateOffer',
+            'priceCurrency' => 'IRR',
+            'lowPrice' => $rial($prices->min()),
+            'highPrice' => $rial($prices->max()),
+            'offerCount' => $offers->count(),
+            'availability' => $offers->contains(fn ($o) => $o->inStock())
+                ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+            'url' => $url,
+            'offers' => $offers->map($single)->values()->all(),
         ];
     }
 
@@ -127,7 +193,7 @@ class Schema
             '@id' => route('articles.show', $article).'#article',
             'headline' => $article->title,
             'description' => $article->excerpt,
-            'image' => url($article->cover_image ?: '/og-image.svg'),
+            'image' => url(Media::original($article->cover_image) ?: '/og-image.svg'),
             'datePublished' => $article->published_at?->toIso8601String(),
             'dateModified' => $article->updated_at?->toIso8601String(),
             'author' => ['@type' => 'Person', 'name' => $article->author ?: config('kian.brand.name')],

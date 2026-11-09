@@ -529,4 +529,85 @@ class ShopTest extends TestCase
             'is_active' => true,
         ]);
     }
+
+    // ------------------------------------------------------ داده‌ی ساخت‌یافته --
+
+    /** گرافِ JSON-LD ِ صفحه، و گرهِ یک نوع. */
+    protected function schemaNode(string $html, string $type): ?array
+    {
+        preg_match_all('~<script type="application/ld\+json">(.*?)</script>~s', $html, $m);
+
+        foreach ($m[1] as $json) {
+            $data = json_decode($json, true);
+            foreach ($data['@graph'] ?? [$data] as $node) {
+                if (($node['@type'] ?? null) === $type) {
+                    return $node;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    protected function offerFor(Product $product, int $price, string $vendor = 'فروشنده', ?int $stock = null): Offer
+    {
+        $v = Vendor::firstOrCreate(['slug' => \Illuminate\Support\Str::slug($vendor) ?: 'v'.$price], ['name' => $vendor, 'is_active' => true]);
+
+        return Offer::create(['vendor_id' => $v->id, 'product_id' => $product->id, 'price' => $price, 'min_order' => 1, 'stock' => $stock]);
+    }
+
+    /**
+     * گوگل Product ِ بی offers را نامعتبر می‌داند: «Either offers, review, or
+     * aggregateRating should be specified». قیمتِ فروشگاه همان offers است — به
+     * ریال، چون «تومان» کدِ ISO ندارد.
+     */
+    public function test_a_product_with_one_offer_carries_it_in_its_schema(): void
+    {
+        $this->enableShop();
+        $product = Product::query()->where('slug', 'ceramic-block-20')->firstOrFail();
+        $this->offerFor($product, 25000, 'Vendor A');
+
+        foreach ([route('products.show', $product), route('shop.show', $product)] as $page) {
+            $node = $this->schemaNode($this->get($page)->assertOk()->getContent(), 'Product');
+
+            $this->assertNotNull($node, $page);
+            $this->assertSame('Offer', $node['offers']['@type']);
+            $this->assertSame(250000, $node['offers']['price']);
+            $this->assertSame('IRR', $node['offers']['priceCurrency']);
+            $this->assertSame('https://schema.org/InStock', $node['offers']['availability']);
+            $this->assertSame(route('shop.show', $product), $node['offers']['url']);
+            $this->assertSame('Vendor A', $node['offers']['seller']['name']);
+            // تصویر نشانیِ واقعی است، نه مسیرِ دیسک
+            $this->assertStringNotContainsString('/admin/', $node['image']);
+        }
+    }
+
+    public function test_several_offers_become_an_aggregate_offer(): void
+    {
+        $this->enableShop();
+        $product = Product::query()->where('slug', 'ceramic-block-20')->firstOrFail();
+        $this->offerFor($product, 30000, 'Vendor B');
+        $this->offerFor($product, 24000, 'Vendor C', stock: 0);
+
+        $node = $this->schemaNode($this->get(route('products.show', $product))->getContent(), 'Product');
+
+        $this->assertSame('AggregateOffer', $node['offers']['@type']);
+        $this->assertSame(240000, $node['offers']['lowPrice']);
+        $this->assertSame(300000, $node['offers']['highPrice']);
+        $this->assertSame(2, $node['offers']['offerCount']);
+        $this->assertSame('https://schema.org/InStock', $node['offers']['availability'], 'یکی هنوز موجود است.');
+        $this->assertCount(2, $node['offers']['offers']);
+    }
+
+    /** بی قیمت، Product اعلام نمی‌شود — به‌جای آیتمِ نامعتبر در Search Console. */
+    public function test_a_product_without_a_price_is_not_declared_as_a_product(): void
+    {
+        $this->enableShop();
+        $product = Product::query()->where('slug', 'ceramic-block-20')->firstOrFail();
+
+        $html = $this->get(route('products.show', $product))->assertOk()->getContent();
+
+        $this->assertNull($this->schemaNode($html, 'Product'));
+        $this->assertNotNull($this->schemaNode($html, 'BreadcrumbList'), 'نان‌ریزه می‌ماند.');
+    }
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Shop;
 use App\Http\Controllers\Controller;
 use App\Models\Offer;
 use App\Models\Product;
+use App\Support\Schema;
 use App\Support\Seo;
 
 /**
@@ -59,6 +60,11 @@ class ShopController extends Controller
                 'name' => $product->name,
                 'count' => $offers->count(),
             ]));
+
+        // همان Product ِ صفحه‌ی محصول، با قیمت‌ها — گوگل این صفحه را هم کالا می‌بیند
+        if ($schema = Schema::product($product)) {
+            $seo->schema($schema);
+        }
 
         return view('pages.shop.show', compact('product', 'offers'));
     }
