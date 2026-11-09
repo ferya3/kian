@@ -618,6 +618,37 @@ if [ "$SSL" = "1" ] && [ -n "$DOMAIN" ]; then
             --register-unsafely-without-email --redirect
     fi
 
+    #
+    # HTTP/2 روی ۴۴۳.
+    #
+    # certbot فقط «listen 443 ssl» می‌نویسد، یعنی HTTP/1.1. آنجا مرورگرِ گوشی
+    # برای CSS و قلم‌ها و عکس‌ها چند اتصالِ جدا باز می‌کند و هر کدام دست‌دادنِ
+    # TLS ِ خودش را دارد — روی اینترنتِ همراه با تأخیرِ بالا، همین FCP و LCP ِ
+    # کاربرانِ واقعی را به ۳ ثانیه می‌رساند. HTTP/2 همه را روی یک اتصال می‌برد.
+    #
+    # nginx ِ اوبونتو ۲۴ نسخه‌ی ۱٫۲۴ است و http2 را روی listen می‌خواهد؛ از
+    # ۱٫۲۵٫۱ دستورِ جدای «http2 on». اگر nginx -t نپذیرفت، پیکربندی برمی‌گردد.
+    if [ "$CERT_OK" = "1" ] && [ -f /etc/nginx/sites-available/kian ]; then
+        NGX=/etc/nginx/sites-available/kian
+        cp -a "$NGX" "$NGX.pre-http2"
+        NGINX_VER="$(nginx -v 2>&1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)"
+
+        if [ "$(printf '%s\n1.25.1\n' "$NGINX_VER" | sort -V | head -1)" = "1.25.1" ]; then
+            grep -q 'http2 on;' "$NGX" || sed -i '0,/listen 443 ssl;/s//listen 443 ssl;\n    http2 on;/' "$NGX"
+        else
+            sed -i -E 's/listen (\[::\]:)?443 ssl( ipv6only=on)?;/listen \1443 ssl http2\2;/' "$NGX"
+        fi
+
+        if nginx -t >/dev/null 2>&1; then
+            systemctl reload nginx 2>/dev/null || service nginx reload
+            grep -q 'http2' "$NGX" && step "HTTP/2 روشن است"
+        else
+            cp -a "$NGX.pre-http2" "$NGX"
+            printf '\n\033[1;33m  ! nginx پیکربندیِ HTTP/2 را نپذیرفت؛ همان HTTP/1.1 ماند.\033[0m\n'
+        fi
+        rm -f "$NGX.pre-http2"
+    fi
+
     # حالا که گواهی سر جایش است و ۴۴۳ شنونده دارد، نشانی هم https می‌شود
     if [ "$CERT_OK" = "1" ]; then
         APP_URL="https://$DOMAIN"
