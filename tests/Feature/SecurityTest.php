@@ -126,4 +126,24 @@ class SecurityTest extends TestCase
             putenv('APP_URL='.($saved[0]['APP_URL'] ?? ''));
         }
     }
+
+    /**
+     * ورودِ ناموفق یک خطِ ثابت در security.log می‌گذارد — همان که fail2ban
+     * (deploy/install.sh) با «admin-login-failed ip=<HOST>» می‌خواند.
+     * گذرواژه هرگز در آن نیست.
+     */
+    public function test_a_failed_login_is_written_for_fail2ban(): void
+    {
+        $log = sys_get_temp_dir().'/kian-security-'.uniqid().'.log';
+        config(['logging.channels.security.path' => $log]);
+
+        $this->post(route('admin.login'), ['email' => 'nobody@example.com', 'password' => 'Secret-Guess-1'])
+            ->assertSessionHasErrors('email');
+
+        $line = file_get_contents($log);
+        @unlink($log);
+
+        $this->assertMatchesRegularExpression('~admin-login-failed ip=127\.0\.0\.1 email=nobody@example\.com~', $line);
+        $this->assertStringNotContainsString('Secret-Guess-1', $line);
+    }
 }

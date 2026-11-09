@@ -496,11 +496,64 @@ CRON
     printf '  هر شب در ‎/root/kian-backups — دیتابیس و رسیدها، ۱۴ روز\n'
 fi
 
+# --------------------------------------------------------------- fail2ban ----
+#
+# بستنِ IP در دیواره‌ی آتش، دو جا:
+#   sshd       — حدسِ گذرواژه‌ی SSH؛ روی هر سروری با IP ِ عمومی هر روز هست.
+#   kian-admin — ورودِ ناموفق به پنل. لاراول خودش «ایمیل + IP» را محدود می‌کند،
+#                ولی رباتی که هر بار ایمیلِ دیگری می‌زند از آن رد می‌شود؛ اینجا
+#                خودِ IP بسته می‌شود. منبع: storage/logs/security.log.
+#
+# شکستش سایت را برنمی‌گرداند — fail2ban لایه‌ی اضافه است، نه شرطِ بالا بودن.
+step "fail2ban"
+if command -v fail2ban-client >/dev/null || apt-get install -y -qq fail2ban >/dev/null 2>&1; then
+    touch "$APP_DIR/storage/logs/security.log"
+    chown www-data:www-data "$APP_DIR/storage/logs/security.log"
+
+    mkdir -p /etc/fail2ban/filter.d /etc/fail2ban/jail.d
+    cat > /etc/fail2ban/filter.d/kian-admin.conf << 'F2B'
+[Definition]
+failregex = admin-login-(?:failed|throttled) ip=<HOST>(?:\s|$)
+ignoreregex =
+F2B
+
+    cat > /etc/fail2ban/jail.d/kian.conf << F2B
+[sshd]
+enabled  = true
+maxretry = 6
+findtime = 10m
+bantime  = 1h
+
+[kian-admin]
+enabled  = true
+port     = http,https
+filter   = kian-admin
+logpath  = $APP_DIR/storage/logs/security.log
+backend  = polling
+maxretry = 10
+findtime = 10m
+bantime  = 1h
+F2B
+
+    if fail2ban-client -t >/dev/null 2>&1; then
+        systemctl enable --now fail2ban >/dev/null 2>&1 || service fail2ban start >/dev/null 2>&1 || true
+        systemctl restart fail2ban >/dev/null 2>&1 || service fail2ban restart >/dev/null 2>&1 || true
+        printf '  SSH: ۶ تلاشِ ناموفق در ۱۰ دقیقه، پنل: ۱۰ — هر دو یک ساعت بسته\n'
+    else
+        rm -f /etc/fail2ban/jail.d/kian.conf
+        printf '  \033[1;33m! پیکربندیِ fail2ban پذیرفته نشد؛ کنار گذاشته شد.\033[0m\n'
+    fi
+else
+    printf '  \033[1;33m! fail2ban نصب نشد؛ سایت بی آن هم کار می‌کند.\033[0m\n'
+fi
+
 # ------------------------------------------------------------- دسترسی‌ها ----
 step "تنظیم دسترسی‌ها و کش"
 
 php artisan optimize
 chown -R www-data:www-data "$APP_DIR"
+# ‎.env رمزها را دارد: فقط www-data (و root) — نه هر کاربرِ دیگرِ سرور
+chmod 640 "$APP_DIR/.env"
 find "$APP_DIR/storage" "$APP_DIR/bootstrap/cache" -type d -exec chmod 775 {} +
 find "$APP_DIR/storage" "$APP_DIR/bootstrap/cache" -type f -exec chmod 664 {} +
 [ -f database/database.sqlite ] && chmod 664 database/database.sqlite

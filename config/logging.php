@@ -52,6 +52,21 @@ return [
 
     'channels' => [
 
+        /*
+        | رویدادهای امنیتی، در پرونده‌ی جدا — fail2ban همین را می‌خواند.
+        |
+        | یک خط برای هر ورودِ ناموفق، با IP. ActivityLog ِ پنل همان را در دیتابیس
+        | نگه می‌دارد برای مدیر؛ این یکی برای دیواره‌ی آتشِ سرور است، که IP ای
+        | را که با ایمیل‌های گوناگون حدس می‌زند می‌بندد — چیزی که محدودیتِ
+        | «ایمیل + IP» ِ خودِ لاراول نمی‌گیرد.
+        */
+        'security' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/security.log'),
+            'level' => 'info',
+            'replace_placeholders' => true,
+        ],
+
         'stack' => [
             'driver' => 'stack',
             'channels' => explode(',', (string) env('LOG_STACK', 'single')),

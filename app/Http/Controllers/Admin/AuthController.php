@@ -6,6 +6,7 @@ use App\Models\ActivityLog;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -38,6 +39,9 @@ class AuthController extends Controller
         if (RateLimiter::tooManyAttempts($key, self::MAX_ATTEMPTS)) {
             $minutes = (int) ceil(RateLimiter::availableIn($key) / 60);
 
+            // ادامه‌دادن پس از قفل هم برای fail2ban شمرده می‌شود
+            Log::channel('security')->warning('admin-login-throttled ip='.$request->ip());
+
             throw ValidationException::withMessages([
                 'email' => "تلاش‌های ناموفق زیاد بود. {$minutes} دقیقه دیگر دوباره امتحان کنید.",
             ]);
@@ -47,6 +51,10 @@ class AuthController extends Controller
         if (! Auth::attempt([...$credentials, 'is_active' => true], $request->boolean('remember'))) {
             RateLimiter::hit($key, self::DECAY_SECONDS);
             ActivityLog::record('login_failed', null, [], $credentials['email']);
+
+            // قالبِ ثابت — فیلترِ fail2ban (deploy/install.sh) با همین «ip=» می‌خواند.
+            // گذرواژه هرگز در لاگ نمی‌آید.
+            Log::channel('security')->warning('admin-login-failed ip='.$request->ip().' email='.Str::limit($credentials['email'], 80));
 
             throw ValidationException::withMessages([
                 'email' => 'ایمیل یا گذرواژه درست نیست.',
